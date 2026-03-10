@@ -1,0 +1,291 @@
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e411] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e4]:
+    - navigation "Primary" [ref=e412]:
+      - link "LinkedIn" [ref=e413] [cursor=pointer]:
+        - /url: /?trk=public_jobs_nav-header-logo
+        - generic [ref=e7]: LinkedIn
+        - img [ref=e356]
+      - generic [ref=e9]:
+        - button [ref=e11] [cursor=pointer]:
+          - generic:
+            - img
+        - tabpanel "Jobs" [ref=e414]:
+          - search [ref=e13]:
+            - generic [ref=e14]:
+              - combobox "Search job titles or companies" [ref=e415]: Senior .NET Developer Contract
+              - button "Clear text" [ref=e416]:
+                - generic [ref=e17]: Clear text
+                - img [ref=e368]
+            - generic [ref=e18]:
+              - combobox "Location" [ref=e417]: Toronto
+              - button "Clear text" [ref=e418]:
+                - generic [ref=e21]: Clear text
+                - img [ref=e373]
+            - button "Search" [ref=e419] [cursor=pointer]:
+              - img [ref=e378]
+        - status [ref=e23]
+      - generic [ref=e24]:
+        - link "Sign in" [ref=e420] [cursor=pointer]:
+          - /url: https://www.linkedin.com/login?emailAddress=&fromSignIn=&fromSignIn=true&session_redirect=https%3A%2F%2Fwww.linkedin.com%2Fjobs%2Fsearch%2F%3Fkeywords%3DSenior%2B.NET%2BDeveloper%2Bcontract%26location%3DToronto%252C%2BOntario%252C%2BCanada%26f_TPR%3Dr604800&trk=public_jobs_nav-header-signin
+        - link "Join now" [ref=e421] [cursor=pointer]:
+          - /url: https://www.linkedin.com/signup/cold-join?source=jobs_registration&session_redirect=https%3A%2F%2Fwww.linkedin.com%2Fjobs%2Fsearch%2F%3Fkeywords%3DSenior%2B.NET%2BDeveloper%2Bcontract%26location%3DToronto%252C%2BOntario%252C%2BCanada%26f_TPR%3Dr604800&trk=public_jobs_nav-header-join
+  - list [ref=e32]:
+    - listitem [ref=e33]:
+      - button "Distance filter. 25 miles (40 km) filter is currently applied. Clicking this button displays all Distance filter options." [ref=e422] [cursor=pointer]:
+        - text: 25 miles (40 km)
+        - img [ref=e380]
+    - listitem [ref=e38]:
+      - button "Date posted filter. Past week filter is currently applied. Clicking this button displays all Date posted filter options." [ref=e423] [cursor=pointer]:
+        - text: Past week
+        - img [ref=e382]
+    - listitem [ref=e43]:
+      - button "Company filter. Clicking this button displays all Company filter options." [ref=e424] [cursor=pointer]:
+        - text: Company
+        - img [ref=e384]
+    - listitem [ref=e48]:
+      - button "Job type filter. Clicking this button displays all Job type filter options." [ref=e425] [cursor=pointer]:
+        - text: Job type
+        - img [ref=e386]
+    - listitem [ref=e53]:
+      - button "Experience level filter. Clicking this button displays all Experience level filter options." [ref=e426] [cursor=pointer]:
+        - text: Experience level
+        - img [ref=e388]
+    - listitem [ref=e58]:
+      - button "Location filter. Clicking this button displays all Location filter options." [ref=e427] [cursor=pointer]:
+        - text: Location
+        - img [ref=e390]
+    - listitem [ref=e63]:
+      - button "Salary filter. Clicking this button displays all Salary filter options." [ref=e428] [cursor=pointer]:
+        - text: Salary
+        - img [ref=e392]
+    - listitem [ref=e68]:
+      - button "Remote filter. Clicking this button displays all Remote filter options." [ref=e429] [cursor=pointer]:
+        - text: Remote
+        - img [ref=e394]
+  - main [ref=e74]:
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - img [ref=e396]
+        - generic [ref=e80]: Get notified when a new job is posted.
+      - generic [ref=e81]:
+        - button "Set alert" [ref=e430]
+        - generic [ref=e83]: Set alert
+    - heading "11 Senior .NET Developer Contract Jobs in Toronto" [level=1] [ref=e431]
+    - generic [ref=e86]:
+      - list [ref=e87]:
+        - listitem [ref=e88]:
+          - generic [ref=e89]:
+            - link "Senior Dotnet Developer" [ref=e432] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-dotnet-developer-at-buzzclan-4380826291?position=1&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=9izJv6Vvb93ETsTGwdSLPA%3D%3D
+              - generic [ref=e91]: Senior Dotnet Developer
+            - img [ref=e93]
+            - generic [ref=e94]:
+              - heading "Senior Dotnet Developer" [level=3] [ref=e433]
+              - heading "BuzzClan" [level=4] [ref=e434]:
+                - link "BuzzClan" [ref=e435] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/buzzclan-llc?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e98]:
+                - generic [ref=e99]: Toronto, Ontario, Canada
+                - generic [ref=e100]:
+                  - img [ref=e398]
+                  - generic [ref=e102]: Actively Hiring
+                - time [ref=e103]: 3 days ago
+        - listitem [ref=e104]:
+          - generic [ref=e105]:
+            - link "Senior Software Developer (Back End)" [ref=e436] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-software-developer-back-end-at-autodesk-4378884608?position=2&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=RgvC5MIAEIrv%2F7CCE4VVbA%3D%3D
+              - generic [ref=e107]: Senior Software Developer (Back End)
+            - img [ref=e109]
+            - generic [ref=e110]:
+              - heading "Senior Software Developer (Back End)" [level=3] [ref=e437]
+              - heading "Autodesk" [level=4] [ref=e438]:
+                - link "Autodesk" [ref=e439] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/autodesk?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e114]:
+                - generic [ref=e115]: Toronto, Ontario, Canada
+                - generic [ref=e116]:
+                  - img [ref=e400]
+                  - generic [ref=e118]: Actively Hiring
+                - time [ref=e119]: 6 days ago
+        - listitem [ref=e120]:
+          - generic [ref=e121]:
+            - link "Senior Software Engineer, Product AI - AI Powered Platform" [ref=e440] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-product-ai-ai-powered-platform-at-andiamo-4381047971?position=3&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=y3%2BqIE79ZDJ9VGq9QKiB1w%3D%3D
+              - generic [ref=e123]: Senior Software Engineer, Product AI - AI Powered Platform
+            - img [ref=e125]
+            - generic [ref=e126]:
+              - heading "Senior Software Engineer, Product AI - AI Powered Platform" [level=3] [ref=e441]
+              - heading "Andiamo" [level=4] [ref=e442]:
+                - link "Andiamo" [ref=e443] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/andiamo-partners?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e130]:
+                - generic [ref=e131]: Toronto, Ontario, Canada
+                - generic [ref=e132]:
+                  - img [ref=e402]
+                  - generic [ref=e134]: Be an early applicant
+                - time [ref=e135]: 3 days ago
+        - listitem [ref=e136]:
+          - generic [ref=e137]:
+            - link "Senior Software Developer, API Platform and Ecosystem" [ref=e444] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-software-developer-api-platform-and-ecosystem-at-maintainx-4383406852?position=4&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=PzGjRi5eGah3u%2FMh5HBBIQ%3D%3D
+              - generic [ref=e139]: Senior Software Developer, API Platform and Ecosystem
+            - generic [ref=e141]:
+              - heading "Senior Software Developer, API Platform and Ecosystem" [level=3] [ref=e445]
+              - heading "MaintainX" [level=4] [ref=e446]:
+                - link "MaintainX" [ref=e447] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/getmaintainx?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e145]:
+                - generic [ref=e146]: Toronto, Ontario, Canada
+                - generic [ref=e149]: Be an early applicant
+                - time [ref=e150]: 15 hours ago
+        - listitem [ref=e151]:
+          - generic [ref=e152]:
+            - link "Senior Software Development Engineer (Backend) - Evisort AI" [ref=e448] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-software-development-engineer-backend-evisort-ai-at-workday-4363160787?position=5&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=X2Ykt5SzK9yuTyeZg7HYaQ%3D%3D
+              - generic [ref=e154]: Senior Software Development Engineer (Backend) - Evisort AI
+            - generic [ref=e156]:
+              - heading "Senior Software Development Engineer (Backend) - Evisort AI" [level=3] [ref=e449]
+              - heading "Workday" [level=4] [ref=e450]:
+                - link "Workday" [ref=e451] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/workday?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e160]:
+                - generic [ref=e161]: Greater Toronto Area, Canada
+                - generic [ref=e164]: Actively Hiring
+                - time [ref=e165]: 6 days ago
+        - listitem [ref=e166]:
+          - generic [ref=e167]:
+            - link "Sr. Cyber Security Developer - Transmit Security" [ref=e452] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/sr-cyber-security-developer-transmit-security-at-rogers-communications-4372019705?position=6&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=1%2F9jppVDHa01u1NgjC6IUQ%3D%3D
+              - generic [ref=e169]: Sr. Cyber Security Developer - Transmit Security
+            - generic [ref=e171]:
+              - heading "Sr. Cyber Security Developer - Transmit Security" [level=3] [ref=e453]
+              - heading "Rogers Communications" [level=4] [ref=e454]:
+                - link "Rogers Communications" [ref=e455] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/company/rogers-communications?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e175]:
+                - generic [ref=e176]: Toronto, Ontario, Canada
+                - generic [ref=e179]: Be an early applicant
+                - time [ref=e180]: 4 days ago
+        - listitem [ref=e181]:
+          - generic [ref=e182]:
+            - link "Sr. Cyber Security Developer - Transmit Security" [ref=e456] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/sr-cyber-security-developer-transmit-security-at-rogers-communications-4372009851?position=7&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=9UJr28HqzE%2BKsEIMpgIH%2Fg%3D%3D
+              - generic [ref=e184]: Sr. Cyber Security Developer - Transmit Security
+            - generic [ref=e186]:
+              - heading "Sr. Cyber Security Developer - Transmit Security" [level=3] [ref=e457]
+              - heading "Rogers Communications" [level=4] [ref=e458]:
+                - link "Rogers Communications" [ref=e459] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/company/rogers-communications?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e190]:
+                - generic [ref=e191]: Brampton, Ontario, Canada
+                - generic [ref=e194]: Be an early applicant
+                - time [ref=e195]: 4 days ago
+        - listitem [ref=e196]:
+          - generic [ref=e197]:
+            - link "Dotnet Developer" [ref=e460] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/dotnet-developer-at-resonaite-4370048064?position=8&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=qf7OKEuckQB%2BLLqvFRXaMw%3D%3D
+              - generic [ref=e199]: Dotnet Developer
+            - generic [ref=e201]:
+              - heading "Dotnet Developer" [level=3] [ref=e461]
+              - heading "Resonaite" [level=4] [ref=e462]:
+                - link "Resonaite" [ref=e463] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/company/resonaite-inc?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e205]:
+                - generic [ref=e206]: Toronto, Ontario, Canada
+                - generic [ref=e209]: Actively Hiring
+                - time [ref=e210]: 2 days ago
+        - listitem [ref=e211]:
+          - generic [ref=e212]:
+            - link "Dotnet Developer" [ref=e464] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/dotnet-developer-at-buzzclan-4380217034?position=9&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=L0bHd99yCMT8CPy5jIkLdQ%3D%3D
+              - generic [ref=e214]: Dotnet Developer
+            - generic [ref=e216]:
+              - heading "Dotnet Developer" [level=3] [ref=e465]
+              - heading "BuzzClan" [level=4] [ref=e466]:
+                - link "BuzzClan" [ref=e467] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/buzzclan-llc?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e220]:
+                - generic [ref=e221]: Toronto, Ontario, Canada
+                - generic [ref=e224]: Actively Hiring
+                - time [ref=e225]: 4 days ago
+        - listitem [ref=e226]:
+          - generic [ref=e227]:
+            - link "Senior Software Engineer (Full Stack, Backend-leaning)" [ref=e468] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-full-stack-backend-leaning-at-jerry-4381783704?position=10&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=m6jZRyVGSZBRlRs4Dg0SBA%3D%3D
+              - generic [ref=e229]: Senior Software Engineer (Full Stack, Backend-leaning)
+            - generic [ref=e231]:
+              - heading "Senior Software Engineer (Full Stack, Backend-leaning)" [level=3] [ref=e469]
+              - heading "Jerry" [level=4] [ref=e470]:
+                - link "Jerry" [ref=e471] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/jerryinc?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e235]:
+                - generic [ref=e236]: Toronto, Ontario, Canada
+                - generic [ref=e239]: Be an early applicant
+                - time [ref=e240]: 14 hours ago
+        - listitem [ref=e241]:
+          - generic [ref=e242]:
+            - link "Senior Developer (C++, Python)" [ref=e472] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-developer-c%2B%2B-python-at-dawn-infotek-4381854934?position=11&pageNum=0&refId=4ZCkQP4LzyFy0g1qTxGLTg%3D%3D&trackingId=jmEypw7JTBNLmlCC47xJ2w%3D%3D
+              - generic [ref=e244]: Senior Developer (C++, Python)
+            - generic [ref=e246]:
+              - heading "Senior Developer (C++, Python)" [level=3] [ref=e473]
+              - heading "Dawn InfoTek" [level=4] [ref=e474]:
+                - link "Dawn InfoTek" [ref=e475] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/company/dawn-infotek-inc.?trk=public_jobs_jserp-result_job-search-card-subtitle
+              - generic [ref=e250]:
+                - generic [ref=e251]: Toronto, Ontario, Canada
+                - generic [ref=e254]: Be an early applicant
+                - time [ref=e255]: 21 hours ago
+      - alert [ref=e256]:
+        - paragraph [ref=e258]: You've viewed all jobs for this search
+      - generic [ref=e259]:
+        - heading "Search similar titles" [level=3] [ref=e476]
+        - list [ref=e261]:
+          - listitem [ref=e262]:
+            - link "Dotnet Developer jobs" [ref=e477] [cursor=pointer]:
+              - /url: https://www.linkedin.com/jobs/dotnet-developer-jobs?trk=public_jobs_similar-title
+          - listitem [ref=e264]:
+            - link "Senior System Analyst jobs" [ref=e478] [cursor=pointer]:
+              - /url: https://www.linkedin.com/jobs/senior-system-analyst-jobs?trk=public_jobs_similar-title
+          - listitem [ref=e266]:
+            - link "Senior Developer jobs" [ref=e479] [cursor=pointer]:
+              - /url: https://www.linkedin.com/jobs/senior-developer-jobs?trk=public_jobs_similar-title
+  - generic [ref=e271]:
+    - button "More searches" [ref=e480] [cursor=pointer]: More searches
+    - list
+  - contentinfo [ref=e274]:
+    - list [ref=e275]:
+      - listitem [ref=e276]:
+        - generic [ref=e277]: LinkedIn
+        - generic [ref=e279]: © 2026
+      - listitem [ref=e280]:
+        - link "About" [ref=e481] [cursor=pointer]:
+          - /url: https://about.linkedin.com?trk=public_jobs_footer-about
+      - listitem [ref=e282]:
+        - link "Accessibility" [ref=e482] [cursor=pointer]:
+          - /url: https://www.linkedin.com/accessibility?trk=public_jobs_footer-accessibility
+      - listitem [ref=e284]:
+        - link "User Agreement" [ref=e483] [cursor=pointer]:
+          - /url: https://www.linkedin.com/legal/user-agreement?trk=public_jobs_footer-user-agreement
+      - listitem [ref=e286]:
+        - link "Privacy Policy" [ref=e484] [cursor=pointer]:
+          - /url: https://www.linkedin.com/legal/privacy-policy?trk=public_jobs_footer-privacy-policy
+      - listitem [ref=e288]:
+        - link "Cookie Policy" [ref=e485] [cursor=pointer]:
+          - /url: https://www.linkedin.com/legal/cookie-policy?trk=public_jobs_footer-cookie-policy
+      - listitem [ref=e290]:
+        - link "Copyright Policy" [ref=e486] [cursor=pointer]:
+          - /url: https://www.linkedin.com/legal/copyright-policy?trk=public_jobs_footer-copyright-policy
+      - listitem [ref=e292]:
+        - link "Brand Policy" [ref=e487] [cursor=pointer]:
+          - /url: https://brand.linkedin.com/policies?trk=public_jobs_footer-brand-policy
+      - listitem [ref=e294]:
+        - link "Guest Controls" [ref=e488] [cursor=pointer]:
+          - /url: https://www.linkedin.com/psettings/guest-controls?trk=public_jobs_footer-guest-controls
+      - listitem [ref=e296]:
+        - link "Community Guidelines" [ref=e489] [cursor=pointer]:
+          - /url: https://www.linkedin.com/legal/professional-community-policies?trk=public_jobs_footer-community-guide
+      - listitem [ref=e298]:
+        - button "Language" [ref=e490]: Language

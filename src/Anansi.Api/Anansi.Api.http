@@ -1,0 +1,6 @@
+@Anansi.Api_HostAddress = http://localhost:5236
+
+GET {{Anansi.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

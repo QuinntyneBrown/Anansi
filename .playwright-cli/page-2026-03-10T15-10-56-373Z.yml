@@ -1,0 +1,843 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+      - /url: "#main-content"
+    - banner [ref=e4]:
+      - navigation "Primary" [ref=e5]:
+        - link "LinkedIn" [ref=e6] [cursor=pointer]:
+          - /url: /?trk=public_jobs_nav-header-logo
+          - generic [ref=e7]: LinkedIn
+          - img [ref=e9]
+        - generic [ref=e20]:
+          - button "Jobs" [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]: Jobs
+            - generic:
+              - img
+          - tabpanel "Jobs" [ref=e24]:
+            - search [ref=e25]:
+              - generic [ref=e26]:
+                - combobox "Search job titles or companies" [ref=e27]: Software Architect C# .NET
+                - button "Clear text" [ref=e28] [cursor=pointer]:
+                  - generic [ref=e29]: Clear text
+                  - img [ref=e31]
+              - generic [ref=e35]:
+                - combobox "Location" [ref=e36]: Canada
+                - button "Clear text" [ref=e37] [cursor=pointer]:
+                  - generic [ref=e38]: Clear text
+                  - img [ref=e40]
+              - button "Search" [ref=e44] [cursor=pointer]:
+                - img [ref=e46]
+          - status [ref=e48]
+        - generic [ref=e49]:
+          - link "Sign in" [ref=e50] [cursor=pointer]:
+            - /url: https://www.linkedin.com/login?emailAddress=&fromSignIn=&fromSignIn=true&session_redirect=https%3A%2F%2Fwww.linkedin.com%2Fjobs%2Fsearch%2F%3Fkeywords%3DSoftware%2BArchitect%2BC%2523%2B.NET%26location%3DCanada%26f_TPR%3Dr604800%26f_WT%3D2&trk=public_jobs_nav-header-signin
+          - link "Join now" [ref=e51] [cursor=pointer]:
+            - /url: https://www.linkedin.com/signup/cold-join?source=jobs_registration&session_redirect=https%3A%2F%2Fwww.linkedin.com%2Fjobs%2Fsearch%2F%3Fkeywords%3DSoftware%2BArchitect%2BC%2523%2B.NET%26location%3DCanada%26f_TPR%3Dr604800%26f_WT%3D2&trk=public_jobs_nav-header-join
+    - generic [ref=e55]:
+      - list [ref=e57]:
+        - listitem [ref=e58]:
+          - button "Date posted filter. Past week filter is currently applied. Clicking this button displays all Date posted filter options." [ref=e61] [cursor=pointer]:
+            - text: Past week
+            - img [ref=e63]
+        - listitem [ref=e65]:
+          - button "Remote filter. Remote filter is currently applied. Clicking this button displays all Remote filter options." [ref=e68] [cursor=pointer]:
+            - text: Remote
+            - img [ref=e70]
+        - listitem [ref=e72]:
+          - button "Company filter. Clicking this button displays all Company filter options." [ref=e75] [cursor=pointer]:
+            - text: Company
+            - img [ref=e77]
+        - listitem [ref=e79]:
+          - button "Job type filter. Clicking this button displays all Job type filter options." [ref=e82] [cursor=pointer]:
+            - text: Job type
+            - img [ref=e84]
+        - listitem [ref=e86]:
+          - button "Experience level filter. Clicking this button displays all Experience level filter options." [ref=e89] [cursor=pointer]:
+            - text: Experience level
+            - img [ref=e91]
+        - listitem [ref=e93]:
+          - button "Location filter. Clicking this button displays all Location filter options." [ref=e96] [cursor=pointer]:
+            - text: Location
+            - img [ref=e98]
+        - listitem [ref=e100]:
+          - button "Salary filter. Clicking this button displays all Salary filter options." [ref=e103] [cursor=pointer]:
+            - text: Salary
+            - img [ref=e105]
+      - button "Reset filters" [ref=e108] [cursor=pointer]: Reset
+    - generic [ref=e109]:
+      - main [ref=e110]:
+        - generic [ref=e113]:
+          - generic [ref=e114]:
+            - img [ref=e116]
+            - generic [ref=e118]: Get notified when a new job is posted.
+          - generic [ref=e119]:
+            - button "Set alert" [ref=e120]
+            - generic [ref=e121]: Set alert
+        - heading "42 Software Architect C# .NET Jobs in Canada" [level=1] [ref=e123]
+        - generic [ref=e124]:
+          - list [ref=e125]:
+            - listitem [ref=e126]:
+              - generic [ref=e127]:
+                - link "Senior Software Architect" [ref=e128] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-architect-at-net2source-n2s-4379048803?position=1&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=VCQ%2FAl9uO7fWs7lpUowjUA%3D%3D
+                  - generic [ref=e129]: Senior Software Architect
+                - img [ref=e131]
+                - generic [ref=e132]:
+                  - heading "Senior Software Architect" [level=3] [ref=e133]
+                  - heading "Net2Source (N2S)" [level=4] [ref=e134]:
+                    - link "Net2Source (N2S)" [ref=e135] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/n2s-global?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e136]:
+                    - generic [ref=e137]: Canada
+                    - time [ref=e138]: 4 days ago
+            - listitem [ref=e139]:
+              - generic [ref=e140]:
+                - link "Senior Software Engineer (C#/PHP)" [ref=e141] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-c%23-php-at-nmi-4343477223?position=2&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=crHRk5r8d57eIC%2BbsfDU5g%3D%3D
+                  - generic [ref=e142]: Senior Software Engineer (C#/PHP)
+                - img [ref=e144]
+                - generic [ref=e145]:
+                  - heading "Senior Software Engineer (C#/PHP)" [level=3] [ref=e146]
+                  - heading "NMI" [level=4] [ref=e147]:
+                    - link "NMI" [ref=e148] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/nmipayments?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e149]:
+                    - generic [ref=e150]: Canada
+                    - time [ref=e151]: 2 days ago
+            - listitem [ref=e152]:
+              - generic [ref=e153]:
+                - link "Staff Software Engineer" [ref=e154] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/staff-software-engineer-at-sage-recruiting-inc-4381889390?position=3&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=hPEFR8IWf7oRxG77KbxwaA%3D%3D
+                  - generic [ref=e155]: Staff Software Engineer
+                - img [ref=e157]
+                - generic [ref=e158]:
+                  - heading "Staff Software Engineer" [level=3] [ref=e159]
+                  - heading "Sage Recruiting Inc." [level=4] [ref=e160]:
+                    - link "Sage Recruiting Inc." [ref=e161] [cursor=pointer]:
+                      - /url: https://ca.linkedin.com/company/sage-recruiting-inc?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e162]:
+                    - generic [ref=e163]: Canada
+                    - time [ref=e164]: 21 hours ago
+            - listitem [ref=e165]:
+              - generic [ref=e166]:
+                - link "Sr. Software Engineer | Up to $85/hr" [ref=e167] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/sr-software-engineer-up-to-%2485-hr-at-mercor-4383355146?position=4&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=LyvqNXpL40Qs%2B6o49gNBgw%3D%3D
+                  - generic [ref=e168]: Sr. Software Engineer | Up to $85/hr
+                - img [ref=e170]
+                - generic [ref=e171]:
+                  - heading "Sr. Software Engineer | Up to $85/hr" [level=3] [ref=e172]
+                  - heading "Mercor" [level=4] [ref=e173]:
+                    - link "Mercor" [ref=e174] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: Greater Montreal Metropolitan Area
+                    - generic [ref=e179]: Be an early applicant
+                    - time [ref=e180]: 20 hours ago
+            - listitem [ref=e181]:
+              - generic [ref=e182]:
+                - link "Principal .NET Software Engineer- Cloud Payments Platform" [ref=e183] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/principal-net-software-engineer-cloud-payments-platform-at-versapay-4380742630?position=5&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=Yo47UfvDCLwRlIKExnbNSQ%3D%3D
+                  - generic [ref=e184]: Principal .NET Software Engineer- Cloud Payments Platform
+                - generic [ref=e186]:
+                  - heading "Principal .NET Software Engineer- Cloud Payments Platform" [level=3] [ref=e187]
+                  - heading "Versapay" [level=4] [ref=e188]:
+                    - link "Versapay" [ref=e189] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/versapay?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e190]:
+                    - generic [ref=e191]: Canada
+                    - time [ref=e192]: 6 days ago
+            - listitem [ref=e193]:
+              - generic [ref=e194]:
+                - link "Senior Software Engineer (.Net Vue.js and Node.js" [ref=e195] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-net-vue-js-and-node-js-at-hays-4382069488?position=6&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=pc9W%2F%2FqXyptLn2DoiFSGLw%3D%3D
+                  - generic [ref=e196]: Senior Software Engineer (.Net Vue.js and Node.js
+                - generic [ref=e198]:
+                  - heading "Senior Software Engineer (.Net Vue.js and Node.js" [level=3] [ref=e199]
+                  - heading "Hays" [level=4] [ref=e200]:
+                    - link "Hays" [ref=e201] [cursor=pointer]:
+                      - /url: https://uk.linkedin.com/company/hays?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e202]:
+                    - generic [ref=e203]: Canada
+                    - generic [ref=e206]: Be an early applicant
+                    - time [ref=e207]: 45 minutes ago
+            - listitem [ref=e208]:
+              - generic [ref=e209]:
+                - link "Senior Software Engineer" [ref=e210] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-at-servicetitan-4339936831?position=7&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=ZSIwgMDg4PSaTNPzWFFw8w%3D%3D
+                  - generic [ref=e211]: Senior Software Engineer
+                - generic [ref=e213]:
+                  - heading "Senior Software Engineer" [level=3] [ref=e214]
+                  - heading "ServiceTitan" [level=4] [ref=e215]:
+                    - link "ServiceTitan" [ref=e216] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/servicetitan?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e217]:
+                    - generic [ref=e218]: Greater Toronto Area, Canada
+                    - time [ref=e219]: 12 hours ago
+            - listitem [ref=e220]:
+              - generic [ref=e221]:
+                - link "Staff Software Engineer" [ref=e222] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/staff-software-engineer-at-sage-recruiting-inc-4379688837?position=8&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=FAL5Io5lJghBl0kWJ49myQ%3D%3D
+                  - generic [ref=e223]: Staff Software Engineer
+                - generic [ref=e225]:
+                  - heading "Staff Software Engineer" [level=3] [ref=e226]
+                  - heading "Sage Recruiting Inc." [level=4] [ref=e227]:
+                    - link "Sage Recruiting Inc." [ref=e228] [cursor=pointer]:
+                      - /url: https://ca.linkedin.com/company/sage-recruiting-inc?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e229]:
+                    - generic [ref=e230]: Canada
+                    - time [ref=e231]: 5 days ago
+            - listitem [ref=e232]:
+              - generic [ref=e233]:
+                - link "Lead Software Engineer" [ref=e234] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/lead-software-engineer-at-clario-4383382502?position=9&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=%2FhB8umS6sRycTrsl8PmqeQ%3D%3D
+                  - generic [ref=e235]: Lead Software Engineer
+                - generic [ref=e237]:
+                  - heading "Lead Software Engineer" [level=3] [ref=e238]
+                  - heading "Clario" [level=4] [ref=e239]:
+                    - link "Clario" [ref=e240] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/clario-inc?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e241]:
+                    - generic [ref=e242]: Canada
+                    - time [ref=e243]: 17 hours ago
+            - listitem [ref=e244]:
+              - generic [ref=e245]:
+                - link "Senior Software Engineer" [ref=e246] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-at-servicetitan-4354232294?position=10&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=2LsNEM%2Fqvupi6Q7u40iKgA%3D%3D
+                  - generic [ref=e247]: Senior Software Engineer
+                - generic [ref=e249]:
+                  - heading "Senior Software Engineer" [level=3] [ref=e250]
+                  - heading "ServiceTitan" [level=4] [ref=e251]:
+                    - link "ServiceTitan" [ref=e252] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/servicetitan?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e253]:
+                    - generic [ref=e254]: Canada
+                    - time [ref=e255]: 5 days ago
+            - listitem [ref=e256]:
+              - generic [ref=e257]:
+                - link "Senior Database Architect & Lead Developer (Visual FoxPro)" [ref=e258] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-database-architect-lead-developer-visual-foxpro-at-others-4379427271?position=11&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=PmbJWcJV5goZh%2BnU80702g%3D%3D
+                  - generic [ref=e259]: Senior Database Architect & Lead Developer (Visual FoxPro)
+                - generic [ref=e261]:
+                  - heading "Senior Database Architect & Lead Developer (Visual FoxPro)" [level=3] [ref=e262]
+                  - heading "Others" [level=4] [ref=e263]:
+                    - link "Others" [ref=e264] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/othersinc?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e265]:
+                    - generic [ref=e266]: Montreal, Quebec, Canada
+                    - generic [ref=e269]: Be an early applicant
+                    - time [ref=e270]: 6 days ago
+            - listitem [ref=e271]:
+              - generic [ref=e272]:
+                - link "Principal Software Engineer Lead" [ref=e273] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/principal-software-engineer-lead-at-mercor-4383348381?position=12&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=twmOIAZD3lFDlwaEYQwJgg%3D%3D
+                  - generic [ref=e274]: Principal Software Engineer Lead
+                - generic [ref=e276]:
+                  - heading "Principal Software Engineer Lead" [level=3] [ref=e277]
+                  - heading "Mercor" [level=4] [ref=e278]:
+                    - link "Mercor" [ref=e279] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e280]:
+                    - generic [ref=e281]: Greater Montreal Metropolitan Area
+                    - generic [ref=e284]: Be an early applicant
+                    - time [ref=e285]: 20 hours ago
+            - listitem [ref=e286]:
+              - generic [ref=e287]:
+                - link "Senior Software Engineer | Up to $110/hr" [ref=e288] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-up-to-%24110-hr-at-mercor-4382908882?position=13&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=TL2ZiYbRkYHfHc5AyYb%2BLA%3D%3D
+                  - generic [ref=e289]: Senior Software Engineer | Up to $110/hr
+                - generic [ref=e291]:
+                  - heading "Senior Software Engineer | Up to $110/hr" [level=3] [ref=e292]
+                  - heading "Mercor" [level=4] [ref=e293]:
+                    - link "Mercor" [ref=e294] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e295]:
+                    - generic [ref=e296]: Greater Montreal Metropolitan Area
+                    - generic [ref=e299]: Be an early applicant
+                    - time [ref=e300]: 1 day ago
+            - listitem [ref=e301]:
+              - generic [ref=e302]:
+                - link "Software Developer Sr" [ref=e303] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/software-developer-sr-at-dayforce-4380812467?position=14&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=nrB5eYcBubc9h%2BLfTpUuMw%3D%3D
+                  - generic [ref=e304]: Software Developer Sr
+                - generic [ref=e306]:
+                  - heading "Software Developer Sr" [level=3] [ref=e307]
+                  - heading "Dayforce" [level=4] [ref=e308]:
+                    - link "Dayforce" [ref=e309] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/dayforce?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e310]:
+                    - generic [ref=e311]: Canada
+                    - time [ref=e312]: 3 days ago
+            - listitem [ref=e313]:
+              - generic [ref=e314]:
+                - link "Staff Software Engineer - Back End, Access" [ref=e315] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/staff-software-engineer-back-end-access-at-sprout-social-inc-4343455600?position=15&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=2JuwJuUNkneru6Cs41Zp6A%3D%3D
+                  - generic [ref=e316]: Staff Software Engineer - Back End, Access
+                - generic [ref=e318]:
+                  - heading "Staff Software Engineer - Back End, Access" [level=3] [ref=e319]
+                  - heading "Sprout Social, Inc." [level=4] [ref=e320]:
+                    - link "Sprout Social, Inc." [ref=e321] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/sprout-social-inc-?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e322]:
+                    - generic [ref=e323]: Canada
+                    - time [ref=e324]: 2 days ago
+            - listitem [ref=e325]:
+              - generic [ref=e326]:
+                - link "Senior Software (TypeScript/Ruby/React) Engineer" [ref=e327] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-typescript-ruby-react-engineer-at-kake-4381118147?position=16&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=AIi2SVryz0Vk6y%2Be5sA%2B2w%3D%3D
+                  - generic [ref=e328]: Senior Software (TypeScript/Ruby/React) Engineer
+                - generic [ref=e330]:
+                  - heading "Senior Software (TypeScript/Ruby/React) Engineer" [level=3] [ref=e331]
+                  - heading "Kake" [level=4] [ref=e332]:
+                    - link "Kake" [ref=e333] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/kake?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e334]:
+                    - generic [ref=e335]: Canada
+                    - time [ref=e336]: 5 days ago
+            - listitem [ref=e337]:
+              - generic [ref=e338]:
+                - link "Sr. Software Engineer (Automation Tools)" [ref=e339] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/sr-software-engineer-automation-tools-at-fortis-games-4365559059?position=17&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=X9rFFysG4apkEdUktAy78Q%3D%3D
+                  - generic [ref=e340]: Sr. Software Engineer (Automation Tools)
+                - generic [ref=e342]:
+                  - heading "Sr. Software Engineer (Automation Tools)" [level=3] [ref=e343]
+                  - heading "Fortis Games" [level=4] [ref=e344]:
+                    - link "Fortis Games" [ref=e345] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/fortis-games?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e346]:
+                    - generic [ref=e347]: Canada
+                    - time [ref=e348]: 2 days ago
+            - listitem [ref=e349]:
+              - generic [ref=e350]:
+                - link "Software Engineering Lead" [ref=e351] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/software-engineering-lead-at-mercor-4382396449?position=18&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=rlG6bym3x8gPDse1SmPTqw%3D%3D
+                  - generic [ref=e352]: Software Engineering Lead
+                - generic [ref=e354]:
+                  - heading "Software Engineering Lead" [level=3] [ref=e355]
+                  - heading "Mercor" [level=4] [ref=e356]:
+                    - link "Mercor" [ref=e357] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e358]:
+                    - generic [ref=e359]: Greater Montreal Metropolitan Area
+                    - generic [ref=e362]: Be an early applicant
+                    - time [ref=e363]: 3 days ago
+            - listitem [ref=e364]:
+              - generic [ref=e365]:
+                - link "Staff Software Engineer" [ref=e366] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/staff-software-engineer-at-servicetitan-4339916957?position=19&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=BisF76I4K8rZght5OMofBg%3D%3D
+                  - generic [ref=e367]: Staff Software Engineer
+                - generic [ref=e369]:
+                  - heading "Staff Software Engineer" [level=3] [ref=e370]
+                  - heading "ServiceTitan" [level=4] [ref=e371]:
+                    - link "ServiceTitan" [ref=e372] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/servicetitan?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e373]:
+                    - generic [ref=e374]: Greater Toronto Area, Canada
+                    - time [ref=e375]: 12 hours ago
+            - listitem [ref=e376]:
+              - generic [ref=e377]:
+                - link "Staff Software Engineer – Product" [ref=e378] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/staff-software-engineer-%E2%80%93-product-at-atlas-hxm-4380406264?position=20&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=WoR3b5IB5EQiew74bsbJ7w%3D%3D
+                  - generic [ref=e379]: Staff Software Engineer – Product
+                - generic [ref=e381]:
+                  - heading "Staff Software Engineer – Product" [level=3] [ref=e382]
+                  - heading "Atlas HXM" [level=4] [ref=e383]:
+                    - link "Atlas HXM" [ref=e384] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/atlashxm?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e385]:
+                    - generic [ref=e386]: Canada
+                    - time [ref=e387]: 5 days ago
+            - listitem [ref=e388]:
+              - generic [ref=e389]:
+                - link "Senior Software Engineer" [ref=e390] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-at-intelex-technologies-ulc-4380745103?position=21&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=GyefGewLedyspk71oZnq9Q%3D%3D
+                  - generic [ref=e391]: Senior Software Engineer
+                - generic [ref=e393]:
+                  - heading "Senior Software Engineer" [level=3] [ref=e394]
+                  - heading "Intelex Technologies ULC" [level=4] [ref=e395]:
+                    - link "Intelex Technologies ULC" [ref=e396] [cursor=pointer]:
+                      - /url: https://ca.linkedin.com/company/intelex-technologies-ulc?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e397]:
+                    - generic [ref=e398]: Ontario, Canada
+                    - time [ref=e399]: 6 days ago
+            - listitem [ref=e400]:
+              - generic [ref=e401]:
+                - link "Principal Software Engineer Lead" [ref=e402] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/principal-software-engineer-lead-at-mercor-4382609002?position=22&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=gr0mSoGBFGFCxeJRzjIDJA%3D%3D
+                  - generic [ref=e403]: Principal Software Engineer Lead
+                - generic [ref=e405]:
+                  - heading "Principal Software Engineer Lead" [level=3] [ref=e406]
+                  - heading "Mercor" [level=4] [ref=e407]:
+                    - link "Mercor" [ref=e408] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e409]:
+                    - generic [ref=e410]: Greater Montreal Metropolitan Area
+                    - generic [ref=e413]: Be an early applicant
+                    - time [ref=e414]: 3 days ago
+            - listitem [ref=e415]:
+              - generic [ref=e416]:
+                - link "Principal Software Engineer" [ref=e417] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/principal-software-engineer-at-mygwork-lgbtq%2B-business-community-4380804321?position=23&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=pa1sXkVUEj1cSAQNdmzXUg%3D%3D
+                  - generic [ref=e418]: Principal Software Engineer
+                - generic [ref=e420]:
+                  - heading "Principal Software Engineer" [level=3] [ref=e421]
+                  - heading "myGwork - LGBTQ+ Business Community" [level=4] [ref=e422]:
+                    - link "myGwork - LGBTQ+ Business Community" [ref=e423] [cursor=pointer]:
+                      - /url: https://uk.linkedin.com/company/mygwork?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e424]:
+                    - generic [ref=e425]: Canada
+                    - generic [ref=e428]: Be an early applicant
+                    - time [ref=e429]: 3 days ago
+            - listitem [ref=e430]:
+              - generic [ref=e431]:
+                - link "Sr. Software Development Engineer | $105/hr" [ref=e432] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/sr-software-development-engineer-%24105-hr-at-mercor-4382388808?position=24&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=NSitLlcKct57OY%2BQA1vTFg%3D%3D
+                  - generic [ref=e433]: Sr. Software Development Engineer | $105/hr
+                - generic [ref=e435]:
+                  - heading "Sr. Software Development Engineer | $105/hr" [level=3] [ref=e436]
+                  - heading "Mercor" [level=4] [ref=e437]:
+                    - link "Mercor" [ref=e438] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e439]:
+                    - generic [ref=e440]: Greater Montreal Metropolitan Area
+                    - generic [ref=e443]: Be an early applicant
+                    - time [ref=e444]: 3 days ago
+            - listitem [ref=e445]:
+              - generic [ref=e446]:
+                - link "Sr. Software Engineer | Up to $105/hr" [ref=e447] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/sr-software-engineer-up-to-%24105-hr-at-mercor-4382383999?position=25&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=AXxkipuwq5UREg1%2Ba1VGIg%3D%3D
+                  - generic [ref=e448]: Sr. Software Engineer | Up to $105/hr
+                - generic [ref=e450]:
+                  - heading "Sr. Software Engineer | Up to $105/hr" [level=3] [ref=e451]
+                  - heading "Mercor" [level=4] [ref=e452]:
+                    - link "Mercor" [ref=e453] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e454]:
+                    - generic [ref=e455]: Greater Montreal Metropolitan Area
+                    - generic [ref=e458]: Be an early applicant
+                    - time [ref=e459]: 3 days ago
+            - listitem [ref=e460]:
+              - generic [ref=e461]:
+                - link "Staff Software Engineer" [ref=e462] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/staff-software-engineer-at-servicetitan-4355212198?position=26&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=9%2BC8JLsz%2FIsHLknBTlxkjg%3D%3D
+                  - generic [ref=e463]: Staff Software Engineer
+                - generic [ref=e465]:
+                  - heading "Staff Software Engineer" [level=3] [ref=e466]
+                  - heading "ServiceTitan" [level=4] [ref=e467]:
+                    - link "ServiceTitan" [ref=e468] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/servicetitan?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e469]:
+                    - generic [ref=e470]: Canada
+                    - time [ref=e471]: 5 days ago
+            - listitem [ref=e472]:
+              - generic [ref=e473]:
+                - link "Principal Software Engineer" [ref=e474] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/principal-software-engineer-at-github-4380661751?position=27&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=R2%2Bw1qJhtFw88MHeoh18PQ%3D%3D
+                  - generic [ref=e475]: Principal Software Engineer
+                - generic [ref=e477]:
+                  - heading "Principal Software Engineer" [level=3] [ref=e478]
+                  - heading "GitHub" [level=4] [ref=e479]:
+                    - link "GitHub" [ref=e480] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/github?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e481]:
+                    - generic [ref=e482]: Canada
+                    - time [ref=e483]: 4 days ago
+            - listitem [ref=e484]:
+              - generic [ref=e485]:
+                - link "Solutions Architect - Databricks (Remote)" [ref=e486] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/solutions-architect-databricks-remote-at-lumenalta-4382982214?position=28&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=scc6aR%2B4fwDyiP4GaYBeKQ%3D%3D
+                  - generic [ref=e487]: Solutions Architect - Databricks (Remote)
+                - generic [ref=e489]:
+                  - heading "Solutions Architect - Databricks (Remote)" [level=3] [ref=e490]
+                  - heading "Lumenalta" [level=4] [ref=e491]:
+                    - link "Lumenalta" [ref=e492] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/lumenalta?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e493]:
+                    - generic [ref=e494]: Calgary, Alberta, Canada
+                    - generic [ref=e497]: Be an early applicant
+                    - time [ref=e498]: 1 day ago
+            - listitem [ref=e499]:
+              - generic [ref=e500]:
+                - link "Solutions Architect - Databricks (Remote)" [ref=e501] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/solutions-architect-databricks-remote-at-lumenalta-4382974467?position=29&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=n%2BIZ8HkS1DATd6zG1YxF9g%3D%3D
+                  - generic [ref=e502]: Solutions Architect - Databricks (Remote)
+                - generic [ref=e504]:
+                  - heading "Solutions Architect - Databricks (Remote)" [level=3] [ref=e505]
+                  - heading "Lumenalta" [level=4] [ref=e506]:
+                    - link "Lumenalta" [ref=e507] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/lumenalta?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e508]:
+                    - generic [ref=e509]: Canada
+                    - generic [ref=e512]: Be an early applicant
+                    - time [ref=e513]: 1 day ago
+            - listitem [ref=e514]:
+              - generic [ref=e515]:
+                - link "Senior Game Developer (C# / Stride Engine) | Remote" [ref=e516] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-game-developer-c%23-stride-engine-remote-at-crossing-hurdles-4381337815?position=30&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=Tbms0xfrxmVmoU3yXzuDnQ%3D%3D
+                  - generic [ref=e517]: Senior Game Developer (C# / Stride Engine) | Remote
+                - generic [ref=e519]:
+                  - heading "Senior Game Developer (C# / Stride Engine) | Remote" [level=3] [ref=e520]
+                  - heading "Crossing Hurdles" [level=4] [ref=e521]:
+                    - link "Crossing Hurdles" [ref=e522] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/crossinghurdles?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e523]:
+                    - generic [ref=e524]: Canada
+                    - generic [ref=e527]: Be an early applicant
+                    - time [ref=e528]: 3 days ago
+            - listitem [ref=e529]:
+              - generic [ref=e530]:
+                - link "Software Engineer | $85/hr Remote" [ref=e531] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/software-engineer-%2485-hr-remote-at-crossing-hurdles-4381361445?position=31&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=lMVL6Y%2FqEkn05WlIG6hLOg%3D%3D
+                  - generic [ref=e532]: Software Engineer | $85/hr Remote
+                - generic [ref=e534]:
+                  - heading "Software Engineer | $85/hr Remote" [level=3] [ref=e535]
+                  - heading "Crossing Hurdles" [level=4] [ref=e536]:
+                    - link "Crossing Hurdles" [ref=e537] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/crossinghurdles?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e538]:
+                    - generic [ref=e539]: Canada
+                    - time [ref=e540]: 3 days ago
+            - listitem [ref=e541]:
+              - generic [ref=e542]:
+                - link "Software Engineer- Design Systems" [ref=e543] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/software-engineer-design-systems-at-dataannotation-4309697563?position=32&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=O8aThOBMCFwj4QYWdbp7eQ%3D%3D
+                  - generic [ref=e544]: Software Engineer- Design Systems
+                - generic [ref=e546]:
+                  - heading "Software Engineer- Design Systems" [level=3] [ref=e547]
+                  - heading "DataAnnotation" [level=4] [ref=e548]:
+                    - link "DataAnnotation" [ref=e549] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/dataannotationtech?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e550]:
+                    - generic [ref=e551]: Canada
+                    - time [ref=e552]: 5 days ago
+            - listitem [ref=e553]:
+              - generic [ref=e554]:
+                - link "Software Engineer" [ref=e555] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/software-engineer-at-hays-4382047976?position=33&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=TIvI8dh%2FCvL7qzvJWYBrjA%3D%3D
+                  - generic [ref=e556]: Software Engineer
+                - generic [ref=e558]:
+                  - heading "Software Engineer" [level=3] [ref=e559]
+                  - heading "Hays" [level=4] [ref=e560]:
+                    - link "Hays" [ref=e561] [cursor=pointer]:
+                      - /url: https://uk.linkedin.com/company/hays?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e562]:
+                    - generic [ref=e563]: Canada
+                    - time [ref=e564]: 1 hour ago
+            - listitem [ref=e565]:
+              - generic [ref=e566]:
+                - link "Backend Software Engineer Remote" [ref=e567] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/backend-software-engineer-remote-at-mercor-4383348379?position=34&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=iif%2FMZg4y%2BO00FgQwTQyww%3D%3D
+                  - generic [ref=e568]: Backend Software Engineer Remote
+                - generic [ref=e570]:
+                  - heading "Backend Software Engineer Remote" [level=3] [ref=e571]
+                  - heading "Mercor" [level=4] [ref=e572]:
+                    - link "Mercor" [ref=e573] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e574]:
+                    - generic [ref=e575]: Greater Montreal Metropolitan Area
+                    - generic [ref=e578]: Be an early applicant
+                    - time [ref=e579]: 20 hours ago
+            - listitem [ref=e580]:
+              - generic [ref=e581]:
+                - link "Senior Software Engineer - Freelance" [ref=e582] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/senior-software-engineer-freelance-at-twine-4371958477?position=35&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=Ar8I1eMQz6XuA%2FknlcAk%2Bw%3D%3D
+                  - generic [ref=e583]: Senior Software Engineer - Freelance
+                - generic [ref=e585]:
+                  - heading "Senior Software Engineer - Freelance" [level=3] [ref=e586]
+                  - heading "Twine" [level=4] [ref=e587]:
+                    - link "Twine" [ref=e588] [cursor=pointer]:
+                      - /url: https://uk.linkedin.com/company/twine-net?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e589]:
+                    - generic [ref=e590]: Canada
+                    - time [ref=e591]: 3 hours ago
+            - listitem [ref=e592]:
+              - generic [ref=e593]:
+                - link "Software Engineer I" [ref=e594] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/software-engineer-i-at-mercor-4382931075?position=36&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=ybZaLUcJ6MTwWHbV5MAvRw%3D%3D
+                  - generic [ref=e595]: Software Engineer I
+                - generic [ref=e597]:
+                  - heading "Software Engineer I" [level=3] [ref=e598]
+                  - heading "Mercor" [level=4] [ref=e599]:
+                    - link "Mercor" [ref=e600] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e601]:
+                    - generic [ref=e602]: Greater Montreal Metropolitan Area
+                    - time [ref=e603]: 1 day ago
+            - listitem [ref=e604]:
+              - generic [ref=e605]:
+                - link "Software Developer Engineer" [ref=e606] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/software-developer-engineer-at-mercor-4382604126?position=37&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=7oqZG06p2i4Wc1%2FRM%2F%2BVGQ%3D%3D
+                  - generic [ref=e607]: Software Developer Engineer
+                - generic [ref=e609]:
+                  - heading "Software Developer Engineer" [level=3] [ref=e610]
+                  - heading "Mercor" [level=4] [ref=e611]:
+                    - link "Mercor" [ref=e612] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e613]:
+                    - generic [ref=e614]: Greater Montreal Metropolitan Area
+                    - generic [ref=e617]: Be an early applicant
+                    - time [ref=e618]: 3 days ago
+            - listitem [ref=e619]:
+              - generic [ref=e620]:
+                - link "Full-Stack Software Engineer" [ref=e621] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/full-stack-software-engineer-at-mercor-4382921386?position=38&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=yp%2FrBEO6%2B07rpmATFpWkmw%3D%3D
+                  - generic [ref=e622]: Full-Stack Software Engineer
+                - generic [ref=e624]:
+                  - heading "Full-Stack Software Engineer" [level=3] [ref=e625]
+                  - heading "Mercor" [level=4] [ref=e626]:
+                    - link "Mercor" [ref=e627] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e628]:
+                    - generic [ref=e629]: Greater Montreal Metropolitan Area
+                    - generic [ref=e632]: Be an early applicant
+                    - time [ref=e633]: 1 day ago
+            - listitem [ref=e634]:
+              - generic [ref=e635]:
+                - link "XR Software Engineer - Remote" [ref=e636] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/xr-software-engineer-remote-at-mercor-4382390695?position=39&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=EnjEoNSF9NZMSLP6GYGFBg%3D%3D
+                  - generic [ref=e637]: XR Software Engineer - Remote
+                - generic [ref=e639]:
+                  - heading "XR Software Engineer - Remote" [level=3] [ref=e640]
+                  - heading "Mercor" [level=4] [ref=e641]:
+                    - link "Mercor" [ref=e642] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e643]:
+                    - generic [ref=e644]: Greater Montreal Metropolitan Area
+                    - generic [ref=e647]: Be an early applicant
+                    - time [ref=e648]: 3 days ago
+            - listitem [ref=e649]:
+              - generic [ref=e650]:
+                - link "Java Software Engineer | Up to $110/hr" [ref=e651] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/java-software-engineer-up-to-%24110-hr-at-mercor-4382929161?position=40&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=8EFcH0CncLbQoeDf%2BljviA%3D%3D
+                  - generic [ref=e652]: Java Software Engineer | Up to $110/hr
+                - generic [ref=e654]:
+                  - heading "Java Software Engineer | Up to $110/hr" [level=3] [ref=e655]
+                  - heading "Mercor" [level=4] [ref=e656]:
+                    - link "Mercor" [ref=e657] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e658]:
+                    - generic [ref=e659]: Greater Montreal Metropolitan Area
+                    - time [ref=e660]: 1 day ago
+            - listitem [ref=e661]:
+              - generic [ref=e662]:
+                - link "AI Software Engineer and Talent Acquisition Specialist" [ref=e663] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/ai-software-engineer-and-talent-acquisition-specialist-at-mercor-4382927217?position=41&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=MZiIjoytOW3MzGihYZG2tg%3D%3D
+                  - generic [ref=e664]: AI Software Engineer and Talent Acquisition Specialist
+                - generic [ref=e666]:
+                  - heading "AI Software Engineer and Talent Acquisition Specialist" [level=3] [ref=e667]
+                  - heading "Mercor" [level=4] [ref=e668]:
+                    - link "Mercor" [ref=e669] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/mercor-ai?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e670]:
+                    - generic [ref=e671]: Greater Montreal Metropolitan Area
+                    - generic [ref=e674]: Be an early applicant
+                    - time [ref=e675]: 1 day ago
+            - listitem [ref=e676]:
+              - generic [ref=e677]:
+                - link "Principal Software Developer Engineer in Test" [ref=e678] [cursor=pointer]:
+                  - /url: https://ca.linkedin.com/jobs/view/principal-software-developer-engineer-in-test-at-autodesk-4381306915?position=42&pageNum=0&refId=YUTcbAl7PZq4oBfJamnK4Q%3D%3D&trackingId=okjw0kSxQT3UtHB2r4zYpA%3D%3D
+                  - generic [ref=e679]: Principal Software Developer Engineer in Test
+                - generic [ref=e681]:
+                  - heading "Principal Software Developer Engineer in Test" [level=3] [ref=e682]
+                  - heading "Autodesk" [level=4] [ref=e683]:
+                    - link "Autodesk" [ref=e684] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/company/autodesk?trk=public_jobs_jserp-result_job-search-card-subtitle
+                  - generic [ref=e685]:
+                    - generic [ref=e686]: Canada
+                    - time [ref=e687]: 3 days ago
+          - alert [ref=e688]:
+            - paragraph [ref=e690]: You've viewed all jobs for this search
+          - generic [ref=e691]:
+            - heading "Search similar titles" [level=3] [ref=e692]
+            - list [ref=e693]:
+              - listitem [ref=e694]:
+                - link "Senior Developer Contract jobs" [ref=e695] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/jobs/senior-developer-contract-jobs?trk=public_jobs_similar-title
+              - listitem [ref=e696]:
+                - link "Lead Software Architect jobs" [ref=e697] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/jobs/lead-software-architect-jobs?trk=public_jobs_similar-title
+              - listitem [ref=e698]:
+                - link "Senior Software Architect jobs" [ref=e699] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/jobs/senior-software-architect-jobs?trk=public_jobs_similar-title
+      - generic [ref=e701]:
+        - generic [ref=e703]:
+          - link "Net2Source (N2S)" [ref=e704] [cursor=pointer]:
+            - /url: https://www.linkedin.com/company/n2s-global?trk=public_jobs_topcard_logo
+            - img "Net2Source (N2S)" [ref=e705]
+          - generic [ref=e707]:
+            - link "Senior Software Architect" [ref=e708] [cursor=pointer]:
+              - /url: https://ca.linkedin.com/jobs/view/senior-software-architect-at-net2source-n2s-4379048803?trk=public_jobs_topcard-title
+              - heading "Senior Software Architect" [level=2] [ref=e709]
+            - heading "Net2Source (N2S) · Canada 4 days ago · 67 applicants See who Net2Source (N2S) has hired for this role" [level=4] [ref=e710]:
+              - generic [ref=e711]:
+                - link "Net2Source (N2S)" [ref=e713] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/n2s-global?trk=public_jobs_topcard-org-name
+                - text: · Canada
+              - generic [ref=e714]: 4 days ago · 67 applicants
+              - link "See who Net2Source (N2S) has hired for this role" [ref=e715] [cursor=pointer]:
+                - /url: https://www.linkedin.com/login?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fsearch%2Fresults%2Fpeople%2F%3FfacetCurrentCompany%3D226965&emailAddress=&fromSignIn=&trk=public_jobs_see-who-was-hired_people-search-link_face-pile-cta
+                - generic [ref=e716]:
+                  - img [ref=e717]
+                  - img [ref=e718]
+                  - img [ref=e719]
+                - paragraph [ref=e721]: See who Net2Source (N2S) has hired for this role
+            - generic [ref=e722]:
+              - button "Apply" [ref=e723] [cursor=pointer]
+              - link "Save" [ref=e724] [cursor=pointer]:
+                - /url: https://www.linkedin.com/login?emailAddress=&fromSignIn=&session_redirect=https%3A%2F%2Fca.linkedin.com%2Fjobs%2Fview%2Fsenior-software-architect-at-net2source-n2s-4379048803&trk=public_jobs
+          - button "Open menu" [ref=e727] [cursor=pointer]
+        - generic [ref=e728]:
+          - generic [ref=e729]:
+            - heading "Net2Source (N2S) provided pay range" [level=2] [ref=e730]
+            - generic [ref=e731]:
+              - paragraph [ref=e732]: This range is provided by Net2Source (N2S). Your actual pay will be based on your skills and experience — talk with your recruiter to learn more.
+              - generic [ref=e733]:
+                - heading "Base pay range" [level=3] [ref=e734]
+                - generic [ref=e735]: $95.00/hr - $100.00/hr
+          - generic [ref=e737]:
+            - generic [ref=e738]:
+              - paragraph [ref=e739]: Direct message the job poster from Net2Source (N2S)
+              - generic [ref=e740]:
+                - link "Tarishi Gupta" [ref=e741] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/in/tarishi-gupta-02925b214
+                  - generic [ref=e742]: Tarishi Gupta
+                - img "Click here to view Tarishi Gupta’s profile" [ref=e743]
+                - generic [ref=e744]:
+                  - heading "Tarishi Gupta" [level=3] [ref=e745]
+                  - heading "Non-Technical Recruiter | Connecting Innovative Companies with Top Talent | Revolutionizing Talent Acquisition in a Changing Workforce Let’s connect!" [level=4] [ref=e746]
+                - link "Message Tarishi Gupta" [ref=e748] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/login?emailAddress=&fromSignIn=&session_redirect=https%3A%2F%2Fwww.linkedin.com%2Fin%2Ftarishi-gupta-02925b214&trk=public_jobs_message-the-recruiter-cta
+            - generic [ref=e750]:
+              - generic [ref=e751]:
+                - paragraph [ref=e752]:
+                  - strong [ref=e753]: "Job Title: Sr. Solution Architect"
+                - paragraph [ref=e754]:
+                  - strong [ref=e755]: "Location: Remote"
+                - paragraph [ref=e756]:
+                  - strong [ref=e757]: "Duration:"
+                  - text: 12+ Months
+                - paragraph [ref=e758]
+                - paragraph [ref=e759]:
+                  - strong [ref=e760]: "Note:"
+                  - text: Consultant shall be required to attend in person at the designated location on the first day and the final day of the contract term. Attendance is required for onboarding and offboarding activities.
+                - paragraph [ref=e761]
+                - paragraph [ref=e762]:
+                  - strong [ref=e763]: "Number of Hours Worked/Day:"
+                  - text: 7 hours per day / 35 hours per week, 1-hour unpaid lunch
+                - paragraph [ref=e764]
+                - paragraph [ref=e765]:
+                  - strong [ref=e766]: "REQUIREMENT:"
+                - paragraph [ref=e767]:
+                  - emphasis [ref=e768]: Work Scope-
+                - paragraph [ref=e769]: Reporting to the Enterprise Architect, the Solutions Architect APM is responsible for supporting the Application Portfolio Modernization ("APM”) Program in the IT Solutions division of the Corporate Services department. The APM Program is a risk and compliance initiative designed to proactively measure and manage Peel's technology application portfolio and effectively reduce the risks of security and technical failure. The Solutions Architect will ensure that the agency can continually optimize the effectiveness of technology applications through the implementation of industry standard measurement and analysis frameworks. The application portfolio is comprised of mission critical applications running on a combination of traditional on-premises; cloud-based; and smaller standalone Microsoft Windows environments, in varying stages of their lifecycles. The Solutions Architect will be responsible for analyzing, planning, and executing a program with complex considerations and integration points. This is an exciting opportunity to transform the technological landscape of an organization
+                - paragraph [ref=e770]
+                - paragraph [ref=e771]:
+                  - strong [ref=e772]:
+                    - emphasis [ref=e773]: "Deliverables:"
+                - list [ref=e774]:
+                  - listitem [ref=e775]: Collaboratively defines and regularly updates and maintains meaningful metrics that reflect the condition level of software applications, i.e., their technical and functional state of good repair, and alignment with Peel's digital strategy and target state architecture.
+                  - listitem [ref=e776]: Recommends specific upgrade, maintain, replacement, or retirement actions to ensure that all applications stay above the desired condition level, and control and measurably reduce the application portfolio's overall technical debt.
+                  - listitem [ref=e777]: "Actively collaborates with IT Solutions leadership and relevant Corporate Services and client stakeholders to:"
+                  - listitem [ref=e778]: Provide technology roadmaps and strategic planning in support of evolving Client program goals and objectives.
+                  - listitem [ref=e779]: Provide application assessment work and recommendations for effective short- and medium-term Application Portfolio upgrade and replacement projects, including recommended phased approaches to align with more complex long-term technology transitions.
+                  - listitem [ref=e780]: Creates solution design documents and collaboratively provides direction and oversight for effective and secure solutions, ensuring robust interoperability with other relevant regional systems, and conformance to the Corporate Services quality assurance, IT security and enterprise architecture principles, and to the Peel Digital Strategy.
+                  - listitem [ref=e781]: Reviews related requirements and configuration documents received from approved third parties, to ensure compliance with IT security and infrastructure policies, standards, and procedures.
+                  - listitem [ref=e782]: Analyzes, designs, and monitors technologies that support existing line of business capabilities.
+                  - listitem [ref=e783]: Develops, updates, and maintains the architecture blueprint that will include as-is architecture, target architecture, and architecture evolution roadmap (1-5 years) aligned with planned projects.
+                  - listitem [ref=e784]: Updates and maintains an accessible repository for reference models and project-related architectural and application development materials related to Client.
+                  - listitem [ref=e785]: Reviews all design documents for new or upgraded application and integration projects to ensure compliance with architectural policies, standards, and procedures, and AODA compliant.
+                  - listitem [ref=e786]: Develops logical data models, data accountability, logical database tables and maps logical data models to databases.
+                - paragraph [ref=e787]
+                - paragraph [ref=e788]:
+                  - strong [ref=e789]:
+                    - emphasis [ref=e790]: "Qualifications and Experience:"
+                - list [ref=e791]:
+                  - listitem [ref=e792]: University or college graduate in Computer Science with a post-bachelor's certificate/diploma in Application Development or related disciplines.
+                  - listitem [ref=e793]: A minimum of 5 years advanced development experience with ITIL, COBIT, application development, spatial database modeling & design, and information architecture.
+                  - listitem [ref=e794]: Proven experience in architecting, designing, and implementing high performance and scalable enterprise level systems and the ability to evaluate how the solution will best meet its functional and quality requirements.
+                  - listitem [ref=e795]: Experience in application portfolio rationalization and optimization initiatives preferred.
+                  - listitem [ref=e796]: Proven experience with object-oriented analysis, design, and programming, unified modeling language, model driven architecture, design patterns, service-oriented architecture, and business plan modeling.
+                  - listitem [ref=e797]: "Expert knowledge and proficiency with the following:"
+                  - listitem [ref=e798]: IT Infrastructure Library,
+                  - listitem [ref=e799]: Control Objectives for Information Technologies,
+                  - listitem [ref=e800]: Integration techniques and Service Oriented Architectures
+                  - listitem [ref=e801]: Technology asset life cycle including performance management, preventive maintenance, and security.
+                  - listitem [ref=e802]: Experience in application development and programming using Java, C#, or .NET.
+                  - listitem [ref=e803]: Experience with industry-standard technologies such as Java, XML, JSON, JSON, JavaScript, HTML5, Web services, SOAP/REST, application servers, and/or Web servers.
+                  - listitem [ref=e804]: Experience with SQL and Enterprise Asset Management databases (DB2, Oracle and SQL Server).
+                  - listitem [ref=e805]: Highly developed writing skills to author complex specification documents, blueprints, and proposals.
+                  - listitem [ref=e806]: Progressive technical knowledge and knowledge of best practices in Information Technology service delivery such as SDLC, PMBOK, COBIT and ITIL.
+                - paragraph [ref=e807]
+                - paragraph [ref=e808]:
+                  - strong [ref=e809]:
+                    - emphasis [ref=e810]: "Mandatory Certifications:"
+                - list [ref=e811]:
+                  - listitem [ref=e812]: SDLC Foundation Certificate or higher (Proof of Certifications must be submitted with submission)
+                  - listitem [ref=e813]: PMBOK Foundation Certificate of higher (Proof of Certifications must be submitted with submission)
+                  - listitem [ref=e814]: COBIT Foundation Certificate or higher (Proof of Certifications must be submitted with submission)
+                  - listitem [ref=e815]: ITIL Certification Foundation Certificate or higher (Proof of Certifications must be submitted with submission)
+                - paragraph
+              - button "Show more" [ref=e816] [cursor=pointer]: Show more
+            - list [ref=e818]:
+              - listitem [ref=e819]:
+                - heading "Seniority level" [level=3] [ref=e820]
+                - text: Mid-Senior level
+              - listitem [ref=e821]:
+                - heading "Employment type" [level=3] [ref=e822]
+                - text: Contract
+              - listitem [ref=e823]:
+                - heading "Job function" [level=3] [ref=e824]
+                - text: Engineering
+              - listitem [ref=e825]:
+                - heading "Industries" [level=3] [ref=e826]
+                - text: Architecture and Planning
+          - generic [ref=e831]:
+            - paragraph [ref=e832]: Referrals increase your chances of interviewing at Net2Source (N2S) by 2x
+            - link "See who you know" [ref=e833] [cursor=pointer]:
+              - /url: https://www.linkedin.com/login?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fsearch%2Fresults%2Fpeople%2F%3FfacetCurrentCompany%3D226965&emailAddress=&fromSignIn=&trk=public_jobs_find-a-referral-cta
+    - generic [ref=e836]:
+      - button "More searches" [ref=e837] [cursor=pointer]: More searches
+      - list
+    - contentinfo [ref=e839]:
+      - list [ref=e840]:
+        - listitem [ref=e841]:
+          - generic [ref=e842]: LinkedIn
+          - generic [ref=e844]: © 2026
+        - listitem [ref=e845]:
+          - link "About" [ref=e846] [cursor=pointer]:
+            - /url: https://about.linkedin.com?trk=public_jobs_footer-about
+        - listitem [ref=e847]:
+          - link "Accessibility" [ref=e848] [cursor=pointer]:
+            - /url: https://www.linkedin.com/accessibility?trk=public_jobs_footer-accessibility
+        - listitem [ref=e849]:
+          - link "User Agreement" [ref=e850] [cursor=pointer]:
+            - /url: https://www.linkedin.com/legal/user-agreement?trk=public_jobs_footer-user-agreement
+        - listitem [ref=e851]:
+          - link "Privacy Policy" [ref=e852] [cursor=pointer]:
+            - /url: https://www.linkedin.com/legal/privacy-policy?trk=public_jobs_footer-privacy-policy
+        - listitem [ref=e853]:
+          - link "Cookie Policy" [ref=e854] [cursor=pointer]:
+            - /url: https://www.linkedin.com/legal/cookie-policy?trk=public_jobs_footer-cookie-policy
+        - listitem [ref=e855]:
+          - link "Copyright Policy" [ref=e856] [cursor=pointer]:
+            - /url: https://www.linkedin.com/legal/copyright-policy?trk=public_jobs_footer-copyright-policy
+        - listitem [ref=e857]:
+          - link "Brand Policy" [ref=e858] [cursor=pointer]:
+            - /url: https://brand.linkedin.com/policies?trk=public_jobs_footer-brand-policy
+        - listitem [ref=e859]:
+          - link "Guest Controls" [ref=e860] [cursor=pointer]:
+            - /url: https://www.linkedin.com/psettings/guest-controls?trk=public_jobs_footer-guest-controls
+        - listitem [ref=e861]:
+          - link "Community Guidelines" [ref=e862] [cursor=pointer]:
+            - /url: https://www.linkedin.com/legal/professional-community-policies?trk=public_jobs_footer-community-guide
+        - listitem [ref=e863]:
+          - button "Language" [ref=e865]: Language
+  - dialog [ref=e867]:
+    - generic [ref=e868]:
+      - img [ref=e870]
+      - paragraph [ref=e873]: LinkedIn
+    - paragraph [ref=e874]: LinkedIn is better on the app
+    - paragraph [ref=e875]: Don’t have the app? Get it in the Microsoft Store.
+    - link "Open the app" [ref=e876] [cursor=pointer]:
+      - /url: ms-windows-store://pdp/?ProductId=9WZDNCRFJ4Q7&mode=mini&cid=guest_desktop_upsell
+    - button "Dismiss" [ref=e877]:
+      - img [ref=e879]

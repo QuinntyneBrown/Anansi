@@ -1,0 +1,928 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Homepage" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - text: 
+      - generic [ref=e6]:
+        - button "Unlock All Jobs" [ref=e7] [cursor=pointer]:
+          - generic [ref=e8]: 
+          - text: Unlock All Jobs
+        - generic [ref=e9]:
+          - button "Log in" [ref=e10] [cursor=pointer]
+          - button "For Employers" [ref=e11] [cursor=pointer]
+  - generic [ref=e13]:
+    - generic [ref=e14]:
+      - heading "Apply to the best remote Software Development jobs before everyone else" [level=1] [ref=e15]:
+        - text: Apply to the best remote Software Development jobs
+        - text: before everyone else
+      - paragraph [ref=e16]: Browse 135,000+ fully remote jobs from vetted companies and get more jobs interviews.
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - search [ref=e22]:
+          - searchbox "Search" [ref=e23]
+          - button "Submit the search query" [ref=e24]:
+            - img [ref=e25]
+        - text: 
+      - generic [ref=e28]:
+        - button "📁 Software Development ▾" [ref=e30] [cursor=pointer]:
+          - text: 📁 Software Development
+          - generic [ref=e31]: ▾
+        - button "🌍 Your Location ▾" [ref=e33] [cursor=pointer]:
+          - text: 🌍 Your Location
+          - generic [ref=e34]: ▾
+        - button "⭐ Experience ▾" [ref=e36] [cursor=pointer]:
+          - text: ⭐ Experience
+          - generic [ref=e37]: ▾
+        - button "💼 Employment Type ▾" [ref=e39] [cursor=pointer]:
+          - text: 💼 Employment Type
+          - generic [ref=e40]: ▾
+        - button "🛠 Skills ▾" [ref=e42] [cursor=pointer]:
+          - text: 🛠 Skills
+          - generic [ref=e43]: ▾
+        - button "💰 Minimum Salary ▾" [ref=e45] [cursor=pointer]:
+          - text: 💰 Minimum Salary
+          - generic [ref=e46]: ▾
+        - button "🗣 Language ▾" [ref=e48] [cursor=pointer]:
+          - text: 🗣 Language
+          - generic [ref=e49]: ▾
+        - button "Clear all filters" [ref=e51] [cursor=pointer]:
+          - generic [ref=e52]: ✕ Clear all filters
+  - generic [ref=e55]:
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e60]: 19,830 matching remote jobs
+        - generic [ref=e61]: ⏺︎ 1,539 posted today
+      - text:  
+    - text: 
+    - generic [ref=e62]:
+      - list [ref=e63]:
+        - listitem [ref=e64]:
+          - link "⚡ 11,547 remote jobs added this week You're seeing 0.4% of available roles Unlock 138,574 jobs →" [ref=e65] [cursor=pointer]:
+            - /url: /join
+            - generic [ref=e66]:
+              - generic [ref=e68]:
+                - paragraph [ref=e69]: ⚡ 11,547 remote jobs added this week
+                - paragraph [ref=e70]: You're seeing 0.4% of available roles
+              - generic [ref=e71]: Unlock 138,574 jobs →
+        - listitem [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - generic [ref=e75]:
+              - link "Senior Full-stack React Developer • Lemon.io" [ref=e77]:
+                - /url: https://remotive.com/remote-jobs/software-development/senior-full-stack-react-developer-2088644
+                - generic [ref=e78]: Senior Full-stack React Developer
+                - generic [ref=e79]: •
+                - generic [ref=e80]: Lemon.io
+              - generic [ref=e81]:
+                - link "Software Development" [ref=e83]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e85]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "Americas" [ref=e87]:
+                  - /url: /remote-jobs?location=Americas
+                - link "Europe" [ref=e89]:
+                  - /url: /remote-jobs?location=Europe
+                - link "Asia" [ref=e91]:
+                  - /url: /remote-jobs?location=Asia
+                - generic [ref=e92]: +1 more
+            - generic [ref=e94]: Featured
+        - listitem [ref=e95] [cursor=pointer]:
+          - generic [ref=e96]:
+            - generic [ref=e98]:
+              - link "Senior Independent AI Engineer / Architect • A.Team" [ref=e100]:
+                - /url: https://remotive.com/remote-jobs/software-development/senior-independent-ai-engineer-architect-1919266
+                - generic [ref=e101]: Senior Independent AI Engineer / Architect
+                - generic [ref=e102]: •
+                - generic [ref=e103]: A.Team
+              - generic [ref=e104]:
+                - link "Software Development" [ref=e106]:
+                  - /url: /remote-jobs/software-development
+                - link "contract" [ref=e108]:
+                  - /url: /remote-jobs?employment-type=contract
+                - generic [ref=e109]: $120 - $170 /ho..
+                - link "Americas" [ref=e111]:
+                  - /url: /remote-jobs?location=Americas
+                - link "Europe" [ref=e113]:
+                  - /url: /remote-jobs?location=Europe
+                - link "Israel" [ref=e115]:
+                  - /url: /remote-jobs?location=Israel
+            - generic [ref=e117]: Featured
+        - listitem [ref=e118] [cursor=pointer]:
+          - generic [ref=e119]:
+            - generic [ref=e121]:
+              - link "Senior Independent Software Developer • A.Team" [ref=e123]:
+                - /url: https://remotive.com/remote-jobs/software-development/senior-independent-software-developer-1919265
+                - generic [ref=e124]: Senior Independent Software Developer
+                - generic [ref=e125]: •
+                - generic [ref=e126]: A.Team
+              - generic [ref=e127]:
+                - link "Software Development" [ref=e129]:
+                  - /url: /remote-jobs/software-development
+                - link "contract" [ref=e131]:
+                  - /url: /remote-jobs?employment-type=contract
+                - generic [ref=e132]: $90 - $150 /hou..
+                - link "Americas" [ref=e134]:
+                  - /url: /remote-jobs?location=Americas
+                - link "Europe" [ref=e136]:
+                  - /url: /remote-jobs?location=Europe
+                - link "Israel" [ref=e138]:
+                  - /url: /remote-jobs?location=Israel
+            - generic [ref=e140]: Featured
+        - listitem [ref=e141]:
+          - link "Ad • Coding Tech Bootcamp • Job Guaranteed by Metana No coding experience required, Land a job with 1-on-1 expert support. Bootcamp Info" [ref=e142] [cursor=pointer]:
+            - /url: https://remotive.com/r/xBG
+            - generic [ref=e143]:
+              - generic [ref=e145]:
+                - paragraph [ref=e146]: Ad • Coding Tech Bootcamp • Job Guaranteed by Metana
+                - paragraph [ref=e147]: No coding experience required, Land a job with 1-on-1 expert support.
+              - generic [ref=e148]: Bootcamp Info
+        - listitem [ref=e149] [cursor=pointer]:
+          - generic [ref=e150]:
+            - generic [ref=e152]:
+              - link "Tech Lead Full-Stack Rails Engineer • Mitre Media" [ref=e154]:
+                - /url: https://remotive.com/remote-jobs/software-development/tech-lead-full-stack-rails-engineer-2069746
+                - generic [ref=e155]: Tech Lead Full-Stack Rails Engineer
+                - generic [ref=e156]: •
+                - generic [ref=e157]: Mitre Media
+              - generic [ref=e158]:
+                - link "Software Development" [ref=e160]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e162]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e163]: $170k - $200k
+                - link "USA" [ref=e165]:
+                  - /url: /remote-jobs?location=USA
+                - link "Canada" [ref=e167]:
+                  - /url: /remote-jobs?location=Canada
+                - link "USA timezones" [ref=e169]:
+                  - /url: /remote-jobs?location=USA%20timezones
+            - generic [ref=e171]: 3wks ago
+        - listitem [ref=e172] [cursor=pointer]:
+          - generic [ref=e173]:
+            - generic [ref=e175]:
+              - link "Tech Lead Databricks Data Engineer • Mitre Media" [ref=e177]:
+                - /url: https://remotive.com/remote-jobs/software-development/tech-lead-databricks-data-engineer-2069747
+                - generic [ref=e178]: Tech Lead Databricks Data Engineer
+                - generic [ref=e179]: •
+                - generic [ref=e180]: Mitre Media
+              - generic [ref=e181]:
+                - link "Software Development" [ref=e183]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e185]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e186]: $160k - $180k
+                - link "USA" [ref=e188]:
+                  - /url: /remote-jobs?location=USA
+                - link "Canada" [ref=e190]:
+                  - /url: /remote-jobs?location=Canada
+                - link "USA timezones" [ref=e192]:
+                  - /url: /remote-jobs?location=USA%20timezones
+            - generic [ref=e194]: 3wks ago
+        - listitem [ref=e195] [cursor=pointer]:
+          - generic [ref=e196]:
+            - generic [ref=e199]:
+              - link "iOS Developer • nooro" [ref=e201]:
+                - /url: https://remotive.com/remote-jobs/software-development/ios-developer-1956455
+                - generic [ref=e202]: iOS Developer
+                - generic [ref=e203]: •
+                - generic [ref=e204]: nooro
+              - generic [ref=e205]:
+                - link "Software Development" [ref=e207]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e209]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e210]: $60k-$130k (dep..
+                - link "USA" [ref=e212]:
+                  - /url: /remote-jobs?location=USA
+            - generic [ref=e214]: New
+        - listitem [ref=e215] [cursor=pointer]:
+          - generic [ref=e216]:
+            - generic [ref=e219]:
+              - link "Shopify Engineer • Nebulab" [ref=e221]:
+                - /url: https://remotive.com/remote-jobs/software-development/shopify-engineer-2088643
+                - generic [ref=e222]: Shopify Engineer
+                - generic [ref=e223]: •
+                - generic [ref=e224]: Nebulab
+              - generic [ref=e225]:
+                - link "Software Development" [ref=e227]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e229]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e230]: €30k - €60k
+                - link "Worldwide" [ref=e232]:
+                  - /url: /remote-jobs?location=Worldwide
+            - generic [ref=e234]: 6d ago
+        - listitem [ref=e235]:
+          - link "⚡ 11,547 remote jobs added this week You're seeing 0.4% of available roles Unlock 138,574 jobs →" [ref=e236] [cursor=pointer]:
+            - /url: /join
+            - generic [ref=e237]:
+              - generic [ref=e239]:
+                - paragraph [ref=e240]: ⚡ 11,547 remote jobs added this week
+                - paragraph [ref=e241]: You're seeing 0.4% of available roles
+              - generic [ref=e242]: Unlock 138,574 jobs →
+        - listitem [ref=e243] [cursor=pointer]:
+          - generic [ref=e244]:
+            - generic [ref=e247]: 
+            - generic [ref=e248]:
+              - generic [ref=e250]:
+                - generic [ref=e251]: Software Engineer - Partner Builds
+                - generic [ref=e252]: •
+                - generic [ref=e253]: "[Company Name]"
+              - generic [ref=e254]:
+                - link "Software Development" [ref=e256]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e258]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e259]: gbp 40,000 - 49..
+                - link "UK" [ref=e261]:
+                  - /url: /remote-jobs?location=UK
+            - generic [ref=e263]: "-1d ago"
+        - listitem [ref=e264] [cursor=pointer]:
+          - generic [ref=e265]:
+            - generic [ref=e268]: 
+            - generic [ref=e269]:
+              - generic [ref=e271]:
+                - generic [ref=e272]: Industrial Automation Architect
+                - generic [ref=e273]: •
+                - generic [ref=e274]: "[Company Name]"
+              - generic [ref=e275]:
+                - link "Software Development" [ref=e277]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e279]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e280]: salary determin..
+                - link "Spain" [ref=e282]:
+                  - /url: /remote-jobs?location=Spain
+            - generic [ref=e284]: "-1d ago"
+        - listitem [ref=e285] [cursor=pointer]:
+          - generic [ref=e286]:
+            - generic [ref=e289]: 
+            - generic [ref=e290]:
+              - generic [ref=e292]:
+                - generic [ref=e293]: Senior Data Engineer
+                - generic [ref=e294]: •
+                - generic [ref=e295]: "[Company Name]"
+              - generic [ref=e296]:
+                - link "Software Development" [ref=e298]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e300]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "Argentina" [ref=e302]:
+                  - /url: /remote-jobs?location=Argentina
+            - generic [ref=e304]: "-1d ago"
+        - listitem [ref=e305] [cursor=pointer]:
+          - generic [ref=e306]:
+            - generic [ref=e309]: 
+            - generic [ref=e310]:
+              - generic [ref=e312]:
+                - generic [ref=e313]: Software Engineer
+                - generic [ref=e314]: •
+                - generic [ref=e315]: "[Company Name]"
+              - generic [ref=e316]:
+                - link "Software Development" [ref=e318]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e320]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e321]: gbp 40,000 - 49..
+                - link "UK" [ref=e323]:
+                  - /url: /remote-jobs?location=UK
+            - generic [ref=e325]: "-1d ago"
+        - listitem [ref=e326] [cursor=pointer]:
+          - generic [ref=e327]:
+            - generic [ref=e330]: 
+            - generic [ref=e331]:
+              - generic [ref=e333]:
+                - generic [ref=e334]: Azure Specialist
+                - generic [ref=e335]: •
+                - generic [ref=e336]: "[Company Name]"
+              - generic [ref=e337]:
+                - link "Software Development" [ref=e339]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e341]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "India" [ref=e343]:
+                  - /url: /remote-jobs?location=India
+            - generic [ref=e345]: "-1d ago"
+        - listitem [ref=e346] [cursor=pointer]:
+          - generic [ref=e347]:
+            - generic [ref=e350]: 
+            - generic [ref=e351]:
+              - generic [ref=e353]:
+                - generic [ref=e354]: Senior Fullstack Engineer
+                - generic [ref=e355]: •
+                - generic [ref=e356]: "[Company Name]"
+              - generic [ref=e357]:
+                - link "Software Development" [ref=e359]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e361]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e362]: eur 40 per hour
+                - link "Poland" [ref=e364]:
+                  - /url: /remote-jobs?location=Poland
+            - generic [ref=e366]: "-1d ago"
+        - listitem [ref=e367] [cursor=pointer]:
+          - generic [ref=e368]:
+            - generic [ref=e371]: 
+            - generic [ref=e372]:
+              - generic [ref=e374]:
+                - generic [ref=e375]: Senior Fullstack Developer
+                - generic [ref=e376]: •
+                - generic [ref=e377]: "[Company Name]"
+              - generic [ref=e378]:
+                - link "Software Development" [ref=e380]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e382]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e383]: eur 55,000 - 75..
+                - link "Germany" [ref=e385]:
+                  - /url: /remote-jobs?location=Germany
+            - generic [ref=e387]: "-1d ago"
+        - listitem [ref=e388]:
+          - link "⚡ 138,574 more jobs waiting 📈 11,547 added this week ⏺︎ 1,539 posted today You're seeing 0.4% of available jobs Unlock full access to apply before everyone else ✓ Access all 138,574 curated remote jobs ✓ See jobs 24 hours early ✓ Custom alerts for your dream role ✓ Advanced search filters (location & salary) Unlock All 138,574 Jobs → ★★★★★ Loved by 100,000+ remote professionals" [ref=e389] [cursor=pointer]:
+            - /url: /join
+            - generic [ref=e390]:
+              - generic [ref=e391]:
+                - generic [ref=e392]:
+                  - text: ⚡ 138,574
+                  - paragraph [ref=e393]: more jobs waiting
+                - generic [ref=e394]:
+                  - text: 📈 11,547
+                  - paragraph [ref=e395]: added this week
+                - generic [ref=e396]:
+                  - text: ⏺︎ 1,539
+                  - paragraph [ref=e397]: posted today
+              - generic [ref=e398]:
+                - paragraph [ref=e399]: You're seeing 0.4% of available jobs
+                - paragraph [ref=e400]: Unlock full access to apply before everyone else
+                - list [ref=e401]:
+                  - listitem [ref=e402]:
+                    - generic [ref=e403]: ✓
+                    - text: Access all
+                    - generic [ref=e404]: 138,574
+                    - text: curated remote jobs
+                  - listitem [ref=e405]:
+                    - generic [ref=e406]: ✓
+                    - text: See jobs
+                    - generic [ref=e407]: 24 hours
+                    - text: early
+                  - listitem [ref=e408]:
+                    - generic [ref=e409]: ✓
+                    - generic [ref=e410]: Custom alerts
+                    - text: for your dream role
+                  - listitem [ref=e411]:
+                    - generic [ref=e412]: ✓
+                    - generic [ref=e413]: Advanced search filters
+                    - text: (location & salary)
+                - generic [ref=e415]:
+                  - generic [ref=e416]: 
+                  - text: Unlock All 138,574 Jobs →
+                - paragraph [ref=e417]: ★★★★★ Loved by 100,000+ remote professionals
+        - listitem [ref=e418] [cursor=pointer]:
+          - generic [ref=e419]:
+            - generic [ref=e422]: 
+            - generic [ref=e423]:
+              - generic [ref=e425]:
+                - generic [ref=e426]: Senior Software Engineer - Search Relevance - Elasticsearch
+                - generic [ref=e427]: •
+                - generic [ref=e428]: "[Company Name]"
+              - generic [ref=e429]:
+                - link "Software Development" [ref=e431]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e433]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e434]: cad 128,300 - 2..
+                - link "Canada" [ref=e436]:
+                  - /url: /remote-jobs?location=Canada
+                - link "Portugal" [ref=e438]:
+                  - /url: /remote-jobs?location=Portugal
+                - link "Sweden" [ref=e440]:
+                  - /url: /remote-jobs?location=Sweden
+                - generic [ref=e441]: +7 more
+            - generic [ref=e443]: "-1d ago"
+        - listitem [ref=e444] [cursor=pointer]:
+          - generic [ref=e445]:
+            - generic [ref=e448]: 
+            - generic [ref=e449]:
+              - generic [ref=e451]:
+                - generic [ref=e452]: Full Stack Developer
+                - generic [ref=e453]: •
+                - generic [ref=e454]: "[Company Name]"
+              - generic [ref=e455]:
+                - link "Software Development" [ref=e457]:
+                  - /url: /remote-jobs/software-development
+                - link "contract" [ref=e459]:
+                  - /url: /remote-jobs?employment-type=contract
+                - generic [ref=e460]: competitive sal..
+                - link "Ukraine" [ref=e462]:
+                  - /url: /remote-jobs?location=Ukraine
+                - link "Slovakia" [ref=e464]:
+                  - /url: /remote-jobs?location=Slovakia
+            - generic [ref=e466]: "-1d ago"
+        - listitem [ref=e467] [cursor=pointer]:
+          - generic [ref=e468]:
+            - generic [ref=e471]: 
+            - generic [ref=e472]:
+              - generic [ref=e474]:
+                - generic [ref=e475]: Automation Engineer
+                - generic [ref=e476]: •
+                - generic [ref=e477]: "[Company Name]"
+              - generic [ref=e478]:
+                - link "Software Development" [ref=e480]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e482]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e483]: tailored compen..
+                - link "Europe" [ref=e485]:
+                  - /url: /remote-jobs?location=Europe
+                - link "USA" [ref=e487]:
+                  - /url: /remote-jobs?location=USA
+                - link "UK" [ref=e489]:
+                  - /url: /remote-jobs?location=UK
+                - generic [ref=e490]: +2 more
+            - generic [ref=e492]: "-1d ago"
+        - listitem [ref=e493] [cursor=pointer]:
+          - generic [ref=e494]:
+            - generic [ref=e497]: 
+            - generic [ref=e498]:
+              - generic [ref=e500]:
+                - generic [ref=e501]: Senior Full Stack Developer with Shopware 6 Experience & AI Affinity
+                - generic [ref=e502]: •
+                - generic [ref=e503]: "[Company Name]"
+              - generic [ref=e504]:
+                - link "Software Development" [ref=e506]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e508]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "European timezones" [ref=e510]:
+                  - /url: /remote-jobs?location=European%20timezones
+            - generic [ref=e512]: "-1d ago"
+        - listitem [ref=e513] [cursor=pointer]:
+          - generic [ref=e514]:
+            - generic [ref=e517]: 
+            - generic [ref=e518]:
+              - generic [ref=e520]:
+                - generic [ref=e521]: Senior Full Stack Shopware Developer with AI Affinity
+                - generic [ref=e522]: •
+                - generic [ref=e523]: "[Company Name]"
+              - generic [ref=e524]:
+                - link "Software Development" [ref=e526]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e528]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "Germany" [ref=e530]:
+                  - /url: /remote-jobs?location=Germany
+            - generic [ref=e532]: "-1d ago"
+        - listitem [ref=e533] [cursor=pointer]:
+          - generic [ref=e534]:
+            - generic [ref=e537]: 
+            - generic [ref=e538]:
+              - generic [ref=e540]:
+                - generic [ref=e541]: React Engineer
+                - generic [ref=e542]: •
+                - generic [ref=e543]: "[Company Name]"
+              - generic [ref=e544]:
+                - link "Software Development" [ref=e546]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e548]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "India" [ref=e550]:
+                  - /url: /remote-jobs?location=India
+            - generic [ref=e552]: "-1d ago"
+        - listitem [ref=e553] [cursor=pointer]:
+          - generic [ref=e554]:
+            - generic [ref=e557]: 
+            - generic [ref=e558]:
+              - generic [ref=e560]:
+                - generic [ref=e561]: Freelance Senior Software Engineer Django React
+                - generic [ref=e562]: •
+                - generic [ref=e563]: "[Company Name]"
+              - generic [ref=e564]:
+                - link "Software Development" [ref=e566]:
+                  - /url: /remote-jobs/software-development
+                - link "contract" [ref=e568]:
+                  - /url: /remote-jobs?employment-type=contract
+                - generic [ref=e569]: eur 600 per day
+                - link "France" [ref=e571]:
+                  - /url: /remote-jobs?location=France
+            - generic [ref=e573]: New
+        - listitem [ref=e574]:
+          - link "⚡ 11,547 remote jobs added this week You're seeing 0.4% of available roles Unlock 138,574 jobs →" [ref=e575] [cursor=pointer]:
+            - /url: /join
+            - generic [ref=e576]:
+              - generic [ref=e578]:
+                - paragraph [ref=e579]: ⚡ 11,547 remote jobs added this week
+                - paragraph [ref=e580]: You're seeing 0.4% of available roles
+              - generic [ref=e581]: Unlock 138,574 jobs →
+        - listitem [ref=e582] [cursor=pointer]:
+          - generic [ref=e583]:
+            - generic [ref=e586]: 
+            - generic [ref=e587]:
+              - generic [ref=e589]:
+                - generic [ref=e590]: Forward Deployed Engineer, VoIP
+                - generic [ref=e591]: •
+                - generic [ref=e592]: "[Company Name]"
+              - generic [ref=e593]:
+                - link "Software Development" [ref=e595]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e597]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e598]: competitive com..
+                - link "Germany" [ref=e600]:
+                  - /url: /remote-jobs?location=Germany
+            - generic [ref=e602]: New
+        - listitem [ref=e603] [cursor=pointer]:
+          - generic [ref=e604]:
+            - generic [ref=e607]: 
+            - generic [ref=e608]:
+              - generic [ref=e610]:
+                - generic [ref=e611]: Staff Cloud Architect (Delivery)
+                - generic [ref=e612]: •
+                - generic [ref=e613]: "[Company Name]"
+              - generic [ref=e614]:
+                - link "Software Development" [ref=e616]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e618]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "UK" [ref=e620]:
+                  - /url: /remote-jobs?location=UK
+                - link "Estonia" [ref=e622]:
+                  - /url: /remote-jobs?location=Estonia
+                - link "Sweden" [ref=e624]:
+                  - /url: /remote-jobs?location=Sweden
+                - generic [ref=e625]: +3 more
+            - generic [ref=e627]: New
+        - listitem [ref=e628] [cursor=pointer]:
+          - generic [ref=e629]:
+            - generic [ref=e632]: 
+            - generic [ref=e633]:
+              - generic [ref=e635]:
+                - generic [ref=e636]: Staff Cloud Architect
+                - generic [ref=e637]: •
+                - generic [ref=e638]: "[Company Name]"
+              - generic [ref=e639]:
+                - link "Software Development" [ref=e641]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e643]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "UK" [ref=e645]:
+                  - /url: /remote-jobs?location=UK
+                - link "Estonia" [ref=e647]:
+                  - /url: /remote-jobs?location=Estonia
+                - link "Sweden" [ref=e649]:
+                  - /url: /remote-jobs?location=Sweden
+                - generic [ref=e650]: +3 more
+            - generic [ref=e652]: New
+        - listitem [ref=e653] [cursor=pointer]:
+          - generic [ref=e654]:
+            - generic [ref=e657]: 
+            - generic [ref=e658]:
+              - generic [ref=e660]:
+                - generic [ref=e661]: Senior Software Development Engineer
+                - generic [ref=e662]: •
+                - generic [ref=e663]: "[Company Name]"
+              - generic [ref=e664]:
+                - link "Software Development" [ref=e666]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e668]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "UK" [ref=e670]:
+                  - /url: /remote-jobs?location=UK
+            - generic [ref=e672]: New
+        - listitem [ref=e673] [cursor=pointer]:
+          - generic [ref=e674]:
+            - generic [ref=e677]: 
+            - generic [ref=e678]:
+              - generic [ref=e680]:
+                - generic [ref=e681]: Engineering Manager - Cloud
+                - generic [ref=e682]: •
+                - generic [ref=e683]: "[Company Name]"
+              - generic [ref=e684]:
+                - link "Software Development" [ref=e686]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e688]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "Morocco" [ref=e690]:
+                  - /url: /remote-jobs?location=Morocco
+            - generic [ref=e692]: New
+        - listitem [ref=e693] [cursor=pointer]:
+          - generic [ref=e694]:
+            - generic [ref=e697]: 
+            - generic [ref=e698]:
+              - generic [ref=e700]:
+                - generic [ref=e701]: Staff Salesforce Architect (Agent and Channel Experience)
+                - generic [ref=e702]: •
+                - generic [ref=e703]: "[Company Name]"
+              - generic [ref=e704]:
+                - link "Software Development" [ref=e706]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e708]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e709]: cad 142,000 - 1..
+                - link "Canada" [ref=e711]:
+                  - /url: /remote-jobs?location=Canada
+            - generic [ref=e713]: New
+        - listitem [ref=e714] [cursor=pointer]:
+          - generic [ref=e715]:
+            - generic [ref=e718]: 
+            - generic [ref=e719]:
+              - generic [ref=e721]:
+                - generic [ref=e722]: Staff Salesforce Architect
+                - generic [ref=e723]: •
+                - generic [ref=e724]: "[Company Name]"
+              - generic [ref=e725]:
+                - link "Software Development" [ref=e727]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e729]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e730]: usd 160,000 - 2..
+                - link "USA" [ref=e732]:
+                  - /url: /remote-jobs?location=USA
+            - generic [ref=e734]: New
+        - listitem [ref=e735]:
+          - link "⚡ 138,574 more jobs waiting 📈 11,547 added this week ⏺︎ 1,539 posted today You're seeing 0.4% of available jobs Unlock full access to apply before everyone else ✓ Access all 138,574 curated remote jobs ✓ See jobs 24 hours early ✓ Custom alerts for your dream role ✓ Advanced search filters (location & salary) Unlock All 138,574 Jobs → ★★★★★ Loved by 100,000+ remote professionals" [ref=e736] [cursor=pointer]:
+            - /url: /join
+            - generic [ref=e737]:
+              - generic [ref=e738]:
+                - generic [ref=e739]:
+                  - text: ⚡ 138,574
+                  - paragraph [ref=e740]: more jobs waiting
+                - generic [ref=e741]:
+                  - text: 📈 11,547
+                  - paragraph [ref=e742]: added this week
+                - generic [ref=e743]:
+                  - text: ⏺︎ 1,539
+                  - paragraph [ref=e744]: posted today
+              - generic [ref=e745]:
+                - paragraph [ref=e746]: You're seeing 0.4% of available jobs
+                - paragraph [ref=e747]: Unlock full access to apply before everyone else
+                - list [ref=e748]:
+                  - listitem [ref=e749]:
+                    - generic [ref=e750]: ✓
+                    - text: Access all
+                    - generic [ref=e751]: 138,574
+                    - text: curated remote jobs
+                  - listitem [ref=e752]:
+                    - generic [ref=e753]: ✓
+                    - text: See jobs
+                    - generic [ref=e754]: 24 hours
+                    - text: early
+                  - listitem [ref=e755]:
+                    - generic [ref=e756]: ✓
+                    - generic [ref=e757]: Custom alerts
+                    - text: for your dream role
+                  - listitem [ref=e758]:
+                    - generic [ref=e759]: ✓
+                    - generic [ref=e760]: Advanced search filters
+                    - text: (location & salary)
+                - generic [ref=e762]:
+                  - generic [ref=e763]: 
+                  - text: Unlock All 138,574 Jobs →
+                - paragraph [ref=e764]: ★★★★★ Loved by 100,000+ remote professionals
+        - listitem [ref=e765] [cursor=pointer]:
+          - generic [ref=e766]:
+            - generic [ref=e769]: 
+            - generic [ref=e770]:
+              - generic [ref=e772]:
+                - generic [ref=e773]: AI Automation Engineer
+                - generic [ref=e774]: •
+                - generic [ref=e775]: "[Company Name]"
+              - generic [ref=e776]:
+                - link "Software Development" [ref=e778]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e780]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "India" [ref=e782]:
+                  - /url: /remote-jobs?location=India
+            - generic [ref=e784]: New
+        - listitem [ref=e785] [cursor=pointer]:
+          - generic [ref=e786]:
+            - generic [ref=e789]: 
+            - generic [ref=e790]:
+              - generic [ref=e792]:
+                - generic [ref=e793]: Senior Solution Architect Team Lead
+                - generic [ref=e794]: •
+                - generic [ref=e795]: "[Company Name]"
+              - generic [ref=e796]:
+                - link "Software Development" [ref=e798]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e800]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e801]: 25000-28000 ron..
+                - link "Poland" [ref=e803]:
+                  - /url: /remote-jobs?location=Poland
+            - generic [ref=e805]: New
+        - listitem [ref=e806] [cursor=pointer]:
+          - generic [ref=e807]:
+            - generic [ref=e810]: 
+            - generic [ref=e811]:
+              - generic [ref=e813]:
+                - generic [ref=e814]: Senior Software Developer
+                - generic [ref=e815]: •
+                - generic [ref=e816]: "[Company Name]"
+              - generic [ref=e817]:
+                - link "Software Development" [ref=e819]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e821]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "India" [ref=e823]:
+                  - /url: /remote-jobs?location=India
+            - generic [ref=e825]: New
+        - listitem [ref=e826] [cursor=pointer]:
+          - generic [ref=e827]:
+            - generic [ref=e830]: 
+            - generic [ref=e831]:
+              - generic [ref=e833]:
+                - generic [ref=e834]: Full Stack Engineer
+                - generic [ref=e835]: •
+                - generic [ref=e836]: "[Company Name]"
+              - generic [ref=e837]:
+                - link "Software Development" [ref=e839]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e841]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e842]: competitive sal..
+                - link "Australia" [ref=e844]:
+                  - /url: /remote-jobs?location=Australia
+            - generic [ref=e846]: New
+        - listitem [ref=e847] [cursor=pointer]:
+          - generic [ref=e848]:
+            - generic [ref=e851]: 
+            - generic [ref=e852]:
+              - generic [ref=e854]:
+                - generic [ref=e855]: Frontend Developer JavaScript
+                - generic [ref=e856]: •
+                - generic [ref=e857]: "[Company Name]"
+              - generic [ref=e858]:
+                - link "Software Development" [ref=e860]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e862]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - generic [ref=e863]: competitive sal..
+                - link "Spain" [ref=e865]:
+                  - /url: /remote-jobs?location=Spain
+            - generic [ref=e867]: New
+        - listitem [ref=e868] [cursor=pointer]:
+          - generic [ref=e869]:
+            - generic [ref=e872]: 
+            - generic [ref=e873]:
+              - generic [ref=e875]:
+                - generic [ref=e876]: Software Development Engineer III - Node JS/ Python
+                - generic [ref=e877]: •
+                - generic [ref=e878]: "[Company Name]"
+              - generic [ref=e879]:
+                - link "Software Development" [ref=e881]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e883]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "India" [ref=e885]:
+                  - /url: /remote-jobs?location=India
+            - generic [ref=e887]: New
+        - listitem [ref=e888] [cursor=pointer]:
+          - generic [ref=e889]:
+            - generic [ref=e892]: 
+            - generic [ref=e893]:
+              - generic [ref=e895]:
+                - generic [ref=e896]: Senior Android Software Engineer
+                - generic [ref=e897]: •
+                - generic [ref=e898]: "[Company Name]"
+              - generic [ref=e899]:
+                - link "Software Development" [ref=e901]:
+                  - /url: /remote-jobs/software-development
+                - link "full-time" [ref=e903]:
+                  - /url: /remote-jobs?employment-type=full-time
+                - link "Romania" [ref=e905]:
+                  - /url: /remote-jobs?location=Romania
+            - generic [ref=e907]: New
+      - button "More Jobs" [ref=e909] [cursor=pointer]
+    - generic [ref=e910]:
+      - generic [ref=e911]:
+        - button "Unlock All Jobs" [ref=e912] [cursor=pointer]:
+          - generic [ref=e913]: 
+          - text: Unlock All Jobs
+        - generic [ref=e914]:
+          - text: 11,547
+          - text: added this week
+      - text:  
+  - generic [ref=e915]:
+    - generic [ref=e916]:
+      - paragraph [ref=e917]: Get relevant job opportunities in your inbox
+      - generic [ref=e920]:
+        - textbox "Your email address" [ref=e922]
+        - combobox [ref=e925] [cursor=pointer]:
+          - option "Job Category" [selected]
+          - option "Software Development"
+          - option "Design"
+          - option "Product"
+          - option "Customer Service"
+          - option "Data Analysis"
+          - option "Writing"
+          - option "DevOps & SysAdmin"
+          - option "QA"
+          - option "Sales & Business"
+          - option "Marketing"
+          - option "Human Resources"
+          - option "Finance"
+          - option "Project Management"
+          - option "AI / ML"
+          - option "Education"
+          - option "Medical"
+          - option "Legal"
+          - option "All Others"
+        - button "Create Alert" [ref=e926] [cursor=pointer]:
+          - generic [ref=e927]: Create Alert
+    - generic [ref=e928]:
+      - generic [ref=e929]:
+        - link "Remotive" [ref=e930] [cursor=pointer]:
+          - /url: /
+        - list [ref=e931]:
+          - listitem [ref=e932]:
+            - link "Remotive Affiliate Program" [ref=e933] [cursor=pointer]:
+              - /url: https://remotive.getrewardful.com/signup
+          - listitem [ref=e934]:
+            - link "Reviews & Success Stories" [ref=e935] [cursor=pointer]:
+              - /url: /reviews-success-stories
+          - listitem [ref=e936]:
+            - link "Sponsorship" [ref=e937] [cursor=pointer]:
+              - /url: https://support.remotive.com/en/article/ycrtby/
+          - listitem [ref=e938]:
+            - link "Press" [ref=e939] [cursor=pointer]:
+              - /url: https://support.remotive.com/en/category/l3ahqd/
+          - listitem [ref=e940]:
+            - link "About" [ref=e941] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e942]:
+            - link "Terms of Use" [ref=e943] [cursor=pointer]:
+              - /url: https://remotive.com/terms-of-use
+            - text: "&"
+            - link "Privacy Policy" [ref=e944] [cursor=pointer]:
+              - /url: https://remotive.com/privacy-policy
+      - generic [ref=e945]:
+        - generic [ref=e946]: Find Remote Jobs
+        - list [ref=e947]:
+          - listitem [ref=e948]:
+            - link "Join Remotive" [ref=e949] [cursor=pointer]:
+              - /url: /join
+          - listitem [ref=e950]:
+            - link "Remote Job Search Tips" [ref=e951] [cursor=pointer]:
+              - /url: /blog/tag/job-search-tips/
+          - listitem [ref=e952]:
+            - link "Remote Work Statistics Hiring Trends" [ref=e953] [cursor=pointer]:
+              - /url: https://remotive.com/blog/remote-work-statistics-hiring-trends
+          - listitem [ref=e954]:
+            - link "Remotive Jobs Public API" [ref=e955] [cursor=pointer]:
+              - /url: /remote-jobs/api
+            - text: "&"
+            - link "RSS Feeds" [ref=e956] [cursor=pointer]:
+              - /url: /remote-jobs/rss-feed
+              - text: RSS Feeds
+      - generic [ref=e958]:
+        - generic [ref=e959]: Hiring Remotely
+        - list [ref=e960]:
+          - listitem [ref=e961]:
+            - link "Why Remotive?" [ref=e962] [cursor=pointer]:
+              - /url: /hire
+          - listitem [ref=e963]:
+            - link "Post a Remote Job" [ref=e964] [cursor=pointer]:
+              - /url: /job/post/new
+          - listitem [ref=e965]:
+            - link "Remote Hiring Tips" [ref=e966] [cursor=pointer]:
+              - /url: /blog/tag/hiring-remotely/
+          - listitem [ref=e967]:
+            - link "Help Center for Recruiters" [ref=e968] [cursor=pointer]:
+              - /url: https://support.remotive.com
+      - generic [ref=e969]:
+        - generic [ref=e970]: Quick Access
+        - list [ref=e971]:
+          - listitem [ref=e972]:
+            - link "Remote Javascript Jobs" [ref=e973] [cursor=pointer]:
+              - /url: /remote-javascript-jobs
+          - listitem [ref=e974]:
+            - link "Remote Python Jobs" [ref=e975] [cursor=pointer]:
+              - /url: /remote-python-jobs
+    - generic [ref=e976]:
+      - paragraph [ref=e978]: © 2014-2026, made Remotely with ❤️
+      - generic [ref=e980]:
+        - link "LinkedIn" [ref=e981] [cursor=pointer]:
+          - /url: https://www.linkedin.com/company/remotive.io/
+          - text: 
+        - link "Twitter" [ref=e982] [cursor=pointer]:
+          - /url: https://twitter.com/remotiveio/
+          - text: 
+        - link "Reddit" [ref=e983] [cursor=pointer]:
+          - /url: https://www.reddit.com/r/remotivejobs/
+          - text: 
+        - link "Telegram" [ref=e984] [cursor=pointer]:
+          - /url: https://t.me/remotejobsenglish/
+          - text: 
+        - link "Facebook" [ref=e985] [cursor=pointer]:
+          - /url: https://www.facebook.com/remotivedotcom/
+          - text: 
+        - link "Instagram" [ref=e986] [cursor=pointer]:
+          - /url: https://www.instagram.com/remotiveio/
+          - text: 
+        - link "Slack Community" [ref=e987] [cursor=pointer]:
+          - /url: /accelerator?utm_medium=footerslack
+          - text: 
+        - link "Email us" [ref=e988] [cursor=pointer]:
+          - /url: mailto:hello@remotive.com
+          - text: 
