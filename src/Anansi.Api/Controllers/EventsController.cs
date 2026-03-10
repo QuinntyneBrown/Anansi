@@ -26,6 +26,8 @@ public class EventsController : ControllerBase
         CancellationToken ct)
     {
         var result = await _mediator.Send(new ListEventsQuery(from, to, category, neighborhood), ct);
+        if (!result.IsSuccess)
+            return StatusCode(result.StatusCode ?? 400, new { error = result.Error });
         return Ok(result.Value);
     }
 
@@ -114,6 +116,8 @@ public class EventsController : ControllerBase
         CancellationToken ct)
     {
         var result = await _mediator.Send(new ListCalendarBlocksQuery(from, to), ct);
+        if (!result.IsSuccess)
+            return StatusCode(result.StatusCode ?? 400, new { error = result.Error });
         return Ok(result.Value);
     }
 }
