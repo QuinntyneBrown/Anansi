@@ -3,7 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve studio-manager",
+    "start:studio": "ng serve studio-manager",
+    "start:gallery": "ng serve client-gallery",
+    "start:store": "ng serve online-store",
+    "start:website": "ng serve website-builder",
+    "start:booking": "ng serve booking-site",
+    "start:mobile": "ng serve mobile-gallery",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
