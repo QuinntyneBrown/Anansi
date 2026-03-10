@@ -13,9 +13,18 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-            if (descriptor != null) services.Remove(descriptor);
+            // Remove all DbContext-related registrations to avoid dual-provider error
+            var descriptorsToRemove = services
+                .Where(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>)
+                    || d.ServiceType == typeof(DbContextOptions)
+                    || (d.ServiceType.IsGenericType && d.ServiceType.GetGenericTypeDefinition() == typeof(DbContextOptions<>))
+                    || d.ServiceType.FullName?.Contains("EntityFrameworkCore") == true)
+                .ToList();
+            foreach (var d in descriptorsToRemove) services.Remove(d);
+
+            // Also remove the ApplicationDbContext registration itself so we can re-add it cleanly
+            var dbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(ApplicationDbContext));
+            if (dbContextDescriptor != null) services.Remove(dbContextDescriptor);
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseInMemoryDatabase($"AnansiTest_{Guid.NewGuid()}"));

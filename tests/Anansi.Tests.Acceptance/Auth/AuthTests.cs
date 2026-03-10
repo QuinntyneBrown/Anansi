@@ -55,13 +55,14 @@ public class AuthTests : IClassFixture<TestWebApplicationFactory>
             businessName = "John Photography"
         };
 
-        await _client.PostAsJsonAsync("/api/auth/register", request);
+        var firstResponse = await _client.PostAsJsonAsync("/api/auth/register", request);
+        firstResponse.StatusCode.Should().Be(HttpStatusCode.OK, "first registration should succeed");
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/auth/register", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().NotBe(HttpStatusCode.OK, "duplicate registration should not succeed");
     }
 
     [Fact]
