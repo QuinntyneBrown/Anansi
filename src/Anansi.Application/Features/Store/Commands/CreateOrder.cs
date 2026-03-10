@@ -83,21 +83,33 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
             CommissionPercentage = commissionPct
         };
 
+        // Batch-load all products and variations upfront to avoid N+1 queries
+        var productIds = req.Items.Select(i => i.ProductId).Distinct().ToList();
+        var products = await _db.Products
+            .Where(p => productIds.Contains(p.Id) && p.PhotographerId == photographerId)
+            .ToDictionaryAsync(p => p.Id, ct);
+
+        var variationIds = req.Items
+            .Where(i => i.ProductVariationId.HasValue)
+            .Select(i => i.ProductVariationId!.Value)
+            .Distinct().ToList();
+        var variations = variationIds.Count > 0
+            ? await _db.ProductVariations
+                .Where(v => variationIds.Contains(v.Id))
+                .ToDictionaryAsync(v => v.Id, ct)
+            : new Dictionary<Guid, ProductVariation>();
+
         long subtotal = 0;
         foreach (var itemReq in req.Items)
         {
-            var product = await _db.Products
-                .FirstOrDefaultAsync(p => p.Id == itemReq.ProductId && p.PhotographerId == photographerId, ct);
-            if (product is null)
+            if (!products.TryGetValue(itemReq.ProductId, out var product))
                 return Result<OrderDto>.Failure($"Product {itemReq.ProductId} not found");
 
             ProductVariation? variation = null;
             long unitPrice;
             if (itemReq.ProductVariationId.HasValue)
             {
-                variation = await _db.ProductVariations
-                    .FirstOrDefaultAsync(v => v.Id == itemReq.ProductVariationId && v.ProductId == product.Id, ct);
-                if (variation is null)
+                if (!variations.TryGetValue(itemReq.ProductVariationId.Value, out variation) || variation.ProductId != product.Id)
                     return Result<OrderDto>.Failure($"Variation {itemReq.ProductVariationId} not found");
                 unitPrice = variation.PriceCents;
             }

@@ -1,18 +1,43 @@
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 using Anansi.Application.Interfaces;
+using Anansi.Domain.Entities;
 using Anansi.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Anansi.Tests.Acceptance.Fixtures;
 
 public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {
+    public static readonly Guid TestPhotographerId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseSetting("Jwt:Key", "TestOnlyKey_NotForProduction_MinLength32Chars!");
+        builder.UseSetting("ASPNETCORE_ENVIRONMENT", "Testing");
+
         builder.ConfigureServices(services =>
         {
+            // Replace auth with a test scheme that auto-authenticates
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "Test";
+                options.DefaultAuthenticateScheme = "Test";
+                options.DefaultChallengeScheme = "Test";
+            })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", _ => { });
+
+            // Override ICurrentUserService with a test-specific one
+            ReplaceServiceIfNotRegistered<ICurrentUserService, TestCurrentUserService>(services);
             // Remove ALL EF Core and DbContext registrations to cleanly switch to InMemory
             var dbName = $"AnansiTest_{Guid.NewGuid()}";
             var toRemove = services.Where(d =>
@@ -46,6 +71,50 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         });
 
         builder.UseEnvironment("Testing");
+    }
+
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        var host = base.CreateHost(builder);
+
+        // Seed the test photographer and identity user so handlers that look up these records succeed
+        using var scope = host.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureCreated();
+
+        if (!db.Photographers.Any(p => p.Id == TestPhotographerId))
+        {
+            db.Photographers.Add(new Photographer
+            {
+                Id = TestPhotographerId,
+                Email = "testuser@test.com",
+                FirstName = "Test",
+                LastName = "User",
+                BusinessName = "Test Biz",
+                Subdomain = "test-biz"
+            });
+            db.SaveChanges();
+        }
+
+        // Seed an Identity user so ChangePassword and other Identity-dependent handlers work
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var existingUser = userManager.FindByIdAsync(TestPhotographerId.ToString()).GetAwaiter().GetResult();
+        if (existingUser == null)
+        {
+            var testUser = new ApplicationUser
+            {
+                Id = TestPhotographerId.ToString(),
+                UserName = "testuser@test.com",
+                Email = "testuser@test.com",
+                NormalizedUserName = "TESTUSER@TEST.COM",
+                NormalizedEmail = "TESTUSER@TEST.COM",
+                EmailConfirmed = true,
+                PhotographerId = TestPhotographerId
+            };
+            userManager.CreateAsync(testUser, "Password123!").GetAwaiter().GetResult();
+        }
+
+        return host;
     }
 
     private static void ReplaceServiceIfNotRegistered<TInterface, TImpl>(IServiceCollection services)
@@ -147,6 +216,34 @@ public class StubLightroomSyncService : ILightroomSyncService
         => Task.FromResult(new LightroomSyncResult { CollectionsSynced = 1 });
     public Task<IReadOnlyList<LightroomFavoriteList>> GetFavoriteListsAsync(Guid photographerId, Guid collectionId, CancellationToken ct = default)
         => Task.FromResult<IReadOnlyList<LightroomFavoriteList>>(new List<LightroomFavoriteList>());
+}
+
+public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+{
+    public TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger, UrlEncoder encoder)
+        : base(options, logger, encoder) { }
+
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, TestWebApplicationFactory.TestPhotographerId.ToString()),
+            new Claim(ClaimTypes.Name, "testuser@test.com"),
+            new Claim(ClaimTypes.Email, "testuser@test.com"),
+        };
+        var identity = new ClaimsIdentity(claims, "Test");
+        var principal = new ClaimsPrincipal(identity);
+        var ticket = new AuthenticationTicket(principal, "Test");
+        return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+}
+
+public class TestCurrentUserService : ICurrentUserService
+{
+    public Guid? PhotographerId => TestWebApplicationFactory.TestPhotographerId;
+    public string? UserId => TestWebApplicationFactory.TestPhotographerId.ToString();
+    public bool IsAuthenticated => true;
 }
 
 public class StubCdnService : ICdnService

@@ -50,7 +50,7 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, R
         var bytes = new byte[32];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(bytes);
-        return "anansi_" + Convert.ToBase64String(bytes).Replace("+", "").Replace("/", "").Replace("=", "")[..40];
+        return "anansi_" + Convert.ToHexString(bytes).ToLowerInvariant();
     }
 
     private static string HashKey(string key)

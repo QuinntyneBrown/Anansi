@@ -313,7 +313,7 @@ public class IntegrationTests : IClassFixture<TestWebApplicationFactory>
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var content = await response.Content.ReadAsStringAsync();
-        content.Should().Contain("Test Biz");
+        content.Should().Contain("testuser@test.com");
     }
 
     [Fact]

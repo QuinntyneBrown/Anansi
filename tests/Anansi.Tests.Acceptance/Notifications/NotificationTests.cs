@@ -46,7 +46,7 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
         using var db = _factory.CreateDbContext();
         db.Notifications.Add(new Notification
         {
-            PhotographerId = photographerId,
+            PhotographerId = TestWebApplicationFactory.TestPhotographerId,
             EventType = NotificationEventType.SessionBooked,
             Category = NotificationCategory.StudioManager,
             Title = "New Booking",
@@ -74,7 +74,7 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
         using var db = _factory.CreateDbContext();
         db.Notifications.Add(new Notification
         {
-            PhotographerId = photographerId,
+            PhotographerId = TestWebApplicationFactory.TestPhotographerId,
             EventType = NotificationEventType.StoreOrderPlaced,
             Category = NotificationCategory.Store,
             Title = "Order Placed",
@@ -82,7 +82,7 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
         });
         db.Notifications.Add(new Notification
         {
-            PhotographerId = photographerId,
+            PhotographerId = TestWebApplicationFactory.TestPhotographerId,
             EventType = NotificationEventType.SessionBooked,
             Category = NotificationCategory.StudioManager,
             Title = "Session Booked",
@@ -108,10 +108,16 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
         var authedClient = _factory.CreateClient();
         authedClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+        // Get baseline count before seeding
+        var baselineResponse = await authedClient.GetAsync("/api/notifications/unread-count");
+        var baselineContent = await baselineResponse.Content.ReadAsStringAsync();
+        var baselineCount = System.Text.Json.JsonDocument.Parse(baselineContent)
+            .RootElement.GetProperty("count").GetInt32();
+
         using var db = _factory.CreateDbContext();
         db.Notifications.Add(new Notification
         {
-            PhotographerId = photographerId,
+            PhotographerId = TestWebApplicationFactory.TestPhotographerId,
             EventType = NotificationEventType.PhotoDownloaded,
             Category = NotificationCategory.ClientGallery,
             Title = "Download",
@@ -119,7 +125,7 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
         });
         db.Notifications.Add(new Notification
         {
-            PhotographerId = photographerId,
+            PhotographerId = TestWebApplicationFactory.TestPhotographerId,
             EventType = NotificationEventType.PhotoDownloaded,
             Category = NotificationCategory.ClientGallery,
             Title = "Download 2",
@@ -135,7 +141,10 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var content = await response.Content.ReadAsStringAsync();
-        content.Should().Contain("1");
+        var newCount = System.Text.Json.JsonDocument.Parse(content)
+            .RootElement.GetProperty("count").GetInt32();
+        // One new unread notification was added (the read one shouldn't be counted)
+        newCount.Should().Be(baselineCount + 1);
     }
 
     [Fact]
@@ -148,7 +157,7 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
 
         var notification = new Notification
         {
-            PhotographerId = photographerId,
+            PhotographerId = TestWebApplicationFactory.TestPhotographerId,
             EventType = NotificationEventType.ContractSigned,
             Category = NotificationCategory.StudioManager,
             Title = "Contract Signed",
@@ -175,8 +184,8 @@ public class NotificationTests : IClassFixture<TestWebApplicationFactory>
 
         using var db = _factory.CreateDbContext();
         db.Notifications.AddRange(
-            new Notification { PhotographerId = photographerId, EventType = NotificationEventType.PhotoDownloaded, Category = NotificationCategory.ClientGallery, Title = "T1", Message = "M1" },
-            new Notification { PhotographerId = photographerId, EventType = NotificationEventType.StoreOrderPlaced, Category = NotificationCategory.Store, Title = "T2", Message = "M2" }
+            new Notification { PhotographerId = TestWebApplicationFactory.TestPhotographerId, EventType = NotificationEventType.PhotoDownloaded, Category = NotificationCategory.ClientGallery, Title = "T1", Message = "M1" },
+            new Notification { PhotographerId = TestWebApplicationFactory.TestPhotographerId, EventType = NotificationEventType.StoreOrderPlaced, Category = NotificationCategory.Store, Title = "T2", Message = "M2" }
         );
         await db.SaveChangesAsync();
 

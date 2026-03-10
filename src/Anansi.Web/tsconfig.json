@@ -1,8 +1,27 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "api": ["./dist/api"],
+      "components": ["./dist/components"],
+      "@domain/auth": ["./dist/domain/auth"],
+      "@domain/dashboard": ["./dist/domain/dashboard"],
+      "@domain/contacts": ["./dist/domain/contacts"],
+      "@domain/projects": ["./dist/domain/projects"],
+      "@domain/calendar": ["./dist/domain/calendar"],
+      "@domain/documents": ["./dist/domain/documents"],
+      "@domain/inbox": ["./dist/domain/inbox"],
+      "@domain/reports": ["./dist/domain/reports"],
+      "@domain/settings": ["./dist/domain/settings"],
+      "@domain/gallery-organization": ["./dist/domain/gallery-organization"],
+      "@domain/gallery-client": ["./dist/domain/gallery-client"],
+      "@domain/store-management": ["./dist/domain/store-management"],
+      "@domain/storefront": ["./dist/domain/storefront"],
+      "@domain/website-builder": ["./dist/domain/website-builder"],
+      "@domain/booking": ["./dist/domain/booking"],
+      "@domain/notifications": ["./dist/domain/notifications"],
+      "@domain/shared-dialogs": ["./dist/domain/shared-dialogs"]
+    },
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -21,5 +40,157 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/components/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/components/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/api/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/api/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/auth/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/auth/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/dashboard/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/dashboard/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/contacts/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/contacts/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/projects/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/projects/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/calendar/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/calendar/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/documents/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/documents/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/inbox/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/inbox/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/reports/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/reports/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/settings/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/settings/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/gallery-organization/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/gallery-organization/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/gallery-client/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/gallery-client/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/store-management/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/store-management/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/storefront/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/storefront/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/website-builder/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/website-builder/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/booking/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/booking/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/notifications/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/notifications/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/shared-dialogs/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/shared-dialogs/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/studio-manager/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/studio-manager/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/client-gallery/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/client-gallery/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/online-store/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/online-store/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/website-builder/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/website-builder/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/booking-site/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/booking-site/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/mobile-gallery/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/mobile-gallery/tsconfig.spec.json"
+    }
+  ]
 }

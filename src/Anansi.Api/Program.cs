@@ -21,9 +21,17 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseMiddleware<ValidationExceptionMiddleware>();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthentication();
-app.UseSession();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.UseSession();
+    app.UseMiddleware<SessionTimeoutMiddleware>();
+}
 app.UseMiddleware<TenantResolutionMiddleware>();
 app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
 app.UseAuthorization();

@@ -21,7 +21,15 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         // JWT Authentication (must be configured before Identity to set default schemes)
-        var jwtKey = configuration["Jwt:Key"] ?? "DefaultDevKeyThatShouldBeReplacedInProduction123!";
+        var environment = configuration["ASPNETCORE_ENVIRONMENT"] ?? "Production";
+        var jwtKey = configuration["Jwt:Key"];
+        if (string.IsNullOrEmpty(jwtKey))
+        {
+            if (environment is "Development" or "Testing")
+                jwtKey = "DevOnlyKey_NotForProduction_MinLength32Chars!";
+            else
+                throw new InvalidOperationException("Jwt:Key must be configured in production. Set the Jwt:Key configuration value.");
+        }
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
         services.AddAuthentication(options =>
