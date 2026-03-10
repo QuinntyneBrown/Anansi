@@ -1,12 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { BuilderSidebarComponent } from './layout/builder-sidebar.component';
 
 @Component({
   selector: 'wb-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, BuilderSidebarComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
-export class App {
-  protected readonly title = signal('website-builder');
-}
+export class App {}

@@ -1,23 +1,46 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { App } from './app';
 
 describe('App', () => {
+  let component: App;
+  let fixture: ComponentFixture<App>;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [provideRouter([])],
     }).compileComponents();
+
+    fixture = TestBed.createComponent(App);
+    component = fixture.componentInstance;
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 
-  it('should render title', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, website-builder');
+  it('should render builder-shell container', () => {
+    fixture.detectChanges();
+    const shell = fixture.nativeElement.querySelector('.builder-shell');
+    expect(shell).toBeTruthy();
+  });
+
+  it('should render builder sidebar', () => {
+    fixture.detectChanges();
+    const sidebar = fixture.nativeElement.querySelector('wb-builder-sidebar');
+    expect(sidebar).toBeTruthy();
+  });
+
+  it('should render main content area', () => {
+    fixture.detectChanges();
+    const content = fixture.nativeElement.querySelector('.builder-shell__content');
+    expect(content).toBeTruthy();
+  });
+
+  it('should render router outlet', () => {
+    fixture.detectChanges();
+    const outlet = fixture.nativeElement.querySelector('router-outlet');
+    expect(outlet).toBeTruthy();
   });
 });
