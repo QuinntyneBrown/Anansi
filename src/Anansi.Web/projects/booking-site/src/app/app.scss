@@ -1,0 +1,10 @@
+.booking-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #1A1A1C;
+}
+
+.booking-shell__content {
+  flex: 1;
+}
