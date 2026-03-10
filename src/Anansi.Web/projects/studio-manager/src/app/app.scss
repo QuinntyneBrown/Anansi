@@ -1,0 +1,26 @@
+.shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #1A1A1C;
+}
+
+.shell__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.shell__content {
+  flex: 1;
+  overflow-y: auto;
+  background: #1A1A1C;
+}
+
+@media (max-width: 768px) {
+  .shell__content {
+    padding-bottom: 64px;
+  }
+}
