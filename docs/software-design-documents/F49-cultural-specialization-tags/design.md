@@ -107,6 +107,8 @@ end note
 @enduml
 ```
 
+![Domain Layer -- Cultural Tag & Service Area Entities](domain-layer-cultural-tag-service-area-entities.png)
+
 ### Domain Layer -- Predefined Reference Data
 
 ```plantuml
@@ -153,6 +155,8 @@ class TorontoNeighborhoods <<static>> {
 @enduml
 ```
 
+![Domain Layer -- Predefined Reference Data](domain-layer-predefined-reference-data.png)
+
 ### Application Layer -- Cultural Tags Commands & Queries
 
 ```plantuml
@@ -194,6 +198,8 @@ GetDirectoryCulturalTagsQuery ..> DirectoryTagDto : returns list
 @enduml
 ```
 
+![Application Layer -- Cultural Tags Commands & Queries](application-layer-cultural-tags-commands-queries.png)
+
 ### Application Layer -- Service Area Commands & Queries
 
 ```plantuml
@@ -232,6 +238,8 @@ GetServiceAreaQuery ..> ServiceAreaDto : returns
 @enduml
 ```
 
+![Application Layer -- Service Area Commands & Queries](application-layer-service-area-commands-queries.png)
+
 ### API Layer -- Profile & Directory Controllers
 
 ```plantuml
@@ -262,6 +270,8 @@ DirectoryController --> "IMediator" : sends queries
 ProfileServiceAreaController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Profile & Directory Controllers](api-layer-profile-directory-controllers.png)
 
 ---
 
@@ -309,6 +319,8 @@ PTC --> P : 200 OK\n[{tagName, isPredefined}, ...]
 @enduml
 ```
 
+![Update Cultural Tags](update-cultural-tags.png)
+
 ### Get Photographer's Cultural Tags
 
 ```plantuml
@@ -333,6 +345,8 @@ M --> PTC : Result.Success
 PTC --> P : 200 OK\n[{tagName: "Caribbean Wedding",\n  isPredefined: true},\n {tagName: "Toronto Street Style",\n  isPredefined: false}]
 @enduml
 ```
+
+![Get Photographer's Cultural Tags](get-photographer-s-cultural-tags.png)
 
 ### Get Directory Cultural Tags
 
@@ -363,6 +377,8 @@ M --> DC : Result.Success
 DC --> C : 200 OK\n[{tagName: "Caribbean Wedding",\n  isPredefined: true,\n  usageCount: 42},\n {tagName: "Melanin Portraiture",\n  isPredefined: true,\n  usageCount: 38},\n ...\n {tagName: "Toronto Street Style",\n  isPredefined: false,\n  usageCount: 5}]
 @enduml
 ```
+
+![Get Directory Cultural Tags](get-directory-cultural-tags.png)
 
 ### Update Service Area
 
@@ -399,6 +415,8 @@ PSC --> P : 200 OK\n{primaryNeighborhood:\n  "Little Jamaica",\nlatitude: 43.689
 @enduml
 ```
 
+![Update Service Area](update-service-area.png)
+
 ### Get Service Area
 
 ```plantuml
@@ -426,3 +444,5 @@ M --> PSC : Result.Success
 PSC --> P : 200 OK\n{primaryNeighborhood,\nlatitude, longitude, radiusKm}\nor 200 OK (null)
 @enduml
 ```
+
+![Get Service Area](get-service-area.png)

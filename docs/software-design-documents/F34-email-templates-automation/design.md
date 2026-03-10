@@ -131,6 +131,8 @@ end note
 @enduml
 ```
 
+![Domain Layer - Email Template & Automation Entities](domain-layer-email-template-automation-entities.png)
+
 ### Domain Layer - Entities Triggering Automated Emails
 
 ```plantuml
@@ -197,6 +199,8 @@ end note
 
 @enduml
 ```
+
+![Domain Layer - Entities Triggering Automated Emails](domain-layer-entities-triggering-automated-emails.png)
 
 ### Application Layer - Commands, Queries, and Services
 
@@ -282,6 +286,8 @@ SendPaymentConfirmationCommand --> ITemplateRenderService
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Services](application-layer-commands-queries-and-services.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -333,6 +339,8 @@ AutomatedEmailJob --> IEmailService
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ---
 
 ## Sequence Diagrams
@@ -366,6 +374,8 @@ API --> Photographer : 201 Created (EmailTemplateDto)
 
 @enduml
 ```
+
+![Create and Use Gallery Email Template](create-and-use-gallery-email-template.png)
 
 ### Send Branded Gallery Invite
 
@@ -409,6 +419,8 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Send Branded Gallery Invite](send-branded-gallery-invite.png)
 
 ### Automated Session Reminder
 
@@ -455,6 +467,8 @@ Job -> DB : SaveChangesAsync()
 
 @enduml
 ```
+
+![Automated Session Reminder](automated-session-reminder.png)
 
 ### Automated Document Reminders
 
@@ -518,6 +532,8 @@ end note
 @enduml
 ```
 
+![Automated Document Reminders](automated-document-reminders.png)
+
 ### Gallery Expiry Reminders
 
 ```plantuml
@@ -556,6 +572,8 @@ Job -> DB : SaveChangesAsync()
 
 @enduml
 ```
+
+![Gallery Expiry Reminders](gallery-expiry-reminders.png)
 
 ### Payment Confirmation Email
 
@@ -604,3 +622,5 @@ Handler --> M : Result.Success
 
 @enduml
 ```
+
+![Payment Confirmation Email](payment-confirmation-email.png)

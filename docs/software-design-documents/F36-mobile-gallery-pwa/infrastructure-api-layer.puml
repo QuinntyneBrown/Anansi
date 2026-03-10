@@ -1,0 +1,53 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class MobileGalleryController <<Controller>> {
+  +Create() : ActionResult
+  +Update() : ActionResult
+  +Delete() : ActionResult
+  +List() : ActionResult
+  +GetById() : ActionResult
+  +Publish() : ActionResult
+}
+
+class PublicMobileGalleryController <<Controller>> {
+  +GetAppShell() : ActionResult
+  +GetManifest() : ActionResult
+  +GetServiceWorker() : ActionResult
+  +GetImages() : ActionResult
+}
+
+class ManifestService <<Service>> {
+  -_storage : IStorageService
+  -_cdn : ICdnService
+  -_db : IApplicationDbContext
+  +GenerateManifestAsync(appId) : string
+  +GenerateServiceWorkerAsync(appId) : string
+}
+
+class MobileGalleryBackgroundJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_storage : IStorageService
+  -_cdn : ICdnService
+  +GenerateAppIconsAsync(appId) : Task
+  +WarmCdnCacheAsync(appId) : Task
+}
+
+interface IManifestService <<Interface>>
+interface IStorageService <<Interface>>
+interface ICdnService <<Interface>>
+
+ManifestService ..|> IManifestService
+ManifestService --> IStorageService
+ManifestService --> ICdnService
+MobileGalleryBackgroundJob --> IStorageService
+MobileGalleryBackgroundJob --> ICdnService
+
+MobileGalleryController ..> CreateMobileGalleryAppCommand
+MobileGalleryController ..> UpdateMobileGalleryAppCommand
+MobileGalleryController ..> PublishMobileGalleryAppCommand
+PublicMobileGalleryController ..> GetPublicMobileGalleryQuery
+
+@enduml

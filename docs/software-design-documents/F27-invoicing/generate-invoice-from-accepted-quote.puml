@@ -1,0 +1,25 @@
+@startuml
+participant "QuoteAcceptanceHandler" as QAH
+participant "MediatR" as M
+participant "GenerateInvoiceFromQuoteHandler" as GIH
+participant "ApplicationDbContext" as DB
+
+QAH -> M : Send(GenerateInvoiceFromQuoteCommand)
+M -> GIH : Handle(command)
+
+GIH -> DB : Load Quote with Items\nand Contact
+
+GIH -> GIH : Map QuoteItems to\nInvoiceLineItems\n(name, description,\nqty, unitPrice)
+
+GIH -> GIH : Calculate subtotal,\ntax, total from items
+
+GIH -> DB : Generate invoice number
+
+GIH -> DB : Invoices.Add(draftInvoice\nwith Status = Draft)
+GIH -> DB : InvoiceLineItems.AddRange(items)
+
+GIH -> DB : quote.GeneratedInvoiceId\n= newInvoice.Id
+GIH -> DB : SaveChangesAsync()
+
+GIH --> M : Result.Success(invoiceId)
+@enduml

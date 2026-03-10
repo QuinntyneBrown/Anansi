@@ -1,0 +1,29 @@
+@startuml
+actor Photographer as P
+participant "TaxProfileController" as TPC
+participant "MediatR" as M
+participant "GetRevenueThresholdHandler" as GTH
+participant "ApplicationDbContext" as DB
+
+P -> TPC : GET /api/tax-profile/threshold
+TPC -> M : Send(GetRevenueThresholdQuery)
+M -> GTH : Handle(query)
+
+GTH -> GTH : Calculate current quarter\nand previous 3 quarters\n(4-quarter rolling window)
+
+GTH -> DB : Query PaymentRecords\nWHERE PhotographerId = {id}\nAND IsRefund = false\nAND CreatedAt >= quarterStart\n(4 quarters ago)\nGROUP BY calendar quarter\nSUM AmountCents
+
+DB --> GTH : Quarterly revenue data
+
+GTH -> GTH : Build quarterly breakdown:\n[{Q2-2025: 800000},\n {Q3-2025: 1200000},\n {Q4-2025: 600000},\n {Q1-2026: 900000}]
+
+GTH -> GTH : rollingRevenue =\nsum(quarterly totals) = 3500000
+
+GTH -> GTH : thresholdPercentage =\n3500000 / 3000000 * 100 = 116.7%
+
+GTH -> GTH : alertLevel =\nExceeded (>= 100%)
+
+GTH --> M : RevenueThresholdDto {\n  rollingRevenueCents: 3500000,\n  thresholdCents: 3000000,\n  thresholdPercentage: 116.7,\n  quarterlyBreakdown: [...],\n  alertLevel: Exceeded\n}
+M --> TPC : Result.Success
+TPC --> P : 200 OK (RevenueThresholdDto)
+@enduml

@@ -1,0 +1,73 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Hosting.Commands" {
+  class ConfigureSubdomainCommand <<record>> {
+    +WebsiteId : Guid
+    +Subdomain : string
+  }
+
+  class ConnectCustomDomainCommand <<record>> {
+    +WebsiteId : Guid
+    +DomainName : string
+  }
+
+  class VerifyCustomDomainCommand <<record>> {
+    +WebsiteId : Guid
+  }
+
+  class RemoveCustomDomainCommand <<record>> {
+    +WebsiteId : Guid
+  }
+}
+
+package "Features.Hosting.Queries" {
+  class GetDnsInstructionsQuery <<record>> {
+    +WebsiteId : Guid
+  }
+
+  class GetHostingStatusQuery <<record>> {
+    +WebsiteId : Guid
+  }
+}
+
+package "Features.Security.Commands" {
+  class SetSitePasswordCommand <<record>> {
+    +WebsiteId : Guid
+    +Password : string
+  }
+
+  class SetPagePasswordCommand <<record>> {
+    +WebsiteId : Guid
+    +PageId : Guid
+    +Password : string
+  }
+
+  class UpdateRightClickProtectionCommand <<record>> {
+    +WebsiteId : Guid
+    +Enabled : bool
+  }
+}
+
+interface ISslService {
+  +ProvisionAsync()
+  +RenewAsync()
+  +RevokeAsync()
+}
+
+interface IDnsVerificationService {
+  +VerifyAsync()
+  +GenerateInstructionsAsync()
+}
+
+interface IPlanGateService {
+  +HasFeatureAsync()
+}
+
+ConnectCustomDomainCommand ..> IPlanGateService : checks plan
+ConnectCustomDomainCommand ..> IDnsVerificationService : generates instructions
+VerifyCustomDomainCommand ..> IDnsVerificationService : verifies DNS
+VerifyCustomDomainCommand ..> ISslService : provisions cert
+@enduml

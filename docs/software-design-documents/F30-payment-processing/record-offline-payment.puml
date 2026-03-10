@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "PaymentsController" as PC
+participant "MediatR" as M
+participant "RecordOfflinePaymentHandler" as ROH
+participant "ApplicationDbContext" as DB
+
+P -> PC : POST /api/payments/record-offline\n{invoiceId, amountCents,\npaymentMethod: "cash",\ndescription: "Cash at session"}
+PC -> M : Send(RecordOfflinePaymentCommand)
+M -> ROH : Handle(command)
+
+ROH -> DB : Load Invoice with\nPaymentSchedules
+
+alt invoice not active
+  ROH --> M : Result.Failure("Invoice is not payable")
+  M --> PC : Result.Failure
+  PC --> P : 400 Bad Request
+end
+
+ROH -> DB : PaymentRecords.Add(\namountCents, feeCents=0,\nnetAmountCents=amountCents,\nmethod=Offline, isOffline=true,\ndescription)
+
+ROH -> DB : invoice.PaidCents += amountCents
+
+ROH -> ROH : Find matching unpaid schedule\nand mark as paid (if amount matches)
+
+ROH -> ROH : Check all installments paid?
+alt all paid
+  ROH -> DB : invoice.Status = Paid
+else some remaining
+  ROH -> DB : invoice.Status = PartiallyPaid
+end
+
+ROH -> DB : SaveChangesAsync()
+ROH --> M : Result.Success(paymentRecordId)
+M --> PC : Result.Success
+PC --> P : 201 Created {paymentRecordId}
+@enduml

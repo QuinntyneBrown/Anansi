@@ -1,0 +1,29 @@
+@startuml
+actor Photographer as P
+participant "BookingCalendarController" as BC
+participant "MediatR" as M
+participant "GetBookingCalendarHandler" as H
+participant "ApplicationDbContext" as DB
+participant "IGoogleCalendarService" as GC
+
+P -> BC : GET /api/booking/calendar\n?from=2026-08-01&to=2026-08-31
+BC -> M : Send(GetBookingCalendarQuery)
+M -> H : Handle()
+
+H -> DB : Load BookingRecords\nWHERE PhotographerId\nAND StartTime within range
+DB --> H : bookings[]
+
+H -> DB : Load EventCalendarBlocks\nWHERE PhotographerId\nAND StartDate/EndDate overlaps range
+DB --> H : eventBlocks[]
+
+H -> GC : GetBusyBlocksAsync(\ncalendarId, from, to)
+GC --> H : googleBlocks[]
+
+H -> H : Merge all three sources:\n- Regular bookings (with client info)\n- Event blocks (with event name + blockType)\n- Google Calendar blocks
+
+H -> H : Sort by start date/time
+
+H --> M : CalendarDto {bookings,\neventBlocks, externalBlocks}
+M --> BC : result
+BC --> P : 200 OK {\n  bookings: [...],\n  eventBlocks: [\n    {eventName: "Caribana",\n     blockType: "Available",\n     startDate: "2026-08-01",\n     endDate: "2026-08-04"}],\n  externalBlocks: [...]\n}
+@enduml

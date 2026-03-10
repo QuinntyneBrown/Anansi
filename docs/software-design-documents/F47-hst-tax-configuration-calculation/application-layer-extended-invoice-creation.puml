@@ -1,0 +1,44 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Invoices.Commands" {
+  class CreateInvoiceCommand <<record>> {
+    +Title : string
+    +ContactId : Guid?
+    +ProjectId : Guid?
+    +LineItems : List<LineItemInput>
+  }
+}
+
+class LineItemInput <<record>> {
+  +Name : string
+  +Description : string?
+  +Quantity : int
+  +UnitPriceCents : long
+  +IsTaxExempt : bool
+}
+
+package "Features.Invoices.Handlers" {
+  class CreateInvoiceCommandHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+    +Handle(cmd, ct) : Result<InvoiceDetailDto>
+  }
+}
+
+CreateInvoiceCommandHandler ..> CreateInvoiceCommand
+CreateInvoiceCommandHandler --> TaxProfile : loads HST rate
+
+note right of CreateInvoiceCommandHandler
+  1. Build line items
+  2. Load TaxProfile
+  3. Filter taxable items
+     (IsTaxExempt = false)
+  4. TaxAmountCents =
+     sum(taxable totals) * hstRate / 100
+  5. TotalCents =
+     subtotal + tax - discount
+end note
+@enduml

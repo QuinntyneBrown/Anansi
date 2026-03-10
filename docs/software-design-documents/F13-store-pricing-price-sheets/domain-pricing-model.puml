@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Store" {
+  class Product {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +ProductType : ProductType
+    +IsActive : bool
+  }
+
+  class ProductVariation {
+    +Id : Guid
+    +ProductId : Guid
+    +Name : string
+    +Sku : string?
+    +CostCents : long
+    +MarkupCents : long
+    +PriceCents : long
+    +IsCustomPriced : bool
+    +IsActive : bool
+  }
+
+  class PriceSheet {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Description : string?
+    +IsDownloadOnly : bool
+    +IsDefault : bool
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+  }
+
+  class PriceSheetItem {
+    +Id : Guid
+    +PriceSheetId : Guid
+    +ProductVariationId : Guid
+    +PriceCents : long
+  }
+}
+
+Product "1" --> "*" ProductVariation : Variations
+PriceSheet "1" --> "*" PriceSheetItem : Items
+PriceSheetItem --> "1" ProductVariation : overrides price of
+
+note right of ProductVariation
+  Three-tier pricing:
+  PriceCents = CostCents + MarkupCents
+  IsCustomPriced protects from bulk overwrite
+end note
+
+note right of PriceSheetItem
+  Override price takes precedence
+  over base ProductVariation.PriceCents
+  when this sheet is active
+end note
+
+@enduml

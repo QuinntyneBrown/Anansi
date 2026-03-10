@@ -121,6 +121,8 @@ InteracSettings --> "1" Photographer : PhotographerId
 @enduml
 ```
 
+![Domain Layer -- Interac Entities](domain-layer-interac-entities.png)
+
 ### Application Layer -- Interac Commands
 
 ```plantuml
@@ -163,6 +165,8 @@ class CheckoutItemInput <<record>> {
 }
 @enduml
 ```
+
+![Application Layer -- Interac Commands](application-layer-interac-commands.png)
 
 ### Application Layer -- Interac Queries & DTOs
 
@@ -210,6 +214,8 @@ class InteracCheckoutResultDto <<record>> {
 @enduml
 ```
 
+![Application Layer -- Interac Queries & DTOs](application-layer-interac-queries-dtos.png)
+
 ### API Layer -- Interac Controllers
 
 ```plantuml
@@ -241,6 +247,8 @@ InteracSettingsController --> "IMediator" : sends commands/queries
 StoreCheckoutController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Interac Controllers](api-layer-interac-controllers.png)
 
 ---
 
@@ -287,6 +295,8 @@ M --> IC : Result.Success
 IC --> P : 201 Created\n{paymentReference,\namountCents, recipientEmail,\nexpiryDate}
 @enduml
 ```
+
+![Create Interac Payment Request from Invoice](create-interac-payment-request-from-invoice.png)
 
 ### Confirm Interac Payment Receipt
 
@@ -341,6 +351,8 @@ IC --> P : 200 OK
 @enduml
 ```
 
+![Confirm Interac Payment Receipt](confirm-interac-payment-receipt.png)
+
 ### List Interac Payment Requests
 
 ```plantuml
@@ -367,6 +379,8 @@ IC --> P : 200 OK\n{items[], page, totalCount, totalPages}
 @enduml
 ```
 
+![List Interac Payment Requests](list-interac-payment-requests.png)
+
 ### Background Expiry of Stale Requests
 
 ```plantuml
@@ -391,6 +405,8 @@ EH -> DB : SaveChangesAsync()
 EH --> M : Result.Success(expiredCount)
 @enduml
 ```
+
+![Background Expiry of Stale Requests](background-expiry-of-stale-requests.png)
 
 ### Update Interac Settings
 
@@ -426,6 +442,8 @@ M --> ISC : Result.Success
 ISC --> P : 200 OK\n{interacEmail, isEnabled}
 @enduml
 ```
+
+![Update Interac Settings](update-interac-settings.png)
 
 ### Store Checkout with Interac e-Transfer
 
@@ -467,3 +485,5 @@ M --> SCC : Result.Success
 SCC --> C : 201 Created\n{orderId, paymentReference,\namountCents, interacEmail,\ninstructions}
 @enduml
 ```
+
+![Store Checkout with Interac e-Transfer](store-checkout-with-interac-e-transfer.png)

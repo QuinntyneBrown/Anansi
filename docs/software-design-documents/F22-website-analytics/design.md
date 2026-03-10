@@ -107,6 +107,8 @@ Website "1" --> "*" AnalyticsPageHit : PageHits
 @enduml
 ```
 
+![Domain Layer -- Analytics Entities](domain-layer-analytics-entities.png)
+
 ### Application Layer -- Analytics Commands & Queries
 
 ```plantuml
@@ -187,6 +189,8 @@ ToggleBuiltInAnalyticsCommand ..> IPlanGateService : validates plan
 @enduml
 ```
 
+![Application Layer -- Analytics Commands & Queries](application-layer-analytics-commands-queries.png)
+
 ### Infrastructure Layer -- Aggregation & Geo Services
 
 ```plantuml
@@ -234,6 +238,8 @@ RecordPageHitHandler --> IGeoLocationService
 @enduml
 ```
 
+![Infrastructure Layer -- Aggregation & Geo Services](infrastructure-layer-aggregation-geo-services.png)
+
 ### API Layer -- Analytics Controllers
 
 ```plantuml
@@ -277,6 +283,8 @@ AnalyticsSettingsController --> "IMediator" : sends commands
 @enduml
 ```
 
+![API Layer -- Analytics Controllers](api-layer-analytics-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -308,6 +316,8 @@ M --> AC : result
 AC --> WP : 204 No Content
 @enduml
 ```
+
+![Record Page Hit (Built-In Tracking)](record-page-hit-built-in-tracking.png)
 
 ### Daily Analytics Aggregation
 
@@ -342,6 +352,8 @@ AGG --> BG : pruning complete
 @enduml
 ```
 
+![Daily Analytics Aggregation](daily-analytics-aggregation.png)
+
 ### View Analytics Dashboard
 
 ```plantuml
@@ -365,6 +377,8 @@ M --> DC : result
 DC --> P : 200 OK {totalVisitors, uniqueVisitors,\npageViews, avgSessionDuration, dailySnapshots[]}
 @enduml
 ```
+
+![View Analytics Dashboard](view-analytics-dashboard.png)
 
 ### Configure Google Analytics / Facebook Pixel
 
@@ -394,3 +408,5 @@ note over P
 end note
 @enduml
 ```
+
+![Configure Google Analytics / Facebook Pixel](configure-google-analytics-facebook-pixel.png)

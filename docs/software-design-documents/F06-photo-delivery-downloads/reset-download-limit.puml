@@ -1,0 +1,24 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "DownloadsController" as API
+participant "ResetDownloadLimitHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : PUT /api/collections/{id}/download-limit\n{newLimit: 100}
+API -> Handler : Send(ResetDownloadLimitCommand)
+
+Handler -> Handler : Verify PhotographerId from ICurrentUserService
+Handler -> DB : Find Collection by Id & PhotographerId
+DB --> Handler : Collection
+
+Handler -> Handler : Set DownloadLimit = 100
+Handler -> Handler : Set DownloadCount = 0
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+@enduml

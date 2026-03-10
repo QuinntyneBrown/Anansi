@@ -1,0 +1,53 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Pipeline.Commands" {
+  class CreateStageCommand <<record>> {
+    +Name : string
+    +SortOrder : int
+  }
+
+  class UpdateStageCommand <<record>> {
+    +StageId : Guid
+    +Name : string
+  }
+
+  class DeleteStageCommand <<record>> {
+    +StageId : Guid
+    +MoveProjectsToStageId : Guid?
+  }
+
+  class ReorderStagesCommand <<record>> {
+    +StageOrders : List<StageOrderDto>
+  }
+}
+
+package "Features.Projects.Commands" {
+  class CreateProjectCommand <<record>> {
+    +StageId : Guid
+    +ContactId : Guid?
+    +Name : string
+    +ProjectType : string?
+  }
+
+  class MoveProjectCommand <<record>> {
+    +ProjectId : Guid
+    +TargetStageId : Guid
+    +NewSortOrder : int
+  }
+
+  class LinkDocumentToProjectCommand <<record>> {
+    +ProjectId : Guid
+    +DocumentId : Guid
+    +DocumentType : DocumentType
+  }
+
+  class AutoCreateProjectCommand <<record>> {
+    +ContactId : Guid
+    +ProjectName : string
+  }
+}
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Integrations.Commands" {
+  class ConnectGoogleCalendarCommand <<record>> {
+    +AuthorizationCode : string
+    +RedirectUri : string
+  }
+
+  class DisconnectGoogleCalendarCommand <<record>>
+
+  class SyncGoogleCalendarCommand <<record>> {
+    +PhotographerId : Guid
+  }
+
+  class ConnectZoomCommand <<record>> {
+    +AuthorizationCode : string
+    +RedirectUri : string
+  }
+
+  class DisconnectZoomCommand <<record>>
+
+  class ConfigureGoogleAnalyticsCommand <<record>> {
+    +MeasurementId : string
+  }
+
+  class ConfigureFacebookPixelCommand <<record>> {
+    +PixelId : string
+  }
+}
+
+package "Features.Integrations.Queries" {
+  class GetIntegrationsStatusQuery <<record>>
+
+  class IntegrationStatusDto <<record>> {
+    +Provider : string
+    +IsConnected : bool
+    +AccountLabel : string?
+    +ConnectedAt : DateTime?
+  }
+}
+
+@enduml

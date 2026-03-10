@@ -1,0 +1,34 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteSeoController" as C
+participant "IMediator" as M
+participant "SaveAltTextHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : PUT /api/websites/{wId}/seo/alt-text\n{ entries: [{ elementId, altText }, ...] }
+C -> M : Send(SaveAltTextCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+loop each entry
+  H -> DB : Load PageElement\n(elementId, photographerId)
+  DB --> H : PageElement
+
+  H -> H : Parse ContentJson\nUpdate altText field\nSerialize back to JSON
+
+  H -> H : Update element.ContentJson
+end
+
+H -> DB : SaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success()
+M --> C : result
+C --> P : 200 OK
+
+@enduml

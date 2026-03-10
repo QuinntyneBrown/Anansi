@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.CodeInjections.Commands" {
+  class CreateCustomCodeInjectionCommand <<record>> {
+    +Code : string
+    +Location : CodeInjectionLocation
+    +Label : string?
+  }
+
+  class UpdateCustomCodeInjectionCommand <<record>> {
+    +Id : Guid
+    +Code : string?
+    +Location : CodeInjectionLocation?
+    +Label : string?
+    +IsActive : bool?
+  }
+
+  class DeleteCustomCodeInjectionCommand <<record>> {
+    +Id : Guid
+  }
+}
+
+package "Features.CodeInjections.Queries" {
+  class GetCustomCodeInjectionsQuery <<record>>
+
+  class GetActiveInjectionsForSiteQuery <<record>> {
+    +PhotographerId : Guid
+  }
+}
+
+package "Features.ApiKeys.Commands" {
+  class CreateApiKeyCommand <<record>> {
+    +Name : string
+    +ExpiresAt : DateTime?
+  }
+
+  class RevokeApiKeyCommand <<record>> {
+    +Id : Guid
+  }
+}
+
+package "Features.ApiKeys.Queries" {
+  class GetApiKeysQuery <<record>>
+}
+
+class ApiKeyDto <<record>> {
+  +Id : Guid
+  +Name : string
+  +KeyPrefix : string
+  +ExpiresAt : DateTime?
+  +LastUsedAt : DateTime?
+  +IsActive : bool
+}
+
+class CreateApiKeyResponse <<record>> {
+  +Id : Guid
+  +FullKey : string
+  +KeyPrefix : string
+}
+
+@enduml

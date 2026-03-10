@@ -1,0 +1,53 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Components" {
+  class Button <<component>> {
+    +variant : ComponentVariant
+    +size : "sm" | "md" | "lg"
+    +disabled : bool
+    +loading : bool
+    +icon : string?
+    +onClick : Action
+    --
+    radius: 20px
+    disabled opacity: 0.4
+  }
+
+  class FormInput <<component>> {
+    +type : "text" | "textarea" | "select" | "checkbox" | "radio" | "toggle" | "date"
+    +label : string
+    +value : string
+    +placeholder : string?
+    +error : string?
+    +required : bool
+    +disabled : bool
+    --
+    default border: #3A3A3C
+    focused border: #C9A962
+    error border: red
+    disabled opacity: 0.4
+  }
+
+  class DatePicker <<component>> {
+    +selectedDate : DateTime?
+    +minDate : DateTime?
+    +maxDate : DateTime?
+    +format : string
+  }
+}
+
+note right of Button
+  Variants:
+  - Primary: gold bg #C9A962, dark text
+  - Secondary: card bg #242426, light text
+  - Outline: transparent bg, gold border
+  - Ghost: transparent, text-only
+  - Destructive: red bg, white text
+end note
+
+FormInput <|-- DatePicker
+
+@enduml

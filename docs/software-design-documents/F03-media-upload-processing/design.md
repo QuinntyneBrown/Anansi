@@ -155,6 +155,8 @@ GalleryMedia --> MediaType
 @enduml
 ```
 
+![Domain Layer -- Media Entities](domain-layer-media-entities.png)
+
 ### Application Layer -- Upload Commands & Services
 
 ```plantuml
@@ -234,6 +236,8 @@ ICdnService ..> ProgressiveImageSet : returns
 @enduml
 ```
 
+![Application Layer -- Upload Commands & Services](application-layer-upload-commands-services.png)
+
 ### Validation Pipeline
 
 ```plantuml
@@ -274,6 +278,8 @@ FileValidator --> FormatRules : checks against
 FileValidator --> PlanLimits : checks against
 @enduml
 ```
+
+![Validation Pipeline](validation-pipeline.png)
 
 ---
 
@@ -348,6 +354,8 @@ GMC --> P : 200 OK (GalleryMediaDto)
 @enduml
 ```
 
+![Single File Upload](single-file-upload.png)
+
 ### Bulk Folder Upload
 
 ```plantuml
@@ -387,6 +395,8 @@ M --> GMC : Result.Success
 GMC --> P : 200 OK (BulkUploadResult)
 @enduml
 ```
+
+![Bulk Folder Upload](bulk-folder-upload.png)
 
 ### Video Upload & Processing
 
@@ -444,6 +454,8 @@ VPS -> DB : SaveChangesAsync()
 @enduml
 ```
 
+![Video Upload & Processing](video-upload-processing.png)
+
 ### RAW File Processing
 
 ```plantuml
@@ -485,6 +497,8 @@ RPS -> DB : SaveChangesAsync()
 @enduml
 ```
 
+![RAW File Processing](raw-file-processing.png)
+
 ### Progressive Image Loading (CDN Delivery)
 
 ```plantuml
@@ -521,6 +535,8 @@ end
 B -> B : Crossfade from low-res\nto full-res image
 @enduml
 ```
+
+![Progressive Image Loading (CDN Delivery)](progressive-image-loading-cdn-delivery.png)
 
 ### File Validation Decision Flow
 
@@ -570,3 +586,5 @@ FV --> UH : All validations passed
 UH -> UH : Proceed with upload
 @enduml
 ```
+
+![File Validation Decision Flow](file-validation-decision-flow.png)

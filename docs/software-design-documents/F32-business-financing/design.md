@@ -107,6 +107,8 @@ FinancingRepayment --> PaymentRecord : triggered by
 @enduml
 ```
 
+![Domain Layer - Financing Entities](domain-layer-financing-entities.png)
+
 ### Application Layer - Commands, Queries, and Services
 
 ```plantuml
@@ -181,6 +183,8 @@ AcceptFinancingOfferCommand ..> IFinancingService
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Services](application-layer-commands-queries-and-services.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -220,6 +224,8 @@ FinancingController ..> GetFinancingApplicationQuery
 
 @enduml
 ```
+
+![Infrastructure & API Layer](infrastructure-api-layer.png)
 
 ---
 
@@ -269,6 +275,8 @@ end note
 
 @enduml
 ```
+
+![Apply for Financing](apply-for-financing.png)
 
 ### Accept Financing Offer and Fund Disbursement
 
@@ -321,6 +329,8 @@ API --> Photographer : 200 OK\n{status: "Active", fundedAt}
 @enduml
 ```
 
+![Accept Financing Offer and Fund Disbursement](accept-financing-offer-and-fund-disbursement.png)
+
 ### Automatic Repayment on Payment Received
 
 ```plantuml
@@ -368,6 +378,8 @@ RepayHandler --> M : Result.Success
 @enduml
 ```
 
+![Automatic Repayment on Payment Received](automatic-repayment-on-payment-received.png)
+
 ### View Financing History
 
 ```plantuml
@@ -398,3 +410,5 @@ API --> Photographer : 200 OK\n(financing history)
 
 @enduml
 ```
+
+![View Financing History](view-financing-history.png)

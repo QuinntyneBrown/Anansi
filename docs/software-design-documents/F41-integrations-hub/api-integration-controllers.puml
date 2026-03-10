@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class IntegrationsController <<ApiController>> {
+  -_mediator : IMediator
+  +GetStatus() : IActionResult
+  +ConnectGoogleCalendar(cmd) : IActionResult
+  +DisconnectGoogleCalendar() : IActionResult
+  +ConnectZoom(cmd) : IActionResult
+  +DisconnectZoom() : IActionResult
+  +ConfigureGoogleAnalytics(cmd) : IActionResult
+  +ConfigureFacebookPixel(cmd) : IActionResult
+  +ConnectInstagram(cmd) : IActionResult
+  +DisconnectInstagram() : IActionResult
+  +UpdateInstagramFeedConfig(cmd) : IActionResult
+  +ConnectStripe(cmd) : IActionResult
+  +DisconnectStripe() : IActionResult
+  +ConfigurePayPal(cmd) : IActionResult
+}
+
+class IntegrationsOAuthController <<ApiController>> {
+  -_mediator : IMediator
+  +GoogleCallback(code, state) : IActionResult
+  +ZoomCallback(code, state) : IActionResult
+  +InstagramCallback(code, state) : IActionResult
+  +StripeCallback(code, state) : IActionResult
+}
+
+IntegrationsController --> "IMediator" : sends commands/queries
+IntegrationsOAuthController --> "IMediator" : sends commands
+
+@enduml

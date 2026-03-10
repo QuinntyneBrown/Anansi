@@ -1,0 +1,60 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Events.Commands" {
+  class CreateCommunityEventCommand <<record>> {
+    +Name : string
+    +Description : string?
+    +StartDate : DateTime
+    +EndDate : DateTime?
+    +Venue : string?
+    +Neighborhood : string?
+    +Category : EventCategory
+    +Recurrence : EventRecurrence
+    +WebsiteUrl : string?
+  }
+
+  class ModerateEventCommand <<record>> {
+    +EventId : Guid
+    +Status : EventStatus
+    +Reason : string?
+  }
+
+  class UpdateCommunityEventCommand <<record>> {
+    +EventId : Guid
+    +Name : string
+    +Description : string?
+    +StartDate : DateTime
+    +EndDate : DateTime?
+    +Venue : string?
+    +Neighborhood : string?
+    +Category : EventCategory
+    +Recurrence : EventRecurrence
+    +WebsiteUrl : string?
+  }
+
+  class CancelCommunityEventCommand <<record>> {
+    +EventId : Guid
+  }
+}
+
+package "Features.Events.Queries" {
+  class ListPendingEventsQuery <<record>> {
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetMySubmittedEventsQuery <<record>> {
+    +Page : int
+    +PageSize : int
+  }
+}
+
+class CreateCommunityEventCommandValidator {
+  +CreateCommunityEventCommandValidator()
+}
+
+CreateCommunityEventCommandValidator ..> CreateCommunityEventCommand : validates
+@enduml

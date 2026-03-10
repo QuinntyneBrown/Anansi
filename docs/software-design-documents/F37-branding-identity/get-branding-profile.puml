@@ -1,0 +1,23 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "BrandingController" as API
+participant "GetBrandingProfileHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/branding
+API -> Handler : Send(GetBrandingProfileQuery)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Load Photographer by Id
+DB --> Handler : Photographer
+
+Handler -> Handler : Derive coverLogoUrl from LogoUrl\n(path convention: /logos/cover-)
+Handler -> Handler : Determine PlatformBrandingRemoved\n(ActivePlanId is not null)
+
+Handler --> API : Result<BrandingProfileDto>
+API --> Photographer : 200 OK\n{profileIcon, logo, coverLogo,\nfavicon, brandColor, fontTheme,\nplatformBrandingRemoved}
+
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "ProductsController" as ctrl
+participant "IMediator" as med
+participant "UpdateVariationPriceHandler" as handler
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : PUT /api/products/{productId}/variations/{variationId}\n{costCents=500, markupCents=1000, priceCents=1500}
+ctrl -> med : Send(UpdateVariationPriceCommand)
+med -> handler : Handle(command, ct)
+
+handler -> db : ProductVariations\n.Include(Product)\n.FirstAsync(id == variationId)
+db --> handler : ProductVariation
+
+handler -> handler : Verify ownership\n(Product.PhotographerId)
+handler -> handler : Set CostCents = 500\nMarkupCents = 1000\nPriceCents = 1500\nIsCustomPriced = true
+
+handler -> db : SaveChangesAsync()
+db --> handler : success
+handler --> med : Result<ProductVariationDto>
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK {variationDto}
+@enduml

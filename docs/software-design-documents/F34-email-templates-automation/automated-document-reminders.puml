@@ -1,0 +1,57 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "AutomatedEmailJob" as Job
+participant "IApplicationDbContext" as DB
+participant "ITemplateRenderService" as Render
+participant "IEmailService" as Email
+
+Job -> DB : Get AutomatedEmailConfigs\nwhere EventType in\n("ContractReminder",\n"InvoiceReminder",\n"QuestionnaireReminder")\nand IsEnabled = true
+DB --> Job : List<AutomatedEmailConfig>
+
+== Contract Reminders ==
+
+Job -> DB : Get Contracts where\nStatus = Sent and\nAutoRemindersEnabled = true\nand (LastReminderSentAt is null\nor days since >= ReminderFrequencyDays)
+DB --> Job : List<Contract>
+
+loop each unsigned contract
+  Job -> DB : Get Contact email
+  Job -> Render : RenderAsync(template, variables)
+  Render --> Job : rendered body
+  Job -> Email : SendAsync(contactEmail,\n"Reminder: Contract awaiting signature")
+  Job -> DB : Update LastReminderSentAt
+end
+
+== Invoice Reminders ==
+
+Job -> DB : Get Invoices where\nStatus in (Sent, Overdue) and\nAutoRemindersEnabled = true\nand days since last reminder >= freq
+DB --> Job : List<Invoice>
+
+loop each unpaid invoice
+  Job -> Render : RenderAsync(template, variables)
+  Job -> Email : SendAsync(contactEmail,\n"Reminder: Invoice payment due")
+  Job -> DB : Update LastReminderSentAt
+end
+
+== Questionnaire Reminders ==
+
+Job -> DB : Get Questionnaires where\nStatus = Sent and\nAutoRemindersEnabled = true\nand days since last reminder >= freq
+DB --> Job : List<Questionnaire>
+
+loop each incomplete questionnaire
+  Job -> Render : RenderAsync(template, variables)
+  Job -> Email : SendAsync(contactEmail,\n"Reminder: Questionnaire pending")
+  Job -> DB : Update LastReminderSentAt
+end
+
+Job -> DB : SaveChangesAsync()
+
+note right of Job
+  Reminders auto-stop when:
+  Contract: Status = Signed
+  Invoice: Status = Paid
+  Questionnaire: Status = Completed
+end note
+
+@enduml

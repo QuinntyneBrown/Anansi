@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface IEventRecurrenceService {
+  +GenerateInstances(event, from, to) : List<EventInstance>
+}
+
+class EventRecurrenceService {
+  +GenerateInstances(event, from, to) : List<EventInstance>
+}
+
+class EventSeedService {
+  -_dbContext : IApplicationDbContext
+  +SeedAsync() : Task
+}
+
+class ListEventsQueryHandler {
+  -_dbContext : IApplicationDbContext
+  -_recurrenceService : IEventRecurrenceService
+  +Handle(query, ct) : PaginatedResult<EventSummaryDto>
+}
+
+class SyncEventToCalendarCommandHandler {
+  -_dbContext : IApplicationDbContext
+  -_recurrenceService : IEventRecurrenceService
+  +Handle(cmd, ct) : EventCalendarBlockDto
+}
+
+IEventRecurrenceService <|.. EventRecurrenceService
+ListEventsQueryHandler --> IEventRecurrenceService
+SyncEventToCalendarCommandHandler --> IEventRecurrenceService
+@enduml

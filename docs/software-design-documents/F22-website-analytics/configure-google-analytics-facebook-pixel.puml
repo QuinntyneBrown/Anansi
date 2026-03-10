@@ -1,0 +1,24 @@
+@startuml
+actor Photographer as P
+participant "AnalyticsSettingsController" as SC
+participant "MediatR" as M
+participant "UpdateGoogleAnalyticsHandler" as GH
+participant "ApplicationDbContext" as DB
+
+P -> SC : PUT /api/websites/{id}/analytics/google\n{measurementId: "G-XXXXXXXXXX"}
+SC -> M : Send(UpdateGoogleAnalyticsCommand)
+M -> GH : Handle()
+GH -> DB : Load Website
+DB --> GH : website
+GH -> DB : Website.GoogleAnalyticsMeasurementId = "G-XXXXXXXXXX"
+DB --> GH : saved
+GH --> M : success
+M --> SC : result
+SC --> P : 200 OK
+
+note over P
+  SiteRenderMiddleware now injects
+  gtag.js with the measurement ID
+  on all website pages.
+end note
+@enduml

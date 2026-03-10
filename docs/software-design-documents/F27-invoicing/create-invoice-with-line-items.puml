@@ -1,0 +1,32 @@
+@startuml
+actor Photographer as P
+participant "InvoicesController" as IC
+participant "MediatR" as M
+participant "CreateInvoiceHandler" as CH
+participant "ApplicationDbContext" as DB
+
+P -> IC : POST /api/invoices\n{title, contactId, lineItems[],\ntaxRatePercent, tipsEnabled}
+IC -> M : Send(CreateInvoiceCommand)
+M -> CH : Handle(command)
+
+CH -> CH : Validate (FluentValidation)
+alt validation fails
+  CH --> M : Result.Failure(errors)
+  M --> IC : Result.Failure
+  IC --> P : 400 Bad Request
+end
+
+CH -> DB : Generate next invoice number\n(e.g., INV-2026-0001)
+
+CH -> CH : Calculate line item totals\n(qty * unitPrice per item)
+CH -> CH : Calculate subtotal\n(sum of line items)
+CH -> CH : Calculate tax\n(subtotal * taxRatePercent / 100)
+CH -> CH : Calculate total\n(subtotal + tax - discount)
+
+CH -> DB : Invoices.Add(invoice)
+CH -> DB : InvoiceLineItems.AddRange(items)
+CH -> DB : SaveChangesAsync()
+CH --> M : Result.Success(invoiceId)
+M --> IC : Result.Success
+IC --> P : 201 Created {invoiceId, invoiceNumber}
+@enduml

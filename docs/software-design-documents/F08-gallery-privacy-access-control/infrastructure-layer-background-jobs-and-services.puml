@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CollectionExpiryBackgroundJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_reminderService : IExpiryReminderService
+  -_email : IEmailService
+  +ProcessExpiredCollections() : Task
+  +SendUpcomingExpiryReminders() : Task
+}
+
+class ExpiryReminderService <<Service>> {
+  -_db : IApplicationDbContext
+  +ResolveRecipients(collectionId, recipientTypes) : List<string>
+  +BuildReminderEmail(template, collection) : EmailContent
+}
+
+class GalleryAccessMiddleware <<Middleware>> {
+  +InvokeAsync(HttpContext) : Task
+  -CheckPassword(collection, password) : AccessLevel
+  -CheckEmailRegistration(collection, context) : bool
+  -CheckExpiry(collection) : bool
+}
+
+interface IExpiryReminderService <<Interface>> {
+  +ResolveRecipients(collectionId, types) : List<string>
+  +BuildReminderEmail(template, collection) : EmailContent
+}
+
+interface IEmailService <<Interface>>
+interface IApplicationDbContext <<Interface>>
+
+ExpiryReminderService ..|> IExpiryReminderService
+CollectionExpiryBackgroundJob --> IExpiryReminderService
+CollectionExpiryBackgroundJob --> IEmailService
+CollectionExpiryBackgroundJob --> IApplicationDbContext
+GalleryAccessMiddleware --> IApplicationDbContext
+
+@enduml

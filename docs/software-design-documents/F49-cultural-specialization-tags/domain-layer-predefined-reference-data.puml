@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PredefinedCulturalTags <<static>> {
+  {static} CaribbeanWedding : string
+  {static} NigerianTraditional : string
+  {static} GhanaianEngagement : string
+  {static} EthiopianEritreanCeremony : string
+  {static} SomaliWedding : string
+  {static} CaribanaCarnaval : string
+  {static} AfrofestCoverage : string
+  {static} ChurchGospelEvent : string
+  {static} NaturalHairPhotography : string
+  {static} MelaninPortraiture : string
+  {static} AfricanFashion : string
+  {static} CulturalPortraits : string
+  {static} CommunityEvent : string
+  {static} BlackFamily : string
+  {static} MaternityNewborn : string
+}
+
+class TorontoNeighborhoods <<static>> {
+  {static} LittleJamaica : string
+  {static} JaneFinch : string
+  {static} ScarboroughMalvern : string
+  {static} Rexdale : string
+  {static} Weston : string
+  {static} LawrenceHeights : string
+  {static} Downsview : string
+  {static} StJamesTown : string
+  {static} KensingtonMarket : string
+  {static} LibertyVillage : string
+  {static} TheAnnex : string
+  {static} Yorkville : string
+  {static} DowntownCore : string
+  {static} NorthYorkCentre : string
+  {static} Mississauga : string
+}
+@enduml

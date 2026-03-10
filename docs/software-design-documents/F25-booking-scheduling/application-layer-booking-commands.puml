@@ -1,0 +1,73 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Booking.Commands" {
+  class CreateBookingCommand <<record>> {
+    +SessionTypeId : Guid
+    +Date : DateTime
+    +StartTime : TimeSpan
+    +ClientFirstName : string
+    +ClientLastName : string
+    +ClientEmail : string
+    +ClientPhone : string?
+    +CouponCode : string?
+    +PaymentMethodId : string?
+  }
+
+  class ConfirmBookingCommand <<record>> {
+    +BookingId : Guid
+  }
+
+  class DeclineBookingCommand <<record>> {
+    +BookingId : Guid
+    +Reason : string?
+  }
+
+  class CancelBookingCommand <<record>> {
+    +BookingId : Guid
+    +RefundRequested : bool
+  }
+}
+
+package "Features.SessionTypes.Commands" {
+  class CreateSessionTypeCommand <<record>> {
+    +Name : string
+    +Description : string?
+    +DurationMinutes : int
+    +PriceCents : long
+    +Location : string?
+    +IsMiniSession : bool
+    +AvailabilityWindows : string?
+    +Visibility : SessionVisibility
+    +BufferBeforeMinutes : int
+    +BufferAfterMinutes : int
+    +RequireManualConfirmation : bool
+    +RequirePayment : bool
+    +DepositAmountCents : long?
+    +VideoCallType : string?
+    +IntakeDocumentIds : string?
+  }
+
+  class ReorderSessionTypesCommand <<record>> {
+    +SessionTypeOrders : List<SessionTypeOrderDto>
+  }
+}
+
+interface IPaymentService {
+  +CreatePaymentIntentAsync() : string
+}
+
+interface IGoogleCalendarService {
+  +CreateEventAsync() : string
+  +GetBusyBlocksAsync() : List<TimeBlock>
+}
+
+interface IVideoCallService {
+  +CreateMeetingAsync() : string
+}
+
+CreateBookingCommand ..> IPaymentService : processes payment
+CreateBookingCommand ..> IVideoCallService : generates link
+@enduml

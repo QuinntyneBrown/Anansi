@@ -1,0 +1,54 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Interfaces" {
+  interface ILabIntegrationService {
+    +SubmitOrderAsync(request, ct) : Task<string>
+    +GetOrderStatusAsync(labName, externalOrderId, ct) : Task<LabOrderStatusResult>
+    +GetPricingAsync(labName, ct) : Task<IReadOnlyList<LabPricingResult>>
+  }
+
+  class LabOrderRequest {
+    +LabName : string
+    +ImageFileUrl : string
+    +ProductSpecifications : string
+    +Size : string
+    +Quantity : int
+    +ShippingName : string
+    +ShippingAddress : string
+    +ShippingCity : string
+    +ShippingProvince : string
+    +ShippingPostalCode : string
+    +ShippingCountry : string
+  }
+
+  class LabOrderStatusResult {
+    +Status : string
+    +TrackingNumber : string?
+  }
+
+  class LabPricingResult {
+    +ProductName : string
+    +Category : string
+    +Size : string
+    +LabCostCents : long
+  }
+}
+
+package "Anansi.Infrastructure.Services" {
+  class LabIntegrationService {
+    -_httpClientFactory : IHttpClientFactory
+    +SubmitOrderAsync(request, ct) : Task<string>
+    +GetOrderStatusAsync(labName, externalOrderId, ct) : Task<LabOrderStatusResult>
+    +GetPricingAsync(labName, ct) : Task<IReadOnlyList<LabPricingResult>>
+  }
+}
+
+LabIntegrationService ..|> ILabIntegrationService
+ILabIntegrationService ..> LabOrderRequest
+ILabIntegrationService ..> LabOrderStatusResult
+ILabIntegrationService ..> LabPricingResult
+
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+actor Admin as A
+participant "EventModerationController" as MC
+participant "MediatR" as M
+participant "ModerateEventCommandHandler" as H
+participant "EventRejectedEventHandler" as RH
+participant "INotificationService" as NS
+participant "ApplicationDbContext" as DB
+
+A -> MC : PUT /api/events/{id}/status\n{status: "Rejected",\nreason: "Duplicate of existing event"}
+MC -> M : Send(ModerateEventCommand)
+M -> H : Handle()
+
+H -> DB : Load CulturalEvent by Id
+DB --> H : event (Status = Pending)
+
+H -> DB : event.Status = Rejected\nevent.RejectionReason =\n"Duplicate of existing event"
+H -> DB : SaveChanges
+DB --> H : saved
+
+H -> H : Raise EventRejectedEvent {\n  EventId, SubmittedById,\n  RejectionReason\n}
+
+H --> M : CommunityEventDto
+M --> MC : result
+MC --> A : 200 OK {\n  id, status: "Rejected",\n  rejectionReason: "Duplicate..."\n}
+
+== Async Notification ==
+
+M -> RH : Handle(EventRejectedEvent)
+RH -> NS : CreateNotificationCommand {\n  PhotographerId: submittedById,\n  EventType: "EventRejected",\n  Title: "Event submission rejected",\n  Message: "Your event was rejected:\n    Duplicate of existing event",\n  Link: "/events/mine"\n}
+NS --> RH : notification sent
+@enduml

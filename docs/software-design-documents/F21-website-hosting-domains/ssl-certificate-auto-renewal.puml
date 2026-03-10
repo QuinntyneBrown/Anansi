@@ -1,0 +1,17 @@
+@startuml
+participant "SslRenewalBackgroundService" as BG
+participant "ApplicationDbContext" as DB
+participant "ISslService" as SSL
+
+BG -> DB : Query CustomDomain\nWHERE SslExpiresAt < NOW + 30 days\nAND SslStatus = Active
+DB --> BG : List<CustomDomain>
+
+loop for each expiring domain
+  BG -> SSL : RenewAsync(domain.SslCertificateId)
+  SSL --> BG : SslCertResult {newCertId, newExpiresAt}
+  BG -> DB : Update SslCertificateId, SslExpiresAt
+  DB --> BG : saved
+end
+
+BG -> BG : Sleep until next check interval
+@enduml

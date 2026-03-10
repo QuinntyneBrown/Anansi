@@ -1,0 +1,39 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PhotographerProfile {
+  +Id : Guid
+  +UserId : Guid
+  +DisplayName : string
+  +BusinessName : string?
+  +ProfileImageUrl : string?
+}
+
+class CulturalTag {
+  +Id : Guid
+  +Name : string
+  +IsSystem : bool
+  +UsageCount : int
+}
+
+class PhotographerCulturalTag {
+  +Id : Guid
+  +PhotographerId : Guid
+  +CulturalTagId : Guid
+}
+
+class PhotographerServiceArea {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Neighborhood : string
+  +Latitude : double
+  +Longitude : double
+  +RadiusKm : int
+}
+
+PhotographerProfile "1" --> "*" PhotographerCulturalTag : has tags
+PhotographerCulturalTag "*" --> "1" CulturalTag : references
+PhotographerProfile "1" --> "0..1" PhotographerServiceArea : service area
+@enduml

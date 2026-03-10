@@ -1,0 +1,76 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Collection {
+  +PhotographerId : Guid
+  +Title : string
+  +Description : string?
+  +Status : CollectionStatus
+  +Slug : string
+  --Cover--
+  +CoverStyle : CoverStyle
+  +CoverPhotoId : Guid?
+  +CoverFocalPointX : double?
+  +CoverFocalPointY : double?
+  +CoverVideoUrl : string?
+  --Design--
+  +Theme : ThemeMode
+  +FontFamily : string
+  +ColorPalette : string
+  +CustomColorHex : string?
+  +Layout : GridLayout
+  --Privacy--
+  +Password : string?
+  +ClientExclusivePassword : string?
+  +RequireEmailRegistration : bool
+  --Downloads--
+  +DownloadsEnabled : bool
+  +DownloadPin : string?
+  +DownloadPinEnabled : bool
+  +DownloadLimit : int?
+  +AllowedResolutions : string
+  --Organization--
+  +IsStarred : bool
+  +PresetId : Guid?
+  +Language : GalleryLanguage
+}
+
+class CollectionSet {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +Title : string
+  +Description : string?
+  +SortOrder : int
+  +IsClientExclusive : bool
+}
+
+class CollectionPreset {
+  +PhotographerId : Guid
+  +Name : string
+  +CoverStyle : CoverStyle
+  +Theme : ThemeMode
+  +FontFamily : string
+  +ColorPalette : string
+  +CustomColorHex : string?
+  +Layout : GridLayout
+  +DownloadsEnabled : bool
+  +DownloadPinEnabled : bool
+  +AllowedResolutions : string
+  +RequireEmailRegistration : bool
+  +Language : GalleryLanguage
+}
+
+class GalleryMedia {
+  +CollectionId : Guid
+  +SetId : Guid?
+  +SortOrder : int
+  +IsStarred : bool
+}
+
+Collection "1" *-- "many" CollectionSet
+Collection "1" *-- "many" GalleryMedia
+CollectionSet "1" *-- "many" GalleryMedia
+Collection ..> CollectionPreset : references via PresetId
+@enduml

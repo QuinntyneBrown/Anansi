@@ -1,0 +1,46 @@
+@startuml
+actor Client as C
+participant "InvoicePublicController" as IPC
+participant "MediatR" as M
+participant "RecordPaymentHandler" as RPH
+participant "ApplicationDbContext" as DB
+participant "IPaymentService" as PS
+participant "IEmailService" as ES
+
+C -> IPC : POST /api/invoices/pay/{token}\n{scheduleId, paymentMethodId,\ntipPercent}
+IPC -> M : Send(RecordPaymentCommand)
+M -> RPH : Handle(command)
+
+RPH -> DB : Load Invoice with\nPaymentSchedules
+
+alt installment already paid
+  RPH --> M : Result.Failure("Already paid")
+  M --> IPC : Result.Failure
+  IPC --> C : 400 Bad Request
+end
+
+RPH -> PS : CreatePaymentIntentAsync(\ninstallment.AmountCents + tipCents,\ncurrency, stripeAccountId)
+PS --> RPH : paymentIntentId
+
+RPH -> DB : schedule.IsPaid = true\nschedule.PaidAt = UtcNow\nschedule.PaymentIntentId = paymentIntentId
+
+RPH -> DB : invoice.PaidCents +=\ninstallment.AmountCents
+RPH -> DB : invoice.TipAmountCents += tipCents
+
+RPH -> RPH : Check all installments paid?
+alt all paid
+  RPH -> DB : invoice.Status = Paid
+else some remaining
+  RPH -> DB : invoice.Status = PartiallyPaid
+end
+
+RPH -> DB : SaveChangesAsync()
+
+RPH -> ES : SendTemplatedAsync(\nclient.Email,\n"Payment Confirmation",\namountPaid, remaining)
+
+RPH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Payment Received",\namountPaid, invoiceNumber)
+
+RPH --> M : Result.Success
+M --> IPC : Result.Success
+IPC --> C : 200 OK {confirmationId}
+@enduml

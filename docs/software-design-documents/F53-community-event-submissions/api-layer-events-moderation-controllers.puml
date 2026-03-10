@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EventsController <<ApiController>> {
+  -_mediator : IMediator
+  +CreateEvent(cmd) : IActionResult
+  +UpdateEvent(id, cmd) : IActionResult
+  +CancelEvent(id) : IActionResult
+  +GetMySubmissions(page, pageSize) : IActionResult
+}
+
+class EventModerationController <<ApiController>> {
+  -_mediator : IMediator
+  +ModerateEvent(id, cmd) : IActionResult
+  +ListPendingEvents(page, pageSize) : IActionResult
+}
+
+note right of EventsController
+  All endpoints require [Authorize].
+  Update and Cancel validate that
+  SubmittedById matches the
+  current authenticated user.
+end note
+
+note right of EventModerationController
+  All endpoints require
+  [Authorize(Roles = "Admin")].
+end note
+
+EventsController --> "IMediator" : sends commands/queries
+EventModerationController --> "IMediator" : sends commands/queries
+@enduml

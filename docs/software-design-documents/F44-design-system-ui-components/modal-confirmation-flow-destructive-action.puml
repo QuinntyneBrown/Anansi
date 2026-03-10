@@ -1,0 +1,25 @@
+@startuml
+actor User as U
+participant "Trigger Component" as TC
+participant "Modal Manager" as MM
+participant "Modal (Destructive)" as MD
+
+U -> TC : Click "Delete Gallery"
+TC -> MM : openModal({\nvariant: "destructive",\ntitle: "Delete Gallery",\ncontent: "This action cannot be undone.\nAll photos will be permanently deleted.",\nconfirmLabel: "Delete",\ncancelLabel: "Cancel"\n})
+
+MM -> MD : Render modal with\n70% overlay backdrop
+
+MD --> U : Modal appears:\n- Title: "Delete Gallery"\n- Warning description\n- Red "Delete" button\n- Gray "Cancel" button
+
+alt user clicks Cancel
+  U -> MD : Click "Cancel"
+  MD -> MM : Close modal
+  MM --> U : Modal dismissed,\nno action taken
+else user clicks Delete
+  U -> MD : Click "Delete"
+  MD -> TC : onConfirm callback
+  TC -> TC : Execute delete action
+  TC -> MM : Close modal
+  MM --> U : Modal dismissed,\naction executed
+end
+@enduml

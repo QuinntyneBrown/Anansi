@@ -1,0 +1,45 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class WatermarksController <<Controller>> {
+  +Create() : ActionResult
+  +Update() : ActionResult
+  +List() : ActionResult
+  +Delete() : ActionResult
+}
+
+class CollectionWatermarkController <<Controller>> {
+  +ApplyWatermark() : ActionResult
+  +RemoveWatermark() : ActionResult
+}
+
+class WatermarkCompositorService <<Service>> {
+  -_storage : IStorageService
+  +CompositeAsync(image, watermark, w, h) : Stream
+}
+
+class WatermarkCacheInvalidationJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_storage : IStorageService
+  -_cdn : ICdnService
+  +InvalidateForWatermarkAsync(watermarkId) : Task
+  +InvalidateForCollectionAsync(collectionId) : Task
+}
+
+interface IWatermarkCompositorService <<Interface>>
+interface IStorageService <<Interface>>
+interface ICdnService <<Interface>>
+
+WatermarkCompositorService ..|> IWatermarkCompositorService
+WatermarkCompositorService --> IStorageService
+WatermarkCacheInvalidationJob --> IStorageService
+WatermarkCacheInvalidationJob --> ICdnService
+
+WatermarksController ..> CreateWatermarkCommand
+WatermarksController ..> UpdateWatermarkCommand
+CollectionWatermarkController ..> ApplyWatermarkToCollectionCommand
+CollectionWatermarkController ..> RemoveWatermarkFromCollectionCommand
+
+@enduml

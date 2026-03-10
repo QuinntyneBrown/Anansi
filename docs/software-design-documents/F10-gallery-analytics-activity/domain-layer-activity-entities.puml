@@ -1,0 +1,51 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class GalleryActivity {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +ActivityType : ActivityType
+  +ActorName : string?
+  +ActorEmail : string?
+  +MediaId : Guid?
+  +FavoriteListId : Guid?
+  +Details : string?
+  +Resolution : DownloadResolution?
+  +IsFullGallery : bool?
+}
+
+class GalleryEmailRegistration {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +Name : string
+  +Email : string
+}
+
+class Collection {
+  +GoogleAnalyticsPropertyId : string?
+}
+
+enum ActivityType {
+  Download
+  Favorite
+  PrivatePhoto
+  EmailRegistration
+  Comment
+  View
+}
+
+BaseEntity <|-- GalleryActivity
+BaseEntity <|-- GalleryEmailRegistration
+Collection "1" --> "*" GalleryActivity : Activities
+Collection "1" --> "*" GalleryEmailRegistration : EmailRegistrations
+GalleryActivity --> ActivityType
+
+@enduml

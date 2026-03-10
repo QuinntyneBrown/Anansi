@@ -115,6 +115,8 @@ DesignToken ..> DesignTokenCategory
 @enduml
 ```
 
+![Domain -- Design Token Value Objects & Enums](domain-design-token-value-objects-enums.png)
+
 ### Application -- Token Queries & DTOs
 
 ```plantuml
@@ -167,6 +169,8 @@ GetComponentManifestQuery ..> ComponentManifestDto
 
 @enduml
 ```
+
+![Application -- Token Queries & DTOs](application-token-queries-dtos.png)
 
 ### Token Catalog -- Color Tokens
 
@@ -236,6 +240,8 @@ object "Radius Tokens" as RT {
 @enduml
 ```
 
+![Token Catalog -- Color Tokens](token-catalog-color-tokens.png)
+
 ### Component Catalog -- Buttons & Form Inputs
 
 ```plantuml
@@ -293,6 +299,8 @@ FormInput <|-- DatePicker
 
 @enduml
 ```
+
+![Component Catalog -- Buttons & Form Inputs](component-catalog-buttons-form-inputs.png)
 
 ### Component Catalog -- Cards, Navigation & Data Display
 
@@ -363,6 +371,8 @@ package "Data Components" {
 @enduml
 ```
 
+![Component Catalog -- Cards, Navigation & Data Display](component-catalog-cards-navigation-data-display.png)
+
 ### Component Catalog -- Overlays & Feedback
 
 ```plantuml
@@ -421,6 +431,8 @@ package "State Components" {
 @enduml
 ```
 
+![Component Catalog -- Overlays & Feedback](component-catalog-overlays-feedback.png)
+
 ### API -- Design System Controllers
 
 ```plantuml
@@ -453,6 +465,8 @@ ComponentManifestController --> "IMediator"
 @enduml
 ```
 
+![API -- Design System Controllers](api-design-system-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -481,6 +495,8 @@ DTC --> App : 200 OK {\n  colors: {page_bg: "#1A1A1C", ...},\n  typography: {dis
 App -> App : Apply tokens as CSS\ncustom properties\n(--color-page-bg, etc.)
 @enduml
 ```
+
+![Load Design Tokens (Client App Initialization)](load-design-tokens-client-app-initialization.png)
 
 ### Serve Design Tokens as CSS Custom Properties
 
@@ -512,6 +528,8 @@ end note
 @enduml
 ```
 
+![Serve Design Tokens as CSS Custom Properties](serve-design-tokens-as-css-custom-properties.png)
+
 ### Get Component Manifest (Website Builder Toolbox)
 
 ```plantuml
@@ -538,6 +556,8 @@ WB -> WB : Render element toolbox\nwith component cards
 WB --> P : Drag-and-drop components\navailable in sidebar
 @enduml
 ```
+
+![Get Component Manifest (Website Builder Toolbox)](get-component-manifest-website-builder-toolbox.png)
 
 ### Render Page with Responsive Token Application
 
@@ -568,6 +588,8 @@ B -> B : Render page with\napplied token values
 B --> C : Fully responsive page\nwith consistent design tokens
 @enduml
 ```
+
+![Render Page with Responsive Token Application](render-page-with-responsive-token-application.png)
 
 ### Toast Notification Lifecycle
 
@@ -603,6 +625,8 @@ end
 @enduml
 ```
 
+![Toast Notification Lifecycle](toast-notification-lifecycle.png)
+
 ### Modal Confirmation Flow (Destructive Action)
 
 ```plantuml
@@ -632,3 +656,5 @@ else user clicks Delete
 end
 @enduml
 ```
+
+![Modal Confirmation Flow (Destructive Action)](modal-confirmation-flow-destructive-action.png)

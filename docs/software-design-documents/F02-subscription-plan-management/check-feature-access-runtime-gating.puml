@@ -1,0 +1,28 @@
+@startuml
+actor "Any Feature Handler" as FH
+participant "MediatR" as M
+participant "CheckFeatureAccessHandler" as CFH
+participant "ApplicationDbContext" as DB
+
+FH -> M : Send(CheckFeatureAccessQuery("raw_upload"))
+M -> CFH : Handle(query)
+
+CFH -> DB : Get Photographer by CurrentUser
+CFH -> DB : Get active Subscription\nwith Plan and FeatureGates
+
+alt no active subscription
+  CFH -> CFH : Assume Free tier\nfor all products
+end
+
+CFH -> DB : Find PlanFeatureGate\nwhere FeatureKey == "raw_upload"
+
+alt gate not found
+  CFH --> M : FeatureAccessResult {\n  IsAllowed: false,\n  PlanLimit: "Not available"\n}
+else gate.FeatureValue == "true"
+  CFH --> M : FeatureAccessResult {\n  IsAllowed: true,\n  PlanName: "Pro"\n}
+else gate.FeatureValue == "false"
+  CFH --> M : FeatureAccessResult {\n  IsAllowed: false,\n  PlanLimit: "Requires Pro or higher"\n}
+end
+
+M --> FH : FeatureAccessResult
+@enduml

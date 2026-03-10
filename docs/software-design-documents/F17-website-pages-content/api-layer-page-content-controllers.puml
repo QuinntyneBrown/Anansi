@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Api.Controllers" {
+  class WebsitePagesController <<ApiController>> {
+    -_mediator : IMediator
+    +List(websiteId) : IActionResult
+    +Create(websiteId, command) : IActionResult
+    +Update(websiteId, pageId, command) : IActionResult
+    +Delete(websiteId, pageId) : IActionResult
+    +Reorder(websiteId, command) : IActionResult
+  }
+
+  class PageElementsController <<ApiController>> {
+    -_mediator : IMediator
+    +List(pageId) : IActionResult
+    +Create(command) : IActionResult
+    +Update(id, command) : IActionResult
+    +Delete(id) : IActionResult
+  }
+
+  class WebsiteTemplatesController <<ApiController>> {
+    -_mediator : IMediator
+    +ListLandingPages() : IActionResult
+  }
+}
+
+WebsitePagesController --> "IMediator" : sends commands/queries
+PageElementsController --> "IMediator" : sends commands/queries
+WebsiteTemplatesController --> "IMediator" : sends queries
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "ProductsController" as ctrl
+participant "IMediator" as med
+participant "CreateProductHandler" as handler
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : POST /api/products\n{name, productType=Package,\npackageItems: [{productId, variationId, qty}]}
+ctrl -> med : Send(CreateProductCommand)
+med -> handler : Handle(command, ct)
+handler -> handler : Create Product entity\n(type=Package, fulfillment=Digital or Lab)
+handler -> db : Validate included product IDs exist
+db --> handler : products found
+
+loop for each PackageItem
+  handler -> handler : Create PackageItem entity\n(includedProductId, variationId, qty)
+end
+
+handler -> db : Products.Add(product)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+handler --> med : Result<ProductDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 201 Created
+@enduml

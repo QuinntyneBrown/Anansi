@@ -1,0 +1,40 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Contact {
+  +Id : Guid
+  +PhotographerId : Guid
+  +FirstName : string
+  +LastName : string
+  +Email : string
+  +Phone : string?
+  +Address : string?
+  +City : string?
+  +Province : string?
+  +PostalCode : string?
+  +Country : string?
+  +Notes : string?
+  +ContactType : ContactType
+}
+
+enum ContactType {
+  Lead
+  Client
+  Other
+}
+
+class Project {
+  +Id : Guid
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +StageId : Guid
+  +Name : string
+  +ProjectType : string?
+  +SortOrder : int
+}
+
+Contact "1" --> "*" Project : Projects
+Contact ..> ContactType
+@enduml

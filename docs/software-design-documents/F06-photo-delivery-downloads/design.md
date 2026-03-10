@@ -132,6 +132,8 @@ GalleryActivity --> DownloadResolution
 @enduml
 ```
 
+![Domain Layer - Download Entities](domain-layer-download-entities.png)
+
 ### Application Layer - Commands, Queries, and Services
 
 ```plantuml
@@ -204,6 +206,8 @@ RequestDownloadHandler --> IZipArchiveService
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Services](application-layer-commands-queries-and-services.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -256,6 +260,8 @@ DownloadsController ..> ListDownloadActivityQuery
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ## Sequence Diagrams
 
 ### Request Individual Photo Download
@@ -301,6 +307,8 @@ API --> Client : 302 Redirect to presigned URL
 
 @enduml
 ```
+
+![Request Individual Photo Download](request-individual-photo-download.png)
 
 ### Async Full Gallery Download with Email Notification
 
@@ -366,6 +374,8 @@ API --> Client : 302 Redirect
 @enduml
 ```
 
+![Async Full Gallery Download with Email Notification](async-full-gallery-download-with-email-notification.png)
+
 ### Reset Download Limit
 
 ```plantuml
@@ -395,6 +405,8 @@ API --> Photographer : 200 OK
 @enduml
 ```
 
+![Reset Download Limit](reset-download-limit.png)
+
 ### Export Download Activity as CSV
 
 ```plantuml
@@ -421,3 +433,5 @@ API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: atta
 
 @enduml
 ```
+
+![Export Download Activity as CSV](export-download-activity-as-csv.png)

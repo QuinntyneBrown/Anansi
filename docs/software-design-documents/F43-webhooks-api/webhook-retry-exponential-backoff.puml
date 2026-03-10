@@ -1,0 +1,32 @@
+@startuml
+participant "Hangfire" as HF
+participant "WebhookRetryJob" as RJ
+participant "IApplicationDbContext" as DB
+participant "HttpClient" as HC
+participant "External URL" as EXT
+
+HF -> RJ : RetryFailedDelivery(deliveryId)
+RJ -> DB : Get WebhookDelivery\nwith WebhookSubscription
+DB --> RJ : delivery + subscription
+
+RJ -> RJ : Check attempt count\n(count existing deliveries\nfor same subscription + payload hash)
+
+alt attempt > 3
+  RJ -> RJ : Mark as permanently failed
+  RJ -> DB : SaveChangesAsync()
+  RJ --> HF : done (no more retries)
+else attempt <= 3
+  RJ -> HC : POST subscription.Url\nBody: delivery.Payload
+  HC -> EXT : HTTP POST
+  EXT --> HC : response
+
+  RJ -> DB : WebhookDeliveries.Add(\nnew delivery record)
+
+  alt still failed
+    RJ -> HF : Schedule next retry\n(30s, 2min, 10min)
+  end
+
+  RJ -> DB : SaveChangesAsync()
+  RJ --> HF : done
+end
+@enduml

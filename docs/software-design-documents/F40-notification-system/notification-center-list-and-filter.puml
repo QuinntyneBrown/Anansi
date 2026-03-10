@@ -1,0 +1,26 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "NotificationsController" as API
+participant "GetNotificationsHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/notifications?\ncategory=ClientGallery&isRead=false&page=1
+API -> Handler : Send(GetNotificationsQuery)
+
+Handler -> Handler : Verify PhotographerId
+
+Handler -> DB : Query Notifications\nWHERE PhotographerId = {id}\nAND Category = ClientGallery\nAND IsRead = false\nORDER BY CreatedAt DESC
+DB --> Handler : Count: 12
+
+Handler -> DB : Take page 1 (20 items)
+DB --> Handler : List<Notification> (12 items)
+
+Handler -> Handler : Map to NotificationDto
+
+Handler --> API : PagedList<NotificationDto>\n{items: [...], total: 12, page: 1}
+API --> Photographer : 200 OK
+
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Photographer {
+  +Id : Guid
+  +Email : string
+  +BusinessName : string
+  +StripeAccountId : string?
+  +PayPalEmail : string?
+  +GoogleCalendarId : string?
+  +ZoomAccountId : string?
+  +GoogleAnalyticsId : string?
+  +FacebookPixelId : string?
+  +InstagramAccessToken : string?
+}
+
+class InstagramFeedConfig {
+  +Id : Guid
+  +PhotographerId : Guid
+  +NumberOfPosts : int
+  +ImageSize : string
+  +ClickBehavior : string
+  +IsActive : bool
+}
+
+enum IntegrationProvider {
+  GoogleCalendar
+  Zoom
+  GoogleMeet
+  GoogleAnalytics
+  FacebookPixel
+  Instagram
+  Stripe
+  PayPal
+}
+
+Photographer "1" --> "0..1" InstagramFeedConfig : owns
+@enduml

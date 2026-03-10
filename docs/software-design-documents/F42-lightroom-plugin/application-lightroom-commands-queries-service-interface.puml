@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Lightroom.Commands" {
+  class PublishLightroomCollectionCommand <<record>> {
+    +PhotographerId : Guid
+    +LightroomCollectionId : string
+    +Images : List<LightroomImage>
+  }
+
+  class SyncLightroomStructureCommand <<record>> {
+    +PhotographerId : Guid
+    +Collections : List<LightroomCollectionInfo>
+  }
+}
+
+package "Features.Lightroom.Queries" {
+  class GetLightroomFavoriteListsQuery <<record>> {
+    +PhotographerId : Guid
+    +CollectionId : Guid
+  }
+
+  class GetLightroomFavoriteItemsQuery <<record>> {
+    +FavoriteListId : Guid
+  }
+
+  class GetLightroomCollectionsQuery <<record>> {
+    +PhotographerId : Guid
+  }
+}
+
+interface ILightroomSyncService {
+  +PublishCollectionAsync(photographerId, collectionId, images) : Task<LightroomPublishResult>
+  +SyncStructureAsync(photographerId, collections) : Task<LightroomSyncResult>
+  +GetFavoriteListsAsync(photographerId, collectionId) : Task<IReadOnlyList<LightroomFavoriteList>>
+}
+
+class LightroomImage <<record>> {
+  +LightroomId : string
+  +FileName : string
+  +ImageStream : Stream?
+  +IsUpdate : bool
+}
+
+class LightroomPublishResult <<record>> {
+  +ImagesUploaded : int
+  +ImagesUpdated : int
+  +FailedImages : IReadOnlyList<string>
+}
+
+class LightroomSyncResult <<record>> {
+  +CollectionsSynced : int
+  +SetsSynced : int
+}
+
+class LightroomFavoriteList <<record>> {
+  +FavoriteListId : Guid
+  +Name : string
+  +PhotoCount : int
+}
+
+PublishLightroomCollectionCommand ..> ILightroomSyncService : delegates to
+SyncLightroomStructureCommand ..> ILightroomSyncService : delegates to
+GetLightroomFavoriteListsQuery ..> ILightroomSyncService : delegates to
+
+@enduml

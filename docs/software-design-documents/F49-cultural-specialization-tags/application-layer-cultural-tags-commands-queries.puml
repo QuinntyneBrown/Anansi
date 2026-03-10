@@ -1,0 +1,36 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Profile.CulturalTags" {
+  class UpdateCulturalTagsCommand <<record>> {
+    +Tags : List<string>
+  }
+
+  class GetCulturalTagsQuery <<record>>
+
+  class GetDirectoryCulturalTagsQuery <<record>>
+}
+
+class CulturalTagDto <<record>> {
+  +TagName : string
+  +IsPredefined : bool
+}
+
+class DirectoryTagDto <<record>> {
+  +TagName : string
+  +IsPredefined : bool
+  +UsageCount : int
+}
+
+class UpdateCulturalTagsValidator <<Validator>> {
+  +Tags : max 20 items
+  +Each tag : max 50 chars, not empty
+  +No duplicates
+}
+
+UpdateCulturalTagsCommand ..> UpdateCulturalTagsValidator : validated by
+GetCulturalTagsQuery ..> CulturalTagDto : returns list
+GetDirectoryCulturalTagsQuery ..> DirectoryTagDto : returns list
+@enduml

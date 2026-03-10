@@ -1,0 +1,38 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class QuestionnairesController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(CreateQuestionnaireCommand) : IActionResult
+  +Update(Guid, UpdateQuestionnaireCommand) : IActionResult
+  +Delete(Guid) : IActionResult
+  +Send(Guid) : IActionResult
+  +SharePublicly(Guid) : IActionResult
+  +Cancel(Guid) : IActionResult
+  +List(ListQuestionnairesQuery) : IActionResult
+  +Get(Guid) : IActionResult
+  +ListResponses(Guid) : IActionResult
+  +GetResponse(Guid, Guid) : IActionResult
+}
+
+class QuestionnaireTemplatesController <<ApiController>> {
+  -_mediator : IMediator
+  +SaveTemplate(SaveQuestionnaireTemplateCommand) : IActionResult
+  +ListTemplates() : IActionResult
+  +ApplyTemplate(Guid, ApplyQuestionnaireTemplateCommand) : IActionResult
+}
+
+class QuestionnairePublicController <<ApiController>> {
+  -_mediator : IMediator
+  +ViewByToken(string token) : IActionResult
+  +ViewBySlug(string slug) : IActionResult
+  +SubmitByToken(string token, SubmitRequest) : IActionResult
+  +SubmitBySlug(string slug, SubmitRequest) : IActionResult
+}
+
+QuestionnairesController --> "IMediator" : sends commands/queries
+QuestionnaireTemplatesController --> "IMediator" : sends commands/queries
+QuestionnairePublicController --> "IMediator" : sends commands/queries
+@enduml

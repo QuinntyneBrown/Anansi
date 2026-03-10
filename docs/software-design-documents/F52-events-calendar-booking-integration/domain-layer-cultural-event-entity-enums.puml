@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CulturalEvent {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +Venue : string?
+  +Neighborhood : string?
+  +Category : EventCategory
+  +TypicalStartMonth : int
+  +TypicalEndMonth : int
+  +StartDate : DateTime?
+  +EndDate : DateTime?
+  +WebsiteUrl : string?
+  +Recurrence : EventRecurrence
+  +Status : EventStatus
+  +IsSeeded : bool
+  +SubmittedById : Guid?
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+enum EventCategory {
+  Festival
+  Cultural
+  Community
+}
+
+enum EventRecurrence {
+  None
+  Annual
+  Monthly
+  Weekly
+}
+
+enum EventStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+CulturalEvent ..> EventCategory
+CulturalEvent ..> EventRecurrence
+CulturalEvent ..> EventStatus
+@enduml

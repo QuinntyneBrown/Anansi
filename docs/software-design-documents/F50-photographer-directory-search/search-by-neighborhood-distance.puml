@@ -1,0 +1,41 @@
+@startuml
+actor Client as C
+participant "DirectoryController" as DC
+participant "MediatR" as M
+participant "SearchDirectoryQueryHandler" as H
+participant "INeighborhoodLookupService" as NL
+participant "IHaversineCalculator" as HC
+participant "ApplicationDbContext" as DB
+
+C -> DC : GET /api/directory/search\n?neighborhood=Scarborough\n&page=1&pageSize=20
+DC -> M : Send(SearchDirectoryQuery)
+M -> H : Handle()
+
+H -> H : Detect location-only search mode
+
+H -> NL : GetCoordinatesAsync("Scarborough")
+NL --> H : (43.7731, -79.2577)
+
+H -> DB : Load all PhotographerServiceArea\nrecords (with PhotographerProfile join)
+DB --> H : serviceAreas[]
+
+loop for each service area
+  H -> HC : CalculateDistanceKm(\nsearchLat, searchLng,\nphotographerLat, photographerLng)
+  HC --> H : distanceKm
+
+  H -> H : Include if distanceKm <= radiusKm
+end
+
+H -> H : Sort by distanceKm ascending
+
+H -> H : Apply pagination (skip 0, take 20)
+
+H -> DB : Load CulturalTags\nfor included photographer IDs
+DB --> H : tags per photographer
+
+H -> H : Build DirectorySearchResultDto[]\nwith DistanceKm and\nRelevanceScore = 1/distanceKm
+
+H --> M : PaginatedResult<DirectorySearchResultDto>
+M --> DC : result
+DC --> C : 200 OK {\n  items: [{name, businessName,\n    neighborhood: "Scarborough",\n    distanceKm: 2.3,\n    relevanceScore: 0.43}],\n  page: 1, totalCount: 8\n}
+@enduml

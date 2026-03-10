@@ -1,0 +1,75 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Analytics.Commands" {
+  class RecordPageHitCommand <<record>> {
+    +WebsiteId : Guid
+    +PagePath : string
+    +IpAddress : string
+    +UserAgent : string?
+    +SessionId : string
+  }
+
+  class UpdateGoogleAnalyticsCommand <<record>> {
+    +WebsiteId : Guid
+    +MeasurementId : string?
+  }
+
+  class UpdateFacebookPixelCommand <<record>> {
+    +WebsiteId : Guid
+    +PixelId : string?
+  }
+
+  class ToggleBuiltInAnalyticsCommand <<record>> {
+    +WebsiteId : Guid
+    +Enabled : bool
+  }
+}
+
+package "Features.Analytics.Queries" {
+  class GetAnalyticsDashboardQuery <<record>> {
+    +WebsiteId : Guid
+    +StartDate : DateTime
+    +EndDate : DateTime
+  }
+
+  class AnalyticsDashboardDto <<record>> {
+    +TotalVisitors : int
+    +UniqueVisitors : int
+    +PageViews : int
+    +AverageSessionDuration : double
+    +DailySnapshots : List<DailySnapshot>
+  }
+
+  class GetTopPagesQuery <<record>> {
+    +WebsiteId : Guid
+    +StartDate : DateTime
+    +EndDate : DateTime
+    +Top : int
+  }
+
+  class GetGeographicDistributionQuery <<record>> {
+    +WebsiteId : Guid
+    +StartDate : DateTime
+    +EndDate : DateTime
+  }
+}
+
+interface IGeoLocationService {
+  +ResolveCountryAsync(ip) : string?
+}
+
+interface IAnalyticsAggregationService {
+  +AggregateAsync(date) : Task
+  +PruneRawEventsAsync(days) : Task
+}
+
+interface IPlanGateService {
+  +HasFeatureAsync(feature) : bool
+}
+
+RecordPageHitCommand ..> IGeoLocationService : resolves country
+ToggleBuiltInAnalyticsCommand ..> IPlanGateService : validates plan
+@enduml

@@ -128,6 +128,8 @@ Collection "1" --> "*" GalleryActivity : Activities
 @enduml
 ```
 
+![Domain Layer - Favorite Entities](domain-layer-favorite-entities.png)
+
 ### Application Layer - Commands and Queries
 
 ```plantuml
@@ -208,6 +210,8 @@ class FavoriteItemDto <<DTO>> {
 @enduml
 ```
 
+![Application Layer - Commands and Queries](application-layer-commands-and-queries.png)
+
 ### API Layer
 
 ```plantuml
@@ -239,6 +243,8 @@ end note
 
 @enduml
 ```
+
+![API Layer](api-layer.png)
 
 ## Sequence Diagrams
 
@@ -281,6 +287,8 @@ API --> Client : 201 Created
 @enduml
 ```
 
+![Add Photo to Favorite List](add-photo-to-favorite-list.png)
+
 ### Add Comment to Favorited Photo
 
 ```plantuml
@@ -315,6 +323,8 @@ API --> Client : 200 OK
 @enduml
 ```
 
+![Add Comment to Favorited Photo](add-comment-to-favorited-photo.png)
+
 ### Complete Favorite List with Photographer Notification
 
 ```plantuml
@@ -348,6 +358,8 @@ API --> Client : 200 OK
 @enduml
 ```
 
+![Complete Favorite List with Photographer Notification](complete-favorite-list-with-photographer-notification.png)
+
 ### Export Favorite List as Lightroom Copy List
 
 ```plantuml
@@ -378,6 +390,8 @@ API --> Photographer : 200 OK\nContent-Disposition: attachment\nfilename="AlbumP
 
 @enduml
 ```
+
+![Export Favorite List as Lightroom Copy List](export-favorite-list-as-lightroom-copy-list.png)
 
 ### Download Favorite List Photos
 
@@ -415,6 +429,8 @@ API --> Client : 202 Accepted (if async)\nor redirect (if immediate)
 @enduml
 ```
 
+![Download Favorite List Photos](download-favorite-list-photos.png)
+
 ### Favorite Activity Dashboard
 
 ```plantuml
@@ -442,3 +458,5 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Favorite Activity Dashboard](favorite-activity-dashboard.png)

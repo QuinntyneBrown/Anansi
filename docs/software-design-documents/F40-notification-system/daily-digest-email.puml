@@ -1,0 +1,31 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "NotificationDigestBackgroundJob" as Job
+participant "IApplicationDbContext" as DB
+participant "IEmailService" as Email
+
+Job -> Job : Hourly schedule trigger
+
+Job -> DB : Query NotificationPreferences\nWHERE EmailDigestOption = DailySummary
+DB --> Job : List<NotificationPreference>\n(grouped by PhotographerId)
+
+Job -> DB : Query Notifications created since\nlast digest run, matching event types\nwith DailySummary preference
+DB --> Job : List<Notification> (ungrouped)
+
+Job -> Job : Group notifications by PhotographerId
+
+loop For each photographer with pending digest items
+  Job -> Job : Build digest summary:\n- "3 new orders"\n- "2 contracts signed"\n- "1 gallery download"
+
+  Job -> DB : Load Photographer.Email
+  DB --> Job : email address
+
+  Job -> Email : SendTemplatedAsync(\nphotographer@email.com,\n"daily-digest",\n{summaryItems, date, dashboardLink})
+  Email --> Job : OK
+end
+
+Job -> Job : Update last-run timestamp
+
+@enduml

@@ -1,0 +1,66 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface IGoogleCalendarService {
+  +CreateEventAsync(calendarId, title, start, end, attendeeEmail?) : Task<string>
+  +UpdateEventAsync(calendarId, eventId, title, start, end) : Task
+  +DeleteEventAsync(calendarId, eventId) : Task
+  +GetEventsAsync(calendarId, from, to) : Task<IReadOnlyList<CalendarEventDto>>
+  +GetBusyTimesAsync(calendarId, from, to) : Task<IReadOnlyList<CalendarEventDto>>
+}
+
+interface IVideoCallService {
+  +CreateZoomMeetingAsync(zoomAccountId, topic, startTime, duration) : Task<VideoMeetingLink>
+  +CreateGoogleMeetAsync(calendarId, topic, startTime, duration, attendeeEmail?) : Task<VideoMeetingLink>
+}
+
+interface IInstagramService {
+  +GetFeedAsync(accessToken, count) : Task<IReadOnlyList<InstagramPost>>
+}
+
+interface IPaymentService {
+  +CreatePaymentIntentAsync(amountCents, currency, stripeAccountId, metadata?) : Task<string>
+  +CreateCheckoutSessionAsync(stripeAccountId, lineItems, successUrl, cancelUrl) : Task<string>
+  +RefundAsync(paymentIntentId, amountCents?) : Task
+  +CreateConnectedAccountAsync(email, country) : Task<string>
+}
+
+interface IPayPalService {
+  +CreateOrderAsync(paypalEmail, amountCents, currency, description, returnUrl, cancelUrl) : Task<string>
+  +CaptureOrderAsync(orderId) : Task<PayPalCaptureResult>
+  +RefundAsync(captureId, amountCents?) : Task
+}
+
+class CalendarEventDto <<record>> {
+  +EventId : string
+  +Title : string
+  +Start : DateTime
+  +End : DateTime
+  +IsBusy : bool
+  +AttendeeEmail : string?
+}
+
+class VideoMeetingLink <<record>> {
+  +MeetingUrl : string
+  +MeetingId : string?
+  +Password : string?
+  +Provider : string
+}
+
+class InstagramPost <<record>> {
+  +Id : string
+  +MediaUrl : string
+  +ThumbnailUrl : string?
+  +Caption : string?
+  +Permalink : string
+  +MediaType : string
+  +Timestamp : DateTime
+}
+
+IGoogleCalendarService ..> CalendarEventDto
+IVideoCallService ..> VideoMeetingLink
+IInstagramService ..> InstagramPost
+
+@enduml

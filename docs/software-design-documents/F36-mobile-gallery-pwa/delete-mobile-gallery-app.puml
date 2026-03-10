@@ -1,0 +1,27 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "MobileGalleryController" as API
+participant "DeleteMobileGalleryAppHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+
+Photographer -> API : DELETE /api/mobile-galleries/{id}
+API -> Handler : Send(DeleteMobileGalleryAppCommand)
+
+Handler -> Handler : Verify PhotographerId via ICurrentUserService
+Handler -> DB : Load MobileGalleryApp (verify ownership)
+DB --> Handler : MobileGalleryApp
+
+Handler -> Handler : Soft-delete (IsDeleted = true)
+Handler -> DB : SaveChangesAsync()
+
+Handler -> Storage : Delete generated icon files
+Storage --> Handler : OK
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+@enduml

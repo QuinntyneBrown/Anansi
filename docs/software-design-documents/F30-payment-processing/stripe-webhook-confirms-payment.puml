@@ -1,0 +1,46 @@
+@startuml
+participant "Stripe" as S
+participant "StripeWebhookController" as SWC
+participant "MediatR" as M
+participant "HandleStripeWebhookHandler" as SWH
+participant "ConfirmPaymentHandler" as CPH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+S -> SWC : POST /webhooks/stripe\n(payment_intent.succeeded)
+SWC -> SWC : Validate webhook signature
+
+SWC -> M : Send(HandleStripeWebhookCommand)
+M -> SWH : Handle(command)
+
+SWH -> SWH : Parse event type:\npayment_intent.succeeded
+
+SWH -> M : Send(ConfirmPaymentCommand)
+M -> CPH : Handle(command)
+
+CPH -> CPH : Calculate fees:\n2.9% + $0.30 for card\n1% for ACH
+
+CPH -> DB : PaymentRecords.Add(\namountCents, feeCents,\nnetAmountCents, method,\nexternalPaymentId)
+
+CPH -> DB : Load linked Invoice\nand PaymentSchedule
+
+CPH -> DB : schedule.IsPaid = true\nschedule.PaidAt = UtcNow\nschedule.PaymentIntentId = piId
+
+CPH -> DB : invoice.PaidCents += amount
+
+CPH -> CPH : Check all installments paid?
+alt all paid
+  CPH -> DB : invoice.Status = Paid
+else some remaining
+  CPH -> DB : invoice.Status = PartiallyPaid
+end
+
+CPH -> DB : SaveChangesAsync()
+
+CPH -> ES : SendTemplatedAsync(\nclient.Email,\n"Payment Confirmation")
+CPH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Payment Received")
+
+CPH --> M : Result.Success
+SWH --> M : Result.Success
+SWC --> S : 200 OK
+@enduml

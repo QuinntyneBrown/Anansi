@@ -1,0 +1,74 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class SetCollectionPasswordCommand <<Command>> {
+  +CollectionId : Guid
+  +Password : string?
+  +ClientExclusivePassword : string?
+}
+
+class VerifyCollectionPasswordCommand <<Command>> {
+  +CollectionId : Guid
+  +Password : string
+}
+
+class SetHomepagePasswordCommand <<Command>> {
+  +Password : string?
+}
+
+class VerifyHomepagePasswordCommand <<Command>> {
+  +Password : string
+}
+
+class RegisterEmailCommand <<Command>> {
+  +CollectionId : Guid
+  +Name : string
+  +Email : string
+}
+
+class ListEmailRegistrationsQuery <<Query>> {
+  +CollectionId : Guid
+  +Page : int
+  +PageSize : int
+}
+
+class ExportEmailRegistrationsQuery <<Query>> {
+  +CollectionId : Guid
+}
+
+class TogglePrivatePhotoCommand <<Command>> {
+  +MediaId : Guid
+  +ClientName : string?
+  +ClientEmail : string?
+}
+
+class SetCollectionExpiryCommand <<Command>> {
+  +CollectionId : Guid
+  +ExpiresAt : DateTime?
+  +ReminderRecipients : string?
+  +ReminderDays : string?
+  +ReminderEmailTemplate : string?
+}
+
+class ExtendCollectionExpiryCommand <<Command>> {
+  +CollectionId : Guid
+  +NewExpiresAt : DateTime
+}
+
+enum AccessLevel {
+  None
+  Public
+  ClientExclusive
+}
+
+class GalleryEmailRegistrationDto <<DTO>> {
+  +Id : Guid
+  +CollectionId : Guid
+  +Name : string
+  +Email : string
+  +CreatedAt : DateTime
+}
+
+@enduml

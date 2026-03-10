@@ -1,0 +1,31 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Tax.Threshold" {
+  class GetRevenueThresholdQuery <<record>>
+
+  class CheckThresholdCrossingCommand <<record>> {
+    +PhotographerId : Guid
+    +PaymentAmountCents : long
+  }
+}
+
+class RevenueThresholdDto <<record>> {
+  +RollingRevenueCents : long
+  +ThresholdCents : long
+  +ThresholdPercentage : decimal
+  +QuarterlyBreakdown : List<QuarterlyRevenueDto>
+  +AlertLevel : ThresholdAlertLevel
+}
+
+class QuarterlyRevenueDto <<record>> {
+  +QuarterLabel : string
+  +QuarterStart : DateTime
+  +QuarterEnd : DateTime
+  +RevenueCents : long
+}
+
+GetRevenueThresholdQuery ..> RevenueThresholdDto : returns
+@enduml

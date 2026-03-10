@@ -1,0 +1,58 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Store" {
+  package "Commands" {
+    class CreateGiftCardCommand <<record>> {
+      +Request : CreateGiftCardRequest
+    }
+    class CreateGiftCardHandler {
+      -_db : IApplicationDbContext
+      -_currentUser : ICurrentUserService
+      -_emailService : IEmailService
+      +Handle(cmd, ct) : Result<GiftCardDto>
+    }
+
+    class RedeemGiftCardCommand <<record>> {
+      +Code : string
+      +AmountCents : long
+      +OrderId : Guid
+    }
+    class RedeemGiftCardHandler {
+      +Handle(cmd, ct) : Result<long>
+    }
+  }
+
+  package "Queries" {
+    class GetGiftCardsQuery <<record>> {
+      +Page : int
+      +PageSize : int
+    }
+    class GetGiftCardByCodeQuery <<record>> {
+      +Code : string
+    }
+  }
+}
+
+package "Anansi.Application.DTOs.Store" {
+  class GiftCardDto <<record>> {
+    +Id : Guid
+    +Code : string
+    +OriginalAmountCents : long
+    +BalanceCents : long
+    +ExpiryDate : DateTime?
+    +IsActive : bool
+  }
+}
+
+CreateGiftCardHandler ..> GiftCardDto
+RedeemGiftCardHandler --> RedeemGiftCardCommand
+
+note right of RedeemGiftCardHandler
+  Returns remaining
+  balance in cents
+end note
+
+@enduml

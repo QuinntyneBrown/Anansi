@@ -1,0 +1,58 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.ContactImport" {
+  class ImportContactsCsvCommand <<record>> {
+    +CsvFile : Stream
+    +ColumnMapping : Dictionary<string, string>
+    +DuplicateStrategy : DuplicateStrategy
+  }
+
+  class ValidateContactImportQuery <<record>> {
+    +CsvFile : Stream
+  }
+
+  class ImportResultDto <<record>> {
+    +Created : int
+    +Merged : int
+    +Skipped : int
+    +Errors : List<string>
+  }
+
+  enum DuplicateStrategy {
+    Merge
+    Skip
+  }
+}
+
+package "Features.LeadCaptureForms.Commands" {
+  class CreateLeadCaptureFormCommand <<record>> {
+    +Name : string
+    +Description : string?
+    +Fields : List<FormFieldDto>
+  }
+
+  class SubmitLeadCaptureFormCommand <<record>> {
+    +FormSlug : string
+    +Responses : Dictionary<Guid, string>
+    +FirstName : string
+    +LastName : string
+    +Email : string
+    +Message : string?
+  }
+}
+
+interface INotificationDispatcher {
+  +DispatchAsync(notification) : Task
+}
+
+interface IEmailService {
+  +SendAsync() : Task
+  +SendTemplatedAsync() : Task
+}
+
+SubmitLeadCaptureFormCommand ..> INotificationDispatcher : notifies
+SubmitLeadCaptureFormCommand ..> IEmailService : emails photographer
+@enduml

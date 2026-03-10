@@ -1,0 +1,41 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "Scheduler" as Sched
+participant "AutomatedEmailJob" as Job
+participant "IApplicationDbContext" as DB
+participant "ITemplateRenderService" as Render
+participant "IEmailService" as Email
+
+Sched -> Job : ProcessPendingEmails()\n(every 15 minutes)
+
+Job -> DB : Get AutomatedEmailConfigs\nwhere EventType = "SessionReminder"\nand IsEnabled = true
+DB --> Job : List<AutomatedEmailConfig>
+
+loop each config
+  Job -> DB : Get BookingRecords\nwhere PhotographerId matches\nand Status = Confirmed\nand StartTime within offset window
+  DB --> Job : List<BookingRecord>
+
+  loop each upcoming booking
+    Job -> Job : Check if reminder\nalready sent for this booking
+
+    alt not yet sent
+      Job -> DB : Get EmailTemplate\n(config.EmailTemplateId)
+      DB --> Job : EmailTemplate
+
+      Job -> Job : Build variables:\n{{client_name}}, {{session_date}},\n{{session_time}}, {{location}}
+
+      Job -> Render : RenderAsync(\ntemplate, variables)
+      Render --> Job : Rendered email body
+
+      Job -> Email : SendAsync(\nbooking.ClientEmail,\nsubject, renderedBody)
+
+      Job -> DB : Record reminder sent\n(prevent duplicates)
+    end
+  end
+end
+
+Job -> DB : SaveChangesAsync()
+
+@enduml

@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+interface IAuditableEntity {
+  +CreatedBy : string?
+  +UpdatedBy : string?
+}
+
+interface ISoftDeletable {
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+class Photographer {
+  +Email : string
+  +FirstName : string
+  +LastName : string
+  +BusinessName : string
+  +Phone : string?
+  +Address : string?
+  +City : string?
+  +Province : string?
+  +PostalCode : string?
+  +Country : string?
+  +Website : string?
+  +LogoUrl : string?
+  +ProfileIconUrl : string?
+  +FaviconUrl : string?
+  +BrandColorHex : string?
+  +FontTheme : string?
+  +StripeAccountId : string?
+  +PayPalEmail : string?
+  +GoogleCalendarId : string?
+  +ZoomAccountId : string?
+  +GoogleAnalyticsId : string?
+  +FacebookPixelId : string?
+  +Subdomain : string
+  +ActivePlanId : Guid?
+  +StorageUsedBytes : long
+  +IdentityUserId : string?
+}
+
+enum StorageWarningLevel {
+  None
+  Warning80
+  Warning90
+  Critical95
+}
+
+BaseEntity <|-- Photographer
+IAuditableEntity <|.. Photographer
+ISoftDeletable <|.. Photographer
+Photographer ..> StorageWarningLevel : uses
+@enduml

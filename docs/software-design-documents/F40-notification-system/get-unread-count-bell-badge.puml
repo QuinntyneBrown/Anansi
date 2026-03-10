@@ -1,0 +1,20 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "NotificationsController" as API
+participant "GetUnreadCountHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/notifications/unread-count
+API -> Handler : Send(GetUnreadCountQuery)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : COUNT Notifications\nWHERE PhotographerId = {id}\nAND IsRead = false
+DB --> Handler : count = 7
+
+Handler --> API : Result<int>(7)
+API --> Photographer : 200 OK {unreadCount: 7}
+
+@enduml

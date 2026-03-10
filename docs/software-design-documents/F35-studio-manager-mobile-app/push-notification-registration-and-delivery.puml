@@ -1,0 +1,48 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "Mobile App" as App
+participant "DevicesController" as API
+participant "MediatR" as M
+participant "RegisterDeviceHandler" as RH
+participant "IPushNotificationService" as Push
+participant "PushNotificationDispatcher" as Dispatcher
+participant "IApplicationDbContext" as DB
+
+== Device Registration ==
+
+Photographer -> App : Login to mobile app
+App -> App : Request push notification\npermission from OS
+App -> App : Receive device token\nfrom APNs/FCM
+
+App -> API : POST /api/devices/register\n{deviceToken: "abc123",\nplatform: "iOS"}
+API -> M : Send(RegisterDeviceCommand)
+M -> RH : Handle(command)
+RH -> Push : RegisterDeviceTokenAsync(\nuserId, "abc123", "iOS")
+RH --> M : Result.Success
+API --> App : 200 OK
+
+== Push Notification Delivery ==
+
+note over Dispatcher
+  Event occurs: client pays invoice
+end note
+
+Dispatcher -> DB : Get NotificationPreference\nfor InvoicePaymentReceived
+DB --> Dispatcher : preference (push enabled)
+
+Dispatcher -> DB : Create Notification\n{EventType: InvoicePaymentReceived}
+
+Dispatcher -> Push : SendAsync(\nphotographerUserId,\n"Payment Received",\n"$150 from Jane Smith",\n"/invoices/{id}")
+
+Push -> Push : Resolve device tokens\nfor user
+Push -> Push : Route to APNs (iOS)\nor FCM (Android)
+
+Push --> App : Push notification appears
+
+Photographer -> App : Taps notification
+App -> App : Navigate to invoice detail
+
+@enduml

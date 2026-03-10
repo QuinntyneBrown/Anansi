@@ -1,0 +1,73 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class PaymentRecord {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +InvoiceId : Guid?
+  +BookingId : Guid?
+  +AmountCents : long
+  +FeeCents : long
+  +NetAmountCents : long
+  +TipCents : long
+  +TaxCents : long
+  +Currency : string
+  +PaymentMethod : PaymentMethod
+  +ExternalPaymentId : string?
+  +CardLast4 : string?
+  +Description : string?
+  +IsOffline : bool
+  +IsRefund : bool
+  +GiftCardId : Guid?
+}
+
+class Invoice {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +InvoiceNumber : string
+  +Title : string
+  +Status : InvoiceStatus
+  +TotalCents : long
+  +PaidCents : long
+  +DueDate : DateTime?
+  +TipAmountCents : long
+  +TaxAmountCents : long
+}
+
+enum PaymentMethod {
+  CreditCard
+  DebitCard
+  ApplePay
+  GooglePay
+  PayPal
+  BankTransfer
+  TapToPay
+  Offline
+  GiftCard
+}
+
+enum InvoiceStatus {
+  Draft
+  Sent
+  Viewed
+  PartiallyPaid
+  Paid
+  Overdue
+  Cancelled
+  Refunded
+}
+
+BaseEntity <|-- PaymentRecord
+BaseEntity <|-- Invoice
+PaymentRecord --> PaymentMethod
+Invoice --> InvoiceStatus
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "CreateCollectionHandler" as CH
+participant "ApplicationDbContext" as DB
+
+P -> CC : POST /api/collections\n{title, description, presetId}
+CC -> M : Send(CreateCollectionCommand)
+M -> CH : Handle(command)
+
+CH -> CH : Validate (FluentValidation)
+
+alt presetId is provided
+  CH -> DB : Find CollectionPreset by presetId
+  alt preset not found
+    CH --> M : Result.Failure("Preset not found")
+    M --> CC : 404
+    CC --> P : 404 Not Found
+  end
+  CH -> CH : Apply preset settings:\n  CoverStyle, Theme, FontFamily,\n  ColorPalette, CustomColorHex,\n  Layout, DownloadsEnabled,\n  DownloadPinEnabled, AllowedResolutions,\n  RequireEmailRegistration, Language
+end
+
+CH -> CH : Generate slug from title
+CH -> CH : Auto-generate 4-digit DownloadPin
+CH -> DB : Collections.Add(newCollection)
+CH -> DB : SaveChangesAsync()
+CH --> M : Result.Success(CollectionDto)
+M --> CC : Result.Success
+CC --> P : 200 OK (CollectionDto)
+@enduml

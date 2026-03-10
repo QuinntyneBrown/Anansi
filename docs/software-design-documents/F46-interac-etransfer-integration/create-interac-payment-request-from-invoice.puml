@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "InteracController" as IC
+participant "MediatR" as M
+participant "CreateInteracPaymentRequestHandler" as CH
+participant "ApplicationDbContext" as DB
+
+P -> IC : POST /api/interac/payment-requests\n{invoiceId}
+IC -> M : Send(CreateInteracPaymentRequestCommand)
+M -> CH : Handle(command)
+
+CH -> DB : Load Invoice by InvoiceId\nand PhotographerId
+alt invoice not found or not payable
+  CH --> M : Result.Failure("Invoice not found\nor not in payable status")
+  M --> IC : Result.Failure
+  IC --> P : 400 Bad Request
+end
+
+CH -> DB : Load InteracSettings\nfor PhotographerId
+alt Interac not enabled or no email
+  CH --> M : Result.Failure("Interac e-Transfer\nis not configured")
+  M --> IC : Result.Failure
+  IC --> P : 400 Bad Request
+end
+
+CH -> CH : Generate unique reference code\n"ANANSI-INV-" + 4-char alphanumeric
+
+CH -> CH : Calculate expiry date\n(UtcNow + 30 days)
+
+CH -> DB : InteracPaymentRequests.Add(\ninvoiceId, paymentReference,\namountCents = invoice.TotalCents\n- invoice.PaidCents,\nrecipientEmail = settings.InteracEmail,\nstatus = Pending,\nexpiryDate)
+
+CH -> DB : SaveChangesAsync()
+
+CH --> M : Result.Success(\nInteracPaymentRequestDto)
+M --> IC : Result.Success
+IC --> P : 201 Created\n{paymentReference,\namountCents, recipientEmail,\nexpiryDate}
+@enduml

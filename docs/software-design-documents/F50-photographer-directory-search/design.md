@@ -100,6 +100,8 @@ PhotographerProfile "1" --> "0..1" PhotographerServiceArea : service area
 @enduml
 ```
 
+![Domain Layer -- Directory Search Entities (from F49)](domain-layer-directory-search-entities-from-f49.png)
+
 ### Application Layer -- Search Query & DTOs
 
 ```plantuml
@@ -148,6 +150,8 @@ SearchDirectoryQueryValidator ..> SearchDirectoryQuery : validates
 @enduml
 ```
 
+![Application Layer -- Search Query & DTOs](application-layer-search-query-dtos.png)
+
 ### Infrastructure Layer -- Search Services
 
 ```plantuml
@@ -188,6 +192,8 @@ SearchDirectoryQueryHandler --> IHaversineCalculator
 @enduml
 ```
 
+![Infrastructure Layer -- Search Services](infrastructure-layer-search-services.png)
+
 ### API Layer -- Directory Controller
 
 ```plantuml
@@ -212,6 +218,8 @@ end note
 DirectoryController --> "IMediator" : sends SearchDirectoryQuery
 @enduml
 ```
+
+![API Layer -- Directory Controller](api-layer-directory-controller.png)
 
 ---
 
@@ -249,6 +257,8 @@ M --> DC : result
 DC --> C : 200 OK {\n  items: [{name, businessName,\n    profileImage, tags,\n    neighborhood, matchingTagCount: 2,\n    relevanceScore: 2.0}],\n  page: 1, totalCount: 15\n}
 @enduml
 ```
+
+![Search by Cultural Tags](search-by-cultural-tags.png)
 
 ### Search by Neighborhood / Distance
 
@@ -295,6 +305,8 @@ M --> DC : result
 DC --> C : 200 OK {\n  items: [{name, businessName,\n    neighborhood: "Scarborough",\n    distanceKm: 2.3,\n    relevanceScore: 0.43}],\n  page: 1, totalCount: 8\n}
 @enduml
 ```
+
+![Search by Neighborhood / Distance](search-by-neighborhood-distance.png)
 
 ### Combined Search (Tags + Location)
 
@@ -350,3 +362,5 @@ M --> DC : result
 DC --> C : 200 OK {\n  items: [{name, tags,\n    matchingTagCount: 1,\n    distanceKm: 3.1,\n    relevanceScore: 0.82}],\n  page: 1, totalCount: 4\n}
 @enduml
 ```
+
+![Combined Search (Tags + Location)](combined-search-tags-location.png)

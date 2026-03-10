@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EmailConversation {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +Subject : string
+  +ClientEmail : string?
+  +IsRead : bool
+  +LastMessageAt : DateTime?
+}
+
+class EmailMessage {
+  +ConversationId : Guid
+  +IsFromPhotographer : bool
+  +SenderEmail : string
+  +Body : string
+  +SentAt : DateTime
+}
+
+class EmailAttachment {
+  +MessageId : Guid
+  +FileName : string
+  +ContentType : string
+  +FileSizeBytes : long
+  +StorageUrl : string
+}
+
+class Contract {
+  +PhotographerId : Guid
+  +Title : string
+  +Status : ContractStatus
+}
+
+class Questionnaire {
+  +PhotographerId : Guid
+  +Title : string
+  +Status : QuestionnaireStatus
+}
+
+enum ContractStatus {
+  Draft
+  Sent
+  Signed
+  Expired
+}
+
+enum QuestionnaireStatus {
+  Draft
+  Sent
+  Completed
+  Expired
+}
+
+EmailConversation "1" --> "*" EmailMessage
+EmailMessage "1" --> "*" EmailAttachment
+Contract --> ContractStatus
+Questionnaire --> QuestionnaireStatus
+
+@enduml

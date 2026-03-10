@@ -1,0 +1,32 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "RequestDownloadHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IGa4Service" as GA4
+participant "GA4 Measurement\nProtocol API" as Google
+
+Handler -> DB : Create DownloadRequest\nand GalleryActivity
+Handler -> DB : SaveChangesAsync()
+
+Handler -> DB : Get Collection.GoogleAnalyticsPropertyId
+DB --> Handler : propertyId
+
+alt propertyId is set
+  Handler -> GA4 : TrackEventAsync(propertyId,\n"file_download",\n{resolution, isFullGallery, mediaCount})
+
+  GA4 -> Google : POST /mp/collect?measurement_id=G-...\n&api_secret=...\n{events: [{name: "file_download",\nparams: {...}}]}
+
+  Google --> GA4 : 204 No Content
+  GA4 --> Handler : Task completed
+end
+
+note right of GA4
+  Server-side tracking captures
+  API-driven events that have no
+  browser page view (downloads,
+  favorites added via API).
+end note
+
+@enduml

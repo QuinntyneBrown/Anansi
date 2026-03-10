@@ -1,0 +1,31 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "LabsController" as ctrl
+participant "IMediator" as med
+participant "GetLabPricingHandler" as handler
+participant "IApplicationDbContext" as db
+participant "ILabIntegrationService" as labService
+participant "Print Lab API" as labApi
+
+Photographer -> ctrl : GET /api/labs/pricing/WHCC
+ctrl -> med : Send(GetLabPricingQuery("WHCC"))
+med -> handler : Handle(query, ct)
+
+handler -> db : LabProducts\n.Where(labName == "WHCC")\n.OrderBy(Category, Size)
+db --> handler : List<LabProduct>
+
+alt cached data is stale (>24h)
+  handler -> labService : GetPricingAsync("WHCC")
+  labService -> labApi : GET /pricing
+  labApi --> labService : [{product, size, cost}...]
+  labService --> handler : List<LabPricingResult>
+  handler -> db : Upsert LabProduct records
+  handler -> db : SaveChangesAsync()
+end
+
+handler -> handler : Map to LabPricingDto list
+handler --> med : Result<List<LabPricingDto>>
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK {labPricing[]}
+@enduml

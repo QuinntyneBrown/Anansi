@@ -123,6 +123,8 @@ ProjectDocument ..> DocumentType
 @enduml
 ```
 
+![Domain Layer -- Pipeline Board Entities](domain-layer-pipeline-board-entities.png)
+
 ### Application Layer -- Board Queries & Commands
 
 ```plantuml
@@ -174,6 +176,8 @@ GetPipelineBoardQuery ..> PipelineBoardDto : returns
 GetProjectDetailQuery ..> ProjectDetailDto : returns
 @enduml
 ```
+
+![Application Layer -- Board Queries & Commands](application-layer-board-queries-commands.png)
 
 ### Application Layer -- Stage & Project Commands
 
@@ -233,6 +237,8 @@ package "Features.Projects.Commands" {
 @enduml
 ```
 
+![Application Layer -- Stage & Project Commands](application-layer-stage-project-commands.png)
+
 ### API Layer -- Pipeline & Project Controllers
 
 ```plantuml
@@ -272,6 +278,8 @@ ProjectDocumentsController --> "IMediator" : sends commands
 @enduml
 ```
 
+![API Layer -- Pipeline & Project Controllers](api-layer-pipeline-project-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -303,6 +311,8 @@ PBC --> P : 200 OK {stages: [\n  {name: "Inquiry", projects: [...]},\n  {name: "
 @enduml
 ```
 
+![Load Pipeline Board](load-pipeline-board.png)
+
 ### Drag-and-Drop: Move Project Between Stages
 
 ```plantuml
@@ -330,6 +340,8 @@ PC --> P : 200 OK
 @enduml
 ```
 
+![Drag-and-Drop: Move Project Between Stages](drag-and-drop-move-project-between-stages.png)
+
 ### Auto-Create Project on Form Submission
 
 ```plantuml
@@ -352,6 +364,8 @@ APH --> M : ProjectId
 M --> FEH : success
 @enduml
 ```
+
+![Auto-Create Project on Form Submission](auto-create-project-on-form-submission.png)
 
 ### View Project Detail with Linked Documents
 
@@ -395,6 +409,8 @@ PC --> P : 200 OK {project, contracts,\ninvoices, questionnaires,\nsessions, pay
 @enduml
 ```
 
+![View Project Detail with Linked Documents](view-project-detail-with-linked-documents.png)
+
 ### Customize Stages (Add / Rename / Reorder)
 
 ```plantuml
@@ -430,3 +446,5 @@ M --> PBC : success
 PBC --> P : 200 OK
 @enduml
 ```
+
+![Customize Stages (Add / Rename / Reorder)](customize-stages-add-rename-reorder.png)

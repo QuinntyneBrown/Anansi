@@ -1,0 +1,33 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Profile.ServiceArea" {
+  class UpdateServiceAreaCommand <<record>> {
+    +PrimaryNeighborhood : string
+    +Latitude : double
+    +Longitude : double
+    +RadiusKm : int
+  }
+
+  class GetServiceAreaQuery <<record>>
+}
+
+class ServiceAreaDto <<record>> {
+  +PrimaryNeighborhood : string
+  +Latitude : double
+  +Longitude : double
+  +RadiusKm : int
+}
+
+class UpdateServiceAreaValidator <<Validator>> {
+  +PrimaryNeighborhood : in predefined list
+  +Latitude : -90..90
+  +Longitude : -180..180
+  +RadiusKm : 5..100
+}
+
+UpdateServiceAreaCommand ..> UpdateServiceAreaValidator : validated by
+GetServiceAreaQuery ..> ServiceAreaDto : returns
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+actor Photographer as P
+participant "ApiKeysController" as AKC
+participant "MediatR" as M
+participant "CreateApiKeyHandler" as H
+participant "ICurrentUserService" as US
+participant "IApplicationDbContext" as DB
+
+P -> AKC : POST /api/api-keys\n{name: "Lightroom Plugin",\nexpiresAt: null}
+AKC -> M : Send(CreateApiKeyCommand)
+M -> H : Handle(command)
+H -> US : PhotographerId
+US --> H : Guid
+
+H -> H : Generate 32-byte\ncryptographically random key
+H -> H : Encode as base64url string\nwith "anan_" prefix
+H -> H : Compute SHA256 hash of full key
+H -> H : Extract prefix (first 8 chars)
+
+H -> DB : ApiKeys.Add(new ApiKey {\nPhotographerId, Name,\nKeyHash, KeyPrefix,\nExpiresAt, IsActive=true})
+H -> DB : SaveChangesAsync()
+
+H --> M : Result.Success(CreateApiKeyResponse {\nId, FullKey, KeyPrefix})
+M --> AKC : Result.Success
+AKC --> P : 201 Created\n{id, fullKey: "anan_xyz...", keyPrefix: "anan_xyz"}
+
+note right of P
+  Full key is shown only once.
+  Photographer must copy it now.
+  Only the hash and prefix are stored.
+end note
+@enduml

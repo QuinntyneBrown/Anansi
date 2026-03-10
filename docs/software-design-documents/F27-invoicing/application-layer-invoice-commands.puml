@@ -1,0 +1,81 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Invoices.Commands" {
+  class CreateInvoiceCommand <<record>> {
+    +Title : string
+    +ContactId : Guid?
+    +ProjectId : Guid?
+    +Notes : string?
+    +HeaderImageUrl : string?
+    +BrandColorHex : string?
+    +TaxRatePercent : decimal
+    +TipsEnabled : bool
+    +LineItems : List<LineItemInput>
+  }
+
+  class UpdateInvoiceCommand <<record>> {
+    +InvoiceId : Guid
+    +Title : string
+    +Notes : string?
+    +HeaderImageUrl : string?
+    +BrandColorHex : string?
+    +TaxRatePercent : decimal
+    +TipsEnabled : bool
+    +CustomHeaderFields : string?
+    +AutoRemindersEnabled : bool
+    +ReminderIntervalDays : int?
+    +LineItems : List<LineItemInput>
+  }
+
+  class SendInvoiceCommand <<record>> {
+    +InvoiceId : Guid
+  }
+
+  class ConfigurePaymentScheduleCommand <<record>> {
+    +InvoiceId : Guid
+    +Installments : List<InstallmentInput>
+  }
+
+  class ConfigureDepositCommand <<record>> {
+    +InvoiceId : Guid
+    +DepositAmountCents : long
+    +BalanceDueDate : DateTime
+  }
+
+  class RecordPaymentCommand <<record>> {
+    +InvoiceId : Guid
+    +ScheduleId : Guid
+    +PaymentIntentId : string?
+    +AmountCents : long
+  }
+
+  class RecordTipCommand <<record>> {
+    +InvoiceId : Guid
+    +TipAmountCents : long
+  }
+
+  class CancelInvoiceCommand <<record>> {
+    +InvoiceId : Guid
+  }
+
+  class DeleteInvoiceCommand <<record>> {
+    +InvoiceId : Guid
+  }
+}
+
+class LineItemInput <<record>> {
+  +Name : string
+  +Description : string?
+  +Quantity : int
+  +UnitPriceCents : long
+}
+
+class InstallmentInput <<record>> {
+  +Label : string
+  +AmountCents : long
+  +DueDate : DateTime
+}
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Visitor
+participant "Ga4TagInjectionMiddleware" as Middleware
+participant "IApplicationDbContext" as DB
+participant "Gallery Page Renderer" as Renderer
+
+Visitor -> Middleware : GET /gallery/{slug}
+
+Middleware -> DB : Find Collection by slug
+DB --> Middleware : Collection
+
+alt GoogleAnalyticsPropertyId is set
+  Middleware -> Renderer : Proceed with request
+  Renderer --> Middleware : HTML response
+
+  Middleware -> Middleware : Inject into <head>:\n<script async src="gtag.js?id=G-..."></script>\n<script>gtag('config', 'G-...')</script>
+
+  Middleware --> Visitor : Modified HTML with GA4 tag
+else No GA4 configured
+  Middleware -> Renderer : Proceed with request
+  Renderer --> Middleware : HTML response
+  Middleware --> Visitor : Unmodified HTML
+end
+
+@enduml

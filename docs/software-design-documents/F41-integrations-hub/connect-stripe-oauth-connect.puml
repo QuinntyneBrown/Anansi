@@ -1,0 +1,28 @@
+@startuml
+actor Photographer as P
+participant "IntegrationsOAuthController" as OC
+participant "MediatR" as M
+participant "ConnectStripeHandler" as H
+participant "IPaymentService" as PS
+participant "IApplicationDbContext" as DB
+
+P -> OC : GET /api/integrations/oauth/stripe/callback\n?code=AUTH_CODE
+OC -> M : Send(ConnectStripeCommand)
+M -> H : Handle(command)
+H -> DB : Get Photographer
+DB --> H : photographer
+
+alt photographer.StripeAccountId already set
+  H --> M : Result.Failure("Stripe already connected")
+  M --> OC : Result.Failure
+  OC --> P : 409 Conflict
+end
+
+H -> PS : CreateConnectedAccountAsync(\nphotographer.Email, photographer.Country)
+PS --> H : stripeAccountId
+H -> DB : photographer.StripeAccountId = stripeAccountId
+H -> DB : SaveChangesAsync()
+H --> M : Result.Success
+M --> OC : Result.Success
+OC --> P : 302 Redirect to integration settings
+@enduml

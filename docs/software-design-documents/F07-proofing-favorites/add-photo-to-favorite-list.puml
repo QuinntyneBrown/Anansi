@@ -1,0 +1,34 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "FavoritesController" as API
+participant "AddFavoriteItemHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Client -> API : POST /api/collections/{cid}/favorites/{listId}/items\n{mediaId}
+API -> Handler : Send(AddFavoriteItemCommand)
+
+Handler -> DB : Find FavoriteList by Id
+DB --> Handler : FavoriteList
+
+Handler -> DB : Find Collection (for FavoriteLimit)
+DB --> Handler : Collection
+
+Handler -> DB : Count total FavoriteItems\nacross all lists for this collection/client
+DB --> Handler : currentCount
+
+Handler -> Handler : Check currentCount < FavoriteLimit\n(skip if limit is null)
+
+Handler -> DB : Verify MediaId exists in collection
+DB --> Handler : GalleryMedia
+
+Handler -> DB : Create FavoriteItem\n{FavoriteListId, MediaId}
+Handler -> DB : Create GalleryActivity\n(ActivityType.Favorite)
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<FavoriteItemDto>
+API --> Client : 201 Created
+
+@enduml

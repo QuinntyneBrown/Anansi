@@ -1,0 +1,56 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "Email Provider\n(SendGrid/Mailgun)" as EP
+participant "EmailController" as API
+participant "InboundEmailWebhookHandler" as Webhook
+participant "MediatR" as M
+participant "ReceiveInboundHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+participant "IEmailService" as Email
+participant "IPushNotificationService" as Push
+
+EP -> API : POST /api/email/inbound\n(webhook payload)
+API -> Webhook : ProcessInboundEmail(payload)
+Webhook -> Webhook : Parse sender, subject,\nbody, attachments
+Webhook -> M : Send(ReceiveInboundEmailCommand)
+M -> Handler : Handle(command)
+
+Handler -> DB : Find EmailConversation\nby ClientEmail + PhotographerId
+DB --> Handler : EmailConversation (existing)
+
+Handler -> DB : Create EmailMessage\n{IsFromPhotographer=false,\nSenderEmail, Body}
+
+alt has attachments
+  loop each attachment
+    Handler -> Storage : UploadAsync(file)
+    Storage --> Handler : storageUrl
+    Handler -> DB : Create EmailAttachment
+  end
+end
+
+Handler -> DB : Set Conversation.IsRead = false
+Handler -> DB : Set LastMessageAt = UtcNow
+Handler -> DB : SaveChangesAsync()
+
+Handler -> DB : Check NotificationPreference\nfor MessageReceived
+DB --> Handler : preferences
+
+alt in-app enabled
+  Handler -> DB : Create Notification\n{EventType: MessageReceived,\nTitle, Link to conversation}
+end
+
+alt email enabled
+  Handler -> Email : SendAsync(\nphotographer.Email,\n"New message from {client}")
+end
+
+alt push enabled
+  Handler -> Push : SendAsync(\nphotographerUserId,\n"New message", link)
+end
+
+Handler --> M : Result.Success
+API --> EP : 200 OK
+
+@enduml

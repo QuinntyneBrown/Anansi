@@ -1,0 +1,31 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "CouponsController" as ctrl
+participant "IMediator" as med
+participant "CreateCouponValidator" as val
+participant "CreateCouponHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : POST /api/coupons\n{code="WINTER25", couponType=PercentageOff,\nscope=EntireOrder, percentageValue=25,\nexpirationDate, usageLimit=100,\nbannerText, showBanner=true}
+ctrl -> med : Send(CreateCouponCommand)
+med -> val : Validate
+val --> med : pass
+
+med -> handler : Handle(command, ct)
+handler -> user : PhotographerId
+user --> handler : Guid
+
+handler -> db : Coupons\n.AnyAsync(Code == "WINTER25"\n&& PhotographerId == pid)
+db --> handler : false (unique)
+
+handler -> handler : Build Coupon entity
+handler -> db : Coupons.Add(coupon)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+handler --> med : Result<CouponDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 201 Created {CouponDto}
+@enduml

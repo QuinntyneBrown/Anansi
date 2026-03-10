@@ -1,0 +1,28 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface ILightroomSyncService
+interface IStorageService
+interface ICdnService
+
+class LightroomSyncService {
+  -_db : IApplicationDbContext
+  -_storageService : IStorageService
+  -_cdnService : ICdnService
+  +PublishCollectionAsync() : Task<LightroomPublishResult>
+  +SyncStructureAsync() : Task<LightroomSyncResult>
+  +GetFavoriteListsAsync() : Task<IReadOnlyList<LightroomFavoriteList>>
+}
+
+class ApiKeyAuthenticationHandler {
+  -_db : IApplicationDbContext
+  +HandleAuthenticateAsync() : Task<AuthenticateResult>
+}
+
+ILightroomSyncService <|.. LightroomSyncService
+LightroomSyncService --> IStorageService
+LightroomSyncService --> ICdnService
+
+@enduml

@@ -1,0 +1,35 @@
+@startuml
+actor Photographer as P
+participant "InvoicesController" as IC
+participant "MediatR" as M
+participant "SendInvoiceHandler" as SH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+P -> IC : POST /api/invoices/{id}/send
+IC -> M : Send(SendInvoiceCommand)
+M -> SH : Handle(command)
+
+SH -> DB : Load Invoice with Contact\nand PaymentSchedules
+
+alt invoice not in Draft status
+  SH --> M : Result.Failure("Only drafts can be sent")
+  M --> IC : Result.Failure
+  IC --> P : 400 Bad Request
+end
+
+alt no payment schedule configured
+  SH -> SH : Create single installment\nfor full amount with DueDate
+end
+
+SH -> SH : Generate secure payment token
+
+SH -> DB : invoice.Status = Sent\ninvoice.SentAt = UtcNow
+SH -> DB : SaveChangesAsync()
+
+SH -> ES : SendTemplatedAsync(\nclient.Email,\n"Invoice from {businessName}",\npaymentLink, amount, dueDate)
+
+SH --> M : Result.Success
+M --> IC : Result.Success
+IC --> P : 200 OK
+@enduml

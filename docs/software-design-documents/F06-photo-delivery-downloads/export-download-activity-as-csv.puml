@@ -1,0 +1,22 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "DownloadsController" as API
+participant "ExportDownloadActivityHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/collections/{id}/downloads/export?from=...&to=...
+API -> Handler : Send(ExportDownloadActivityQuery)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Query GalleryActivities\n(CollectionId, Download type, date range)
+DB --> Handler : List<GalleryActivity>
+
+Handler -> Handler : Build CSV rows:\nName, Email, Resolution, Type, Timestamp
+
+Handler --> API : Result<byte[]> (CSV content)
+API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: attachment
+
+@enduml

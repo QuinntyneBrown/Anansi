@@ -1,0 +1,20 @@
+@startuml
+participant "InteracExpiryBackgroundJob" as JOB
+participant "MediatR" as M
+participant "ExpireStaleInteracRequestsHandler" as EH
+participant "ApplicationDbContext" as DB
+
+JOB -> M : Send(ExpireStaleInteracRequestsCommand)
+M -> EH : Handle(command)
+
+EH -> DB : Query InteracPaymentRequests\nWHERE Status = Pending\nAND ExpiryDate < UtcNow
+
+DB --> EH : List<InteracPaymentRequest>\n(stale requests)
+
+loop each stale request
+  EH -> EH : request.Status = Expired
+end
+
+EH -> DB : SaveChangesAsync()
+EH --> M : Result.Success(expiredCount)
+@enduml

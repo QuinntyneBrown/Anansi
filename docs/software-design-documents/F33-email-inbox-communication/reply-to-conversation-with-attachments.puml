@@ -1,0 +1,53 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "EmailController" as API
+participant "MediatR" as M
+participant "ReplyHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+participant "IEmailService" as Email
+
+Photographer -> API : POST /api/email/conversations/{id}/reply\n{body, htmlBody}\n+ file attachments (multipart)
+API -> M : Send(ReplyToConversationCommand)
+M -> Handler : Handle(command)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Find EmailConversation\n(Id, PhotographerId)
+DB --> Handler : EmailConversation
+
+alt not found
+  Handler --> M : Result.NotFound
+  M --> API : Result.Failure
+  API --> Photographer : 404 Not Found
+end
+
+alt has attachments
+  Handler -> Handler : Validate total size <= 25MB
+  alt size exceeded
+    Handler --> M : Result.Failure\n("Attachments exceed 25MB limit")
+    M --> API : Result.Failure
+    API --> Photographer : 400 Bad Request
+  end
+
+  loop each file
+    Handler -> Storage : UploadAsync(stream)
+    Storage --> Handler : storageUrl
+  end
+end
+
+Handler -> DB : Create EmailMessage\n{IsFromPhotographer=true}
+Handler -> DB : Create EmailAttachments
+Handler -> DB : Update LastMessageAt
+Handler -> DB : SaveChangesAsync()
+
+Handler -> Email : SendAsync(\nclientEmail, subject, htmlBody)
+
+Handler --> M : Result<EmailMessageDto>
+M --> API : Result.Success
+API --> Photographer : 200 OK (EmailMessageDto)
+
+@enduml

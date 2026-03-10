@@ -1,0 +1,36 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteSeoController" as C
+participant "IMediator" as M
+participant "CreateUrlRedirectHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/seo/redirects\n{ sourcePath: "/old-gallery",\n  destinationUrl: "/portfolio",\n  redirectType: "Permanent301" }
+C -> M : Send(CreateUrlRedirectCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Verify Website\n(websiteId, photographerId)
+DB --> H : Website
+
+H -> DB : Check for conflicting\nactive redirect with\nsame SourcePath
+DB --> H : none found
+
+H -> DB : Check SourcePath doesn't\nmatch an existing page Slug
+DB --> H : no conflict
+
+H -> H : Create UrlRedirect entity\n{ sourcePath, destinationUrl,\n  redirectType, isActive: true }
+
+H -> DB : Add(redirect)\nSaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(UrlRedirectDto)
+M --> C : result
+C --> P : 201 Created { redirectDto }
+
+@enduml

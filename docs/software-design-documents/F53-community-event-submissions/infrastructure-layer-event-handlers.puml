@@ -1,0 +1,42 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CreateCommunityEventCommandHandler {
+  -_dbContext : IApplicationDbContext
+  -_currentUser : ICurrentUserService
+  +Handle(cmd, ct) : CommunityEventDto
+}
+
+class ModerateEventCommandHandler {
+  -_dbContext : IApplicationDbContext
+  -_mediator : IMediator
+  +Handle(cmd, ct) : CommunityEventDto
+}
+
+class UpdateCommunityEventCommandHandler {
+  -_dbContext : IApplicationDbContext
+  -_currentUser : ICurrentUserService
+  +Handle(cmd, ct) : CommunityEventDto
+}
+
+class CancelCommunityEventCommandHandler {
+  -_dbContext : IApplicationDbContext
+  -_currentUser : ICurrentUserService
+  +Handle(cmd, ct) : Unit
+}
+
+class EventRejectedEventHandler {
+  -_mediator : IMediator
+  +Handle(notification, ct) : Task
+}
+
+class EventResetToPendingEventHandler {
+  -_mediator : IMediator
+  +Handle(notification, ct) : Task
+}
+
+ModerateEventCommandHandler ..> EventRejectedEventHandler : rejection triggers
+UpdateCommunityEventCommandHandler ..> EventResetToPendingEventHandler : status reset triggers
+@enduml

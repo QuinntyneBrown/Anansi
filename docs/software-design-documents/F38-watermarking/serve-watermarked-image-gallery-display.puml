@@ -1,0 +1,58 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "GalleryImageController" as API
+participant "GetWatermarkedImageHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+participant "IWatermarkCompositorService" as Compositor
+participant "ICdnService" as CDN
+
+Client -> API : GET /api/galleries/{collId}/images/{mediaId}?w=1200
+API -> Handler : Send(GetWatermarkedImageQuery)
+
+Handler -> DB : Load Collection by Id
+DB --> Handler : Collection
+
+alt WatermarkEnabled = false or WatermarkId = null
+  Handler -> Storage : GetPresignedUrlAsync(media.StorageKey)
+  Storage --> Handler : cleanImageUrl
+  Handler --> API : Redirect to clean image
+else WatermarkEnabled = true
+  Handler -> Handler : Compute cacheKey:\n{mediaId}-{watermarkId}-{configHash}-w1200
+
+  Handler -> Storage : Check if cached composite exists
+  Storage --> Handler : exists? (true/false)
+
+  alt Cached composite found
+    Handler -> CDN : GetUrlAsync(cacheKey)
+    CDN --> Handler : cachedUrl
+    Handler --> API : Redirect to cached URL
+  else No cache, compose on the fly
+    Handler -> DB : Load Watermark by Collection.WatermarkId
+    DB --> Handler : Watermark
+
+    Handler -> Storage : DownloadAsync(media.StorageKey)
+    Storage --> Handler : originalImageStream
+
+    Handler -> Compositor : CompositeAsync(\noriginalImageStream, watermark, 1200, null)
+    note right of Compositor
+      Text: renders text at position
+      with font, opacity, scale.
+      Image: overlays PNG at position
+      with opacity, scale.
+    end note
+    Compositor --> Handler : compositedStream
+
+    Handler -> Storage : UploadAsync(compositedStream, cacheKey)
+    Storage --> Handler : compositeUrl
+
+    Handler --> API : Redirect to composite URL
+  end
+end
+
+API --> Client : 302 Redirect to image
+
+@enduml

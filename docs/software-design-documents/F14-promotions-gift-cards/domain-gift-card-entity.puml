@@ -1,0 +1,40 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Store" {
+  class GiftCard {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Code : string
+    +OriginalAmountCents : long
+    +BalanceCents : long
+    +ExpiryDate : DateTime?
+    +RecipientEmail : string?
+    +RecipientName : string?
+    +SenderName : string?
+    +Message : string?
+    +IsActive : bool
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+  }
+}
+
+package "Anansi.Domain.Entities.Store" as store2 {
+  class Order {
+    +GiftCardCode : string?
+    +DiscountCents : long
+  }
+}
+
+GiftCard ..> Order : balance applied\nat checkout
+
+note bottom of GiftCard
+  STR-2.4.3 / GFT-4.9.1 / GFT-4.9.2:
+  Remaining balance saved for future use
+  Code is globally unique
+  Deliverable via branded email
+end note
+
+@enduml

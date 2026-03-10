@@ -155,6 +155,8 @@ Invoice --> InvoiceStatus : uses
 @enduml
 ```
 
+![Domain Layer -- Invoice Entities](domain-layer-invoice-entities.png)
+
 ### Application Layer -- Invoice Commands
 
 ```plantuml
@@ -241,6 +243,8 @@ class InstallmentInput <<record>> {
 @enduml
 ```
 
+![Application Layer -- Invoice Commands](application-layer-invoice-commands.png)
+
 ### Application Layer -- Invoice Queries & Templates
 
 ```plantuml
@@ -324,6 +328,8 @@ class InvoiceDetailDto <<record>> {
 @enduml
 ```
 
+![Application Layer -- Invoice Queries & Templates](application-layer-invoice-queries-templates.png)
+
 ### API Layer -- Invoice Controllers
 
 ```plantuml
@@ -364,6 +370,8 @@ InvoiceTemplatesController --> "IMediator" : sends commands/queries
 InvoicePublicController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Invoice Controllers](api-layer-invoice-controllers.png)
 
 ---
 
@@ -406,6 +414,8 @@ IC --> P : 201 Created {invoiceId, invoiceNumber}
 @enduml
 ```
 
+![Create Invoice with Line Items](create-invoice-with-line-items.png)
+
 ### Configure Payment Schedule with Deposit
 
 ```plantuml
@@ -446,6 +456,8 @@ M --> IC : Result.Success
 IC --> P : 200 OK
 @enduml
 ```
+
+![Configure Payment Schedule with Deposit](configure-payment-schedule-with-deposit.png)
 
 ### Client Pays Invoice Installment
 
@@ -498,6 +510,8 @@ IPC --> C : 200 OK {confirmationId}
 @enduml
 ```
 
+![Client Pays Invoice Installment](client-pays-invoice-installment.png)
+
 ### Send Invoice to Client
 
 ```plantuml
@@ -538,6 +552,8 @@ IC --> P : 200 OK
 @enduml
 ```
 
+![Send Invoice to Client](send-invoice-to-client.png)
+
 ### Payment Reminder Background Job
 
 ```plantuml
@@ -568,6 +584,8 @@ SRH --> M : Result.Success(reminderCount)
 @enduml
 ```
 
+![Payment Reminder Background Job](payment-reminder-background-job.png)
+
 ### Overdue Invoice Processing
 
 ```plantuml
@@ -590,6 +608,8 @@ POH -> DB : SaveChangesAsync()
 POH --> M : Result.Success(overdueCount)
 @enduml
 ```
+
+![Overdue Invoice Processing](overdue-invoice-processing.png)
 
 ### Generate Invoice from Accepted Quote
 
@@ -620,3 +640,5 @@ GIH -> DB : SaveChangesAsync()
 GIH --> M : Result.Success(invoiceId)
 @enduml
 ```
+
+![Generate Invoice from Accepted Quote](generate-invoice-from-accepted-quote.png)

@@ -1,0 +1,35 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface IWebhookService
+
+class WebhookService {
+  -_db : IApplicationDbContext
+  -_httpClientFactory : IHttpClientFactory
+  -_logger : ILogger
+  +DeliverAsync(photographerId, eventType, payload) : Task
+  -SignPayload(payload, secret) : string
+  -RecordDelivery(subscriptionId, payload, statusCode, response, success) : Task
+}
+
+class WebhookRetryJob {
+  -_db : IApplicationDbContext
+  -_httpClientFactory : IHttpClientFactory
+  +RetryFailedDelivery(deliveryId) : Task
+}
+
+class ApiKeyAuthenticationHandler {
+  -_db : IApplicationDbContext
+  +HandleAuthenticateAsync() : Task<AuthenticateResult>
+}
+
+class CodeInjectionSanitizer {
+  +Validate(code) : ValidationResult
+  -_blockedPatterns : string[]
+}
+
+IWebhookService <|.. WebhookService
+
+@enduml

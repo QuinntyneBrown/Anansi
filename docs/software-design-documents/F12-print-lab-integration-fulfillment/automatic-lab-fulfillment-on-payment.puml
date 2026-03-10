@@ -1,0 +1,34 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+participant "Checkout Flow" as checkout
+participant "IPaymentService" as payment
+participant "CreateOrderHandler" as orderHandler
+participant "IApplicationDbContext" as db
+participant "ILabIntegrationService" as labService
+participant "Print Lab API" as labApi
+
+Client -> checkout : Complete purchase\n(lab-fulfilled product)
+checkout -> payment : CreatePaymentIntentAsync()
+payment --> checkout : PaymentIntent confirmed
+
+checkout -> orderHandler : Handle(CreateOrderCommand)
+orderHandler -> db : Create Order entity\n(FulfillmentType=Lab)
+orderHandler -> db : SaveChangesAsync()
+db --> orderHandler : Order persisted
+
+loop for each lab-fulfilled OrderItem
+  orderHandler -> labService : SubmitOrderAsync(\nLabOrderRequest)
+  labService -> labApi : POST /orders\n{image, specs, shipping}
+  labApi --> labService : {externalOrderId}
+  labService --> orderHandler : externalOrderId
+
+  orderHandler -> db : Create LabOrder record\n(status=Transmitted)
+  orderHandler -> db : Update Order.LabOrderReference
+end
+
+orderHandler -> db : SaveChangesAsync()
+db --> orderHandler : success
+orderHandler --> checkout : Result<OrderDto>
+checkout --> Client : Order confirmation
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+participant "GoogleCalendarSyncJob" as Job
+participant "IApplicationDbContext" as DB
+participant "IGoogleCalendarService" as GCS
+participant "MediatR" as M
+
+Job -> DB : Get all Photographers\nwhere GoogleCalendarId != null
+DB --> Job : photographers[]
+
+loop for each photographer
+  Job -> GCS : GetEventsAsync(calendarId,\nlastSync, now)
+  GCS --> Job : remoteEvents[]
+
+  Job -> DB : Get BookingRecords\nwhere UpdatedAt > lastSync
+  DB --> Job : localBookings[]
+
+  loop remote events not in local
+    alt event is busy (blocks slots)
+      Job -> DB : Mark time as unavailable
+    else event matches booking pattern
+      Job -> DB : Create/update BookingRecord
+    end
+  end
+
+  loop local bookings not synced
+    Job -> GCS : CreateEventAsync(calendarId,\ntitle, start, end, clientEmail)
+    GCS --> Job : eventId
+    Job -> DB : booking.GoogleCalendarEventId = eventId
+  end
+
+  loop local bookings updated
+    Job -> GCS : UpdateEventAsync(calendarId,\neventId, title, start, end)
+  end
+
+  Job -> DB : SaveChangesAsync()
+end
+@enduml

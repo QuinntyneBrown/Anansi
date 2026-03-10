@@ -1,0 +1,30 @@
+@startuml
+actor Photographer as P
+participant "TaxProfileController" as TPC
+participant "MediatR" as M
+participant "UpdateTaxProfileHandler" as UH
+participant "ApplicationDbContext" as DB
+
+P -> TPC : PUT /api/tax-profile\n{hstRate: 13.0,\nhstRegistrationNumber:\n"123456789RT0001",\nregistrationStatus: "Mandatory"}
+TPC -> M : Send(UpdateTaxProfileCommand)
+M -> UH : Handle(command)
+
+UH -> UH : Validate (FluentValidation)\n- hstRate: 0..100\n- BN format: 9 digits + RT + 4 digits
+alt validation fails
+  UH --> M : Result.Failure(errors)
+  M --> TPC : Result.Failure
+  TPC --> P : 400 Bad Request
+end
+
+UH -> DB : Find TaxProfile\nby PhotographerId
+alt existing profile found
+  UH -> DB : Update HstRate,\nHstRegistrationNumber,\nRegistrationStatus
+else no existing profile
+  UH -> DB : TaxProfiles.Add(\nphotographerId, hstRate,\nregistrationNumber, status)
+end
+
+UH -> DB : SaveChangesAsync()
+UH --> M : Result.Success(TaxProfileDto)
+M --> TPC : Result.Success
+TPC --> P : 200 OK\n{hstRate: 13.0,\nhstRegistrationNumber:\n"123456789RT0001",\nregistrationStatus: "Mandatory"}
+@enduml

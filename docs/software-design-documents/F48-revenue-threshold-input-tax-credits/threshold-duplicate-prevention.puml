@@ -1,0 +1,31 @@
+@startuml
+participant "ConfirmPaymentHandler" as CPH
+participant "MediatR" as M
+participant "CheckThresholdCrossingHandler" as TCH
+participant "ApplicationDbContext" as DB
+
+CPH -> M : Send(CheckThresholdCrossingCommand\n{photographerId, paymentAmountCents})
+M -> TCH : Handle(command)
+
+TCH -> DB : Query PaymentRecords\nfor last 4 calendar quarters\nSUM AmountCents
+DB --> TCH : rollingRevenue = 2400000
+
+TCH -> TCH : Determine alert level:\n2400000 / 3000000 = 80%\nalertLevel = Warning (>= 75%)
+
+TCH -> TCH : Current quarter: Q1-2026
+
+TCH -> DB : Query ThresholdAlertRecords\nWHERE PhotographerId = {id}\nAND QuarterStart = 2026-01-01\nAND AlertLevel = Warning
+DB --> TCH : **Existing record found**\n(alert already sent this quarter)
+
+TCH -> TCH : Skip notification creation\n(duplicate prevention)
+
+TCH --> M : Result.Success\n(no notification sent)
+
+note right of TCH
+  Rate-limited to one notification
+  per quarter per threshold level.
+  Prevents duplicate alerts when
+  multiple payments cross the
+  same boundary.
+end note
+@enduml

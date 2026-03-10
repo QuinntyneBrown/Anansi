@@ -1,0 +1,48 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BrandingController <<Controller>> {
+  +GetProfile() : ActionResult
+  +UpdateProfile() : ActionResult
+  +UploadLogo() : ActionResult
+  +UploadFavicon() : ActionResult
+  +UploadProfileIcon() : ActionResult
+  +GetDocumentBranding() : ActionResult
+  +UpsertDocumentBranding() : ActionResult
+}
+
+class ImageProcessingService <<Service>> {
+  -_storage : IStorageService
+  +GenerateWhiteVariantAsync(stream) : string
+}
+
+class PlanService <<Service>> {
+  -_db : IApplicationDbContext
+  +HasFeatureAsync(photographerId, feature) : bool
+}
+
+class CoverLogoGenerationJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_imageProcessing : IImageProcessingService
+  -_storage : IStorageService
+  +ProcessAsync(photographerId) : Task
+}
+
+interface IImageProcessingService <<Interface>>
+interface IPlanService <<Interface>>
+interface IStorageService <<Interface>>
+
+ImageProcessingService ..|> IImageProcessingService
+PlanService ..|> IPlanService
+ImageProcessingService --> IStorageService
+CoverLogoGenerationJob --> IImageProcessingService
+CoverLogoGenerationJob --> IStorageService
+
+BrandingController ..> GetBrandingProfileQuery
+BrandingController ..> UpdateBrandingProfileCommand
+BrandingController ..> UploadLogoCommand
+BrandingController ..> UpsertDocumentBrandingCommand
+
+@enduml

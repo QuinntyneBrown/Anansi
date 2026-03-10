@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Pre-commit hook: renders staged .puml files to .png and stages the results.
+#
+# Setup: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Find staged .puml files (Added, Modified, Copied, Renamed)
+staged_puml=()
+while IFS= read -r file; do
+    [ -n "$file" ] && staged_puml+=("$file")
+done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.puml')
+
+if [ ${#staged_puml[@]} -eq 0 ]; then
+    exit 0
+fi
+
+echo "[pre-commit] Rendering ${#staged_puml[@]} PlantUML file(s) to PNG..."
+
+# Convert to absolute paths
+abs_files=()
+for f in "${staged_puml[@]}"; do
+    abs_files+=("$REPO_ROOT/$f")
+done
+
+# Render (skip gracefully if no renderer is available)
+if ! "$REPO_ROOT/scripts/render-plantuml.sh" "${abs_files[@]}" 2>/dev/null; then
+    echo "[pre-commit] WARNING: PlantUML rendering skipped (no renderer found)." >&2
+    echo "[pre-commit] Install plantuml, set PLANTUML_JAR, or install Docker to enable auto-rendering." >&2
+    exit 0
+fi
+
+# Stage the generated .png files alongside the .puml files
+for f in "${staged_puml[@]}"; do
+    png="${f%.puml}.png"
+    if [ -f "$REPO_ROOT/$png" ]; then
+        git add "$REPO_ROOT/$png"
+    fi
+done
+
+echo "[pre-commit] PNG files staged."

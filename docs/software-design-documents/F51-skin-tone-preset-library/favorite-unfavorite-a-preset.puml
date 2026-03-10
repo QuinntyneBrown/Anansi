@@ -1,0 +1,50 @@
+@startuml
+actor Photographer as P
+participant "PresetFavoritesController" as FC
+participant "MediatR" as M
+participant "FavoritePresetCommandHandler" as FH
+participant "UnfavoritePresetCommandHandler" as UH
+participant "ApplicationDbContext" as DB
+
+== Favorite ==
+
+P -> FC : POST /api/presets/{id}/favorite
+FC -> M : Send(FavoritePresetCommand)
+M -> FH : Handle()
+
+FH -> DB : Check PresetFavorite exists\nWHERE PhotographerId AND PresetId
+DB --> FH : null (not yet favorited)
+
+FH -> DB : Create PresetFavorite\n{PhotographerId, PresetId}
+DB --> FH : created
+
+FH -> DB : UPDATE EditingPresets\nSET FavoriteCount = FavoriteCount + 1\nWHERE Id = @presetId
+DB --> FH : updated
+
+FH -> DB : SaveChanges
+DB --> FH : saved
+
+FH --> M : success
+M --> FC : result
+FC --> P : 200 OK
+
+== Unfavorite ==
+
+P -> FC : DELETE /api/presets/{id}/favorite
+FC -> M : Send(UnfavoritePresetCommand)
+M -> UH : Handle()
+
+UH -> DB : Load PresetFavorite\nWHERE PhotographerId AND PresetId
+DB --> UH : favorite record
+
+UH -> DB : Remove PresetFavorite
+UH -> DB : UPDATE EditingPresets\nSET FavoriteCount = FavoriteCount - 1\nWHERE Id = @presetId
+DB --> UH : updated
+
+UH -> DB : SaveChanges
+DB --> UH : saved
+
+UH --> M : success
+M --> FC : result
+FC --> P : 200 OK
+@enduml

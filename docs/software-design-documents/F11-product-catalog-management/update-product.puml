@@ -1,0 +1,25 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "ProductsController" as ctrl
+participant "IMediator" as med
+participant "UpdateProductHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : PUT /api/products/{id}\n{name, description, isActive, labPartner, ...}
+ctrl -> med : Send(UpdateProductCommand)
+med -> handler : Handle(command, ct)
+handler -> user : PhotographerId
+user --> handler : Guid
+handler -> db : Products.FindAsync(id)
+db --> handler : Product entity
+handler -> handler : Verify ownership\n(PhotographerId matches)
+handler -> handler : Apply field updates
+handler -> db : SaveChangesAsync()
+db --> handler : success
+handler -> handler : MapToDto(product)
+handler --> med : Result<ProductDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK {ProductDto}
+@enduml

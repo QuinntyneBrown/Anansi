@@ -113,6 +113,8 @@ GalleryActivity --> ActivityType
 @enduml
 ```
 
+![Domain Layer - Activity Entities](domain-layer-activity-entities.png)
+
 ### Application Layer - Queries and Services
 
 ```plantuml
@@ -181,6 +183,8 @@ GetActivitySummaryQuery ..> ActivitySummaryDto
 @enduml
 ```
 
+![Application Layer - Queries and Services](application-layer-queries-and-services.png)
+
 ### Infrastructure Layer - GA4 Integration
 
 ```plantuml
@@ -219,6 +223,8 @@ Ga4MeasurementProtocolService --> Ga4Config
 @enduml
 ```
 
+![Infrastructure Layer - GA4 Integration](infrastructure-layer-ga4-integration.png)
+
 ### API Layer
 
 ```plantuml
@@ -245,6 +251,8 @@ end note
 
 @enduml
 ```
+
+![API Layer](api-layer.png)
 
 ## Sequence Diagrams
 
@@ -283,6 +291,8 @@ API --> Photographer : 200 OK\n{items, totalCount, page, totalPages}
 @enduml
 ```
 
+![List Collection Activities with Filtering](list-collection-activities-with-filtering.png)
+
 ### Export Activities as CSV
 
 ```plantuml
@@ -315,6 +325,8 @@ API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: atta
 @enduml
 ```
 
+![Export Activities as CSV](export-activities-as-csv.png)
+
 ### Get Activity Summary
 
 ```plantuml
@@ -342,6 +354,8 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Get Activity Summary](get-activity-summary.png)
 
 ### Configure Google Analytics GA4
 
@@ -380,6 +394,8 @@ end note
 @enduml
 ```
 
+![Configure Google Analytics GA4](configure-google-analytics-ga4.png)
+
 ### GA4 Tag Injection for Client Page Views
 
 ```plantuml
@@ -412,6 +428,8 @@ end
 
 @enduml
 ```
+
+![GA4 Tag Injection for Client Page Views](ga4-tag-injection-for-client-page-views.png)
 
 ### Server-Side GA4 Event Tracking (Downloads)
 
@@ -449,3 +467,5 @@ end note
 
 @enduml
 ```
+
+![Server-Side GA4 Event Tracking (Downloads)](server-side-ga4-event-tracking-downloads.png)

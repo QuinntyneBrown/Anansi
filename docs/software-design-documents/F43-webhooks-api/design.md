@@ -110,6 +110,8 @@ WebhookSubscription ..> WebhookEventType
 @enduml
 ```
 
+![Domain -- Webhook Entities](domain-webhook-entities.png)
+
 ### Domain -- Code Injection & API Key Entities
 
 ```plantuml
@@ -149,6 +151,8 @@ CustomCodeInjection ..> CodeInjectionLocation
 
 @enduml
 ```
+
+![Domain -- Code Injection & API Key Entities](domain-code-injection-api-key-entities.png)
 
 ### Application -- Webhook Commands & Queries
 
@@ -214,6 +218,8 @@ class WebhookDeliveryDto <<record>> {
 
 @enduml
 ```
+
+![Application -- Webhook Commands & Queries](application-webhook-commands-queries.png)
 
 ### Application -- Code Injection & API Key Commands
 
@@ -284,6 +290,8 @@ class CreateApiKeyResponse <<record>> {
 @enduml
 ```
 
+![Application -- Code Injection & API Key Commands](application-code-injection-api-key-commands.png)
+
 ### Infrastructure -- WebhookService & Authentication
 
 ```plantuml
@@ -323,6 +331,8 @@ IWebhookService <|.. WebhookService
 
 @enduml
 ```
+
+![Infrastructure -- WebhookService & Authentication](infrastructure-webhookservice-authentication.png)
 
 ### API -- Controllers
 
@@ -384,6 +394,8 @@ TemplatesApiController --> "IMediator"
 @enduml
 ```
 
+![API -- Controllers](api-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -428,6 +440,8 @@ WS --> BH : (fire-and-forget)
 @enduml
 ```
 
+![Webhook Delivery on Business Event](webhook-delivery-on-business-event.png)
+
 ### Webhook Retry (Exponential Backoff)
 
 ```plantuml
@@ -464,6 +478,8 @@ else attempt <= 3
 end
 @enduml
 ```
+
+![Webhook Retry (Exponential Backoff)](webhook-retry-exponential-backoff.png)
 
 ### Create Custom Code Injection (Pro Plan)
 
@@ -509,6 +525,8 @@ CC --> P : 201 Created {id, code, location, label}
 @enduml
 ```
 
+![Create Custom Code Injection (Pro Plan)](create-custom-code-injection-pro-plan.png)
+
 ### Create API Key
 
 ```plantuml
@@ -545,6 +563,8 @@ note right of P
 end note
 @enduml
 ```
+
+![Create API Key](create-api-key.png)
 
 ### REST API Template Access (API Key Auth)
 
@@ -583,6 +603,8 @@ TC --> EXT : 200 OK {\nitems: [{id, name, subject, body}],\npage: 1, pageSize: 2
 @enduml
 ```
 
+![REST API Template Access (API Key Auth)](rest-api-template-access-api-key-auth.png)
+
 ### Code Injection Rendering in Website Pipeline
 
 ```plantuml
@@ -617,3 +639,5 @@ end note
 WR --> C : Full HTML page with\ninjected tracking/chat/analytics code
 @enduml
 ```
+
+![Code Injection Rendering in Website Pipeline](code-injection-rendering-in-website-pipeline.png)

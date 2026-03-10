@@ -1,0 +1,59 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface ITokenService {
+  +GenerateAccessToken()
+  +GenerateRefreshToken()
+}
+
+interface ICurrentUserService {
+  +UserId : string?
+  +PhotographerId : Guid?
+  +IsAuthenticated : bool
+}
+
+class TokenService {
+  -_configuration : IConfiguration
+  +GenerateAccessToken() : string
+  +GenerateRefreshToken() : string
+}
+
+class CurrentUserService {
+  -_httpContextAccessor : IHttpContextAccessor
+  +UserId : string?
+  +PhotographerId : Guid?
+  +IsAuthenticated : bool
+}
+
+class RegisterCommandHandler {
+  -_userManager : UserManager
+  -_dbContext : IApplicationDbContext
+  -_tokenService : ITokenService
+  +Handle() : Result<RegisterResponse>
+}
+
+class LoginCommandHandler {
+  -_signInManager : SignInManager
+  -_tokenService : ITokenService
+  -_dbContext : IApplicationDbContext
+  +Handle() : Result<LoginResponse>
+}
+
+class ForgotPasswordCommandHandler {
+  -_userManager : UserManager
+  -_emailService : IEmailService
+  +Handle() : Result
+}
+
+class ResetPasswordCommandHandler {
+  -_userManager : UserManager
+  +Handle() : Result
+}
+
+ITokenService <|.. TokenService
+ICurrentUserService <|.. CurrentUserService
+RegisterCommandHandler --> ITokenService
+LoginCommandHandler --> ITokenService
+@enduml

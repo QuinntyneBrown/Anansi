@@ -1,0 +1,65 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Integrations" {
+  class LabOrder {
+    +Id : Guid
+    +PhotographerId : Guid
+    +StoreOrderId : Guid?
+    +LabName : string
+    +ExternalLabOrderId : string?
+    +Status : LabOrderStatus
+    +ImageFileKey : string
+    +ProductSpecifications : string
+    +Size : string
+    +Quantity : int
+    +ShippingName : string
+    +ShippingAddress : string
+    +ShippingCity : string
+    +ShippingProvince : string
+    +ShippingPostalCode : string
+    +ShippingCountry : string
+    +LabCostCents : long
+    +MarkupCents : long
+    +ClientPriceCents : long
+    +TrackingNumber : string?
+    +TransmittedAt : DateTime?
+    +ShippedAt : DateTime?
+  }
+
+  class LabProduct {
+    +Id : Guid
+    +LabName : string
+    +ProductName : string
+    +Category : string
+    +Size : string
+    +LabCostCents : long
+    +PriceLastUpdated : DateTime
+    +IsAvailable : bool
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum LabPartner {
+    WHCC
+    ProDPI
+    Millers
+    LoxleyColour
+  }
+
+  enum LabOrderStatus {
+    Pending
+    Transmitted
+    InProduction
+    Shipped
+    Delivered
+    Failed
+  }
+}
+
+LabOrder ..> LabOrderStatus
+LabOrder ..> LabPartner : LabName maps to
+
+@enduml

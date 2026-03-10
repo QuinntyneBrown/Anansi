@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Questionnaires.Queries" {
+  class ViewQuestionnaireQuery <<record>> {
+    +QuestionnaireId : Guid
+  }
+
+  class ListQuestionnairesQuery <<record>> {
+    +Status : QuestionnaireStatus?
+    +ContactId : Guid?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetQuestionnaireByTokenQuery <<record>> {
+    +Token : string
+  }
+
+  class GetQuestionnaireBySlugQuery <<record>> {
+    +Slug : string
+  }
+
+  class ListQuestionnaireResponsesQuery <<record>> {
+    +QuestionnaireId : Guid
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetQuestionnaireResponseQuery <<record>> {
+    +QuestionnaireId : Guid
+    +ResponseId : Guid
+  }
+}
+
+package "Features.Questionnaires.Templates" {
+  class SaveQuestionnaireTemplateCommand <<record>> {
+    +QuestionnaireId : Guid
+    +TemplateName : string
+  }
+
+  class ListQuestionnaireTemplatesQuery <<record>>
+
+  class ApplyQuestionnaireTemplateCommand <<record>> {
+    +TemplateId : Guid
+    +ContactId : Guid?
+    +ProjectId : Guid?
+  }
+}
+
+package "Features.Questionnaires.BackgroundJobs" {
+  class ProcessQuestionnaireExpiryCommand <<record>>
+  class SendQuestionnaireRemindersCommand <<record>>
+}
+
+class QuestionnaireDto <<record>> {
+  +Id : Guid
+  +Title : string
+  +Status : QuestionnaireStatus
+  +QuestionCount : int
+  +ResponseCount : int
+  +ContactName : string?
+  +SentAt : DateTime?
+}
+
+class QuestionnaireDetailDto <<record>> {
+  +Id : Guid
+  +Title : string
+  +Description : string?
+  +Status : QuestionnaireStatus
+  +Questions : List<QuestionDto>
+  +ResponseCount : int
+  +PublicSlug : string?
+  +ExpiresAt : DateTime?
+}
+@enduml

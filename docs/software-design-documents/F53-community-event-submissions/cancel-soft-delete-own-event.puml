@@ -1,0 +1,48 @@
+@startuml
+actor Photographer as P
+participant "EventsController" as EC
+participant "MediatR" as M
+participant "CancelCommunityEventCommandHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> EC : DELETE /api/events/{id}
+EC -> M : Send(CancelCommunityEventCommand)
+M -> H : Handle()
+
+H -> DB : Load CulturalEvent by Id
+DB --> H : event
+
+alt event not found or already deleted
+  H --> M : throw NotFoundException
+end
+
+alt event.SubmittedById != currentUserId
+  H --> M : throw ForbiddenException
+  M --> EC : 403 Forbidden
+  EC --> P : 403 Forbidden
+end
+
+H -> DB : event.IsDeleted = true\nevent.DeletedAt = DateTime.UtcNow
+
+H -> DB : Load EventCalendarBlocks\nWHERE CulturalEventId = eventId
+DB --> H : linkedBlocks[]
+
+loop for each linked block
+  H -> DB : Remove EventCalendarBlock
+end
+
+H -> DB : SaveChanges
+DB --> H : saved
+
+H --> M : Unit
+M --> EC : result
+EC --> P : 204 No Content
+
+note right of H
+  The event no longer appears in:
+  - Public calendar listings
+  - Photographer's "my events" list
+  - Any photographer's booking calendar
+    (linked blocks removed)
+end note
+@enduml

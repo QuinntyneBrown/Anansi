@@ -1,0 +1,26 @@
+@startuml
+actor Client as C
+participant "BookingsController" as BC
+participant "MediatR" as M
+participant "ValidateCouponHandler" as VH
+participant "ApplicationDbContext" as DB
+
+C -> BC : POST /api/bookings/validate-coupon\n{code: "SPRING20", priceCents: 30000}
+BC -> M : Send(ValidateCouponQuery)
+M -> VH : Handle()
+VH -> DB : Load BookingCoupon\nWHERE Code = "SPRING20"\nAND IsActive = true
+DB --> VH : coupon
+
+VH -> VH : Check not expired
+VH -> VH : Check usage < usageLimit
+
+alt couponType = PercentageOff
+  VH -> VH : discount = price * 20% = 6000
+else couponType = FixedAmountOff
+  VH -> VH : discount = fixedAmountCents
+end
+
+VH --> M : CouponValidationDto\n{valid: true, discountCents: 6000,\nfinalPriceCents: 24000}
+M --> BC : result
+BC --> C : 200 OK {valid, discountCents,\nfinalPriceCents}
+@enduml

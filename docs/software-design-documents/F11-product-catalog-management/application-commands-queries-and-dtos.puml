@@ -1,0 +1,72 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Store" {
+  package "Commands" {
+    class CreateProductCommand <<record>> {
+      +Request : CreateProductRequest
+    }
+    class CreateProductHandler {
+      -_db : IApplicationDbContext
+      -_currentUser : ICurrentUserService
+      +Handle(cmd, ct) : Result<ProductDto>
+    }
+
+    class UpdateProductCommand <<record>> {
+      +Id : Guid
+      +Request : UpdateProductRequest
+    }
+    class UpdateProductHandler {
+      +Handle(cmd, ct) : Result<ProductDto>
+    }
+
+    class DeleteProductCommand <<record>> {
+      +Id : Guid
+    }
+    class DeleteProductHandler {
+      +Handle(cmd, ct) : Result<bool>
+    }
+  }
+
+  package "Queries" {
+    class GetProductsQuery <<record>> {
+      +ProductType : ProductType?
+      +Page : int
+      +PageSize : int
+    }
+    class GetProductByIdQuery <<record>> {
+      +Id : Guid
+    }
+  }
+}
+
+package "Anansi.Application.DTOs.Store" {
+  class ProductDto <<record>> {
+    +Id : Guid
+    +Name : string
+    +Variations : List<ProductVariationDto>
+    ...
+  }
+  class CreateProductRequest <<record>> {
+    +Name : string
+    +ProductType : ProductType
+    +FulfillmentType : FulfillmentType
+    +Variations : List<CreateProductVariationRequest>?
+    ...
+  }
+  class CreateProductVariationRequest <<record>> {
+    +Name : string
+    +CostCents : long
+    +MarkupCents : long
+    +PriceCents : long
+    ...
+  }
+}
+
+CreateProductCommand ..> CreateProductRequest
+CreateProductHandler ..> CreateProductCommand
+CreateProductHandler ..> ProductDto
+
+@enduml

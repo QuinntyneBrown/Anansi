@@ -1,0 +1,26 @@
+@startuml
+actor Photographer as P
+participant "QuestionnairesController" as QC
+participant "MediatR" as M
+participant "CreateQuestionnaireHandler" as CH
+participant "ApplicationDbContext" as DB
+
+P -> QC : POST /api/questionnaires\n{title, description,\ncontactId, questions[]}
+QC -> M : Send(CreateQuestionnaireCommand)
+M -> CH : Handle(command)
+
+CH -> CH : Validate (FluentValidation)\n- At least one question\n- Valid question types\n- Options required for\n  MultipleChoice/Checkboxes
+
+alt validation fails
+  CH --> M : Result.Failure(errors)
+  M --> QC : Result.Failure
+  QC --> P : 400 Bad Request
+end
+
+CH -> DB : Questionnaires.Add(questionnaire)
+CH -> DB : QuestionnaireQuestions.AddRange(\nquestions with SortOrder)
+CH -> DB : SaveChangesAsync()
+CH --> M : Result.Success(questionnaireId)
+M --> QC : Result.Success
+QC --> P : 201 Created {questionnaireId}
+@enduml

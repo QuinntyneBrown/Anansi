@@ -1,0 +1,25 @@
+@startuml
+actor Client as C
+participant "DirectoryController" as DC
+participant "MediatR" as M
+participant "GetDirectoryCulturalTagsHandler" as GDH
+participant "ApplicationDbContext" as DB
+
+C -> DC : GET /api/directory/cultural-tags
+DC -> M : Send(GetDirectoryCulturalTagsQuery)
+M -> GDH : Handle(query)
+
+GDH -> GDH : Load predefined tag list\n(15 static tags)
+
+GDH -> DB : Query CulturalTags\nGROUP BY TagName\nSELECT TagName,\nCOUNT(DISTINCT PhotographerId)\nas UsageCount
+
+DB --> GDH : Tag usage data
+
+GDH -> GDH : Build result set:\n1. All 15 predefined tags\n   with their usage counts\n2. Custom tags WHERE\n   UsageCount >= 3
+
+GDH -> GDH : Sort by UsageCount DESC,\nthen TagName ASC
+
+GDH --> M : Result.Success(\nList<DirectoryTagDto>)
+M --> DC : Result.Success
+DC --> C : 200 OK\n[{tagName: "Caribbean Wedding",\n  isPredefined: true,\n  usageCount: 42},\n {tagName: "Melanin Portraiture",\n  isPredefined: true,\n  usageCount: 38},\n ...\n {tagName: "Toronto Street Style",\n  isPredefined: false,\n  usageCount: 5}]
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitesController" as C
+participant "IMediator" as M
+participant "UpdateWebsiteHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : PUT /api/websites/{id}\n{ websiteId, templateId (new) }
+C -> M : Send(UpdateWebsiteCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load Website\nwith Pages, Elements, BlogPosts
+DB --> H : Website (existing)
+
+H -> DB : Find new WebsiteTemplate
+DB --> H : WebsiteTemplate
+
+H -> H : Update Website.TemplateId
+H -> H : Apply new template layout\nto page structure
+
+note right of H
+  Pages, blog posts, text content,
+  and images are preserved.
+  Only layout/positioning changes.
+end note
+
+H -> DB : SaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(WebsiteDto)
+M --> C : result
+C --> P : 200 OK { updated websiteDto }
+
+@enduml

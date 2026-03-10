@@ -1,0 +1,56 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Contracts.Templates" {
+  class SaveContractTemplateCommand <<record>> {
+    +ContractId : Guid
+    +TemplateName : string
+  }
+
+  class ListContractTemplatesQuery <<record>>
+
+  class ApplyContractTemplateCommand <<record>> {
+    +TemplateId : Guid
+    +ContactId : Guid?
+    +ProjectId : Guid?
+    +CustomVariableValues : Dictionary<string, string>?
+  }
+}
+
+package "Features.Contracts.BackgroundJobs" {
+  class ProcessContractExpiryCommand <<record>>
+  class SendContractRemindersCommand <<record>>
+}
+
+class ContractDto <<record>> {
+  +Id : Guid
+  +Title : string
+  +Status : ContractStatus
+  +ContactName : string?
+  +SentAt : DateTime?
+  +ExpiresAt : DateTime?
+  +SignedAt : DateTime?
+}
+
+class ContractDetailDto <<record>> {
+  +Id : Guid
+  +Title : string
+  +Content : string
+  +HeaderImageUrl : string?
+  +Status : ContractStatus
+  +Fields : List<ContractFieldDto>
+  +Signatures : List<ContractSignatureDto>
+  +ExpiryDays : int?
+  +ExpiresAt : DateTime?
+  +AutoRemindersEnabled : bool
+}
+
+class ContractTemplateDto <<record>> {
+  +Id : Guid
+  +TemplateName : string
+  +FieldCount : int
+  +CreatedAt : DateTime
+}
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteSeoController" as C
+participant "IMediator" as M
+participant "GenerateAiDescriptionHandler" as H
+participant "ICurrentUserService" as U
+participant "IAiContentService" as AI
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/seo/ai-description/{pageId}
+C -> M : Send(GenerateAiDescriptionCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load WebsitePage\n(pageId, photographerId)\nwith Elements
+DB --> H : WebsitePage + elements
+
+H -> H : Extract text content from\nall Text-type PageElements\nConcatenate into page content
+
+H -> AI : GenerateDescriptionAsync(\npageContent)
+AI --> H : generatedDescription
+
+H --> M : Result.Success(generatedDescription)
+M --> C : result
+C --> P : 200 OK { description:\n"Professional photography..." }
+
+note right of P
+  Photographer reviews/edits
+  the suggestion, then saves
+  via UpdatePage endpoint.
+end note
+
+@enduml

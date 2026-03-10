@@ -1,0 +1,36 @@
+@startuml
+actor Photographer as P
+participant "InvoicesController" as IC
+participant "MediatR" as M
+participant "CreateInvoiceCommandHandler" as CH
+participant "ApplicationDbContext" as DB
+
+P -> IC : POST /api/invoices\n{title: "Wedding Package",\nlineItems: [\n  {name: "Photography", qty: 1,\n   unitPriceCents: 350000,\n   isTaxExempt: false},\n  {name: "Travel", qty: 1,\n   unitPriceCents: 15000,\n   isTaxExempt: true}\n]}
+IC -> M : Send(CreateInvoiceCommand)
+M -> CH : Handle(command)
+
+CH -> CH : Validate (FluentValidation)
+
+CH -> DB : Generate next invoice number
+
+CH -> CH : Calculate line item totals:\nPhotography = 350000\nTravel = 15000
+
+CH -> CH : Subtotal = 365000
+
+CH -> DB : Load TaxProfile\nfor PhotographerId
+DB --> CH : TaxProfile\n{hstRate: 13.0}
+
+CH -> CH : Filter taxable items:\nPhotography (350000)\n(Travel excluded: isTaxExempt=true)
+
+CH -> CH : TaxAmountCents =\n350000 * 13 / 100 = 45500
+
+CH -> CH : TotalCents =\n365000 + 45500 = 410500
+
+CH -> DB : Invoices.Add(invoice\nwith TaxRatePercent = 13.0,\nTaxAmountCents = 45500)
+CH -> DB : InvoiceLineItems.AddRange(\nwith IsTaxExempt flags)
+CH -> DB : SaveChangesAsync()
+
+CH --> M : Result.Success(invoiceId)
+M --> IC : Result.Success
+IC --> P : 201 Created\n{invoiceId, invoiceNumber,\nsubtotalCents: 365000,\ntaxAmountCents: 45500,\ntotalCents: 410500}
+@enduml

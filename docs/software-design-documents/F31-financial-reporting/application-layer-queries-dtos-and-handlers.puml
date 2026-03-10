@@ -1,0 +1,77 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class GetRevenueDashboardQuery <<Query>> {
+  +From : DateTime?
+  +To : DateTime?
+}
+
+class GetMonthlyRevenueQuery <<Query>> {
+  +Year : int
+}
+
+class ListTransactionsQuery <<Query>> {
+  +MethodFilter : PaymentMethod?
+  +Search : string?
+  +From : DateTime?
+  +To : DateTime?
+  +Page : int
+  +PageSize : int
+}
+
+class ExportTransactionsQuery <<Query>> {
+  +From : DateTime?
+  +To : DateTime?
+}
+
+class ListInvoicesByStatusQuery <<Query>> {
+  +Status : InvoiceStatus?
+  +Page : int
+  +PageSize : int
+}
+
+class RevenueDashboardDto <<DTO>> {
+  +TotalRevenueCents : long
+  +NetRevenueCents : long
+  +TotalFeesCents : long
+  +TotalRefundsCents : long
+  +TotalTipsCents : long
+  +TotalTaxCents : long
+  +PaymentMethodBreakdown : List
+  +PaidInvoiceCount : int
+  +PendingInvoiceCount : int
+  +OverdueInvoiceCount : int
+}
+
+class MonthlyRevenueDto <<DTO>> {
+  +Year : int
+  +Month : int
+  +TotalRevenueCents : long
+  +NetRevenueCents : long
+  +TransactionCount : int
+}
+
+class InvoiceSummaryDto <<DTO>> {
+  +Id : Guid
+  +InvoiceNumber : string
+  +ClientName : string?
+  +TotalCents : long
+  +PaidCents : long
+  +Status : InvoiceStatus
+  +DueDate : DateTime?
+  +IsOverdue : bool
+}
+
+class PaymentRecordDto <<DTO>> {
+  +Id : Guid
+  +AmountCents : long
+  +FeeCents : long
+  +NetAmountCents : long
+  +PaymentMethod : PaymentMethod
+  +CardLast4 : string?
+  +CreatedAt : DateTime
+}
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+actor Photographer as P
+participant "QuestionnaireTemplatesController" as QTC
+participant "MediatR" as M
+participant "ApplyTemplateHandler" as ATH
+participant "ApplicationDbContext" as DB
+
+P -> QTC : POST /api/questionnaire-templates/{id}/apply\n{contactId, projectId}
+QTC -> M : Send(ApplyQuestionnaireTemplateCommand)
+M -> ATH : Handle(command)
+
+ATH -> DB : Load template Questionnaire\nwith Questions (IsTemplate = true)
+
+alt template not found
+  ATH --> M : Result.Failure("Template not found")
+  M --> QTC : Result.Failure
+  QTC --> P : 404 Not Found
+end
+
+ATH -> ATH : Clone questionnaire entity\n(new Id, Status = Draft,\nassign contactId/projectId)
+
+ATH -> ATH : Clone all Questions\nwith new IDs, preserving\nlabels, types, options,\nrequired status, sort order
+
+ATH -> DB : Questionnaires.Add(newQuestionnaire)
+ATH -> DB : QuestionnaireQuestions.AddRange(questions)
+ATH -> DB : SaveChangesAsync()
+
+ATH --> M : Result.Success(newQuestionnaireId)
+M --> QTC : Result.Success
+QTC --> P : 201 Created {questionnaireId}
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class EmailTemplate {
+  +PhotographerId : Guid
+  +Name : string
+  +Category : string
+  +SubjectLine : string?
+  +Body : string
+  +HtmlBody : string?
+  +HeaderImageUrl : string?
+  +UseBranding : bool
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+class AutomatedEmailConfig {
+  +PhotographerId : Guid
+  +EventType : string
+  +IsEnabled : bool
+  +EmailTemplateId : Guid?
+  +TimingOffsetHours : int?
+  +ReminderFrequencyDays : int?
+  +RecipientTypes : string?
+  +DaysBeforeEvent : string?
+}
+
+BaseEntity <|-- EmailTemplate
+BaseEntity <|-- AutomatedEmailConfig
+AutomatedEmailConfig --> EmailTemplate : uses
+
+note right of EmailTemplate
+  Category values:
+  "Gallery"
+  "StudioManager"
+  "BrandedInvite"
+end note
+
+note right of AutomatedEmailConfig
+  EventType values:
+  "BookingConfirmation"
+  "SessionReminder"
+  "ContractReminder"
+  "InvoiceReminder"
+  "QuestionnaireReminder"
+  "GalleryExpiryReminder"
+  "PaymentConfirmation"
+end note
+
+@enduml

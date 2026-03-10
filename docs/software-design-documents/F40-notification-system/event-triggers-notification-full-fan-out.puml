@@ -1,0 +1,47 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "FeatureHandler\n(e.g. OrderPlaced)" as Source
+participant "MediatR" as Bus
+participant "NotificationEventHandler" as EvtHandler
+participant "CreateNotificationHandler" as CmdHandler
+participant "IApplicationDbContext" as DB
+participant "IEmailService" as Email
+participant "IPushNotificationService" as Push
+participant "NotificationHub" as SignalR
+
+Source -> Bus : Publish(NotificationEvent)\n{photographerId, StoreOrderPlaced,\nStore, "New Order", "Order #1234\nfrom Jane Smith", "Jane Smith",\n"/orders/1234"}
+
+Bus -> EvtHandler : Handle(NotificationEvent)
+EvtHandler -> Bus : Send(CreateNotificationCommand)
+Bus -> CmdHandler : Handle(CreateNotificationCommand)
+
+CmdHandler -> DB : Load NotificationPreference\n(photographerId, StoreOrderPlaced)
+DB --> CmdHandler : Preference\n{inApp: true, email: true,\npush: true, digest: RealTime}
+
+== In-App ==
+CmdHandler -> DB : Create Notification entity
+CmdHandler -> DB : SaveChangesAsync()
+CmdHandler -> SignalR : Send to photographer group\n{newNotification}
+note right of SignalR
+  Dashboard bell badge
+  updates in real-time
+  via WebSocket
+end note
+
+== Email (RealTime) ==
+CmdHandler -> DB : Load Photographer.Email
+CmdHandler -> Email : SendTemplatedAsync(\nphotographer@email.com,\n"notification",\n{Title, Message, Link})
+
+== Push ==
+CmdHandler -> DB : Load Photographer.IdentityUserId
+CmdHandler -> Push : SendAsync(userId,\n"New Order",\n"Order #1234 from Jane Smith",\n"/orders/1234")
+note right of Push
+  FCM/APNs deliver
+  within 30 seconds
+end note
+
+CmdHandler --> Bus : Result<Guid> (notificationId)
+
+@enduml

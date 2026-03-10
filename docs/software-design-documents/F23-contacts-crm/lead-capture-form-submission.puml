@@ -1,0 +1,33 @@
+@startuml
+actor Visitor as V
+participant "FormSubmissionController" as FSC
+participant "MediatR" as M
+participant "SubmitLeadCaptureFormHandler" as SH
+participant "ApplicationDbContext" as DB
+participant "INotificationDispatcher" as ND
+participant "IEmailService" as ES
+
+V -> FSC : POST /api/forms/{slug}/submit\n{firstName, lastName, email,\nmessage, responses: {...}}
+FSC -> M : Send(SubmitLeadCaptureFormCommand)
+M -> SH : Handle()
+SH -> DB : Load LeadCaptureForm by slug\n(with Fields)
+DB --> SH : form
+SH -> SH : Validate required fields
+SH -> DB : Check existing Contact by email
+DB --> SH : null (no existing)
+SH -> DB : Create Contact\n(Type = form.DefaultContactType)
+DB --> SH : contact
+SH -> DB : Create LeadCaptureFormSubmission\n{formId, contactId, responseData}
+DB --> SH : submission
+SH -> DB : Load first ProjectStage\n(SortOrder = 0)
+DB --> SH : inquiryStage
+SH -> DB : Create Project\n{contactId, stageId, name}
+DB --> SH : project
+SH -> ND : Dispatch InboxNotification
+ND --> SH : delivered
+SH -> ES : SendTemplatedAsync(photographerEmail,\n"new_form_submission", variables)
+ES --> SH : sent
+SH --> M : SubmissionResultDto
+M --> FSC : result
+FSC --> V : 201 Created {message: "Submitted"}
+@enduml

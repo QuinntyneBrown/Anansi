@@ -1,0 +1,36 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "ProductsController" as ctrl
+participant "IMediator" as med
+participant "ApplyBulkMarkupValidator" as val
+participant "ApplyBulkMarkupHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : POST /api/products/bulk-markup\n{productType=CanvasPrint,\nmarkupPercentage=50,\noverrideCustomPriced=false}
+ctrl -> med : Send(ApplyBulkMarkupCommand)
+med -> val : Validate
+val --> med : pass
+med -> handler : Handle(command, ct)
+handler -> user : PhotographerId
+user --> handler : Guid
+
+handler -> db : ProductVariations\n.Include(Product)\n.Where(Product.ProductType == CanvasPrint\n&& Product.PhotographerId == pid\n&& IsActive)
+db --> handler : List<ProductVariation>
+
+loop for each variation
+  alt IsCustomPriced && !overrideCustomPriced
+    handler -> handler : Skip (preserve custom price)
+  else
+    handler -> handler : MarkupCents = CostCents * 50 / 100\nPriceCents = CostCents + MarkupCents
+    handler -> handler : count++
+  end
+end
+
+handler -> db : SaveChangesAsync()
+db --> handler : success
+handler --> med : Result<int>.Success(count)
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK {updatedCount: 12}
+@enduml

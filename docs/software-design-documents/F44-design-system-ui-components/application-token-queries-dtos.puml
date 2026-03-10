@@ -1,0 +1,48 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.DesignSystem.Queries" {
+  class GetDesignTokensQuery <<record>> {
+    +Category : DesignTokenCategory?
+  }
+
+  class GetComponentManifestQuery <<record>>
+}
+
+package "DTOs.DesignSystem" {
+  class DesignTokenDto <<record>> {
+    +Category : string
+    +Key : string
+    +Value : string
+    +Description : string?
+  }
+
+  class ComponentManifestDto <<record>> {
+    +ComponentName : string
+    +Variants : List<string>
+    +Props : List<ComponentPropDto>
+    +DefaultValues : Dictionary<string, string>
+    +ResponsiveBehavior : string?
+  }
+
+  class ComponentPropDto <<record>> {
+    +Name : string
+    +Type : string
+    +Required : bool
+    +DefaultValue : string?
+    +Description : string?
+  }
+}
+
+class DesignTokensProvider <<service>> {
+  +GetAllTokens() : IReadOnlyList<DesignToken>
+  +GetTokensByCategory(category) : IReadOnlyList<DesignToken>
+  +GetToken(key) : DesignToken?
+}
+
+GetDesignTokensQuery ..> DesignTokensProvider : uses
+GetComponentManifestQuery ..> ComponentManifestDto
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+actor Client as C
+participant "QuestionnairePublicController" as QPC
+participant "MediatR" as M
+participant "SubmitResponseHandler" as SRH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+C -> QPC : POST /api/questionnaires/submit/{token}\n{respondentName, respondentEmail,\nanswers[{questionId, value}]}
+QPC -> M : Send(SubmitQuestionnaireResponseCommand)
+M -> SRH : Handle(command)
+
+SRH -> DB : Load Questionnaire\nwith Questions
+
+alt questionnaire expired or cancelled
+  SRH --> M : Result.Failure("No longer accepting responses")
+  M --> QPC : Result.Failure
+  QPC --> C : 410 Gone
+end
+
+SRH -> SRH : Validate required fields:\ncheck each IsRequired question\nhas a non-empty answer
+
+alt required field missing
+  SRH --> M : Result.Failure("Required fields incomplete")
+  M --> QPC : Result.Failure
+  QPC --> C : 400 Bad Request
+end
+
+SRH -> SRH : Serialize answers to JSON
+
+SRH -> DB : QuestionnaireResponses.Add(\nresponse with AnswersJson,\nRespondentName, RespondentEmail,\nSubmittedAt = UtcNow)
+
+alt single-submission mode
+  SRH -> DB : questionnaire.Status = Completed\nquestionnaire.CompletedAt = UtcNow
+end
+
+SRH -> DB : SaveChangesAsync()
+
+SRH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Questionnaire Completed",\nquestionnaireTitle,\nrespondentName)
+
+SRH --> M : Result.Success(responseId)
+M --> QPC : Result.Success
+QPC --> C : 200 OK
+@enduml

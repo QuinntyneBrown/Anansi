@@ -1,0 +1,48 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ProjectStage {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Name : string
+  +SortOrder : int
+}
+
+class Project {
+  +Id : Guid
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +StageId : Guid
+  +Name : string
+  +ProjectType : string?
+  +SortOrder : int
+}
+
+class ProjectDocument {
+  +Id : Guid
+  +ProjectId : Guid
+  +DocumentId : Guid
+  +DocumentType : DocumentType
+}
+
+class Contact {
+  +Id : Guid
+  +FirstName : string
+  +LastName : string
+  +Email : string
+  +ContactType : ContactType
+}
+
+enum DocumentType {
+  Contract
+  Invoice
+  Questionnaire
+}
+
+ProjectStage "1" --> "*" Project : Projects
+Project --> "0..1" Contact : Contact
+Project "1" --> "*" ProjectDocument : Documents
+ProjectDocument ..> DocumentType
+@enduml

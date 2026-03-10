@@ -134,6 +134,8 @@ Collection "1" --> "*" QuickShareLink
 @enduml
 ```
 
+![Domain Layer - Sharing Entities](domain-layer-sharing-entities.png)
+
 ### Application Layer - Commands, Queries, and Services
 
 ```plantuml
@@ -222,6 +224,8 @@ interface IQrCodeService <<Interface>> {
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Services](application-layer-commands-queries-and-services.png)
+
 ### API Layer
 
 ```plantuml
@@ -266,6 +270,8 @@ OpenGraphController ..> GetShareMetadataQuery
 @enduml
 ```
 
+![API Layer](api-layer.png)
+
 ## Sequence Diagrams
 
 ### Send Email Invitation with Password
@@ -309,6 +315,8 @@ API --> Photographer : 201 Created
 @enduml
 ```
 
+![Send Email Invitation with Password](send-email-invitation-with-password.png)
+
 ### Track Email Open
 
 ```plantuml
@@ -337,6 +345,8 @@ Middleware --> Recipient : 200 OK (1x1 transparent PNG)
 
 @enduml
 ```
+
+![Track Email Open](track-email-open.png)
 
 ### Social Media Share with Open Graph
 
@@ -390,6 +400,8 @@ end note
 @enduml
 ```
 
+![Social Media Share with Open Graph](social-media-share-with-open-graph.png)
+
 ### Create and Access Quick Share Link
 
 ```plantuml
@@ -440,6 +452,8 @@ end
 @enduml
 ```
 
+![Create and Access Quick Share Link](create-and-access-quick-share-link.png)
+
 ### Generate QR Code
 
 ```plantuml
@@ -477,6 +491,8 @@ end note
 
 @enduml
 ```
+
+![Generate QR Code](generate-qr-code.png)
 
 ### Get Embed Code
 
@@ -518,3 +534,5 @@ end note
 
 @enduml
 ```
+
+![Get Embed Code](get-embed-code.png)

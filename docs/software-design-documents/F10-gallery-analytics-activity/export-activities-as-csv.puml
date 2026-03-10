@@ -1,0 +1,27 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ActivitiesController" as API
+participant "ExportActivitiesCsvHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/collections/{id}/activities/export\n?type=Favorite&from=2026-02-01
+API -> Handler : Send(ExportActivitiesCsvQuery)
+
+Handler -> Handler : Verify PhotographerId
+
+Handler -> DB : Query GalleryActivities\nwith type and date filters
+DB --> Handler : List<GalleryActivity>
+
+Handler -> Handler : Build CSV header:\nTimestamp,Type,Name,Email,\nMediaId,FavoriteListId,\nResolution,IsFullGallery,Details
+
+loop For each activity
+  Handler -> Handler : Append CSV row
+end
+
+Handler --> API : Result<byte[]>
+API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: attachment;\nfilename="activities_2026-02-01.csv"
+
+@enduml

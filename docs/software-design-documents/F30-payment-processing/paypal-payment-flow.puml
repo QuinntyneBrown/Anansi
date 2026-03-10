@@ -1,0 +1,39 @@
+@startuml
+actor Client as C
+participant "InvoicePublicController" as IPC
+participant "MediatR" as M
+participant "ProcessPayPalHandler" as PPH
+participant "IPayPalService" as PPS
+participant "PayPalWebhookController" as PPWC
+participant "HandlePayPalWebhookHandler" as PPWH
+participant "ApplicationDbContext" as DB
+
+== Step 1: Create PayPal Order ==
+C -> IPC : POST /api/invoices/pay/{token}\n{method: "paypal"}
+IPC -> M : Send(ProcessPayPalPaymentCommand)
+M -> PPH : Handle(command)
+
+PPH -> PPS : CreateOrderAsync(\npaypalEmail, amountCents,\ncurrency, description,\nreturnUrl, cancelUrl)
+PPS --> PPH : approvalUrl
+
+PPH --> M : Result.Success(approvalUrl)
+M --> IPC : Result.Success
+IPC --> C : 200 OK {approvalUrl}
+
+C -> C : Redirect to PayPal\nfor approval
+
+== Step 2: Capture on Webhook ==
+participant "PayPal" as PP
+PP -> PPWC : POST /webhooks/paypal\n(CHECKOUT.ORDER.APPROVED)
+PPWC -> M : Send(HandlePayPalWebhookCommand)
+M -> PPWH : Handle(command)
+
+PPWH -> PPS : CaptureOrderAsync(orderId)
+PPS --> PPWH : captureResult (success)
+
+PPWH -> DB : PaymentRecords.Add(\nmethod=PayPal,\nexternalPaymentId=captureId)
+PPWH -> DB : Update invoice status
+PPWH -> DB : SaveChangesAsync()
+PPWH --> M : Result.Success
+PPWC --> PP : 200 OK
+@enduml

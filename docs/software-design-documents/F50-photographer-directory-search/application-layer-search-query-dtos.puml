@@ -1,0 +1,43 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Directory.Queries" {
+  class SearchDirectoryQuery <<record>> {
+    +Tags : string[]?
+    +Neighborhood : string?
+    +Latitude : double?
+    +Longitude : double?
+    +Page : int
+    +PageSize : int
+  }
+
+  class SearchDirectoryQueryValidator {
+    +SearchDirectoryQueryValidator()
+  }
+
+  class DirectorySearchResultDto <<record>> {
+    +PhotographerId : Guid
+    +DisplayName : string
+    +BusinessName : string?
+    +ProfileImageUrl : string?
+    +CulturalTags : string[]
+    +Neighborhood : string?
+    +MatchingTagCount : int?
+    +DistanceKm : double?
+    +RelevanceScore : double
+  }
+
+  class "PaginatedResult<DirectorySearchResultDto>" as PaginatedResult {
+    +Items : List<DirectorySearchResultDto>
+    +Page : int
+    +PageSize : int
+    +TotalCount : int
+    +TotalPages : int
+  }
+}
+
+SearchDirectoryQuery ..> PaginatedResult : returns
+SearchDirectoryQueryValidator ..> SearchDirectoryQuery : validates
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+participant "FormSubmittedEventHandler" as FEH
+participant "MediatR" as M
+participant "AutoCreateProjectHandler" as APH
+participant "ApplicationDbContext" as DB
+
+FEH -> M : Send(AutoCreateProjectCommand\n{contactId, projectName: "New Inquiry"})
+M -> APH : Handle()
+APH -> DB : Query ProjectStage\nWHERE PhotographerId\nORDER BY SortOrder ASC\nTAKE 1
+DB --> APH : inquiryStage (first stage)
+APH -> DB : Count projects in stage
+DB --> APH : count = 5
+APH -> DB : Create Project\n{contactId, stageId: inquiryStage.Id,\nname: "New Inquiry",\nsortOrder: 5}
+DB --> APH : project saved
+APH -> APH : Raise ProjectCreatedEvent
+APH --> M : ProjectId
+M --> FEH : success
+@enduml

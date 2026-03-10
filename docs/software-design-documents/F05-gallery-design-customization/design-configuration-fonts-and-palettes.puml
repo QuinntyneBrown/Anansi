@@ -1,0 +1,46 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class DesignOptions <<static>> {
+  +AvailableCoverStyles : CoverStyle[]
+  +AvailableFonts : FontOption[]
+  +AvailableColorPalettes : ColorPaletteOption[]
+  +AvailableLanguages : GalleryLanguage[]
+}
+
+class FontOption {
+  +Family : string
+  +DisplayName : string
+  +Category : string
+  +Weights : int[]
+}
+
+class ColorPaletteOption {
+  +Name : string
+  +Primary : string
+  +Secondary : string
+  +Accent : string
+  +Background : string
+  +Text : string
+}
+
+note right of DesignOptions
+  Minimum 6 fonts:
+  - Inter
+  - Cormorant Garamond
+  - Playfair Display
+  - Lora
+  - Montserrat
+  - Raleway
+
+  Minimum 9 color palettes:
+  - Classic, Warm, Cool, Earth,
+    Midnight, Blush, Forest,
+    Ocean, Sunset
+end note
+
+DesignOptions *-- FontOption
+DesignOptions *-- ColorPaletteOption
+@enduml

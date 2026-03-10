@@ -1,0 +1,47 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Pipeline.Queries" {
+  class GetPipelineBoardQuery <<record>>
+
+  class PipelineBoardDto <<record>> {
+    +Stages : List<StageDto>
+  }
+
+  class StageDto <<record>> {
+    +Id : Guid
+    +Name : string
+    +SortOrder : int
+    +Projects : List<ProjectCardDto>
+  }
+
+  class ProjectCardDto <<record>> {
+    +Id : Guid
+    +Name : string
+    +ProjectType : string?
+    +ClientName : string?
+    +ClientEmail : string?
+    +HasPendingDocuments : bool
+    +HasUpcomingSession : bool
+    +HasOutstandingPayment : bool
+  }
+
+  class GetProjectDetailQuery <<record>> {
+    +ProjectId : Guid
+  }
+
+  class ProjectDetailDto <<record>> {
+    +Project : ProjectCardDto
+    +Contracts : List<ContractSummaryDto>
+    +Invoices : List<InvoiceSummaryDto>
+    +Questionnaires : List<QuestionnaireSummaryDto>
+    +Sessions : List<BookingSummaryDto>
+    +Payments : List<PaymentSummaryDto>
+  }
+}
+
+GetPipelineBoardQuery ..> PipelineBoardDto : returns
+GetProjectDetailQuery ..> ProjectDetailDto : returns
+@enduml

@@ -1,0 +1,47 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ContactsController <<ApiController>> {
+  -_mediator : IMediator
+  +List(query) : IActionResult
+  +GetById(id) : IActionResult
+  +GetProfile(id) : IActionResult
+  +Create(cmd) : IActionResult
+  +Update(id, cmd) : IActionResult
+  +Delete(id) : IActionResult
+  +ChangeType(id, cmd) : IActionResult
+}
+
+class ContactImportController <<ApiController>> {
+  -_mediator : IMediator
+  +Preview(csvFile) : IActionResult
+  +Import(cmd) : IActionResult
+}
+
+class LeadCaptureFormsController <<ApiController>> {
+  -_mediator : IMediator
+  +List() : IActionResult
+  +GetById(id) : IActionResult
+  +Create(cmd) : IActionResult
+  +Update(id, cmd) : IActionResult
+  +Delete(id) : IActionResult
+}
+
+class FormSubmissionController <<ApiController>> {
+  -_mediator : IMediator
+  +Submit(slug, cmd) : IActionResult
+}
+
+note right of FormSubmissionController
+  Public endpoint.
+  No [Authorize] required.
+  Anti-spam: rate limiting + honeypot.
+end note
+
+ContactsController --> "IMediator" : sends commands/queries
+ContactImportController --> "IMediator" : sends commands/queries
+LeadCaptureFormsController --> "IMediator" : sends commands/queries
+FormSubmissionController --> "IMediator" : sends commands
+@enduml

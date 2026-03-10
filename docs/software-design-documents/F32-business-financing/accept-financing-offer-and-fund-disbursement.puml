@@ -1,0 +1,46 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "FinancingController" as API
+participant "MediatR" as M
+participant "AcceptOfferHandler" as Handler
+participant "IFinancingService" as FS
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/financing/{id}/accept
+API -> M : Send(AcceptFinancingOfferCommand)
+M -> Handler : Handle(command)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Find FinancingApplication\n(Id, PhotographerId, Status="Approved")
+DB --> Handler : FinancingApplication
+
+alt application not found or wrong status
+  Handler --> M : Result.Failure("Not found")
+  M --> API : Result.Failure
+  API --> Photographer : 404 Not Found
+end
+
+Handler -> Handler : Set Status = "Active"
+Handler -> Handler : Set ApprovedAt = UtcNow
+
+Handler -> FS : DisburseFundsAsync(\nphotographerId, offeredAmountCents)
+
+note right of FS
+  Funds deposited to
+  photographer's bank
+  within 1-2 business days
+  via Stripe Connect payout.
+end note
+
+Handler -> Handler : Set FundedAt = UtcNow
+Handler -> DB : SaveChangesAsync()
+
+Handler --> M : Result<FinancingApplicationDto>
+M --> API : Result.Success
+API --> Photographer : 200 OK\n{status: "Active", fundedAt}
+
+@enduml

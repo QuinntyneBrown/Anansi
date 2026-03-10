@@ -1,0 +1,69 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Website.Templates" {
+  class ListTemplatesQuery <<record>> {
+    +Category : TemplateCategory?
+  }
+  class ListTemplatesHandler {
+    -_db : IApplicationDbContext
+  }
+  class GetTemplatePreviewQuery <<record>> {
+    +TemplateId : Guid
+  }
+}
+
+package "Anansi.Application.Features.Website.Sites" {
+  class CreateWebsiteCommand <<record>> {
+    +Name : string
+    +Description : string?
+    +TemplateId : Guid?
+    +Subdomain : string
+  }
+  class CreateWebsiteValidator
+  class CreateWebsiteHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+  }
+  class PublishWebsiteCommand <<record>> {
+    +WebsiteId : Guid
+  }
+}
+
+package "Anansi.Application.Features.Website.Elements" {
+  class CreateElementCommand <<record>> {
+    +PageId : Guid
+    +ElementType : ElementType
+    +ContentJson : string?
+    +PositionX : double
+    +PositionY : double
+    +Width : double
+    +Height : double
+    +ZIndex : int?
+    +ParentElementId : Guid?
+    +BreakpointOverrides : List?
+  }
+  class CreateElementHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+  }
+}
+
+package "Anansi.Application.DTOs.Website" {
+  class WebsiteDto <<record>>
+  class WebsiteTemplateDto <<record>>
+  class PageElementDto <<record>>
+  class BreakpointOverrideDto <<record>>
+}
+
+ListTemplatesHandler ..> ListTemplatesQuery : handles
+CreateWebsiteHandler ..> CreateWebsiteCommand : handles
+CreateElementHandler ..> CreateElementCommand : handles
+
+CreateWebsiteHandler ..> WebsiteDto : returns
+ListTemplatesHandler ..> WebsiteTemplateDto : returns
+CreateElementHandler ..> PageElementDto : returns
+
+@enduml

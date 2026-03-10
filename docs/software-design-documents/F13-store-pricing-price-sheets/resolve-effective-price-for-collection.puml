@@ -1,0 +1,28 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+participant "StorePageController" as ctrl
+participant "ResolveCollectionPricesHandler" as handler
+participant "IApplicationDbContext" as db
+
+Client -> ctrl : GET /api/store/{collectionId}/products
+ctrl -> handler : Handle(query)
+
+handler -> db : Collection.FindAsync(collectionId)
+db --> handler : Collection\n(PriceSheetId = guid or null)
+
+alt Collection has assigned PriceSheet
+  handler -> db : PriceSheetItems\n.Where(PriceSheetId == sheetId)\n.Include(ProductVariation.Product)
+  db --> handler : List<PriceSheetItem>
+
+  handler -> handler : Build product list\nusing PriceSheetItem.PriceCents\nas effective price
+else No PriceSheet (use base prices)
+  handler -> db : Products\n.Include(Variations)\n.Where(IsActive)
+  db --> handler : List<Product>
+
+  handler -> handler : Build product list\nusing ProductVariation.PriceCents\nas effective price
+end
+
+handler --> ctrl : List<StoreProductDto>
+ctrl --> Client : 200 OK {products\nwith effective prices}
+@enduml

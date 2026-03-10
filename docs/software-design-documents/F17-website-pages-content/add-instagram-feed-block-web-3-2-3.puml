@@ -1,0 +1,37 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "PageElementsController" as C
+participant "IMediator" as M
+participant "CreateElementHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/.../elements\n{ elementType: InstagramFeed,\n  contentJson: { photoCount: 9,\n    size: "medium",\n    clickBehavior: "lightbox" } }
+C -> M : Send(CreateElementCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Find page (pageId, photographerId)
+DB --> H : WebsitePage
+
+H -> DB : Check Photographer\nhas InstagramAccessToken
+DB --> H : Photographer (token present)
+
+alt no Instagram token
+  H --> M : Result.Failure\n("Instagram account not connected")
+  M --> C : failure
+  C --> P : 400 Bad Request
+else token present
+  H -> H : Build PageElement\n(ElementType = InstagramFeed)
+  H -> DB : Add(element)\nSaveChangesAsync()
+  DB --> H : saved
+  H --> M : Result.Success(PageElementDto)
+  M --> C : result
+  C --> P : 201 Created { elementDto }
+end
+
+@enduml

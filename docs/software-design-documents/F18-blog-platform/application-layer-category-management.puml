@@ -1,0 +1,45 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Website.Blog" {
+  class CreateBlogCategoryCommand <<record>> {
+    +Name : string
+    +Slug : string?
+    +Description : string?
+  }
+  class CreateBlogCategoryHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+  }
+
+  class DeleteBlogCategoryCommand <<record>> {
+    +CategoryId : Guid
+  }
+  class DeleteBlogCategoryHandler
+
+  class ListBlogCategoriesQuery <<record>>
+  class ListBlogCategoriesHandler
+}
+
+package "Anansi.Application.DTOs.Website" {
+  class BlogCategoryDto <<record>> {
+    +Id : Guid
+    +Name : string
+    +Slug : string
+    +Description : string?
+    +SortOrder : int
+  }
+}
+
+package "Anansi.Application.Interfaces" {
+  interface IBlogMigrationService {
+    +FetchAndParseAsync(url) : BlogImportResult
+  }
+}
+
+CreateBlogCategoryHandler ..> BlogCategoryDto : returns
+ListBlogCategoriesHandler ..> BlogCategoryDto : returns
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "SharingController" as API
+participant "GetEmbedCodeHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/collections/{id}/embed
+API -> Handler : Send(GetEmbedCodeQuery)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Find Collection by Id & PhotographerId
+DB --> Handler : Collection
+
+alt EmbeddingEnabled
+  Handler -> Handler : Generate iframe snippet:\n<iframe src="/gallery/{slug}/embed"\nwidth="100%" height="600"></iframe>
+
+  Handler -> Handler : Generate JS snippet:\n<div id="anansi-gallery"></div>\n<script src="/embed.js?c={id}"></script>
+
+  Handler --> API : Result<EmbedCodeResult>
+  API --> Photographer : 200 OK
+else Embedding disabled
+  Handler --> API : Result.Failure("Embedding not enabled")
+  API --> Photographer : 400 Bad Request
+end
+
+note right of Handler
+  Embedded galleries respect privacy:
+  password-protected collections
+  show a password prompt within
+  the iframe/embed container.
+end note
+
+@enduml

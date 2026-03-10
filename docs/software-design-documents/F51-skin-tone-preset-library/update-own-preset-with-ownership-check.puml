@@ -1,0 +1,40 @@
+@startuml
+actor Photographer as P
+participant "PresetsController" as PC
+participant "MediatR" as M
+participant "UpdatePresetCommandHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> PC : PUT /api/presets/{id}\n{name: "Deep Glow v2", ...}
+PC -> M : Send(UpdatePresetCommand)
+M -> H : Handle()
+
+H -> DB : Load EditingPreset by Id
+DB --> H : preset
+
+alt preset.IsSystemPreset = true
+  H --> M : throw ForbiddenException\n("System presets cannot be modified")
+  M --> PC : 403 Forbidden
+  PC --> P : 403 Forbidden
+else preset.AuthorId != currentUserId
+  H --> M : throw ForbiddenException\n("You can only edit your own presets")
+  M --> PC : 403 Forbidden
+  PC --> P : 403 Forbidden
+else valid owner
+  H -> H : Update Name, Description,\nSkinToneRange, ShootingContext
+  H -> H : Update PresetAdjustments values
+  H -> H : Update PresetSplitTone values
+
+  H -> DB : Remove existing PresetHslChannels
+  H -> DB : Create 8 new PresetHslChannel records
+  DB --> H : channels replaced
+
+  H -> DB : SaveChanges
+  DB --> H : saved
+
+  H -> H : Map to PresetDetailDto
+  H --> M : PresetDetailDto
+  M --> PC : result
+  PC --> P : 200 OK {updated preset detail}
+end
+@enduml

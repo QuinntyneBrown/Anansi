@@ -1,0 +1,40 @@
+@startuml
+actor Photographer as P
+participant "BookingController" as BC
+participant "MediatR" as M
+participant "ConfirmBookingHandler" as H
+participant "IApplicationDbContext" as DB
+participant "IVideoCallService" as VCS
+participant "IGoogleCalendarService" as GCS
+
+P -> BC : PUT /api/bookings/{id}/confirm
+BC -> M : Send(ConfirmBookingCommand)
+M -> H : Handle(command)
+H -> DB : Get BookingRecord with SessionType
+DB --> H : booking + sessionType
+
+H -> H : booking.Status = Confirmed
+
+alt sessionType.VideoCallType == "Zoom"
+  H -> DB : Get Photographer.ZoomAccountId
+  H -> VCS : CreateZoomMeetingAsync(\nzoomAccountId, topic, startTime, duration)
+  VCS --> H : VideoMeetingLink
+  H -> H : booking.VideoCallLink = link.MeetingUrl
+else sessionType.VideoCallType == "GoogleMeet"
+  H -> DB : Get Photographer.GoogleCalendarId
+  H -> VCS : CreateGoogleMeetAsync(\ncalendarId, topic, startTime, duration, clientEmail)
+  VCS --> H : VideoMeetingLink
+  H -> H : booking.VideoCallLink = link.MeetingUrl
+end
+
+alt Photographer.GoogleCalendarId != null
+  H -> GCS : CreateEventAsync(calendarId,\nsessionType.Name, start, end, clientEmail)
+  GCS --> H : eventId
+  H -> H : booking.GoogleCalendarEventId = eventId
+end
+
+H -> DB : SaveChangesAsync()
+H --> M : Result.Success(BookingDto)
+M --> BC : Result.Success
+BC --> P : 200 OK {BookingDto with videoCallLink}
+@enduml

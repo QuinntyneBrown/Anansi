@@ -1,0 +1,24 @@
+@startuml
+actor Photographer as P
+participant "IntegrationsController" as IC
+participant "MediatR" as M
+participant "GetIntegrationsStatusHandler" as H
+participant "ICurrentUserService" as US
+participant "IApplicationDbContext" as DB
+
+P -> IC : GET /api/integrations/status
+IC -> M : Send(GetIntegrationsStatusQuery)
+M -> H : Handle(query)
+H -> US : PhotographerId
+US --> H : Guid
+H -> DB : Get Photographer with\nall integration fields
+DB --> H : photographer
+H -> DB : Get InstagramFeedConfig
+DB --> H : config (or null)
+
+H -> H : Build IntegrationStatusDto[]\nfor each provider:\n- GoogleCalendar: connected if GoogleCalendarId set\n- Zoom: connected if ZoomAccountId set\n- GoogleMeet: connected if GoogleCalendarId set\n- GA4: connected if GoogleAnalyticsId set\n- FacebookPixel: connected if FacebookPixelId set\n- Instagram: connected if InstagramAccessToken set\n- Stripe: connected if StripeAccountId set\n- PayPal: connected if PayPalEmail set
+
+H --> M : Result.Success(IntegrationStatusDto[])
+M --> IC : Result.Success
+IC --> P : 200 OK [{provider, isConnected, accountLabel}]
+@enduml

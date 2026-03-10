@@ -1,0 +1,34 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "CustomDomainsController" as API
+participant "DeleteCustomDomainHandler" as Handler
+participant "ISslProvisioningService" as SSL
+participant "IApplicationDbContext" as DB
+participant "DomainCache" as Cache
+
+Photographer -> API : DELETE /api/domains/{id}
+API -> Handler : Send(DeleteCustomDomainCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Load CustomDomain by Id & PhotographerId
+DB --> Handler : CustomDomain
+
+alt Has SSL certificate
+  Handler -> SSL : RevokeAsync(certId)
+  SSL --> Handler : OK
+end
+
+Handler -> DB : Update Photographer\n(clear CustomGalleryDomain or CustomWebsiteDomain)
+
+Handler -> DB : Remove CustomDomain entity
+Handler -> DB : SaveChangesAsync()
+
+Handler -> Cache : Evict(domainName)
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+@enduml

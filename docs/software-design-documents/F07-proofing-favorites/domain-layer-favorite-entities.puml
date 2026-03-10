@@ -1,0 +1,54 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class FavoriteList {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +Name : string
+  +ClientName : string?
+  +ClientEmail : string?
+  +IsPreset : bool
+  +IsCompleted : bool
+  +ShareToken : string?
+}
+
+class FavoriteItem {
+  +FavoriteListId : Guid
+  +MediaId : Guid
+  +Comment : string?
+}
+
+class Collection {
+  +FavoriteLimit : int?
+}
+
+class GalleryMedia {
+  +FileName : string
+  +OriginalFileName : string
+  +StorageKey : string
+}
+
+class GalleryActivity {
+  +ActivityType : ActivityType
+  +ActorName : string?
+  +FavoriteListId : Guid?
+  +MediaId : Guid?
+  +Details : string?
+}
+
+BaseEntity <|-- FavoriteList
+BaseEntity <|-- FavoriteItem
+Collection "1" --> "*" FavoriteList : FavoriteLists
+FavoriteList "1" --> "*" FavoriteItem : Items
+FavoriteItem "*" --> "1" GalleryMedia : Media
+Collection "1" --> "*" GalleryActivity : Activities
+
+@enduml

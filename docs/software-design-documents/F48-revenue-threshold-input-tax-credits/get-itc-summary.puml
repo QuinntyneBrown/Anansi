@@ -1,0 +1,27 @@
+@startuml
+actor Photographer as P
+participant "TaxProfileController" as TPC
+participant "MediatR" as M
+participant "GetItcSummaryHandler" as ISH
+participant "ApplicationDbContext" as DB
+
+P -> TPC : GET /api/tax-profile/itc-summary?\nfrom=2025-01-01&to=2025-12-31
+TPC -> M : Send(GetItcSummaryQuery)
+M -> ISH : Handle(query)
+
+ISH -> DB : Query PaymentRecords\nWHERE PhotographerId = {id}\nAND IsRefund = false\nAND CreatedAt BETWEEN from..to\nSUM TaxCents
+DB --> ISH : hstCollectedCents = 52000
+
+ISH -> DB : Query BusinessExpenses\nWHERE PhotographerId = {id}\nAND ExpenseDate BETWEEN from..to\nGROUP BY Category\nSUM AmountCents, SUM HstPaidCents,\nCOUNT(*)
+DB --> ISH : Category aggregations
+
+ISH -> ISH : hstPaidOnExpensesCents =\nsum(all category HstPaidCents)\n= 28500
+
+ISH -> ISH : netHstOwingCents =\n52000 - 28500 = 23500
+
+ISH -> ISH : Build categoryBreakdown:\n[{Equipment: 2 expenses,\n  total: 300000,\n  hstPaid: 19500},\n {Software: 4 expenses,\n  total: 60000,\n  hstPaid: 7800},\n {Travel: 1 expense,\n  total: 9231,\n  hstPaid: 1200}]
+
+ISH --> M : ItcSummaryDto {\n  hstCollectedCents: 52000,\n  hstPaidOnExpensesCents: 28500,\n  netHstOwingCents: 23500,\n  categoryBreakdown: [...]\n}
+M --> TPC : Result.Success
+TPC --> P : 200 OK (ItcSummaryDto)
+@enduml

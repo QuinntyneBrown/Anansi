@@ -144,6 +144,8 @@ Collection --> CollectionStatus
 @enduml
 ```
 
+![Domain Layer - Privacy Entities](domain-layer-privacy-entities.png)
+
 ### Application Layer - Commands and Queries
 
 ```plantuml
@@ -223,6 +225,8 @@ class GalleryEmailRegistrationDto <<DTO>> {
 @enduml
 ```
 
+![Application Layer - Commands and Queries](application-layer-commands-and-queries.png)
+
 ### Infrastructure Layer - Background Jobs and Services
 
 ```plantuml
@@ -268,6 +272,8 @@ GalleryAccessMiddleware --> IApplicationDbContext
 
 @enduml
 ```
+
+![Infrastructure Layer - Background Jobs and Services](infrastructure-layer-background-jobs-and-services.png)
 
 ## Sequence Diagrams
 
@@ -320,6 +326,8 @@ end
 @enduml
 ```
 
+![Visitor Accesses Password-Protected Collection](visitor-accesses-password-protected-collection.png)
+
 ### Client Marks Photo as Private
 
 ```plantuml
@@ -357,6 +365,8 @@ end note
 @enduml
 ```
 
+![Client Marks Photo as Private](client-marks-photo-as-private.png)
+
 ### Collection Expiry and Auto-Hide
 
 ```plantuml
@@ -384,6 +394,8 @@ end
 
 @enduml
 ```
+
+![Collection Expiry and Auto-Hide](collection-expiry-and-auto-hide.png)
 
 ### Send Expiry Reminder Emails
 
@@ -423,6 +435,8 @@ end
 @enduml
 ```
 
+![Send Expiry Reminder Emails](send-expiry-reminder-emails.png)
+
 ### Set Collection Expiry Configuration
 
 ```plantuml
@@ -454,6 +468,8 @@ API --> Photographer : 200 OK
 @enduml
 ```
 
+![Set Collection Expiry Configuration](set-collection-expiry-configuration.png)
+
 ### Email Registration and Export
 
 ```plantuml
@@ -480,3 +496,5 @@ API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: atta
 
 @enduml
 ```
+
+![Email Registration and Export](email-registration-and-export.png)

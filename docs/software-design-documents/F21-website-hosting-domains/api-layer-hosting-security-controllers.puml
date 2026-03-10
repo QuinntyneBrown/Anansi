@@ -1,0 +1,45 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class HostingController <<ApiController>> {
+  -_mediator : IMediator
+  +GetHostingStatus(websiteId) : IActionResult
+  +ConfigureSubdomain(websiteId, cmd) : IActionResult
+  +ConnectCustomDomain(websiteId, cmd) : IActionResult
+  +VerifyCustomDomain(websiteId) : IActionResult
+  +RemoveCustomDomain(websiteId) : IActionResult
+  +GetDnsInstructions(websiteId) : IActionResult
+}
+
+class WebsiteSecurityController <<ApiController>> {
+  -_mediator : IMediator
+  +SetSitePassword(websiteId, cmd) : IActionResult
+  +RemoveSitePassword(websiteId) : IActionResult
+  +SetPagePassword(websiteId, pageId, cmd) : IActionResult
+  +RemovePagePassword(websiteId, pageId) : IActionResult
+  +UpdateRightClickProtection(websiteId, cmd) : IActionResult
+}
+
+class SiteAccessController <<ApiController>> {
+  -_mediator : IMediator
+  +ValidatePassword(subdomain, cmd) : IActionResult
+}
+
+class SiteRenderMiddleware {
+  -_next : RequestDelegate
+  +InvokeAsync(HttpContext) : Task
+}
+
+note right of SiteRenderMiddleware
+  Resolves website from hostname.
+  Checks Published status.
+  Enforces password protection.
+  Injects right-click protection JS.
+end note
+
+HostingController --> "IMediator" : sends commands/queries
+WebsiteSecurityController --> "IMediator" : sends commands
+SiteAccessController --> "IMediator" : sends commands
+@enduml

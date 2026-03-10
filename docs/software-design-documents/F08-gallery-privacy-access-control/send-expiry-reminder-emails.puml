@@ -1,0 +1,33 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "CollectionExpiryBackgroundJob" as Job
+participant "IExpiryReminderService" as Reminder
+participant "IApplicationDbContext" as DB
+participant "IEmailService" as Email
+
+Job -> DB : Query Collections\nWhere Status == Published\nAnd ExpiresAt IS NOT NULL\nAnd ExpiryReminderDays IS NOT NULL
+DB --> Job : List<Collection>
+
+loop For each collection
+  Job -> Job : Parse ExpiryReminderDays\n(e.g., "7,3,1")
+  Job -> Job : Calculate days until expiry
+
+  alt days matches a configured reminder day
+    Job -> Reminder : ResolveRecipients(\ncollectionId, recipientTypes)
+
+    Reminder -> DB : Query by recipient type:\n- GalleryActivities (downloaders)\n- FavoriteLists (favoriters)\n- GalleryEmailRegistrations (viewers)\n- Orders (purchasers)\n- Specific email addresses
+    DB --> Reminder : Deduplicated email list
+    Reminder --> Job : List<string> emails
+
+    Job -> Reminder : BuildReminderEmail(\ntemplate, collection)
+    Reminder --> Job : EmailContent
+
+    loop For each recipient
+      Job -> Email : SendAsync(recipient,\nsubject, body)
+    end
+  end
+end
+
+@enduml

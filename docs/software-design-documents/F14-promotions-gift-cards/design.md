@@ -117,6 +117,8 @@ end note
 @enduml
 ```
 
+![Domain -- Coupon Entity](domain-coupon-entity.png)
+
 ### Domain -- Gift Card Entity
 
 ```plantuml
@@ -161,6 +163,8 @@ end note
 
 @enduml
 ```
+
+![Domain -- Gift Card Entity](domain-gift-card-entity.png)
 
 ### Application -- Coupon Commands & Validation
 
@@ -216,6 +220,8 @@ CreateCouponHandler ..> CreateCouponCommand
 
 @enduml
 ```
+
+![Application -- Coupon Commands & Validation](application-coupon-commands-validation.png)
 
 ### Application -- Gift Card Commands
 
@@ -280,6 +286,8 @@ end note
 @enduml
 ```
 
+![Application -- Gift Card Commands](application-gift-card-commands.png)
+
 ---
 
 ## Sequence Diagrams
@@ -319,6 +327,8 @@ med --> ctrl : Result
 ctrl --> Photographer : 201 Created {CouponDto}
 @enduml
 ```
+
+![Create Coupon](create-coupon.png)
 
 ### Validate Coupon at Checkout
 
@@ -366,6 +376,8 @@ ctrl --> Client : 200 OK {CouponValidationResult}
 @enduml
 ```
 
+![Validate Coupon at Checkout](validate-coupon-at-checkout.png)
+
 ### Create and Deliver Gift Card via Email
 
 ```plantuml
@@ -403,6 +415,8 @@ med --> ctrl : Result
 ctrl --> Photographer : 201 Created {GiftCardDto}
 @enduml
 ```
+
+![Create and Deliver Gift Card via Email](create-and-deliver-gift-card-via-email.png)
 
 ### Redeem Gift Card at Checkout
 
@@ -443,6 +457,8 @@ checkout --> Client : Order summary updated\n(Gift card: -$50.00)
 @enduml
 ```
 
+![Redeem Gift Card at Checkout](redeem-gift-card-at-checkout.png)
+
 ### Display Coupon Banner on Gallery/Store
 
 ```plantuml
@@ -475,3 +491,5 @@ med --> ctrl : Result
 ctrl --> Client : 200 OK\n{bannerText, color, code}\nor 204 No Content
 @enduml
 ```
+
+![Display Coupon Banner on Gallery/Store](display-coupon-banner-on-gallery-store.png)

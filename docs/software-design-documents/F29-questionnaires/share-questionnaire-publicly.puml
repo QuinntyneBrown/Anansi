@@ -1,0 +1,31 @@
+@startuml
+actor Photographer as P
+participant "QuestionnairesController" as QC
+participant "MediatR" as M
+participant "SharePubliclyHandler" as SPH
+participant "ApplicationDbContext" as DB
+
+P -> QC : POST /api/questionnaires/{id}/share
+QC -> M : Send(ShareQuestionnairePubliclyCommand)
+M -> SPH : Handle(command)
+
+SPH -> DB : Load Questionnaire
+
+alt not in Draft or Sent status
+  SPH --> M : Result.Failure("Cannot share in current status")
+  M --> QC : Result.Failure
+  QC --> P : 400 Bad Request
+end
+
+SPH -> SPH : Generate unique URL slug\n(e.g., "wedding-details-a1b2c3")
+
+SPH -> DB : questionnaire.PublicSlug = slug\nquestionnaire.AllowMultipleSubmissions = true
+alt currently Draft
+  SPH -> DB : questionnaire.Status = Sent\nquestionnaire.SentAt = UtcNow
+end
+SPH -> DB : SaveChangesAsync()
+
+SPH --> M : Result.Success(publicUrl)
+M --> QC : Result.Success
+QC --> P : 200 OK {publicUrl}
+@enduml

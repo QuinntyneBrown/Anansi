@@ -1,0 +1,45 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "SharingController" as API
+participant "CreateQuickShareLinkHandler" as CreateHandler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/collections/{id}/quick-share\n{mediaIds: [guid1, guid2, guid3]}
+API -> CreateHandler : Send(CreateQuickShareLinkCommand)
+
+CreateHandler -> CreateHandler : Verify PhotographerId
+CreateHandler -> DB : Find Collection by Id & PhotographerId
+DB --> CreateHandler : Collection
+
+CreateHandler -> DB : Create QuickShareLink\n{Token=random, MediaIds=csv}
+CreateHandler -> DB : SaveChangesAsync()
+
+CreateHandler --> API : Result<QuickShareLinkDto>
+API --> Photographer : 201 Created\n{token: "abc123...", url: "/share/abc123..."}
+
+== Later: Anyone accesses the link ==
+
+actor Viewer
+participant "QuickShareController" as Public
+participant "GetQuickSharePhotosHandler" as GetHandler
+
+Viewer -> Public : GET /share/{token}
+Public -> GetHandler : Send(GetQuickSharePhotosQuery)
+
+GetHandler -> DB : Find QuickShareLink by Token
+DB --> GetHandler : QuickShareLink
+
+alt IsRevoked
+  GetHandler --> Public : Result.NotFound("Link revoked")
+  Public --> Viewer : 404 Not Found
+else Active
+  GetHandler -> DB : Load GalleryMedia by parsed MediaIds
+  DB --> GetHandler : List<GalleryMedia>
+  GetHandler --> Public : Result<List<GalleryMediaDto>>
+  Public --> Viewer : 200 OK (photo gallery)
+end
+
+@enduml

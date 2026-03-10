@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CreateCustomDomainCommand <<Command>> {
+  +DomainName : string
+  +Purpose : DomainPurpose
+}
+
+class VerifyCustomDomainCommand <<Command>> {
+  +DomainId : Guid
+}
+
+class DeleteCustomDomainCommand <<Command>> {
+  +DomainId : Guid
+}
+
+class CheckDomainDnsCommand <<Command>> {
+  +DomainId : Guid
+}
+
+class RenewSslCertificateCommand <<Command>> {
+  +DomainId : Guid
+}
+
+class GetSubdomainAvailabilityQuery <<Query>> {
+  +DesiredSubdomain : string
+}
+
+class CustomDomainDto <<DTO>> {
+  +Id : Guid
+  +DomainName : string
+  +Purpose : DomainPurpose
+  +IsVerified : bool
+  +SslStatus : SslStatus
+  +SslExpiresAt : DateTime?
+  +DnsInstructions : string?
+  +VerifiedAt : DateTime?
+  +CreatedAt : DateTime
+}
+
+class DnsCheckResultDto <<DTO>> {
+  +DomainName : string
+  +CnameTarget : string?
+  +TxtRecords : List<string>
+  +VerificationMatch : bool
+}
+
+interface IDnsVerificationService <<Interface>> {
+  +CheckCnameAsync(domain) : string?
+  +CheckTxtRecordsAsync(domain) : List<string>
+  +VerifyAsync(domain, token) : bool
+}
+
+interface ISslProvisioningService <<Interface>> {
+  +ProvisionAsync(domain) : SslCertResult
+  +RenewAsync(certId) : SslCertResult
+  +RevokeAsync(certId) : Task
+}
+
+VerifyCustomDomainCommand --> IDnsVerificationService
+VerifyCustomDomainCommand --> ISslProvisioningService
+RenewSslCertificateCommand --> ISslProvisioningService
+CheckDomainDnsCommand --> IDnsVerificationService
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "PageElementsController" as C
+participant "IMediator" as M
+participant "CreateElementValidator" as V
+participant "CreateElementHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/pages/{pId}/elements\n{ elementType, contentJson, posX, posY,\n  width, height, breakpointOverrides }
+C -> M : Send(CreateElementCommand)
+M -> V : Validate(command)
+V --> M : valid
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Find page by pageId\nand photographerId
+DB --> H : WebsitePage
+
+H -> DB : Max(SortOrder) for page
+DB --> H : maxSort
+
+H -> H : Build PageElement entity\n(ZIndex = maxSort + 1)
+
+loop each breakpoint override
+  H -> H : Build ElementBreakpointOverride
+  H -> DB : Add(override)
+end
+
+H -> DB : Add(element)\nSaveChangesAsync()
+DB --> H : saved
+
+H -> DB : Load breakpoint overrides
+DB --> H : List<BreakpointOverride>
+
+H --> M : Result.Success(PageElementDto)
+M --> C : result
+C --> P : 201 Created { pageElementDto }
+
+@enduml

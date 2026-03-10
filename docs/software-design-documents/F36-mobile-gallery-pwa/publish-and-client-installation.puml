@@ -1,0 +1,53 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+actor Client
+participant "MobileGalleryController" as MgmtAPI
+participant "PublishHandler" as PubHandler
+participant "IApplicationDbContext" as DB
+participant "MobileGalleryBackgroundJob" as Job
+participant "IStorageService" as Storage
+participant "ICdnService" as CDN
+participant "PublicMobileGalleryController" as PubAPI
+participant "IManifestService" as Manifest
+
+== Publish ==
+Photographer -> MgmtAPI : POST /api/mobile-galleries/{id}/publish
+MgmtAPI -> PubHandler : Send(PublishMobileGalleryAppCommand)
+PubHandler -> DB : Load MobileGalleryApp (verify ownership)
+DB --> PubHandler : MobileGalleryApp (Draft)
+PubHandler -> PubHandler : Set Status = Published
+PubHandler -> DB : SaveChangesAsync()
+PubHandler --> MgmtAPI : Result<MobileGalleryAppDto>
+MgmtAPI --> Photographer : 200 OK {shareLink: /m/{slug}}
+
+... Background icon generation ...
+
+Job -> DB : Load MobileGalleryApp
+Job -> Storage : Download favorite photo
+Storage --> Job : Image stream
+Job -> Job : Resize to 192x192, 512x512
+Job -> Storage : Upload icon variants
+Job -> CDN : Warm cache for curated images
+
+== Client Installation ==
+Client -> PubAPI : GET /m/{slug}
+PubAPI -> DB : Load MobileGalleryApp by slug
+DB --> PubAPI : MobileGalleryApp (Published)
+PubAPI --> Client : HTML shell + <link rel="manifest">
+
+Client -> PubAPI : GET /m/{slug}/manifest.json
+PubAPI -> Manifest : GenerateManifestAsync(appId)
+Manifest --> PubAPI : JSON manifest
+PubAPI --> Client : manifest.json\n(name, icons, theme_color, start_url)
+
+Client -> Client : Browser "Install App" / \n"Add to Home Screen" prompt
+
+Client -> PubAPI : GET /m/{slug}/sw.js
+PubAPI -> Manifest : GenerateServiceWorkerAsync(appId)
+Manifest --> PubAPI : Service worker script
+PubAPI --> Client : sw.js (pre-cache image list)
+
+@enduml

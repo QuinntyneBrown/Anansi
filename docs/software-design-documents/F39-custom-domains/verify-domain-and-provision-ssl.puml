@@ -1,0 +1,44 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "CustomDomainsController" as API
+participant "VerifyCustomDomainHandler" as Handler
+participant "IDnsVerificationService" as DNS
+participant "ISslProvisioningService" as SSL
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/domains/{id}/verify
+API -> Handler : Send(VerifyCustomDomainCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Load CustomDomain by Id & PhotographerId
+DB --> Handler : CustomDomain (IsVerified=false)
+
+Handler -> DNS : CheckCnameAsync("gallery.janedoe.com")
+DNS --> Handler : "gallery.anansi.com" (correct target)
+
+Handler -> DNS : VerifyAsync("gallery.janedoe.com", verificationToken)
+DNS --> Handler : true (TXT record matches)
+
+Handler -> Handler : Set IsVerified = true\nSet VerifiedAt = now
+
+Handler -> SSL : ProvisionAsync("gallery.janedoe.com")
+note right of SSL
+  Initiates ACME challenge
+  (HTTP-01 or DNS-01),
+  obtains certificate,
+  stores cert ID.
+end note
+SSL --> Handler : SslCertResult {certId, expiresAt}
+
+Handler -> Handler : Set SslStatus = Active\nSet SslCertificateId, SslExpiresAt
+
+Handler -> DB : Update Photographer.CustomGalleryDomain
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<CustomDomainDto>
+API --> Photographer : 200 OK\n{isVerified: true, sslStatus: Active,\nsslExpiresAt: "2027-03-10"}
+
+@enduml

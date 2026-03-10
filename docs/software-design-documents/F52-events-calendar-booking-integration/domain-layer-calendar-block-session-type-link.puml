@@ -1,0 +1,38 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CulturalEvent {
+  +Id : Guid
+  +Name : string
+  +Status : EventStatus
+}
+
+class EventCalendarBlock {
+  +Id : Guid
+  +PhotographerId : Guid
+  +CulturalEventId : Guid
+  +BlockType : CalendarBlockType
+  +StartDate : DateTime
+  +EndDate : DateTime
+  +Notes : string?
+}
+
+class SessionType {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Name : string
+  +EventId : Guid?
+}
+
+enum CalendarBlockType {
+  Available
+  Blocked
+  Tentative
+}
+
+CulturalEvent "1" --> "*" EventCalendarBlock : synced by photographers
+CulturalEvent "1" --> "*" SessionType : linked session types
+EventCalendarBlock ..> CalendarBlockType
+@enduml

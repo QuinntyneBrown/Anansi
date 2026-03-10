@@ -1,0 +1,22 @@
+@startuml
+actor Photographer as P
+participant "PresetsController" as PC
+participant "MediatR" as M
+participant "BrowsePresetsQueryHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> PC : GET /api/presets\n?skinTone=Deep&context=GoldenHour\n&page=1&pageSize=20
+PC -> M : Send(BrowsePresetsQuery)
+M -> H : Handle()
+
+H -> DB : SELECT ep.*, \n  CASE WHEN pf.Id IS NOT NULL\n    THEN true ELSE false END AS IsFavorited\nFROM EditingPresets ep\nLEFT JOIN PresetFavorites pf\n  ON pf.PresetId = ep.Id\n  AND pf.PhotographerId = @currentUser\nWHERE ep.IsDeleted = false\n  AND ep.SkinToneRange = 'Deep'\n  AND ep.ShootingContext = 'GoldenHour'\n  AND (ep.IsPublic = true\n    OR ep.AuthorId = @currentUser)\nORDER BY ep.FavoriteCount DESC
+DB --> H : presets with favorite status
+
+H -> H : Apply pagination\n(skip 0, take 20)
+
+H -> H : Map to PresetSummaryDto[]
+
+H --> M : PaginatedResult<PresetSummaryDto>
+M --> PC : result
+PC --> P : 200 OK {\n  items: [{id, name,\n    authorName: "Anansi",\n    favoriteCount: 42,\n    isSystemPreset: true,\n    isFavorited: false}, ...],\n  page: 1, totalCount: 5\n}
+@enduml

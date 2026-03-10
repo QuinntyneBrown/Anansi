@@ -1,0 +1,22 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ActivitiesController <<Controller>> {
+  +ListActivities() : ActionResult
+  +ExportCsv() : ActionResult
+  +GetSummary() : ActionResult
+  +SetGoogleAnalytics() : ActionResult
+}
+
+note right of ActivitiesController
+  Route: /api/collections/{collectionId}/activities
+
+  GET  /                     - List with filters
+  GET  /export               - CSV download
+  GET  /summary              - Aggregate counts
+  PUT  /google-analytics     - Set GA4 property
+end note
+
+@enduml

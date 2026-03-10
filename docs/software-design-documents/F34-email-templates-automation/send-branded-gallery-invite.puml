@@ -1,0 +1,38 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "GalleryInvitesController" as API
+participant "MediatR" as M
+participant "SendInviteHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "ITemplateRenderService" as Render
+participant "IEmailService" as Email
+
+Photographer -> API : POST /api/galleries/{collectionId}/invite\n{recipientEmail, recipientName,\ntemplateId, includePassword: true}
+API -> M : Send(SendBrandedGalleryInviteCommand)
+M -> Handler : Handle(command)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Get Photographer\n(LogoUrl, BrandColorHex)
+Handler -> DB : Get Collection\n(Password, DownloadPin, ShareUrl)
+Handler -> DB : Get EmailTemplate (templateId)
+DB --> Handler : photographer, collection, template
+
+Handler -> Handler : Build variables map:\n{{client_name}} = recipientName\n{{gallery_link}} = collection.ShareUrl\n{{password}} = collection.Password
+
+Handler -> Render : RenderBrandedAsync(\ntemplate, variables,\n{logo, headerImage, brandColor})
+Render --> Handler : Rendered HTML email\nwith branding wrapper
+
+Handler -> Email : SendAsync(\nrecipientEmail,\ntemplate.SubjectLine,\nrenderedHtml)
+
+Handler -> DB : Create EmailInvitation\nrecord for tracking
+Handler -> DB : SaveChangesAsync()
+
+Handler --> M : Result.Success
+M --> API : Result.Success
+API --> Photographer : 200 OK
+
+@enduml

@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class RequestDownloadCommand <<Command>> {
+  +CollectionId : Guid
+  +Resolution : DownloadResolution
+  +IsFullGallery : bool
+  +MediaIds : List<Guid>?
+  +Pin : string?
+  +RequestedBy : string?
+  +RequestedByEmail : string?
+}
+
+class RequestDownloadHandler <<Handler>> {
+  -_db : IApplicationDbContext
+  +Handle() : Result<DownloadRequestDto>
+}
+
+class GetDownloadStatusQuery <<Query>> {
+  +DownloadRequestId : Guid
+}
+
+class ListDownloadActivityQuery <<Query>> {
+  +CollectionId : Guid
+  +From : DateTime?
+  +To : DateTime?
+  +Page : int
+  +PageSize : int
+}
+
+class ResetDownloadLimitCommand <<Command>> {
+  +CollectionId : Guid
+  +NewLimit : int?
+}
+
+class ExportDownloadActivityQuery <<Query>> {
+  +CollectionId : Guid
+  +From : DateTime?
+  +To : DateTime?
+}
+
+class DownloadRequestDto <<DTO>> {
+  +Id : Guid
+  +CollectionId : Guid
+  +RequestedBy : string?
+  +Resolution : DownloadResolution
+  +IsFullGallery : bool
+  +IsReady : bool
+  +ExpiresAt : DateTime?
+}
+
+interface IImageResizeService <<Interface>> {
+  +ResizeAsync(storageKey, resolution) : Stream
+}
+
+interface IZipArchiveService <<Interface>> {
+  +CreateZipAsync(storageKeys) : string
+}
+
+RequestDownloadHandler ..> RequestDownloadCommand
+RequestDownloadHandler ..> DownloadRequestDto
+RequestDownloadHandler --> IImageResizeService
+RequestDownloadHandler --> IZipArchiveService
+
+@enduml

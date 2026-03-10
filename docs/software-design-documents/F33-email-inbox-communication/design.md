@@ -114,6 +114,8 @@ EmailMessage "1" --> "*" EmailAttachment : Attachments
 @enduml
 ```
 
+![Domain Layer - Email Entities](domain-layer-email-entities.png)
+
 ### Domain Layer - Notification Entities
 
 ```plantuml
@@ -152,6 +154,8 @@ NotificationPreference --> NotificationEventType
 
 @enduml
 ```
+
+![Domain Layer - Notification Entities](domain-layer-notification-entities.png)
 
 ### Application Layer - Commands, Queries, and DTOs
 
@@ -232,6 +236,8 @@ class EmailAttachmentDto <<DTO>> {
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and DTOs](application-layer-commands-queries-and-dtos.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -277,6 +283,8 @@ InboundEmailWebhookHandler ..> ReceiveInboundEmailCommand
 
 @enduml
 ```
+
+![Infrastructure & API Layer](infrastructure-api-layer.png)
 
 ---
 
@@ -330,6 +338,8 @@ API --> Photographer : 201 Created (ConversationDto)
 
 @enduml
 ```
+
+![Compose and Send New Message](compose-and-send-new-message.png)
 
 ### Receive Inbound Client Reply
 
@@ -392,6 +402,8 @@ API --> EP : 200 OK
 @enduml
 ```
 
+![Receive Inbound Client Reply](receive-inbound-client-reply.png)
+
 ### List Conversations (Unified Inbox)
 
 ```plantuml
@@ -428,6 +440,8 @@ API --> Photographer : 200 OK\n(paginated conversations)
 
 @enduml
 ```
+
+![List Conversations (Unified Inbox)](list-conversations-unified-inbox.png)
 
 ### Reply to Conversation with Attachments
 
@@ -487,6 +501,8 @@ API --> Photographer : 200 OK (EmailMessageDto)
 @enduml
 ```
 
+![Reply to Conversation with Attachments](reply-to-conversation-with-attachments.png)
+
 ### Mark Conversation as Read
 
 ```plantuml
@@ -520,3 +536,5 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Mark Conversation as Read](mark-conversation-as-read.png)

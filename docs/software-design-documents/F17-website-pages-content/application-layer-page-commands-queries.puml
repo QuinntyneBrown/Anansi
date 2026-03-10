@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Website.Pages" {
+  class CreatePageCommand <<record>> {
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +PageType : WebsitePageType
+    +ShowInNavigation : bool
+    +PagePassword : string?
+    +MetaTitle : string?
+    +MetaDescription : string?
+    +OgImageUrl : string?
+  }
+  class CreatePageValidator
+  class CreatePageHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+  }
+
+  class UpdatePageCommand <<record>> {
+    +PageId : Guid
+    +Title : string
+    +Slug : string
+    +IsVisible : bool
+    +ShowInNavigation : bool
+  }
+  class UpdatePageHandler
+
+  class DeletePageCommand <<record>> {
+    +PageId : Guid
+  }
+
+  class ListPagesQuery <<record>> {
+    +WebsiteId : Guid
+  }
+  class ListPagesHandler
+}
+
+package "Anansi.Application.DTOs.Website" {
+  class WebsitePageDto <<record>> {
+    +Id : Guid
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +PageType : WebsitePageType
+    +SortOrder : int
+    +IsVisible : bool
+    +ShowInNavigation : bool
+    +HasPassword : bool
+    +MetaTitle : string?
+    +MetaDescription : string?
+    +OgImageUrl : string?
+    +CreatedAt : DateTime
+    +UpdatedAt : DateTime
+  }
+}
+
+CreatePageHandler ..> CreatePageCommand : handles
+CreatePageHandler ..> WebsitePageDto : returns
+UpdatePageHandler ..> UpdatePageCommand : handles
+ListPagesHandler ..> ListPagesQuery : handles
+
+@enduml

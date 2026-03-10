@@ -1,0 +1,75 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class WebsitePage {
+    +Id : Guid
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +PageType : WebsitePageType
+    +SortOrder : int
+  }
+
+  class PageElement {
+    +Id : Guid
+    +PhotographerId : Guid
+    +PageId : Guid
+    +ElementType : ElementType
+    +ContentJson : string?
+    +PositionX : double
+    +PositionY : double
+    +Width : double
+    +Height : double
+    +ZIndex : int
+    +SortOrder : int
+    +ParentElementId : Guid?
+  }
+
+  class ElementBreakpointOverride {
+    +Id : Guid
+    +PageElementId : Guid
+    +Breakpoint : Breakpoint
+    +PositionX : double?
+    +PositionY : double?
+    +Width : double?
+    +Height : double?
+    +IsHidden : bool
+    +StyleOverridesJson : string?
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum ElementType {
+    Image
+    Text
+    VideoEmbed
+    Button
+    Shape
+    Slider
+    Carousel
+    ImageGrid
+    Accordion
+    ClientGalleryBlock
+    InstagramFeed
+    CustomEmbed
+    LandingPageBlock
+    LayoutBlock
+  }
+
+  enum Breakpoint {
+    Desktop
+    Tablet
+    Mobile
+  }
+}
+
+WebsitePage --> "*" PageElement : Elements
+PageElement --> "*" PageElement : ChildElements
+PageElement --> "*" ElementBreakpointOverride : BreakpointOverrides
+PageElement ..> ElementType
+ElementBreakpointOverride ..> Breakpoint
+
+@enduml

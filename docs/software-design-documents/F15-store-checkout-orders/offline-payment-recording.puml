@@ -1,0 +1,36 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "OrdersController" as ctrl
+participant "IMediator" as med
+participant "CreateOrderHandler" as handler
+participant "IApplicationDbContext" as db
+participant "IEmailService" as email
+
+Photographer -> ctrl : POST /api/orders\n{paymentMethod=Offline,\nclientName, items[], ...}
+ctrl -> med : Send(CreateOrderCommand)
+med -> handler : Handle(command, ct)
+
+handler -> handler : Calculate subtotal, tax,\nshipping, discount, total
+
+handler -> handler : Skip payment processor\n(Offline method)
+
+handler -> db : Create Order entity\n(Status=Processing,\nPaymentMethod=Offline,\nPaymentIntentId=null)
+handler -> db : Create OrderItems
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+handler -> email : Send order confirmation to client
+email --> handler : sent
+
+handler --> med : Result<OrderDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 201 Created {OrderDto}
+
+note right of handler
+  Offline orders go directly
+  to Processing status.
+  Photographer records
+  cash/check payment externally.
+end note
+@enduml

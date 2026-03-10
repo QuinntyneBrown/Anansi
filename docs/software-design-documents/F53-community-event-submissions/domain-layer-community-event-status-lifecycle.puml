@@ -1,0 +1,52 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CulturalEvent {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +StartDate : DateTime?
+  +EndDate : DateTime?
+  +Venue : string?
+  +Neighborhood : string?
+  +Category : EventCategory
+  +Recurrence : EventRecurrence
+  +WebsiteUrl : string?
+  +Status : EventStatus
+  +RejectionReason : string?
+  +IsSeeded : bool
+  +SubmittedById : Guid?
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+enum EventStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+class EventApprovedEvent <<DomainEvent>> {
+  +EventId : Guid
+}
+
+class EventRejectedEvent <<DomainEvent>> {
+  +EventId : Guid
+  +SubmittedById : Guid
+  +RejectionReason : string?
+}
+
+class EventResetToPendingEvent <<DomainEvent>> {
+  +EventId : Guid
+  +PreviousStatus : EventStatus
+}
+
+CulturalEvent ..> EventStatus
+CulturalEvent ..> EventApprovedEvent : raises on approve
+CulturalEvent ..> EventRejectedEvent : raises on reject
+CulturalEvent ..> EventResetToPendingEvent : raises on edit of approved
+@enduml

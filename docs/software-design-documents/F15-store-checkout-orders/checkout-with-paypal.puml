@@ -1,0 +1,35 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+participant "OrdersController" as ctrl
+participant "CreateOrderHandler" as handler
+participant "IPayPalService" as paypal
+participant "IApplicationDbContext" as db
+participant "IEmailService" as email
+
+Client -> ctrl : POST /api/orders\n{paymentMethod=PayPal, ...}
+ctrl -> handler : Handle(command, ct)
+
+handler -> handler : Calculate subtotal,\ndiscount, tax, shipping, total\n(same as Stripe flow)
+
+handler -> paypal : CreateOrderAsync(\npaypalEmail, totalCents, "CAD",\ndescription, returnUrl, cancelUrl)
+paypal --> handler : paypalOrderId
+
+handler --> Client : 200 OK\n{paypalOrderId, approvalUrl}
+
+== Client approves on PayPal ==
+
+Client -> ctrl : POST /api/orders/paypal/capture\n{paypalOrderId}
+ctrl -> handler : Handle(CapturePayPalCommand)
+
+handler -> paypal : CaptureOrderAsync(paypalOrderId)
+paypal --> handler : PayPalCaptureResult\n(isSuccess=true, captureId)
+
+handler -> db : Create Order + OrderItems\n(PaymentIntentId = captureId)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+handler -> email : Send confirmations
+handler --> ctrl : Result<OrderDto>
+ctrl --> Client : 201 Created {OrderDto}
+@enduml

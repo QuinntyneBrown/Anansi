@@ -1,0 +1,83 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class SendEmailInvitationCommand <<Command>> {
+  +CollectionId : Guid
+  +RecipientEmail : string
+  +Subject : string
+  +Body : string
+  +HeaderImageUrl : string?
+  +IncludePassword : bool
+}
+
+class TrackEmailOpenCommand <<Command>> {
+  +InvitationId : Guid
+}
+
+class GetShareMetadataQuery <<Query>> {
+  +CollectionId : Guid
+  +MediaId : Guid?
+  +Platform : SharePlatform
+}
+
+class CreateQuickShareLinkCommand <<Command>> {
+  +CollectionId : Guid
+  +MediaIds : List<Guid>
+}
+
+class RevokeQuickShareLinkCommand <<Command>> {
+  +QuickShareLinkId : Guid
+}
+
+class GetQuickSharePhotosQuery <<Query>> {
+  +Token : string
+}
+
+class GenerateQrCodeQuery <<Query>> {
+  +CollectionId : Guid
+}
+
+class GetEmbedCodeQuery <<Query>> {
+  +CollectionId : Guid
+}
+
+class EmailInvitationDto <<DTO>> {
+  +Id : Guid
+  +RecipientEmail : string
+  +IsSent : bool
+  +SentAt : DateTime?
+  +IsOpened : bool
+  +OpenedAt : DateTime?
+}
+
+class QuickShareLinkDto <<DTO>> {
+  +Id : Guid
+  +Token : string
+  +MediaIds : string
+  +IsRevoked : bool
+}
+
+class ShareMetadataDto <<DTO>> {
+  +Title : string
+  +Description : string
+  +PreviewImageUrl : string
+  +CanonicalUrl : string
+}
+
+class QrCodeResult <<DTO>> {
+  +CollectionUrl : string
+  +QrCodeDataUrl : string
+}
+
+class EmbedCodeResult <<DTO>> {
+  +IframeSnippet : string
+  +JavaScriptSnippet : string
+}
+
+interface IQrCodeService <<Interface>> {
+  +GenerateAsync(url) : byte[]
+}
+
+@enduml

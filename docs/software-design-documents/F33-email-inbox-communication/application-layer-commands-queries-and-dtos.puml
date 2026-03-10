@@ -1,0 +1,74 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ListConversationsQuery <<Query>> {
+  +Page : int
+  +PageSize : int
+  +Search : string?
+}
+
+class GetConversationQuery <<Query>> {
+  +ConversationId : Guid
+}
+
+class ComposeMessageCommand <<Command>> {
+  +ClientEmail : string
+  +ClientName : string?
+  +Subject : string
+  +Body : string
+  +HtmlBody : string?
+  +Attachments : List<FileUpload>?
+}
+
+class ReplyToConversationCommand <<Command>> {
+  +ConversationId : Guid
+  +Body : string
+  +HtmlBody : string?
+  +Attachments : List<FileUpload>?
+}
+
+class ReceiveInboundEmailCommand <<Command>> {
+  +FromEmail : string
+  +FromName : string?
+  +Subject : string
+  +Body : string
+  +HtmlBody : string?
+  +Attachments : List<InboundAttachment>?
+  +PhotographerId : Guid
+}
+
+class MarkConversationReadCommand <<Command>> {
+  +ConversationId : Guid
+}
+
+class ConversationDto <<DTO>> {
+  +Id : Guid
+  +Subject : string
+  +ClientName : string?
+  +ClientEmail : string?
+  +LastMessagePreview : string?
+  +LastMessageAt : DateTime?
+  +IsRead : bool
+  +UnreadCount : int
+}
+
+class EmailMessageDto <<DTO>> {
+  +Id : Guid
+  +IsFromPhotographer : bool
+  +SenderName : string?
+  +Body : string
+  +SentAt : DateTime
+  +Attachments : List<EmailAttachmentDto>
+}
+
+class EmailAttachmentDto <<DTO>> {
+  +Id : Guid
+  +FileName : string
+  +ContentType : string
+  +FileSizeBytes : long
+  +DownloadUrl : string
+}
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Bookings" {
+  class ListBookingsQuery <<Query>> {
+    +Status : BookingStatus?
+    +From : DateTime?
+    +To : DateTime?
+    +Page : int
+  }
+  class UpdateBookingStatusCommand <<Command>> {
+    +BookingId : Guid
+    +NewStatus : BookingStatus
+  }
+}
+
+package "Invoices" {
+  class ListInvoicesQuery <<Query>> {
+    +Status : InvoiceStatus?
+    +Page : int
+  }
+  class CreateInvoiceCommand <<Command>> {
+    +ContactId : Guid?
+    +Title : string
+    +LineItems : List
+  }
+  class SendInvoiceCommand <<Command>> {
+    +InvoiceId : Guid
+  }
+}
+
+package "Documents" {
+  class ListContractsQuery <<Query>> {
+    +Status : ContractStatus?
+    +Page : int
+  }
+  class ListQuestionnairesQuery <<Query>> {
+    +Status : QuestionnaireStatus?
+    +Page : int
+  }
+}
+
+package "Communication" {
+  class ListConversationsQuery <<Query>> {
+    +Page : int
+    +Search : string?
+  }
+  class ComposeMessageCommand <<Command>> {
+    +ClientEmail : string
+    +Subject : string
+    +Body : string
+  }
+}
+
+@enduml

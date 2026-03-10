@@ -1,0 +1,20 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EditingPreset {
+  +Id : Guid
+  +Name : string
+  +FavoriteCount : int
+}
+
+class PresetFavorite {
+  +Id : Guid
+  +PhotographerId : Guid
+  +PresetId : Guid
+  +CreatedAt : DateTime
+}
+
+EditingPreset "1" --> "*" PresetFavorite : favorited by
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Events.Queries" {
+  class ListEventsQuery <<record>> {
+    +From : DateTime
+    +To : DateTime
+    +Category : EventCategory?
+    +Neighborhood : string?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetEventDetailQuery <<record>> {
+    +EventId : Guid
+  }
+
+  class GetEventLinkedSessionTypesQuery <<record>> {
+    +EventId : Guid
+  }
+}
+
+package "Features.Events.Commands" {
+  class SyncEventToCalendarCommand <<record>> {
+    +EventId : Guid
+    +BlockType : CalendarBlockType
+    +Notes : string?
+  }
+
+  class RemoveEventSyncCommand <<record>> {
+    +EventId : Guid
+  }
+
+  class CreateEventLinkedSessionTypeCommand <<record>> {
+    +EventId : Guid
+    +Name : string
+    +Description : string?
+    +DurationMinutes : int
+    +PriceCents : long
+    +Location : string?
+  }
+}
+
+interface IEventRecurrenceService {
+  +GenerateInstances(event, from, to) : List<EventInstance>
+}
+
+ListEventsQuery ..> IEventRecurrenceService : uses
+@enduml

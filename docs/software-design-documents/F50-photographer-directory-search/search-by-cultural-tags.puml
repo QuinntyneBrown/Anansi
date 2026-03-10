@@ -1,0 +1,28 @@
+@startuml
+actor Client as C
+participant "DirectoryController" as DC
+participant "MediatR" as M
+participant "SearchDirectoryQueryHandler" as H
+participant "ApplicationDbContext" as DB
+
+C -> DC : GET /api/directory/search\n?tags=Caribbean+Wedding,Caribana\n&page=1&pageSize=20
+DC -> DC : Map query params to\nSearchDirectoryQuery
+DC -> M : Send(SearchDirectoryQuery)
+M -> H : Handle()
+
+H -> H : Detect tag-only search mode\n(no neighborhood/coordinates)
+
+H -> DB : SELECT p.Id, p.DisplayName,\np.BusinessName, p.ProfileImageUrl,\nsa.Neighborhood,\nCOUNT(pct.Id) AS MatchingTagCount\nFROM PhotographerProfiles p\nJOIN PhotographerCulturalTags pct\nJOIN CulturalTags ct\nWHERE ct.Name IN ('Caribbean Wedding', 'Caribana')\nGROUP BY p.Id\nORDER BY MatchingTagCount DESC
+DB --> H : matchedPhotographers
+
+H -> DB : Load all CulturalTags\nfor matched photographer IDs
+DB --> H : allTags per photographer
+
+H -> H : Build DirectorySearchResultDto[]\nwith RelevanceScore = MatchingTagCount
+
+H -> H : Apply pagination\n(skip 0, take 20)
+
+H --> M : PaginatedResult<DirectorySearchResultDto>
+M --> DC : result
+DC --> C : 200 OK {\n  items: [{name, businessName,\n    profileImage, tags,\n    neighborhood, matchingTagCount: 2,\n    relevanceScore: 2.0}],\n  page: 1, totalCount: 15\n}
+@enduml

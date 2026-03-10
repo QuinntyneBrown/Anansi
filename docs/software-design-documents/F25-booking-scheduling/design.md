@@ -168,6 +168,8 @@ SessionType ..> SessionVisibility
 @enduml
 ```
 
+![Domain Layer -- Session Type & Booking Entities](domain-layer-session-type-booking-entities.png)
+
 ### Domain Layer -- Booking Site & Coupon Entities
 
 ```plantuml
@@ -209,6 +211,8 @@ enum CouponType {
 BookingCoupon ..> CouponType
 @enduml
 ```
+
+![Domain Layer -- Booking Site & Coupon Entities](domain-layer-booking-site-coupon-entities.png)
 
 ### Application Layer -- Booking Commands
 
@@ -288,6 +292,8 @@ CreateBookingCommand ..> IVideoCallService : generates link
 @enduml
 ```
 
+![Application Layer -- Booking Commands](application-layer-booking-commands.png)
+
 ### Application Layer -- Booking Queries
 
 ```plantuml
@@ -350,6 +356,8 @@ GetBookingSiteQuery ..> BookingSiteDto : returns
 @enduml
 ```
 
+![Application Layer -- Booking Queries](application-layer-booking-queries.png)
+
 ### Infrastructure Layer -- Calendar & Video Call Services
 
 ```plantuml
@@ -403,6 +411,8 @@ GoogleCalendarSyncBackgroundService --> IGoogleCalendarService
 GetAvailableSlotsHandler --> IGoogleCalendarService
 @enduml
 ```
+
+![Infrastructure Layer -- Calendar & Video Call Services](infrastructure-layer-calendar-video-call-services.png)
 
 ### API Layer -- Booking Controllers
 
@@ -462,6 +472,8 @@ BookingCouponsController --> "IMediator" : sends commands
 @enduml
 ```
 
+![API Layer -- Booking Controllers](api-layer-booking-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -506,6 +518,8 @@ M --> BSC : result
 BSC --> C : 200 OK {slots: [{date, startTime,\nendTime, spotsRemaining}]}
 @enduml
 ```
+
+![View Booking Site & Available Slots](view-booking-site-available-slots.png)
 
 ### Complete Booking Flow
 
@@ -577,6 +591,8 @@ BC --> C : 201 Created {bookingId, status,\nvideoCallLink, confirmationSent}
 @enduml
 ```
 
+![Complete Booking Flow](complete-booking-flow.png)
+
 ### Manual Booking Confirmation
 
 ```plantuml
@@ -613,6 +629,8 @@ M --> BC : result
 BC --> P : 200 OK {status: "Confirmed"}
 @enduml
 ```
+
+![Manual Booking Confirmation](manual-booking-confirmation.png)
 
 ### Google Calendar Two-Way Sync
 
@@ -654,6 +672,8 @@ BG -> BG : Sleep 5 minutes
 @enduml
 ```
 
+![Google Calendar Two-Way Sync](google-calendar-two-way-sync.png)
+
 ### Mini Session Availability with "Nearly Sold Out"
 
 ```plantuml
@@ -689,6 +709,8 @@ BSC --> C : 200 OK {slots: [\n  {time: "09:00", spots: 2, nearlySoldOut: true},\
 @enduml
 ```
 
+![Mini Session Availability with "Nearly Sold Out"](mini-session-availability-with-nearly-sold-out.png)
+
 ### Apply Booking Coupon
 
 ```plantuml
@@ -719,3 +741,5 @@ M --> BC : result
 BC --> C : 200 OK {valid, discountCents,\nfinalPriceCents}
 @enduml
 ```
+
+![Apply Booking Coupon](apply-booking-coupon.png)

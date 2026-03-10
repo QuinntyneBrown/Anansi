@@ -1,0 +1,54 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Website.Seo" {
+  class CreateUrlRedirectCommand <<record>> {
+    +WebsiteId : Guid
+    +SourcePath : string
+    +DestinationUrl : string
+    +RedirectType : RedirectType
+  }
+  class CreateUrlRedirectHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+  }
+
+  class UpdateUrlRedirectCommand <<record>> {
+    +RedirectId : Guid
+    +SourcePath : string
+    +DestinationUrl : string
+    +RedirectType : RedirectType
+    +IsActive : bool
+  }
+  class UpdateUrlRedirectHandler
+
+  class DeleteUrlRedirectCommand <<record>> {
+    +RedirectId : Guid
+  }
+  class DeleteUrlRedirectHandler
+
+  class ListUrlRedirectsQuery <<record>> {
+    +WebsiteId : Guid
+  }
+  class ListUrlRedirectsHandler
+}
+
+package "Anansi.Application.DTOs.Website" {
+  class UrlRedirectDto <<record>> {
+    +Id : Guid
+    +WebsiteId : Guid
+    +SourcePath : string
+    +DestinationUrl : string
+    +RedirectType : RedirectType
+    +IsActive : bool
+    +CreatedAt : DateTime
+  }
+}
+
+CreateUrlRedirectHandler ..> UrlRedirectDto : returns
+UpdateUrlRedirectHandler ..> UrlRedirectDto : returns
+ListUrlRedirectsHandler ..> UrlRedirectDto : returns
+
+@enduml

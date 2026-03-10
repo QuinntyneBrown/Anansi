@@ -114,6 +114,8 @@ ThresholdAlertRecord --> ThresholdAlertLevel : uses
 @enduml
 ```
 
+![Domain Layer -- Business Expense & Threshold Entities](domain-layer-business-expense-threshold-entities.png)
+
 ### Application Layer -- Revenue Threshold Commands & Queries
 
 ```plantuml
@@ -149,6 +151,8 @@ class QuarterlyRevenueDto <<record>> {
 GetRevenueThresholdQuery ..> RevenueThresholdDto : returns
 @enduml
 ```
+
+![Application Layer -- Revenue Threshold Commands & Queries](application-layer-revenue-threshold-commands-queries.png)
 
 ### Application Layer -- Expense Commands & ITC Queries
 
@@ -219,6 +223,8 @@ CreateBusinessExpenseCommand ..> BusinessExpenseDto : returns
 @enduml
 ```
 
+![Application Layer -- Expense Commands & ITC Queries](application-layer-expense-commands-itc-queries.png)
+
 ### API Layer -- Extended Tax Profile Controller
 
 ```plantuml
@@ -241,6 +247,8 @@ class TaxProfileController <<ApiController>> {
 TaxProfileController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Extended Tax Profile Controller](api-layer-extended-tax-profile-controller.png)
 
 ---
 
@@ -280,6 +288,8 @@ TPC --> P : 200 OK (RevenueThresholdDto)
 @enduml
 ```
 
+![Get Revenue Threshold Dashboard](get-revenue-threshold-dashboard.png)
+
 ### Threshold Crossing Notification on Payment
 
 ```plantuml
@@ -316,6 +326,8 @@ TCH --> M : Result.Success
 @enduml
 ```
 
+![Threshold Crossing Notification on Payment](threshold-crossing-notification-on-payment.png)
+
 ### Create Business Expense
 
 ```plantuml
@@ -345,6 +357,8 @@ M --> TPC : Result.Success
 TPC --> P : 201 Created\n{id, amountCents, hstPaidCents,\ncategory, expenseDate,\ndescription, vendorName}
 @enduml
 ```
+
+![Create Business Expense](create-business-expense.png)
 
 ### Get ITC Summary
 
@@ -377,6 +391,8 @@ M --> TPC : Result.Success
 TPC --> P : 200 OK (ItcSummaryDto)
 @enduml
 ```
+
+![Get ITC Summary](get-itc-summary.png)
 
 ### Threshold Duplicate Prevention
 
@@ -413,3 +429,5 @@ note right of TCH
 end note
 @enduml
 ```
+
+![Threshold Duplicate Prevention](threshold-duplicate-prevention.png)

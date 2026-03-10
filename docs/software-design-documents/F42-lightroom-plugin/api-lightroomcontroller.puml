@@ -1,0 +1,23 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class LightroomController <<ApiController>> {
+  -_mediator : IMediator
+  +PublishCollection(images : IFormFileCollection) : IActionResult
+  +SyncStructure(cmd) : IActionResult
+  +GetCollections() : IActionResult
+  +GetFavoriteLists(collectionId) : IActionResult
+  +GetFavoriteItems(collectionId, listId) : IActionResult
+}
+
+note right of LightroomController
+  All endpoints require API key authentication
+  via X-Api-Key header.
+  [Authorize(AuthenticationSchemes = "ApiKey")]
+end note
+
+LightroomController --> "IMediator" : sends commands/queries
+
+@enduml

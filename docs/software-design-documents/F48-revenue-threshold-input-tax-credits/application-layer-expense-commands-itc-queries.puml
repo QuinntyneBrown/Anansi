@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Tax.Expenses" {
+  class CreateBusinessExpenseCommand <<record>> {
+    +AmountCents : long
+    +HstPaidCents : long
+    +Category : ExpenseCategory
+    +ExpenseDate : DateTime
+    +Description : string
+    +VendorName : string?
+  }
+
+  class ListBusinessExpensesQuery <<record>> {
+    +Category : ExpenseCategory?
+    +FromDate : DateTime?
+    +ToDate : DateTime?
+    +Page : int
+    +PageSize : int
+  }
+}
+
+package "Features.Tax.Itc" {
+  class GetItcSummaryQuery <<record>> {
+    +From : DateTime
+    +To : DateTime
+  }
+
+  class ExportItcSummaryQuery <<record>> {
+    +From : DateTime
+    +To : DateTime
+  }
+}
+
+class BusinessExpenseDto <<record>> {
+  +Id : Guid
+  +AmountCents : long
+  +HstPaidCents : long
+  +Category : ExpenseCategory
+  +ExpenseDate : DateTime
+  +Description : string
+  +VendorName : string?
+  +CreatedAt : DateTime
+}
+
+class ItcSummaryDto <<record>> {
+  +HstCollectedCents : long
+  +HstPaidOnExpensesCents : long
+  +NetHstOwingCents : long
+  +CategoryBreakdown : List<CategoryItcBreakdownDto>
+}
+
+class CategoryItcBreakdownDto <<record>> {
+  +Category : ExpenseCategory
+  +ExpenseCount : int
+  +TotalAmountCents : long
+  +TotalHstPaidCents : long
+}
+
+GetItcSummaryQuery ..> ItcSummaryDto : returns
+CreateBusinessExpenseCommand ..> BusinessExpenseDto : returns
+@enduml

@@ -1,0 +1,59 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "DownloadsController" as API
+participant "RequestDownloadHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "DownloadBackgroundJob" as Job
+participant "IImageResizeService" as Resize
+participant "IZipArchiveService" as Zip
+participant "IStorageService" as Storage
+participant "IEmailService" as Email
+
+Client -> API : POST /api/collections/{id}/downloads\n{resolution, isFullGallery: true, pin}
+API -> Handler : Send(RequestDownloadCommand)
+Handler -> DB : Validate PIN, limits, resolution
+Handler -> DB : Create DownloadRequest (IsReady=false)
+Handler -> DB : Increment DownloadCount
+Handler -> DB : Create GalleryActivity
+Handler -> DB : SaveChangesAsync()
+Handler --> API : DownloadRequestDto (IsReady=false)
+API --> Client : 202 Accepted {downloadRequestId}
+
+... Background processing ...
+
+Job -> DB : Query pending DownloadRequests
+DB --> Job : DownloadRequest (IsReady=false)
+Job -> DB : Load GalleryMedia for collection
+DB --> Job : List<GalleryMedia>
+
+loop For each media item
+  Job -> Storage : DownloadAsync(storageKey)
+  Storage --> Job : Stream
+  Job -> Resize : ResizeAsync(stream, resolution)
+  Resize --> Job : Resized Stream
+end
+
+Job -> Zip : CreateZipAsync(resized streams)
+Zip -> Storage : UploadAsync(zip stream)
+Storage --> Zip : zipStorageKey
+Zip --> Job : zipStorageKey
+
+Job -> DB : Update DownloadRequest\n(ZipStorageKey, IsReady=true, ReadyAt)
+Job -> Storage : GetPresignedUrlAsync(zipStorageKey, 7 days)
+Storage --> Job : Download URL
+Job -> Email : SendAsync(clientEmail, downloadUrl)
+Job -> DB : Set NotificationSent = true
+Job -> DB : SaveChangesAsync()
+
+... Client receives email ...
+
+Client -> API : GET /api/downloads/{id}/file
+API -> DB : Find DownloadRequest
+API -> Storage : GetPresignedUrlAsync(zipStorageKey)
+Storage --> API : Presigned URL
+API --> Client : 302 Redirect
+
+@enduml

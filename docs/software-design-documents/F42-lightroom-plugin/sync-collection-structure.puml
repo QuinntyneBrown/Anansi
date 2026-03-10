@@ -1,0 +1,39 @@
+@startuml
+actor Photographer as P
+participant "Lightroom Classic" as LR
+participant "LightroomController" as LC
+participant "MediatR" as M
+participant "SyncStructureHandler" as H
+participant "ILightroomSyncService" as LS
+participant "IApplicationDbContext" as DB
+
+P -> LR : Plugin detects collection\nstructure changes
+LR -> LC : POST /api/lightroom/sync-structure\n{collections: [{id, name, parentId}]}
+LC -> M : Send(SyncLightroomStructureCommand)
+M -> H : Handle(command)
+H -> LS : SyncStructureAsync(\nphotographerId, collections)
+
+LS -> DB : Get existing Collections\nfor photographer
+DB --> LS : existingCollections[]
+
+loop for each LightroomCollectionInfo
+  alt parentId is null (top-level collection)
+    LS -> DB : Find Collection by\nmatching name or create new
+    alt not found
+      LS -> DB : Collections.Add(new Collection)
+    else found
+      LS -> LS : Update title if changed
+    end
+  else parentId is set (nested = CollectionSet)
+    LS -> DB : Find parent Collection
+    LS -> DB : Find or create CollectionSet\nunder parent
+  end
+end
+
+LS -> DB : SaveChangesAsync()
+LS --> H : LightroomSyncResult\n{collectionsSynced: N, setsSynced: M}
+H --> M : Result.Success
+M --> LC : Result.Success
+LC --> LR : 200 OK {collectionsSynced, setsSynced}
+LR --> P : "Synced N collections,\nM sets"
+@enduml

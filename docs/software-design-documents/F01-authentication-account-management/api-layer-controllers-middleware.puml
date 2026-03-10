@@ -1,0 +1,38 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class AuthController <<ApiController>> {
+  -_mediator : IMediator
+  +Register(RegisterCommand) : IActionResult
+  +Login(LoginCommand) : IActionResult
+  +ForgotPassword(ForgotPasswordCommand) : IActionResult
+  +ResetPassword(ResetPasswordCommand) : IActionResult
+  +ChangePassword(ChangePasswordCommand) : IActionResult
+  +Logout() : IActionResult
+}
+
+class AccountController <<ApiController>> {
+  -_mediator : IMediator
+  +GetSettings() : IActionResult
+  +UpdateSettings(UpdateAccountSettingsCommand) : IActionResult
+  +DeleteAccount(exportFirst: bool) : IActionResult
+  +GetStorageUsage() : IActionResult
+}
+
+class SessionTimeoutMiddleware {
+  -_next : RequestDelegate
+  -_timeout : TimeSpan
+  +InvokeAsync(HttpContext) : Task
+}
+
+note right of SessionTimeoutMiddleware
+  Reads "Session:TimeoutMinutes" from config.
+  Checks LastActivity in session state.
+  Returns 401 if idle > timeout.
+end note
+
+AuthController --> "IMediator" : sends commands
+AccountController --> "IMediator" : sends commands/queries
+@enduml

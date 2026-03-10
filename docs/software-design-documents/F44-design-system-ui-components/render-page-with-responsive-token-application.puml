@@ -1,0 +1,25 @@
+@startuml
+actor Client as C
+participant "Browser" as B
+participant "Anansi Web" as AW
+participant "CSS Token Layer" as CSS
+
+C -> B : Navigate to photographer's\ngallery page
+
+B -> AW : GET /gallery/{slug}
+AW --> B : HTML + CSS + JS
+
+B -> CSS : Load :root CSS variables\n(design tokens)
+
+alt viewport >= 1440px (desktop)
+  CSS -> CSS : Apply desktop layout tokens\n--sidebar-width: 260px\n--topbar-height: 64px\n--grid-columns: 4
+else viewport >= 768px (tablet)
+  CSS -> CSS : Apply tablet layout tokens\n--sidebar-width: 0 (collapsed)\n--grid-columns: 2
+else viewport < 768px (mobile)
+  CSS -> CSS : Apply mobile layout tokens\n--sidebar-width: 0\n--tabbar-height: 62px\n--grid-columns: 1
+end
+
+B -> B : Render page with\napplied token values
+
+B --> C : Fully responsive page\nwith consistent design tokens
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class InvoicesController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(CreateInvoiceCommand) : IActionResult
+  +Update(Guid, UpdateInvoiceCommand) : IActionResult
+  +Delete(Guid) : IActionResult
+  +Send(Guid) : IActionResult
+  +ConfigureSchedule(Guid, ConfigurePaymentScheduleCommand) : IActionResult
+  +ConfigureDeposit(Guid, ConfigureDepositCommand) : IActionResult
+  +Cancel(Guid) : IActionResult
+  +List(ListInvoicesQuery) : IActionResult
+  +Get(Guid) : IActionResult
+  +GetPayments(Guid) : IActionResult
+}
+
+class InvoiceTemplatesController <<ApiController>> {
+  -_mediator : IMediator
+  +SaveTemplate(SaveInvoiceTemplateCommand) : IActionResult
+  +ListTemplates() : IActionResult
+  +ApplyTemplate(Guid, ApplyInvoiceTemplateCommand) : IActionResult
+}
+
+class InvoicePublicController <<ApiController>> {
+  -_mediator : IMediator
+  +ViewInvoice(string token) : IActionResult
+  +PayInvoice(string token, PayInvoiceRequest) : IActionResult
+}
+
+InvoicesController --> "IMediator" : sends commands/queries
+InvoiceTemplatesController --> "IMediator" : sends commands/queries
+InvoicePublicController --> "IMediator" : sends commands/queries
+@enduml

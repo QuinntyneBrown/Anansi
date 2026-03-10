@@ -1,0 +1,70 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Website.Typography" {
+  class UploadCustomFontCommand <<record>> {
+    +FontFamily : string
+    +FileBase64 : string
+    +FileFormat : string
+    +FontWeight : string?
+    +FontStyle : string?
+  }
+  class UploadCustomFontHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+    -_storageService : IStorageService
+  }
+
+  class DeleteCustomFontCommand <<record>> {
+    +FontId : Guid
+  }
+  class DeleteCustomFontHandler
+
+  class ListCustomFontsQuery <<record>>
+  class ListCustomFontsHandler
+
+  class ListColorPalettesQuery <<record>>
+  class ListColorPalettesHandler
+
+  class CreateCustomColorPaletteCommand <<record>> {
+    +Name : string
+    +ColorsJson : string
+  }
+  class CreateCustomColorPaletteHandler
+}
+
+package "Anansi.Application.DTOs.Website" {
+  class WebsiteFontDto <<record>> {
+    +Id : Guid
+    +FontFamily : string
+    +FileUrl : string
+    +FileFormat : string
+    +FontWeight : string?
+    +FontStyle : string?
+  }
+
+  class ColorPaletteDto <<record>> {
+    +Id : Guid
+    +Name : string
+    +ColorsJson : string
+    +IsSystem : bool
+    +SortOrder : int
+  }
+}
+
+package "Anansi.Application.Interfaces" {
+  interface IStorageService {
+    +UploadAsync(stream, fileName, contentType) : string
+    +DeleteAsync(key) : void
+  }
+}
+
+UploadCustomFontHandler ..> WebsiteFontDto : returns
+UploadCustomFontHandler --> IStorageService : uploads font file
+ListCustomFontsHandler ..> WebsiteFontDto : returns
+ListColorPalettesHandler ..> ColorPaletteDto : returns
+CreateCustomColorPaletteHandler ..> ColorPaletteDto : returns
+
+@enduml

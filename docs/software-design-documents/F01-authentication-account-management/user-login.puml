@@ -1,0 +1,29 @@
+@startuml
+actor Photographer as P
+participant "AuthController" as AC
+participant "MediatR" as M
+participant "LoginCommandHandler" as LH
+participant "SignInManager" as SM
+participant "ApplicationDbContext" as DB
+participant "TokenService" as TS
+
+P -> AC : POST /api/auth/login\n{email, password}
+AC -> M : Send(LoginCommand)
+M -> LH : Handle(command)
+
+LH -> SM : PasswordSignInAsync(email, password)
+alt invalid credentials
+  LH --> M : Result.Failure("Invalid credentials")
+  M --> AC : Result.Failure
+  AC --> P : 401 Unauthorized
+end
+
+LH -> DB : Photographers.FirstOrDefault(email)
+LH -> TS : GenerateAccessToken(userId, email, photographerId)
+TS --> LH : JWT token
+LH -> TS : GenerateRefreshToken()
+TS --> LH : refresh token
+LH --> M : Result.Success(LoginResponse)
+M --> AC : Result.Success
+AC --> P : 200 OK {token, refreshToken, expiresAt, photographerId}
+@enduml

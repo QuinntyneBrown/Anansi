@@ -1,0 +1,48 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty methods
+
+enum CollectionStatus {
+  Draft
+  Published
+  Hidden
+  Expired
+}
+
+enum CoverStyle {
+  Reef
+  West
+  Oakwood
+  Edge
+  Harbor
+  Summit
+  Cascade
+}
+
+enum ThemeMode {
+  Light
+  Dark
+}
+
+enum GridLayout {
+  Vertical
+  Horizontal
+}
+
+enum GalleryLanguage {
+  English
+  Spanish
+  French
+  German
+  Dutch
+  ChineseSimplified
+  Portuguese
+  Swedish
+}
+
+enum SlideshowSpeed {
+  Slow
+  Medium
+  Fast
+}
+@enduml

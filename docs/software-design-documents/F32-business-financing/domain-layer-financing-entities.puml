@@ -1,0 +1,47 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class FinancingApplication {
+  +PhotographerId : Guid
+  +RequestedAmountCents : long
+  +OfferedAmountCents : long?
+  +FlatFeeCents : long?
+  +RepaymentPercentage : decimal?
+  +RepaidCents : long
+  +Status : string
+  +ApprovedAt : DateTime?
+  +FundedAt : DateTime?
+  +RepaidAt : DateTime?
+}
+
+class FinancingRepayment {
+  +PhotographerId : Guid
+  +ApplicationId : Guid
+  +PaymentRecordId : Guid
+  +DeductedAmountCents : long
+}
+
+class PaymentRecord {
+  +PhotographerId : Guid
+  +AmountCents : long
+  +FeeCents : long
+  +NetAmountCents : long
+  +PaymentMethod : PaymentMethod
+}
+
+BaseEntity <|-- FinancingApplication
+BaseEntity <|-- FinancingRepayment
+BaseEntity <|-- PaymentRecord
+
+FinancingApplication "1" --> "*" FinancingRepayment : Repayments
+FinancingRepayment --> PaymentRecord : triggered by
+
+@enduml

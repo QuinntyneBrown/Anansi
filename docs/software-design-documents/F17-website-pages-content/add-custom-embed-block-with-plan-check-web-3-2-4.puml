@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "PageElementsController" as C
+participant "IMediator" as M
+participant "CreateElementHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/.../elements\n{ elementType: CustomEmbed,\n  contentJson: { html: "<iframe ...>" } }
+C -> M : Send(CreateElementCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Find page (pageId, photographerId)
+DB --> H : WebsitePage
+
+H -> DB : Load Photographer\nwith ActivePlanId
+DB --> H : Photographer
+
+H -> DB : Load Plan\n(ActivePlanId)
+DB --> H : Plan
+
+alt plan tier < Pro
+  H --> M : Result.Forbidden\n("Custom embed requires Pro plan")
+  M --> C : failure
+  C --> P : 403 Forbidden
+else Pro or higher
+  H -> H : Build PageElement\n(ElementType = CustomEmbed)
+  H -> DB : Add(element)\nSaveChangesAsync()
+  DB --> H : saved
+  H --> M : Result.Success(PageElementDto)
+  M --> C : result
+  C --> P : 201 Created { elementDto }
+end
+
+@enduml

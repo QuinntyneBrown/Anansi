@@ -1,0 +1,37 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "PriceSheetsController" as ctrl
+participant "IMediator" as med
+participant "CreatePriceSheetHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : POST /api/pricesheets\n{name, isDefault=true, items[]}
+ctrl -> med : Send(CreatePriceSheetCommand)
+med -> handler : Handle(command, ct)
+handler -> user : PhotographerId
+user --> handler : Guid
+
+alt isDefault == true
+  handler -> db : PriceSheets\n.Where(PhotographerId == pid\n&& IsDefault)
+  db --> handler : existing default sheet?
+  alt exists
+    handler -> handler : Set existing.IsDefault = false
+  end
+end
+
+handler -> handler : Create PriceSheet entity
+
+loop for each item in request.Items
+  handler -> handler : Create PriceSheetItem\n(ProductVariationId, PriceCents)
+end
+
+handler -> db : PriceSheets.Add(priceSheet)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+handler -> handler : MapToDto(priceSheet)
+handler --> med : Result<PriceSheetDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 201 Created {PriceSheetDto}
+@enduml

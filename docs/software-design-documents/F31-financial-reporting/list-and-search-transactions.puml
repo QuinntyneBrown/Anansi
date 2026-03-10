@@ -1,0 +1,32 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ReportsController" as API
+participant "MediatR" as M
+participant "ListTransactionsHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/reports/transactions?\nmethod=CreditCard&search=Smith\n&from=2025-06-01&page=1
+API -> M : Send(ListTransactionsQuery)
+M -> Handler : Handle(query)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Build query with filters:\nPaymentMethod, date range,\nsearch on Description/CardLast4
+DB --> Handler : Filtered IQueryable
+
+Handler -> DB : CountAsync()
+DB --> Handler : totalCount
+
+Handler -> DB : OrderByDescending(CreatedAt)\n.Skip().Take()
+DB --> Handler : List<PaymentRecord>
+
+Handler -> Handler : Project to PaymentRecordDto
+
+Handler --> M : Result<PagedList<PaymentRecordDto>>
+M --> API : Result.Success
+API --> Photographer : 200 OK (paginated results)
+
+@enduml

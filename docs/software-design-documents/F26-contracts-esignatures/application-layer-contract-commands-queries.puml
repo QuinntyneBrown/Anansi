@@ -1,0 +1,84 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Contracts.Commands" {
+  class CreateContractCommand <<record>> {
+    +Title : string
+    +Content : string
+    +HeaderImageUrl : string?
+    +ContactId : Guid?
+    +ProjectId : Guid?
+    +Fields : List<ContractFieldDto>
+  }
+
+  class UpdateContractCommand <<record>> {
+    +ContractId : Guid
+    +Title : string
+    +Content : string
+    +HeaderImageUrl : string?
+    +ExpiryDays : int?
+    +AutoRemindersEnabled : bool
+    +ReminderIntervalDays : int?
+    +Fields : List<ContractFieldDto>
+  }
+
+  class SendContractCommand <<record>> {
+    +ContractId : Guid
+    +CustomVariableValues : Dictionary<string, string>?
+  }
+
+  class PreSignContractCommand <<record>> {
+    +ContractId : Guid
+    +SignatureData : string
+  }
+
+  class SignContractCommand <<record>> {
+    +Token : string
+    +SignerRole : string
+    +SignerName : string
+    +SignerEmail : string
+    +SignatureData : string
+  }
+
+  class AddSignerCommand <<record>> {
+    +ContractId : Guid
+    +SignerName : string
+    +SignerEmail : string
+    +SignerRole : string
+  }
+
+  class CancelContractCommand <<record>> {
+    +ContractId : Guid
+  }
+
+  class DeleteContractCommand <<record>> {
+    +ContractId : Guid
+  }
+}
+
+package "Features.Contracts.Queries" {
+  class ViewContractQuery <<record>> {
+    +ContractId : Guid
+  }
+
+  class ListContractsQuery <<record>> {
+    +Status : ContractStatus?
+    +ContactId : Guid?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetContractByTokenQuery <<record>> {
+    +Token : string
+  }
+}
+
+interface IEmailService {
+  +SendAsync()
+  +SendTemplatedAsync()
+}
+
+SendContractCommand ..> IEmailService : uses
+@enduml

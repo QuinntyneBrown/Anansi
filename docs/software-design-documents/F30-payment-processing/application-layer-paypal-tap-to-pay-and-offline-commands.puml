@@ -1,0 +1,60 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Payments.PayPal" {
+  class ProcessPayPalPaymentCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+    +Description : string
+    +InvoiceId : Guid?
+    +ReturnUrl : string
+    +CancelUrl : string
+  }
+
+  class HandlePayPalWebhookCommand <<record>> {
+    +WebhookBody : string
+    +WebhookId : string
+  }
+}
+
+package "Features.Payments.TapToPay" {
+  class ProcessTapToPayCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+    +InvoiceId : Guid?
+    +TipCents : long
+  }
+
+  class GenerateQrFallbackCommand <<record>> {
+    +PaymentIntentId : string
+    +AmountCents : long
+  }
+}
+
+package "Features.Payments.Offline" {
+  class RecordOfflinePaymentCommand <<record>> {
+    +InvoiceId : Guid
+    +AmountCents : long
+    +PaymentMethod : string
+    +Description : string?
+  }
+}
+
+package "Features.Payments.Refunds" {
+  class RefundPaymentCommand <<record>> {
+    +PaymentRecordId : Guid
+    +AmountCents : long?
+    +Reason : string?
+  }
+}
+
+interface IPayPalService {
+  +CreateOrderAsync()
+  +CaptureOrderAsync()
+  +RefundAsync()
+}
+
+ProcessPayPalPaymentCommand ..> IPayPalService : uses
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class WebhooksController <<ApiController>> {
+  -_mediator : IMediator
+  +GetSubscriptions() : IActionResult
+  +CreateSubscription(cmd) : IActionResult
+  +UpdateSubscription(id, cmd) : IActionResult
+  +DeleteSubscription(id) : IActionResult
+  +TestWebhook(id) : IActionResult
+}
+
+class WebhookDeliveriesController <<ApiController>> {
+  -_mediator : IMediator
+  +GetDeliveries(subscriptionId, page, pageSize) : IActionResult
+}
+
+class CodeInjectionsController <<ApiController>> {
+  -_mediator : IMediator
+  +GetInjections() : IActionResult
+  +CreateInjection(cmd) : IActionResult
+  +UpdateInjection(id, cmd) : IActionResult
+  +DeleteInjection(id) : IActionResult
+}
+
+class ApiKeysController <<ApiController>> {
+  -_mediator : IMediator
+  +GetKeys() : IActionResult
+  +CreateKey(cmd) : IActionResult
+  +RevokeKey(id) : IActionResult
+}
+
+class TemplatesApiController <<ApiController>> {
+  -_mediator : IMediator
+  +GetTemplates(type, page, pageSize) : IActionResult
+  +GetTemplate(type, id) : IActionResult
+  +CreateTemplate(type, request) : IActionResult
+  +UpdateTemplate(type, id, request) : IActionResult
+  +DeleteTemplate(type, id) : IActionResult
+}
+
+note bottom of TemplatesApiController
+  Authenticated via X-Api-Key header.
+  Supports types: email, contract,
+  invoice, questionnaire, quote.
+end note
+
+WebhooksController --> "IMediator"
+CodeInjectionsController --> "IMediator"
+ApiKeysController --> "IMediator"
+TemplatesApiController --> "IMediator"
+
+@enduml

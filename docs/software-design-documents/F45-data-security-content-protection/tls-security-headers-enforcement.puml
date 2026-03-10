@@ -1,0 +1,28 @@
+@startuml
+actor Client as C
+participant "Load Balancer / Reverse Proxy" as LB
+participant "TlsEnforcementMiddleware" as TLS
+participant "SecurityHeadersMiddleware" as SH
+participant "Application" as APP
+
+C -> LB : HTTP request (port 80)
+LB -> TLS : Forward request
+TLS -> TLS : Check X-Forwarded-Proto\nor request scheme
+
+alt scheme == "http"
+  TLS --> C : 301 Redirect to HTTPS
+end
+
+C -> LB : HTTPS request (TLS 1.2+)
+LB -> TLS : Forward request\n(X-Forwarded-Proto: https)
+TLS -> TLS : Verify TLS 1.2+\n(configured at LB level)
+
+TLS -> SH : Pass to security headers
+SH -> SH : Add response headers:\n- Strict-Transport-Security:\n  max-age=31536000;\n  includeSubDomains\n- X-Content-Type-Options: nosniff\n- X-Frame-Options: DENY\n- X-XSS-Protection: 1; mode=block\n- Referrer-Policy: strict-origin\n- Content-Security-Policy: ...
+
+SH -> APP : Pass to application pipeline
+APP --> SH : Response
+SH --> TLS : Response + security headers
+TLS --> LB : Response
+LB --> C : Secured response with\nall security headers
+@enduml

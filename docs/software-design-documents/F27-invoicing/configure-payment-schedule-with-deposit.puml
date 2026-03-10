@@ -1,0 +1,36 @@
+@startuml
+actor Photographer as P
+participant "InvoicesController" as IC
+participant "MediatR" as M
+participant "ConfigureDepositHandler" as DH
+participant "ApplicationDbContext" as DB
+
+P -> IC : POST /api/invoices/{id}/deposit\n{depositAmountCents,\nbalanceDueDate}
+IC -> M : Send(ConfigureDepositCommand)
+M -> DH : Handle(command)
+
+DH -> DB : Load Invoice
+alt invoice not in Draft status
+  DH --> M : Result.Failure("Schedule only\nconfigurable on drafts")
+  M --> IC : Result.Failure
+  IC --> P : 400 Bad Request
+end
+
+alt deposit >= total
+  DH --> M : Result.Failure("Deposit must be\nless than total")
+  M --> IC : Result.Failure
+  IC --> P : 400 Bad Request
+end
+
+DH -> DB : Remove existing\nPaymentSchedules for invoice
+
+DH -> DB : Add Installment 1:\nLabel="Deposit"\nAmount=depositAmountCents\nDueDate=now
+
+DH -> DB : Add Installment 2:\nLabel="Remaining Balance"\nAmount=total - deposit\nDueDate=balanceDueDate
+
+DH -> DB : invoice.DepositAmountCents\n= depositAmountCents
+DH -> DB : SaveChangesAsync()
+DH --> M : Result.Success
+M --> IC : Result.Success
+IC --> P : 200 OK
+@enduml

@@ -1,0 +1,81 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Store" {
+  class Product {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Description : string?
+    +ProductType : ProductType
+    +FulfillmentType : FulfillmentType
+    +IsActive : bool
+    +LabPartner : LabPartner?
+    +LabColorCorrectionEnabled : bool
+    +PreviewImageUrl : string?
+    +DigitalResolutionOptions : string?
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+    +CreatedBy : string?
+    +UpdatedBy : string?
+  }
+
+  class ProductVariation {
+    +Id : Guid
+    +ProductId : Guid
+    +Name : string
+    +Sku : string?
+    +CostCents : long
+    +MarkupCents : long
+    +PriceCents : long
+    +IsCustomPriced : bool
+    +IsActive : bool
+  }
+
+  class PackageItem {
+    +Id : Guid
+    +PackageProductId : Guid
+    +IncludedProductId : Guid
+    +IncludedVariationId : Guid?
+    +Quantity : int
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum ProductType {
+    Print
+    MountedPrint
+    CanvasPrint
+    MetalPrint
+    WoodPrint
+    FramedPrint
+    WallArt
+    LargeFormat
+    SquarePrint
+    Standout
+    BambooPanel
+    Album
+    Book
+    GreetingCard
+    DigitalDownload
+    Package
+    SelfFulfilled
+  }
+
+  enum FulfillmentType {
+    Lab
+    SelfFulfilled
+    Digital
+  }
+}
+
+Product "1" --> "*" ProductVariation : Variations
+Product "1" --> "*" PackageItem : PackageItems (as package)
+PackageItem --> "1" Product : IncludedProduct
+PackageItem --> "0..1" ProductVariation : IncludedVariation
+Product ..> ProductType
+Product ..> FulfillmentType
+
+@enduml

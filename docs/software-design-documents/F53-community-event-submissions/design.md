@@ -119,6 +119,8 @@ CulturalEvent ..> EventResetToPendingEvent : raises on edit of approved
 @enduml
 ```
 
+![Domain Layer -- Community Event Status Lifecycle](domain-layer-community-event-status-lifecycle.png)
+
 ### Application Layer -- Submission & Moderation Commands
 
 ```plantuml
@@ -184,6 +186,8 @@ CreateCommunityEventCommandValidator ..> CreateCommunityEventCommand : validates
 @enduml
 ```
 
+![Application Layer -- Submission & Moderation Commands](application-layer-submission-moderation-commands.png)
+
 ### Application Layer -- Submission DTOs
 
 ```plantuml
@@ -218,6 +222,8 @@ class "PaginatedResult<CommunityEventDto>" as PaginatedResult {
 }
 @enduml
 ```
+
+![Application Layer -- Submission DTOs](application-layer-submission-dtos.png)
 
 ### Infrastructure Layer -- Event Handlers
 
@@ -266,6 +272,8 @@ UpdateCommunityEventCommandHandler ..> EventResetToPendingEventHandler : status 
 @enduml
 ```
 
+![Infrastructure Layer -- Event Handlers](infrastructure-layer-event-handlers.png)
+
 ### API Layer -- Events & Moderation Controllers
 
 ```plantuml
@@ -304,6 +312,8 @@ EventsController --> "IMediator" : sends commands/queries
 EventModerationController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Events & Moderation Controllers](api-layer-events-moderation-controllers.png)
 
 ---
 
@@ -346,6 +356,8 @@ M --> EC : result
 EC --> P : 201 Created {\n  id, name: "Afro-Caribbean Art Show",\n  status: "Approved",\n  startDate: "2026-09-15",\n  category: "Cultural"\n}
 @enduml
 ```
+
+![Submit a Community Event (MVP Auto-Approve)](submit-a-community-event-mvp-auto-approve.png)
 
 ### Admin Approves a Pending Event
 
@@ -391,6 +403,8 @@ end note
 @enduml
 ```
 
+![Admin Approves a Pending Event](admin-approves-a-pending-event.png)
+
 ### Admin Rejects a Pending Event
 
 ```plantuml
@@ -427,6 +441,8 @@ RH -> NS : CreateNotificationCommand {\n  PhotographerId: submittedById,\n  Even
 NS --> RH : notification sent
 @enduml
 ```
+
+![Admin Rejects a Pending Event](admin-rejects-a-pending-event.png)
 
 ### Edit an Approved Event (Resets to Pending)
 
@@ -474,6 +490,8 @@ M --> EC : result
 EC --> P : 200 OK {\n  id, name: "Afro-Caribbean Art Show 2026",\n  status: "Pending",\n  endDate: "2026-09-18"\n}
 @enduml
 ```
+
+![Edit an Approved Event (Resets to Pending)](edit-an-approved-event-resets-to-pending.png)
 
 ### Cancel (Soft-Delete) Own Event
 
@@ -527,3 +545,5 @@ note right of H
 end note
 @enduml
 ```
+
+![Cancel (Soft-Delete) Own Event](cancel-soft-delete-own-event.png)

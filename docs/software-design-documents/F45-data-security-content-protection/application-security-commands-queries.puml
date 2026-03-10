@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Security.Commands" {
+  class ValidateGalleryPasswordCommand <<record>> {
+    +CollectionId : Guid
+    +Password : string
+  }
+
+  class ValidateDownloadPinCommand <<record>> {
+    +CollectionId : Guid
+    +Pin : string
+  }
+
+  class GenerateWatermarkedImageCommand <<record>> {
+    +MediaId : Guid
+    +WatermarkId : Guid?
+  }
+}
+
+package "Features.Security.Queries" {
+  class GetGalleryMediaQuery <<record>> {
+    +CollectionId : Guid
+    +GalleryAccessToken : string?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetProgressiveImageSetQuery <<record>> {
+    +MediaId : Guid
+  }
+
+  class GetAdaptiveVideoStreamQuery <<record>> {
+    +MediaId : Guid
+  }
+}
+
+class GalleryAccessTokenDto <<record>> {
+  +Token : string
+  +ExpiresAt : DateTime
+  +AccessLevel : string
+}
+
+class ProgressiveImageSetDto <<record>> {
+  +PlaceholderUrl : string
+  +LowResUrl : string
+  +FullResUrl : string
+}
+
+class AdaptiveStreamDto <<record>> {
+  +HlsManifestUrl : string
+  +DashManifestUrl : string
+  +QualityLevels : List<string>
+}
+
+ValidateGalleryPasswordCommand ..> GalleryAccessTokenDto
+GetProgressiveImageSetQuery ..> ProgressiveImageSetDto
+GetAdaptiveVideoStreamQuery ..> AdaptiveStreamDto
+
+@enduml

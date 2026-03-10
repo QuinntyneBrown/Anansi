@@ -1,0 +1,21 @@
+@startuml
+actor Photographer as P
+participant "InteracController" as IC
+participant "MediatR" as M
+participant "ListInteracPaymentRequestsHandler" as LH
+participant "ApplicationDbContext" as DB
+
+P -> IC : GET /api/interac/payment-requests?\nstatus=Pending&page=1&pageSize=20
+IC -> M : Send(ListInteracPaymentRequestsQuery)
+M -> LH : Handle(query)
+
+LH -> DB : Query InteracPaymentRequests\nWHERE PhotographerId = {id}\nAND (Status = Pending OR no filter)\nORDER BY CreatedAt DESC\nSkip/Take for pagination
+
+DB --> LH : List<InteracPaymentRequest>,\ntotalCount
+
+LH -> LH : Map to List<InteracPaymentRequestDto>
+
+LH --> M : PagedList<InteracPaymentRequestDto>\n{items, totalCount, page, pageSize}
+M --> IC : Result.Success
+IC --> P : 200 OK\n{items[], page, totalCount, totalPages}
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+participant "QuestionnaireReminderJob" as JOB
+participant "MediatR" as M
+participant "SendRemindersHandler" as SRH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+JOB -> M : Send(SendQuestionnaireRemindersCommand)
+M -> SRH : Handle(command)
+
+SRH -> DB : Query Questionnaires WHERE\nStatus IN (Sent, Viewed)\nAND AutoRemindersEnabled = true\nAND AllowMultipleSubmissions = false\nAND (LastReminderSentAt is null\n  OR LastReminderSentAt +\n  ReminderIntervalDays < UtcNow)
+
+SRH -> DB : Join Photographer to verify\nplan supports reminders
+
+loop each questionnaire due for reminder
+  SRH -> ES : SendTemplatedAsync(\nclient.Email,\n"Reminder: Please Complete\nYour Questionnaire",\nquestionnaireLink)
+  SRH -> DB : questionnaire.LastReminderSentAt\n= UtcNow
+end
+
+SRH -> DB : SaveChangesAsync()
+SRH --> M : Result.Success(reminderCount)
+@enduml

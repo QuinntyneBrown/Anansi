@@ -1,0 +1,24 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "TaxRatesController" as ctrl
+participant "IMediator" as med
+participant "CreateTaxRateHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : POST /api/taxrates\n{name="Ontario HST",\nregion="ON",\npercentage=13.00}
+ctrl -> med : Send(CreateTaxRateCommand)
+med -> handler : Handle(command, ct)
+handler -> user : PhotographerId
+user --> handler : Guid
+
+handler -> handler : Build TaxRate entity\n(PhotographerId, name, region, percentage)
+handler -> db : TaxRates.Add(taxRate)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+handler --> med : Result<TaxRateDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 201 Created {TaxRateDto}
+@enduml

@@ -1,0 +1,35 @@
+@startuml
+participant "GoogleCalendarSyncBackgroundService" as BG
+participant "IGoogleCalendarService" as GC
+participant "ApplicationDbContext" as DB
+
+BG -> DB : Query Photographers\nWHERE GoogleCalendarId IS NOT NULL
+DB --> BG : photographers
+
+loop for each photographer
+  BG -> GC : SyncIncomingChangesAsync(calendarId)
+
+  GC -> GC : Fetch updated events\nsince last sync token
+
+  loop for each changed event
+    alt event created (external)
+      GC -> DB : No booking match found
+      GC -> GC : Mark time block as busy\n(affects availability queries)
+    else event updated
+      GC -> DB : Find BookingRecord\nby GoogleCalendarEventId
+      alt booking found
+        GC -> DB : Update StartTime/EndTime
+        DB --> GC : saved
+      end
+    else event deleted
+      GC -> DB : Find BookingRecord\nby GoogleCalendarEventId
+      alt booking found
+        GC -> DB : booking.Status = Cancelled
+        DB --> GC : saved
+      end
+    end
+  end
+end
+
+BG -> BG : Sleep 5 minutes
+@enduml

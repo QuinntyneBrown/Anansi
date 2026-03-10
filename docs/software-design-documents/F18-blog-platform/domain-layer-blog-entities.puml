@@ -1,0 +1,75 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class Website {
+    +Id : Guid
+    +PhotographerId : Guid
+    +BlogLayout : BlogLayoutType
+    +BlogPostsPerPage : int
+    +BlogLoadMoreEnabled : bool
+  }
+
+  class BlogPost {
+    +Id : Guid
+    +PhotographerId : Guid
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +Excerpt : string?
+    +BodyHtml : string
+    +FeaturedImageUrl : string?
+    +Status : BlogPostStatus
+    +PublishDate : DateTime?
+    +ScheduledPublishDate : DateTime?
+    +MetaTitle : string?
+    +MetaDescription : string?
+    +OgImageUrl : string?
+    +ImportedFromUrl : string?
+    +ImportedAt : DateTime?
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+    +CreatedBy : string?
+    +UpdatedBy : string?
+  }
+
+  class BlogCategory {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Slug : string
+    +Description : string?
+    +SortOrder : int
+  }
+
+  class BlogPostCategory {
+    +Id : Guid
+    +BlogPostId : Guid
+    +BlogCategoryId : Guid
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum BlogPostStatus {
+    Draft
+    Published
+    Scheduled
+    Archived
+  }
+
+  enum BlogLayoutType {
+    Grid
+    Stacked
+    AlternatedCards
+  }
+}
+
+Website --> "*" BlogPost : BlogPosts
+BlogPost --> "*" BlogPostCategory
+BlogCategory --> "*" BlogPostCategory
+BlogPost ..> BlogPostStatus
+Website ..> BlogLayoutType
+
+@enduml

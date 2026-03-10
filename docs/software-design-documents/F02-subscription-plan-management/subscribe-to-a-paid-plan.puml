@@ -1,0 +1,39 @@
+@startuml
+actor Photographer as P
+participant "PlansController" as PC
+participant "MediatR" as M
+participant "CreateSubscriptionHandler" as CSH
+participant "ApplicationDbContext" as DB
+participant "IPaymentService" as PS
+
+P -> PC : POST /api/plans/subscription\n{planId, billingInterval: Annual,\npaymentMethodId}
+PC -> M : Send(CreateSubscriptionCommand)
+M -> CSH : Handle(command)
+
+CSH -> DB : Find Plan by planId
+alt plan not found
+  CSH --> M : Result.Failure("Plan not found")
+  M --> PC : 404
+  PC --> P : 404 Not Found
+end
+
+CSH -> DB : Check existing active subscription
+alt already subscribed
+  CSH --> M : Result.Failure("Already subscribed.\nUse change endpoint.")
+  M --> PC : 400
+  PC --> P : 400 Bad Request
+end
+
+alt plan.Tier == Free
+  CSH -> DB : Create Subscription\n(no Stripe, no payment)
+else paid plan
+  CSH -> PS : CreateCheckoutSessionAsync(\nstripeAccountId, lineItems,\nsuccessUrl, cancelUrl)
+  PS --> CSH : stripeSubscriptionId
+  CSH -> DB : Create Subscription\n(with StripeSubscriptionId,\nperiod dates, price)
+end
+
+CSH -> DB : SaveChangesAsync()
+CSH --> M : Result.Success(SubscriptionDto)
+M --> PC : Result.Success
+PC --> P : 201 Created
+@enduml

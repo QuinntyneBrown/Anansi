@@ -1,0 +1,24 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor "Email Client" as Recipient
+participant "EmailTrackingMiddleware" as Middleware
+participant "TrackEmailOpenHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Recipient -> Middleware : GET /api/tracking/pixel/{invitationId}.png
+Middleware -> Handler : Send(TrackEmailOpenCommand)
+
+Handler -> DB : Find EmailInvitation by Id
+DB --> Handler : EmailInvitation
+
+alt Not already opened
+  Handler -> Handler : Set IsOpened=true,\nOpenedAt=UtcNow
+  Handler -> DB : SaveChangesAsync()
+end
+
+Handler --> Middleware : Result.Success()
+Middleware --> Recipient : 200 OK (1x1 transparent PNG)
+
+@enduml

@@ -1,0 +1,63 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class DownloadRequest {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +RequestedBy : string?
+  +RequestedByEmail : string?
+  +Resolution : DownloadResolution
+  +IsFullGallery : bool
+  +MediaIds : string?
+  +ZipStorageKey : string?
+  +IsReady : bool
+  +ReadyAt : DateTime?
+  +ExpiresAt : DateTime?
+  +NotificationSent : bool
+}
+
+class Collection {
+  +DownloadsEnabled : bool
+  +DownloadPin : string?
+  +DownloadPinEnabled : bool
+  +DownloadLimit : int?
+  +DownloadCount : int
+  +AllowedResolutions : string
+}
+
+class GalleryActivity {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +ActivityType : ActivityType
+  +ActorName : string?
+  +ActorEmail : string?
+  +MediaId : Guid?
+  +Resolution : DownloadResolution?
+  +IsFullGallery : bool?
+  +Details : string?
+}
+
+enum DownloadResolution {
+  Web640
+  Web1024
+  Web2048
+  High3600
+  Original
+}
+
+BaseEntity <|-- DownloadRequest
+BaseEntity <|-- GalleryActivity
+Collection "1" --> "*" DownloadRequest : DownloadRequests
+Collection "1" --> "*" GalleryActivity : Activities
+DownloadRequest --> DownloadResolution
+GalleryActivity --> DownloadResolution
+
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+participant "StorePageController" as ctrl
+participant "IMediator" as med
+participant "GetActiveBannerHandler" as handler
+participant "IApplicationDbContext" as db
+
+Client -> ctrl : GET /api/store/{collectionId}/banner
+ctrl -> med : Send(GetActiveBannerQuery(collectionId))
+med -> handler : Handle(query, ct)
+
+handler -> db : Collections.FindAsync(collectionId)
+db --> handler : Collection (PhotographerId)
+
+handler -> db : Coupons\n.Where(PhotographerId == pid\n&& ShowBanner == true\n&& IsActive == true\n&& (ExpirationDate > now || null))
+db --> handler : List<Coupon> (active banners)
+
+alt banners found
+  handler -> handler : Select first active banner\n(or highest priority)
+  handler --> med : {bannerText, bannerColorHex,\ncouponCode}
+else no active banners
+  handler --> med : null
+end
+
+med --> ctrl : Result
+ctrl --> Client : 200 OK\n{bannerText, color, code}\nor 204 No Content
+@enduml

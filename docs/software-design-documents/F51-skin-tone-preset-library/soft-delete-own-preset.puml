@@ -1,0 +1,39 @@
+@startuml
+actor Photographer as P
+participant "PresetsController" as PC
+participant "MediatR" as M
+participant "DeletePresetCommandHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> PC : DELETE /api/presets/{id}
+PC -> M : Send(DeletePresetCommand)
+M -> H : Handle()
+
+H -> DB : Load EditingPreset by Id
+DB --> H : preset
+
+alt preset.IsSystemPreset = true
+  H --> M : throw ForbiddenException
+  M --> PC : 403 Forbidden
+  PC --> P : 403 Forbidden
+else preset.AuthorId != currentUserId
+  H --> M : throw ForbiddenException
+  M --> PC : 403 Forbidden
+  PC --> P : 403 Forbidden
+else valid owner
+  H -> DB : SET IsDeleted = true,\nDeletedAt = DateTime.UtcNow
+  H -> DB : SaveChanges
+  DB --> H : saved
+
+  note right of H
+    PresetFavorite records are NOT deleted.
+    When other photographers query their
+    favorites, the IsAvailable flag will
+    be false for this preset (IsDeleted check).
+  end note
+
+  H --> M : success
+  M --> PC : result
+  PC --> P : 204 No Content
+end
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Infrastructure.Services" {
+  class LabIntegrationService {
+    -_httpClientFactory : IHttpClientFactory
+    -_adapters : Dictionary<string, ILabAdapter>
+    +SubmitOrderAsync(request, ct) : Task<string>
+    +GetOrderStatusAsync(labName, orderId, ct) : Task<LabOrderStatusResult>
+    +GetPricingAsync(labName, ct) : Task<IReadOnlyList<LabPricingResult>>
+  }
+
+  interface ILabAdapter {
+    +LabName : string
+    +SubmitAsync(request, ct) : Task<string>
+    +GetStatusAsync(orderId, ct) : Task<LabOrderStatusResult>
+    +GetPricingAsync(ct) : Task<IReadOnlyList<LabPricingResult>>
+  }
+
+  class WhccAdapter {
+    +LabName : string = "WHCC"
+  }
+  class ProDpiAdapter {
+    +LabName : string = "ProDPI"
+  }
+  class MillersAdapter {
+    +LabName : string = "Millers"
+  }
+  class LoxleyAdapter {
+    +LabName : string = "LoxleyColour"
+  }
+
+  class LabPricingSyncJob {
+    -_serviceScopeFactory : IServiceScopeFactory
+    +ExecuteAsync(ct) : Task
+  }
+}
+
+LabIntegrationService --> ILabAdapter : routes by LabName
+WhccAdapter ..|> ILabAdapter
+ProDpiAdapter ..|> ILabAdapter
+MillersAdapter ..|> ILabAdapter
+LoxleyAdapter ..|> ILabAdapter
+LabPricingSyncJob --> ILabAdapter : polls pricing
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitePagesController" as C
+participant "IMediator" as M
+participant "CreatePageValidator" as V
+participant "CreatePageHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/pages\n{ title, slug, pageType,\n  showInNavigation, pagePassword }
+C -> M : Send(CreatePageCommand)
+M -> V : Validate(command)
+V --> M : valid
+
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Find Website\n(websiteId, photographerId)
+DB --> H : Website
+
+H -> DB : AnyAsync\n(websiteId, slug)
+DB --> H : false (unique)
+
+H -> DB : Max(SortOrder)\nfor website pages
+DB --> H : maxSort
+
+H -> H : Create WebsitePage entity\n(sortOrder = maxSort + 1)
+
+opt pagePassword provided
+  H -> H : SHA256 hash password\nset PagePasswordHash
+end
+
+H -> DB : Add(page)\nSaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(WebsitePageDto)
+M --> C : result
+C --> P : 201 Created { pageDto }
+
+@enduml

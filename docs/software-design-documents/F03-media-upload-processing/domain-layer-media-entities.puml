@@ -1,0 +1,92 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+interface ITenantEntity {
+  +PhotographerId : Guid
+}
+
+interface ISoftDeletable {
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+class GalleryMedia {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +SetId : Guid?
+  --File Info--
+  +FileName : string
+  +OriginalFileName : string
+  +MediaType : MediaType
+  +ContentType : string
+  +FileSizeBytes : long
+  +StorageKey : string
+  +ThumbnailStorageKey : string?
+  --Image Metadata--
+  +Width : int?
+  +Height : int?
+  +CameraMake : string?
+  +CameraModel : string?
+  +LensModel : string?
+  +FocalLength : double?
+  +Aperture : string?
+  +ShutterSpeed : string?
+  +Iso : int?
+  +DateTaken : DateTime?
+  +GpsLatitude : double?
+  +GpsLongitude : double?
+  --Video Metadata--
+  +Duration : TimeSpan?
+  +VideoResolution : string?
+  +CustomVideoThumbnailKey : string?
+  --Organization--
+  +SortOrder : int
+  +IsStarred : bool
+  +IsPrivate : bool
+  +MarkedPrivateByClientId : Guid?
+}
+
+class Collection {
+  +Title : string
+  +CoverPhotoId : Guid?
+  +Sets : ICollection<CollectionSet>
+  +Media : ICollection<GalleryMedia>
+}
+
+class CollectionSet {
+  +CollectionId : Guid
+  +Title : string
+  +SortOrder : int
+  +Media : ICollection<GalleryMedia>
+}
+
+enum MediaType {
+  Jpeg
+  Png
+  Gif
+  Raw
+  Mp4
+  Mov
+  Avi
+  M4V
+}
+
+BaseEntity <|-- GalleryMedia
+BaseEntity <|-- Collection
+BaseEntity <|-- CollectionSet
+ITenantEntity <|.. GalleryMedia
+ISoftDeletable <|.. GalleryMedia
+
+Collection "1" *-- "many" GalleryMedia
+Collection "1" *-- "many" CollectionSet
+CollectionSet "1" *-- "many" GalleryMedia
+GalleryMedia --> MediaType
+@enduml

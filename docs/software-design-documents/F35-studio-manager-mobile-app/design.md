@@ -188,6 +188,8 @@ Invoice --> InvoiceStatus
 @enduml
 ```
 
+![Domain Layer - Mobile-Relevant Entities](domain-layer-mobile-relevant-entities.png)
+
 ### Domain Layer - Communication & Document Entities
 
 ```plantuml
@@ -255,6 +257,8 @@ Questionnaire --> QuestionnaireStatus
 @enduml
 ```
 
+![Domain Layer - Communication & Document Entities](domain-layer-communication-document-entities.png)
+
 ### Application Layer - Tap to Pay Commands
 
 ```plantuml
@@ -315,6 +319,8 @@ GeneratePaymentQrCommand ..> PaymentQrDto
 
 @enduml
 ```
+
+![Application Layer - Tap to Pay Commands](application-layer-tap-to-pay-commands.png)
 
 ### Application Layer - Existing Queries Consumed by Mobile
 
@@ -378,6 +384,8 @@ package "Communication" {
 @enduml
 ```
 
+![Application Layer - Existing Queries Consumed by Mobile](application-layer-existing-queries-consumed-by-mobile.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -433,6 +441,8 @@ DevicesController ..> RegisterDeviceCommand
 
 @enduml
 ```
+
+![Infrastructure & API Layer](infrastructure-api-layer.png)
 
 ---
 
@@ -496,6 +506,8 @@ App -> App : Display receipt\nto photographer
 @enduml
 ```
 
+![Tap to Pay - Successful Contactless Payment](tap-to-pay-successful-contactless-payment.png)
+
 ### Tap to Pay - QR Code Fallback
 
 ```plantuml
@@ -544,6 +556,8 @@ end note
 
 @enduml
 ```
+
+![Tap to Pay - QR Code Fallback](tap-to-pay-qr-code-fallback.png)
 
 ### Mobile Booking Management
 
@@ -595,6 +609,8 @@ App -> App : Update calendar view
 @enduml
 ```
 
+![Mobile Booking Management](mobile-booking-management.png)
+
 ### Mobile Invoice Management
 
 ```plantuml
@@ -645,6 +661,8 @@ API --> App : 200 OK
 
 @enduml
 ```
+
+![Mobile Invoice Management](mobile-invoice-management.png)
 
 ### Push Notification Registration and Delivery
 
@@ -699,6 +717,8 @@ App -> App : Navigate to invoice detail
 @enduml
 ```
 
+![Push Notification Registration and Delivery](push-notification-registration-and-delivery.png)
+
 ### Mobile Document Management
 
 ```plantuml
@@ -745,3 +765,5 @@ App -> App : Update status badge\nto "Sent"
 
 @enduml
 ```
+
+![Mobile Document Management](mobile-document-management.png)

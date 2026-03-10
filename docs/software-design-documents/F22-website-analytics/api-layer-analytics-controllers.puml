@@ -1,0 +1,38 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class AnalyticsCollectorController <<ApiController>> {
+  -_mediator : IMediator
+  +RecordHit(RecordPageHitCommand) : IActionResult
+}
+
+class AnalyticsDashboardController <<ApiController>> {
+  -_mediator : IMediator
+  +GetDashboard(websiteId, startDate, endDate) : IActionResult
+  +GetTopPages(websiteId, startDate, endDate, top) : IActionResult
+  +GetGeoDistribution(websiteId, startDate, endDate) : IActionResult
+}
+
+class AnalyticsSettingsController <<ApiController>> {
+  -_mediator : IMediator
+  +ToggleBuiltIn(websiteId, cmd) : IActionResult
+  +SetGoogleAnalytics(websiteId, cmd) : IActionResult
+  +SetFacebookPixel(websiteId, cmd) : IActionResult
+}
+
+note right of AnalyticsCollectorController
+  Public endpoint. Rate-limited.
+  No authentication required.
+end note
+
+note right of AnalyticsDashboardController
+  [Authorize] required.
+  Date range filtering via query params.
+end note
+
+AnalyticsCollectorController --> "IMediator" : sends commands
+AnalyticsDashboardController --> "IMediator" : sends queries
+AnalyticsSettingsController --> "IMediator" : sends commands
+@enduml

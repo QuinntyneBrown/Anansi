@@ -1,0 +1,28 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Api.Controllers" {
+  class BlogController <<ApiController>> {
+    -_mediator : IMediator
+    +ListPosts(websiteId, status, categoryId, page, pageSize) : IActionResult
+    +CreatePost(websiteId, command) : IActionResult
+    +UpdatePost(websiteId, postId, command) : IActionResult
+    +DuplicatePost(websiteId, postId) : IActionResult
+    +DeletePost(websiteId, postId) : IActionResult
+    +ImportPost(websiteId, command) : IActionResult
+    +ListCategories() : IActionResult
+    +CreateCategory(command) : IActionResult
+    +DeleteCategory(categoryId) : IActionResult
+  }
+}
+
+note right of BlogController
+  Route: api/websites/{websiteId}/blog
+  All endpoints require [Authorize]
+end note
+
+BlogController --> "IMediator" : sends commands/queries
+
+@enduml

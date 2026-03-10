@@ -1,0 +1,61 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface IGoogleCalendarService
+interface IVideoCallService
+interface IInstagramService
+interface IPaymentService
+interface IPayPalService
+
+class GoogleCalendarService {
+  -_calendarClient : CalendarService
+  -_tokenStore : ITokenStore
+  +CreateEventAsync() : Task<string>
+  +UpdateEventAsync() : Task
+  +DeleteEventAsync() : Task
+  +GetEventsAsync() : Task<IReadOnlyList<CalendarEventDto>>
+  +GetBusyTimesAsync() : Task<IReadOnlyList<CalendarEventDto>>
+}
+
+class VideoCallService {
+  -_httpClient : HttpClient
+  -_calendarClient : CalendarService
+  +CreateZoomMeetingAsync() : Task<VideoMeetingLink>
+  +CreateGoogleMeetAsync() : Task<VideoMeetingLink>
+}
+
+class InstagramService {
+  -_httpClient : HttpClient
+  +GetFeedAsync() : Task<IReadOnlyList<InstagramPost>>
+}
+
+class StripePaymentService {
+  -_stripeClient : StripeClient
+  +CreatePaymentIntentAsync() : Task<string>
+  +CreateCheckoutSessionAsync() : Task<string>
+  +RefundAsync() : Task
+  +CreateConnectedAccountAsync() : Task<string>
+}
+
+class PayPalService {
+  -_httpClient : HttpClient
+  +CreateOrderAsync() : Task<string>
+  +CaptureOrderAsync() : Task<PayPalCaptureResult>
+  +RefundAsync() : Task
+}
+
+class GoogleCalendarSyncJob {
+  -_mediator : IMediator
+  -_db : IApplicationDbContext
+  +ExecuteAsync() : Task
+}
+
+IGoogleCalendarService <|.. GoogleCalendarService
+IVideoCallService <|.. VideoCallService
+IInstagramService <|.. InstagramService
+IPaymentService <|.. StripePaymentService
+IPayPalService <|.. PayPalService
+
+@enduml

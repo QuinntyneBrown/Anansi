@@ -1,0 +1,26 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ProfileCulturalTagsController <<ApiController>> {
+  -_mediator : IMediator
+  +UpdateTags(UpdateCulturalTagsCommand) : IActionResult
+  +GetTags() : IActionResult
+}
+
+class DirectoryController <<ApiController>> {
+  -_mediator : IMediator
+  +GetCulturalTags() : IActionResult
+}
+
+class ProfileServiceAreaController <<ApiController>> {
+  -_mediator : IMediator
+  +UpdateServiceArea(UpdateServiceAreaCommand) : IActionResult
+  +GetServiceArea() : IActionResult
+}
+
+ProfileCulturalTagsController --> "IMediator" : sends commands/queries
+DirectoryController --> "IMediator" : sends queries
+ProfileServiceAreaController --> "IMediator" : sends commands/queries
+@enduml

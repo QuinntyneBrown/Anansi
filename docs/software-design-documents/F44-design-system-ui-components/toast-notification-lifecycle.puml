@@ -1,0 +1,29 @@
+@startuml
+actor User as U
+participant "Action Trigger" as AT
+participant "Toast Manager" as TM
+participant "Toast Stack" as TS
+
+U -> AT : Perform action\n(e.g., save settings)
+
+AT -> TM : showToast({\nmessage: "Settings saved",\ntype: "success",\nduration: 5000\n})
+
+TM -> TS : Check current stack size
+
+alt stack.length >= 3
+  TM -> TS : Remove oldest toast\n(FIFO)
+end
+
+TM -> TS : Add new toast to stack\n(position: top-right desktop,\ntop-center mobile)
+
+TS --> U : Toast appears with\ngreen color bar + message
+
+TM -> TM : Start 5s auto-dismiss timer
+
+alt user clicks dismiss
+  U -> TM : Dismiss toast
+  TM -> TS : Remove toast (slide out)
+else timer expires
+  TM -> TS : Auto-remove toast\n(fade out animation)
+end
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "FinancingController" as API
+participant "MediatR" as M
+participant "ListFinancingHistoryHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/financing
+API -> M : Send(ListFinancingHistoryQuery)
+M -> Handler : Handle(query)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Query FinancingApplications\n(PhotographerId)\nOrderByDescending(CreatedAt)
+DB --> Handler : List<FinancingApplication>
+
+Handler -> Handler : Project to\nList<FinancingApplicationDto>
+
+Handler --> M : Result<List<FinancingApplicationDto>>
+M --> API : Result.Success
+API --> Photographer : 200 OK\n(financing history)
+
+@enduml

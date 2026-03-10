@@ -1,0 +1,55 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CustomDomainsController <<Controller>> {
+  +Create() : ActionResult
+  +Verify() : ActionResult
+  +DnsCheck() : ActionResult
+  +List() : ActionResult
+  +Delete() : ActionResult
+}
+
+class SubdomainController <<Controller>> {
+  +CheckAvailability() : ActionResult
+  +ChangeSubdomain() : ActionResult
+}
+
+class DnsVerificationService <<Service>> {
+  +CheckCnameAsync(domain) : string?
+  +CheckTxtRecordsAsync(domain) : List<string>
+  +VerifyAsync(domain, token) : bool
+}
+
+class SslProvisioningService <<Service>> {
+  +ProvisionAsync(domain) : SslCertResult
+  +RenewAsync(certId) : SslCertResult
+  +RevokeAsync(certId) : Task
+}
+
+class SslRenewalBackgroundJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_mediator : IMediator
+  +RunAsync() : Task
+}
+
+class DomainRoutingMiddleware <<Middleware>> {
+  -_domainCache : IConcurrentDictionary
+  -_db : IApplicationDbContext
+  +InvokeAsync(HttpContext) : Task
+}
+
+interface IDnsVerificationService <<Interface>>
+interface ISslProvisioningService <<Interface>>
+
+DnsVerificationService ..|> IDnsVerificationService
+SslProvisioningService ..|> ISslProvisioningService
+SslRenewalBackgroundJob --> ISslProvisioningService
+DomainRoutingMiddleware --> IApplicationDbContext
+
+CustomDomainsController ..> CreateCustomDomainCommand
+CustomDomainsController ..> VerifyCustomDomainCommand
+CustomDomainsController ..> CheckDomainDnsCommand
+
+@enduml

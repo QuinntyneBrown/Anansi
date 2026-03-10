@@ -1,0 +1,46 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class InvoiceLineItem {
+  +Id : Guid
+  +InvoiceId : Guid
+  +Name : string
+  +Description : string?
+  +Quantity : int
+  +UnitPriceCents : long
+  +TotalCents : long
+  +**IsTaxExempt : bool**
+  +SortOrder : int
+}
+
+class QuoteItem {
+  +Id : Guid
+  +QuoteId : Guid
+  +Name : string
+  +Description : string?
+  +Quantity : int
+  +UnitPriceCents : long
+  +TotalCents : long
+  +**IsTaxExempt : bool**
+  +SortOrder : int
+}
+
+class Invoice {
+  +Id : Guid
+  +TaxRatePercent : decimal
+  +TaxAmountCents : long
+  +SubtotalCents : long
+  +TotalCents : long
+}
+
+Invoice "1" --> "*" InvoiceLineItem : LineItems
+
+note bottom of InvoiceLineItem
+  IsTaxExempt = true excludes
+  the item from HST calculation.
+  TaxAmountCents = sum of
+  non-exempt item totals * HstRate
+end note
+@enduml

@@ -1,0 +1,42 @@
+@startuml
+actor Photographer as P
+participant "PlansController" as PC
+participant "MediatR" as M
+participant "ChangeSubscriptionHandler" as CH
+participant "ApplicationDbContext" as DB
+participant "IPaymentService" as PS
+
+P -> PC : PUT /api/plans/subscription\n{newPlanId, newBillingInterval}
+PC -> M : Send(ChangeSubscriptionCommand)
+M -> CH : Handle(command)
+
+CH -> DB : Load current Subscription\nwith Plan
+CH -> DB : Load new Plan by newPlanId
+
+alt same plan
+  CH --> M : Result.Failure("Already on this plan")
+end
+
+CH -> CH : Calculate proration credit:\nremaining days on current period\n* daily rate of current plan
+
+alt upgrading from Free to Paid
+  CH -> PS : Create new Stripe subscription\nwith proration credit applied
+  PS --> CH : newStripeSubscriptionId
+else changing between paid plans
+  CH -> PS : Update Stripe subscription\nto new price with proration
+  PS --> CH : updated subscription
+else downgrading to Free
+  CH -> PS : Cancel Stripe subscription
+  note right: Credit is forfeited or\nrefunded per policy
+end
+
+CH -> DB : subscription.PlanId = newPlanId
+CH -> DB : subscription.PriceCents = newPrice
+CH -> DB : subscription.ProrationCreditCents = credit
+CH -> DB : subscription.BillingInterval = newInterval
+CH -> DB : SaveChangesAsync()
+
+CH --> M : Result.Success(SubscriptionDto)
+M --> PC : Result.Success
+PC --> P : 200 OK (updated subscription)
+@enduml

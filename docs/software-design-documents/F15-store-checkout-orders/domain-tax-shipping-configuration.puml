@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Store" {
+  class TaxRate {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Region : string
+    +Percentage : decimal
+    +IsActive : bool
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+  }
+
+  class ShippingMethod {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Description : string?
+    +CostCents : long
+    +EstimatedDelivery : string?
+    +IsActive : bool
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum OrderStatus {
+    Pending
+    Processing
+    Shipped
+    Delivered
+    Cancelled
+    Refunded
+  }
+
+  enum PaymentMethod {
+    CreditCard
+    DebitCard
+    ApplePay
+    GooglePay
+    PayPal
+    Offline
+    GiftCard
+  }
+}
+
+note bottom of TaxRate
+  STR-2.5.2: Rates configurable by region
+  Auto-calculated at checkout
+  Tracked in financial reports
+end note
+
+note bottom of ShippingMethod
+  STR-2.5.3: Multiple delivery methods
+  Flat-rate cost calculation
+  Free shipping via coupon codes
+end note
+
+@enduml

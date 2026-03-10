@@ -1,0 +1,33 @@
+@startuml
+skinparam maxMessageSize 200
+participant "CreateOrderHandler" as handler
+participant "IApplicationDbContext" as db
+participant "ICurrentUserService" as user
+
+[-> handler : Handle(CreateOrderCommand)
+
+handler -> db : Subscriptions\n.Where(PhotographerId)\n.FirstOrDefault(IsActive)
+db --> handler : Subscription?
+
+alt No active subscription (Free plan)
+  handler -> handler : commissionPercentage = 15.0m
+else Paid plan
+  handler -> handler : commissionPercentage = 0.0m
+end
+
+handler -> handler : Calculate subtotal\nfrom order items
+handler -> handler : CommissionCents =\n(SubtotalCents * commissionPercentage / 100)
+handler -> handler : Set Order.CommissionCents\nand Order.CommissionPercentage
+
+handler -> db : Orders.Add(order)
+handler -> db : SaveChangesAsync()
+
+[<-- handler : Result<OrderDto>
+
+note right of handler
+  STR-2.3.4:
+  Free = 15% commission
+  Paid = 0% commission
+  Clearly displayed in account settings
+end note
+@enduml

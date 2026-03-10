@@ -1,0 +1,36 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class FileValidator {
+  +ValidateFormat(contentType, mediaType) : Result
+  +ValidateSize(fileSizeBytes, planLimits) : Result
+  +ValidateVideoResolution(resolution, plan) : Result
+  +ValidateStorageQuota(currentUsage, fileSize, planLimit) : Result
+}
+
+class FormatRules <<static>> {
+  +SupportedImageTypes : string[]
+  +SupportedRawTypes : string[]
+  +SupportedVideoTypes : string[]
+  +MaxImageSizeBytes : long = 52_428_800
+}
+
+class PlanLimits {
+  +StorageLimitBytes : long
+  +VideoMinutesHd : int
+  +VideoMinutes4k : int
+  +RawUploadEnabled : bool
+}
+
+note right of FileValidator
+  Called before upload to storage.
+  Rejects unsupported formats with
+  clear error naming the format.
+  Checks plan via CheckFeatureAccessQuery.
+end note
+
+FileValidator --> FormatRules : checks against
+FileValidator --> PlanLimits : checks against
+@enduml

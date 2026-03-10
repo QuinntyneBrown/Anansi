@@ -1,0 +1,35 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Integrations.Commands" {
+  class ConnectInstagramCommand <<record>> {
+    +AuthorizationCode : string
+    +RedirectUri : string
+  }
+
+  class DisconnectInstagramCommand <<record>>
+
+  class UpdateInstagramFeedConfigCommand <<record>> {
+    +NumberOfPosts : int
+    +ImageSize : string
+    +ClickBehavior : string
+  }
+
+  class ConnectStripeCommand <<record>> {
+    +AuthorizationCode : string
+  }
+
+  class DisconnectStripeCommand <<record>>
+
+  class ConfigurePayPalCommand <<record>> {
+    +PayPalEmail : string
+  }
+}
+
+package "Features.Integrations.Queries" {
+  class GetInstagramFeedQuery <<record>>
+}
+
+@enduml

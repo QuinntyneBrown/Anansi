@@ -1,0 +1,22 @@
+@startuml
+actor Photographer as P
+participant "ProjectsController" as PC
+participant "MediatR" as M
+participant "MoveProjectHandler" as MH
+participant "ApplicationDbContext" as DB
+
+P -> PC : PUT /api/projects/{id}/move\n{targetStageId, newSortOrder: 2}
+PC -> M : Send(MoveProjectCommand)
+M -> MH : Handle()
+MH -> DB : Load Project
+DB --> MH : project (StageId = oldStage)
+MH -> MH : oldStageId = project.StageId
+MH -> DB : project.StageId = targetStageId
+MH -> DB : project.SortOrder = 2
+MH -> DB : Shift SortOrder of other projects\nin target stage (>= 2) by +1
+DB --> MH : saved
+MH -> MH : Raise ProjectStageChangedEvent\n{from: oldStage, to: targetStage}
+MH --> M : success
+M --> PC : result
+PC --> P : 200 OK
+@enduml

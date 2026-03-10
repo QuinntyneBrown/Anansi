@@ -1,0 +1,35 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteTypographyController" as C
+participant "IMediator" as M
+participant "CreateCustomColorPaletteHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/website-typography/color-palettes\n{ name: "My Brand Colors",\n  colorsJson: '["#2D2D2D","#FFD700","#FFFFFF"]' }
+C -> M : Send(CreateCustomColorPaletteCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> H : Validate colorsJson\n(valid JSON array of hex strings)
+
+alt invalid colors
+  H --> M : Result.Failure\n("Invalid hex color format")
+  M --> C : failure
+  C --> P : 400 Bad Request
+else valid colors
+  H -> H : Create ColorPalette\n{ name, colorsJson,\n  isSystem: false,\n  photographerId }
+
+  H -> DB : Add(palette)\nSaveChangesAsync()
+  DB --> H : saved
+
+  H --> M : Result.Success(ColorPaletteDto)
+  M --> C : result
+  C --> P : 201 Created { paletteDto }
+end
+
+@enduml

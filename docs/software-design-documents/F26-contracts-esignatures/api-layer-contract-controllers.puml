@@ -1,0 +1,35 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ContractsController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(CreateContractCommand) : IActionResult
+  +Update(Guid, UpdateContractCommand) : IActionResult
+  +Delete(Guid) : IActionResult
+  +Send(Guid, SendContractCommand) : IActionResult
+  +PreSign(Guid, PreSignContractCommand) : IActionResult
+  +AddSigner(Guid, AddSignerCommand) : IActionResult
+  +Cancel(Guid) : IActionResult
+  +List(ListContractsQuery) : IActionResult
+  +Get(Guid) : IActionResult
+}
+
+class ContractTemplatesController <<ApiController>> {
+  -_mediator : IMediator
+  +SaveTemplate(SaveContractTemplateCommand) : IActionResult
+  +ListTemplates() : IActionResult
+  +ApplyTemplate(Guid, ApplyContractTemplateCommand) : IActionResult
+}
+
+class ContractPublicController <<ApiController>> {
+  -_mediator : IMediator
+  +ViewContract(string token) : IActionResult
+  +SignContract(string token, SignContractCommand) : IActionResult
+}
+
+ContractsController --> "IMediator" : sends commands/queries
+ContractTemplatesController --> "IMediator" : sends commands/queries
+ContractPublicController --> "IMediator" : sends commands/queries
+@enduml

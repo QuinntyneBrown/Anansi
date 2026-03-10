@@ -1,0 +1,44 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class Photographer {
+  +Email : string
+  +BusinessName : string
+  +ProfileIconUrl : string?
+  +LogoUrl : string?
+  +FaviconUrl : string?
+  +BrandColorHex : string?
+  +FontTheme : string?
+  +ActivePlanId : Guid?
+  +Subdomain : string
+}
+
+class DocumentBranding {
+  +PhotographerId : Guid
+  +DocumentType : DocumentType
+  +HeaderImageUrl : string?
+  +BrandColorHex : string?
+  +SecondaryColorHex : string?
+  +FontTheme : string?
+}
+
+enum DocumentType {
+  Contract
+  Invoice
+  Questionnaire
+}
+
+BaseEntity <|-- Photographer
+BaseEntity <|-- DocumentBranding
+DocumentBranding --> DocumentType
+Photographer "1" --> "*" DocumentBranding : DocumentBrandings
+
+@enduml

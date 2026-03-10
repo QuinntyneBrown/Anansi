@@ -1,0 +1,70 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Galleries.Collections" {
+  class CreateCollectionCommand <<record>> {
+    +Title : string
+    +Description : string?
+    +PresetId : Guid?
+  }
+  class ListCollectionsQuery <<record>> {
+    +Page : int
+    +PageSize : int
+    +StarredOnly : bool?
+    +Status : CollectionStatus?
+    +Search : string?
+  }
+  class GetCollectionQuery <<record>> {
+    +Id : Guid
+  }
+  class UpdateCollectionCommand <<record>> {
+    +Id : Guid
+  }
+  class DeleteCollectionCommand <<record>> {
+    +Id : Guid
+  }
+  class BulkCreateCollectionsCommand <<record>> {
+    +Galleries : List<BulkGalleryEntry>
+    +PresetId : Guid?
+  }
+  class ToggleStarCollectionCommand <<record>> {
+    +Id : Guid
+  }
+}
+
+class BulkGalleryEntry {
+  +Title : string
+  +ClientName : string?
+  +ClientEmail : string?
+}
+
+package "Features.Galleries.Sets" {
+  class CreateSetCommand <<record>> {
+    +CollectionId : Guid
+    +Title : string
+    +Description : string?
+    +SortOrder : int
+    +IsClientExclusive : bool
+  }
+  class UpdateSetCommand <<record>>
+  class DeleteSetCommand <<record>>
+  class ReorderSetsCommand <<record>> {
+    +CollectionId : Guid
+    +SetIdsInOrder : List<Guid>
+  }
+  class ListSetsQuery <<record>> {
+    +CollectionId : Guid
+  }
+}
+
+package "Features.Galleries.Presets" {
+  class CreatePresetCommand <<record>>
+  class UpdatePresetCommand <<record>>
+  class DeletePresetCommand <<record>>
+  class ListPresetsQuery <<record>>
+}
+
+BulkCreateCollectionsCommand *-- BulkGalleryEntry
+@enduml

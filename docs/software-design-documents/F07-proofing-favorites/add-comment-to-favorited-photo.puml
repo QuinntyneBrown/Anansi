@@ -1,0 +1,29 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "FavoritesController" as API
+participant "UpdateFavoriteCommentHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IEmailService" as Email
+
+Client -> API : PUT /api/favorites/items/{itemId}/comment\n{comment: "Please brighten this one"}
+API -> Handler : Send(UpdateFavoriteCommentCommand)
+
+Handler -> DB : Find FavoriteItem with FavoriteList
+DB --> Handler : FavoriteItem + FavoriteList
+
+Handler -> Handler : Validate comment length >= 0
+
+Handler -> DB : Update FavoriteItem.Comment
+Handler -> DB : Create GalleryActivity\n(ActivityType.Comment, details)
+Handler -> DB : SaveChangesAsync()
+
+Handler -> DB : Find Photographer notification preferences
+Handler -> Email : SendAsync(photographer,\n"New comment on favorite")
+
+Handler --> API : Result.Success()
+API --> Client : 200 OK
+
+@enduml

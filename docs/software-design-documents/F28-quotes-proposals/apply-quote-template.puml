@@ -1,0 +1,31 @@
+@startuml
+actor Photographer as P
+participant "QuoteTemplatesController" as QTC
+participant "MediatR" as M
+participant "ApplyQuoteTemplateHandler" as ATH
+participant "ApplicationDbContext" as DB
+
+P -> QTC : POST /api/quote-templates/{id}/apply\n{contactId, projectId}
+QTC -> M : Send(ApplyQuoteTemplateCommand)
+M -> ATH : Handle(command)
+
+ATH -> DB : Load template Quote\nwith Items (IsTemplate = true)
+
+alt template not found
+  ATH --> M : Result.Failure("Template not found")
+  M --> QTC : Result.Failure
+  QTC --> P : 404 Not Found
+end
+
+ATH -> ATH : Clone quote entity\nfrom template\n(new Id, Status = Draft,\nassign contactId/projectId)
+
+ATH -> ATH : Clone all QuoteItems\nwith new IDs
+
+ATH -> DB : Quotes.Add(newQuote)
+ATH -> DB : QuoteItems.AddRange(items)
+ATH -> DB : SaveChangesAsync()
+
+ATH --> M : Result.Success(newQuoteId)
+M --> QTC : Result.Success
+QTC --> P : 201 Created {quoteId}
+@enduml

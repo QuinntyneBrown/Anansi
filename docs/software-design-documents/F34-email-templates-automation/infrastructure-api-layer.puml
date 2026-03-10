@@ -1,0 +1,46 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EmailTemplatesController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(command) : IActionResult
+  +List(category, page) : IActionResult
+  +Get(id) : IActionResult
+  +Update(id, command) : IActionResult
+  +Delete(id) : IActionResult
+  +Preview(id, variables) : IActionResult
+}
+
+class AutomatedEmailsController <<ApiController>> {
+  -_mediator : IMediator
+  +CreateConfig(command) : IActionResult
+  +ListConfigs() : IActionResult
+  +UpdateConfig(id, command) : IActionResult
+}
+
+class GalleryInvitesController <<ApiController>> {
+  -_mediator : IMediator
+  +SendInvite(collectionId, command) : IActionResult
+}
+
+class AutomatedEmailJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_templateRender : ITemplateRenderService
+  -_emailService : IEmailService
+  +ProcessPendingEmails() : Task
+}
+
+class TemplateRenderService <<Service>> {
+  +RenderAsync(templateId, variables) : string
+  +RenderBrandedAsync(templateId, variables, branding) : string
+}
+
+interface ITemplateRenderService <<Interface>>
+
+TemplateRenderService ..|> ITemplateRenderService
+AutomatedEmailJob --> ITemplateRenderService
+AutomatedEmailJob --> IEmailService
+
+@enduml

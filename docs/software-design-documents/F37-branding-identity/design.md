@@ -105,6 +105,8 @@ Photographer "1" --> "*" DocumentBranding : DocumentBrandings
 @enduml
 ```
 
+![Domain Layer - Branding Entities](domain-layer-branding-entities.png)
+
 ### Application Layer - Commands, Queries, and Services
 
 ```plantuml
@@ -187,6 +189,8 @@ UpsertDocumentBrandingCommand ..> DocumentBrandingDto
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Services](application-layer-commands-queries-and-services.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -240,6 +244,8 @@ BrandingController ..> UpsertDocumentBrandingCommand
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ---
 
 ## Sequence Diagrams
@@ -286,6 +292,8 @@ API --> Photographer : 200 OK {logoUrl, coverLogoUrl}
 @enduml
 ```
 
+![Upload Logo with Cover Logo Generation](upload-logo-with-cover-logo-generation.png)
+
 ### Get Branding Profile
 
 ```plantuml
@@ -313,6 +321,8 @@ API --> Photographer : 200 OK\n{profileIcon, logo, coverLogo,\nfavicon, brandCol
 
 @enduml
 ```
+
+![Get Branding Profile](get-branding-profile.png)
 
 ### Upload Custom Favicon (Paid Plan Gate)
 
@@ -353,6 +363,8 @@ end
 @enduml
 ```
 
+![Upload Custom Favicon (Paid Plan Gate)](upload-custom-favicon-paid-plan-gate.png)
+
 ### Upsert Document Branding
 
 ```plantuml
@@ -388,6 +400,8 @@ API --> Photographer : 200 OK {id, documentType, headerImageUrl, colors, font}
 
 @enduml
 ```
+
+![Upsert Document Branding](upsert-document-branding.png)
 
 ### Platform Branding Check (Consumed by Gallery Rendering)
 
@@ -429,3 +443,5 @@ GalAPI --> Client : 200 OK (rendered gallery)
 
 @enduml
 ```
+
+![Platform Branding Check (Consumed by Gallery Rendering)](platform-branding-check-consumed-by-gallery-rendering.png)

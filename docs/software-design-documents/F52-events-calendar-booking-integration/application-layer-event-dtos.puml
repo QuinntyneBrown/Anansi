@@ -1,0 +1,47 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EventSummaryDto <<record>> {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +Venue : string?
+  +Neighborhood : string?
+  +Category : string
+  +StartDate : DateTime
+  +EndDate : DateTime?
+  +WebsiteUrl : string?
+  +IsRecurringInstance : bool
+  +Recurrence : string
+}
+
+class EventDetailDto <<record>> {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +Venue : string?
+  +Neighborhood : string?
+  +Category : string
+  +TypicalStartMonth : int
+  +TypicalEndMonth : int
+  +StartDate : DateTime?
+  +EndDate : DateTime?
+  +WebsiteUrl : string?
+  +Status : string
+  +IsSeeded : bool
+  +SubmittedByName : string?
+  +Recurrence : string
+}
+
+class EventCalendarBlockDto <<record>> {
+  +Id : Guid
+  +EventId : Guid
+  +EventName : string
+  +BlockType : string
+  +StartDate : DateTime
+  +EndDate : DateTime
+  +Notes : string?
+}
+@enduml

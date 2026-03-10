@@ -1,0 +1,40 @@
+@startuml
+actor Photographer as P
+participant "ContactImportController" as IC
+participant "MediatR" as M
+participant "ImportContactsCsvHandler" as IH
+participant "IContactImportService" as CS
+participant "ApplicationDbContext" as DB
+
+P -> IC : POST /api/contacts/import/preview\n(CSV file upload)
+IC -> M : Send(ValidateContactImportQuery)
+M -> CS : ParseCsvAsync(stream)
+CS --> M : ImportPreview {rows, mappedColumns,\nduplicates, errors}
+M --> IC : preview
+IC --> P : 200 OK {preview with detected duplicates}
+
+P -> IC : POST /api/contacts/import\n{columnMapping, duplicateStrategy: "Merge"}
+IC -> M : Send(ImportContactsCsvCommand)
+M -> IH : Handle()
+IH -> CS : ParseCsvAsync(stream)
+CS --> IH : parsed rows
+
+loop for each row
+  IH -> DB : Check existing by email
+  DB --> IH : existing or null
+  alt duplicate found AND strategy = Merge
+    IH -> IH : Merge fields into existing contact
+    IH -> DB : Update Contact
+  else duplicate found AND strategy = Skip
+    IH -> IH : Skip row, increment counter
+  else no duplicate
+    IH -> DB : Insert Contact
+  end
+end
+
+IH -> DB : SaveChanges
+DB --> IH : saved
+IH --> M : ImportResultDto {created: 45, merged: 3, skipped: 2}
+M --> IC : result
+IC --> P : 200 OK {created, merged, skipped, errors}
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitesController" as C
+participant "IMediator" as M
+participant "UpdateWebsiteHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : PUT /api/websites/{id}\n{ websiteId,\n  animationType: "SlideIn",\n  animationsEnabled: true }
+C -> M : Send(UpdateWebsiteCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load Website\n(websiteId, photographerId)
+DB --> H : Website
+
+H -> H : Update AnimationType = SlideIn
+H -> H : Update AnimationsEnabled = true
+
+H -> DB : SaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(WebsiteDto)
+M --> C : result
+C --> P : 200 OK { websiteDto\n  with animation settings }
+
+note right of H
+  AnimationType enum:
+  None, FadeIn, ScaleUp,
+  SlideIn, Unfold
+
+  Animations trigger on scroll
+  and apply site-wide.
+end note
+
+@enduml

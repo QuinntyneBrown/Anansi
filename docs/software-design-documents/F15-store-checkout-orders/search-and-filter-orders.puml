@@ -1,0 +1,24 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "OrdersController" as ctrl
+participant "IMediator" as med
+participant "GetOrdersHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : GET /api/orders?\nstatus=Shipped&search=jane&page=1&pageSize=20
+ctrl -> med : Send(GetOrdersQuery)
+med -> handler : Handle(query, ct)
+
+handler -> user : PhotographerId
+user --> handler : Guid
+
+handler -> db : Orders\n.Where(PhotographerId == pid)\n.Where(Status == Shipped)\n.Where(ClientName.Contains("jane")\n|| ClientEmail.Contains("jane"))\n.Include(Items)\n.OrderByDescending(CreatedAt)\n.Skip(0).Take(20)
+db --> handler : List<Order>, totalCount
+
+handler -> handler : Map to List<OrderDto>
+handler --> med : Result<PagedList<OrderDto>>
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK\n{items[], page, totalCount, totalPages}
+@enduml

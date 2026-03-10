@@ -1,0 +1,43 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "RecordPaymentHandler" as PayHandler
+participant "MediatR" as M
+participant "SendConfirmationHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "ITemplateRenderService" as Render
+participant "IEmailService" as Email
+
+PayHandler -> M : Send(SendPaymentConfirmationCommand\n{paymentRecordId})
+M -> Handler : Handle(command)
+
+Handler -> DB : Get PaymentRecord
+DB --> Handler : PaymentRecord
+
+Handler -> DB : Get AutomatedEmailConfig\n(EventType = "PaymentConfirmation",\nPhotographerId)
+DB --> Handler : config (if enabled)
+
+alt config is null or disabled
+  Handler --> M : Result.Success (no-op)
+end
+
+Handler -> DB : Get Invoice (if linked)\nfor remaining balance
+DB --> Handler : Invoice
+
+Handler -> DB : Get Contact for email
+DB --> Handler : Contact
+
+Handler -> DB : Get EmailTemplate\n(config.EmailTemplateId)
+DB --> Handler : EmailTemplate
+
+Handler -> Handler : Build variables:\n{{amount_paid}} = formatted amount\n{{payment_method}} = method name\n{{remaining_balance}} = outstanding
+
+Handler -> Render : RenderAsync(template, variables)
+Render --> Handler : rendered body
+
+Handler -> Email : SendAsync(\ncontact.Email,\ntemplate.SubjectLine,\nrenderedBody)
+
+Handler --> M : Result.Success
+
+@enduml

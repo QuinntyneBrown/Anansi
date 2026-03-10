@@ -1,0 +1,26 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Api.Controllers" {
+  class ProductsController {
+    -_mediator : IMediator
+    +GetProducts(productType?, page, pageSize) : IActionResult
+    +GetProduct(id) : IActionResult
+    +CreateProduct(request) : IActionResult
+    +UpdateProduct(id, request) : IActionResult
+    +DeleteProduct(id) : IActionResult
+    +ApplyBulkMarkup(request) : IActionResult
+  }
+}
+
+package "MediatR" {
+  interface IMediator {
+    +Send<T>(request) : T
+  }
+}
+
+ProductsController --> IMediator
+
+@enduml

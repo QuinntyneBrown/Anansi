@@ -1,0 +1,32 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+participant "Checkout Flow" as checkout
+participant "IPaymentService" as payment
+participant "CreateOrderHandler" as handler
+participant "IApplicationDbContext" as db
+participant "IStorageService" as storage
+participant "IEmailService" as email
+
+Client -> checkout : Complete purchase\n(digital download product)
+checkout -> payment : CreatePaymentIntentAsync()
+payment --> checkout : PaymentIntent confirmed
+
+checkout -> handler : Handle(CreateOrderCommand)
+handler -> db : Create Order entity\n(FulfillmentType=Digital)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+handler -> handler : Detect digital items\nin order
+
+loop for each digital OrderItem
+  handler -> storage : GeneratePresignedUrl(imageKey,\nresolution)
+  storage --> handler : downloadUrl
+end
+
+handler -> email : Send delivery email\nwith download links
+email --> handler : sent
+
+handler --> checkout : Result<OrderDto>
+checkout --> Client : Order confirmation\n+ download links
+@enduml

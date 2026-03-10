@@ -1,0 +1,23 @@
+@startuml
+actor Photographer as P
+participant "ProfileServiceAreaController" as PSC
+participant "MediatR" as M
+participant "GetServiceAreaHandler" as GSH
+participant "ApplicationDbContext" as DB
+
+P -> PSC : GET /api/profile/service-area
+PSC -> M : Send(GetServiceAreaQuery)
+M -> GSH : Handle(query)
+
+GSH -> DB : Find ServiceArea\nby PhotographerId
+alt service area exists
+  DB --> GSH : ServiceArea entity
+  GSH -> GSH : Map to ServiceAreaDto
+else no service area configured
+  GSH -> GSH : Return null/empty response
+end
+
+GSH --> M : Result.Success(ServiceAreaDto?)
+M --> PSC : Result.Success
+PSC --> P : 200 OK\n{primaryNeighborhood,\nlatitude, longitude, radiusKm}\nor 200 OK (null)
+@enduml

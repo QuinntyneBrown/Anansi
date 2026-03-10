@@ -1,0 +1,25 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "EmailTemplatesController" as API
+participant "MediatR" as M
+participant "CreateTemplateHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/email/templates\n{name: "Gallery Welcome",\ncategory: "Gallery",\nsubjectLine: "Your photos are ready!",\nbody: "Hi {{client_name}}, your\ngallery is ready: {{gallery_link}}"}
+API -> M : Send(CreateEmailTemplateCommand)
+M -> Handler : Handle(command)
+
+Handler -> Handler : Resolve PhotographerId
+Handler -> Handler : Validate required fields
+
+Handler -> DB : Create EmailTemplate\n{Name, Category, Subject, Body}
+Handler -> DB : SaveChangesAsync()
+
+Handler --> M : Result<EmailTemplateDto>
+M --> API : Result.Success
+API --> Photographer : 201 Created (EmailTemplateDto)
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "Mobile App" as App
+participant "TapToPayController" as API
+participant "MediatR" as M
+participant "QrFallbackHandler" as Handler
+participant "IPaymentService" as Payment
+
+Photographer -> App : Contactless payment fails
+App -> App : Show "Try QR Code" option
+Photographer -> App : Tap "QR Code Fallback"
+
+App -> API : POST /api/tap-to-pay/qr-fallback\n{amountCents: 17000,\ndescription: "Session payment"}
+API -> M : Send(GeneratePaymentQrCommand)
+M -> Handler : Handle(command)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> Payment : CreateCheckoutSessionAsync(\nstripeAccountId,\nlineItems, successUrl, cancelUrl)
+Payment --> Handler : checkoutSessionUrl
+
+Handler -> Handler : Generate QR code\ndata URI from URL
+
+Handler --> M : Result<PaymentQrDto>\n{paymentUrl, qrCodeDataUri,\nexpiresAt}
+M --> API : Result.Success
+API --> App : PaymentQrDto
+
+App -> App : Display QR code on screen
+
+actor Client
+Client -> App : Scans QR code\nwith phone camera
+Client -> Client : Completes payment\nin browser
+
+note right of Client
+  Stripe Checkout handles
+  payment, tip collection,
+  Apple Pay, Google Pay,
+  and card entry.
+end note
+
+@enduml

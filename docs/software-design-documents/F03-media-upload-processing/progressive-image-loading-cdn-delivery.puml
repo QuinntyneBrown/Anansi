@@ -1,0 +1,32 @@
+@startuml
+actor Client as C
+participant "CDN Edge" as CDN
+participant "Origin Storage" as OS
+participant "Browser" as B
+
+C -> B : Open gallery page
+
+B -> CDN : Request placeholder image\n(blurred 20px thumbnail, ~1KB)
+CDN --> B : placeholder.webp (cached)
+B -> B : Display blurred placeholder
+
+B -> CDN : Request low-res image\n(640px wide, ~30KB)
+alt cache hit
+  CDN --> B : low-res.webp
+else cache miss
+  CDN -> OS : Fetch low-res variant
+  OS --> CDN : low-res.webp
+  CDN --> B : low-res.webp
+end
+B -> B : Crossfade from placeholder\nto low-res image
+
+B -> CDN : Request full-res image\n(original quality, ~2-5MB)
+alt cache hit
+  CDN --> B : full-res.webp
+else cache miss
+  CDN -> OS : Fetch full-res variant
+  OS --> CDN : full-res.webp
+  CDN --> B : full-res.webp
+end
+B -> B : Crossfade from low-res\nto full-res image
+@enduml

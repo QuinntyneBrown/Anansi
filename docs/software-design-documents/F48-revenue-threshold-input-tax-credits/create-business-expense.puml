@@ -1,0 +1,25 @@
+@startuml
+actor Photographer as P
+participant "TaxProfileController" as TPC
+participant "MediatR" as M
+participant "CreateBusinessExpenseHandler" as CEH
+participant "ApplicationDbContext" as DB
+
+P -> TPC : POST /api/tax-profile/expenses\n{amountCents: 150000,\nhstPaidCents: 19500,\ncategory: "Equipment",\nexpenseDate: "2026-02-15",\ndescription: "Camera lens\nSigma 35mm f/1.4",\nvendorName: "Henry's"}
+TPC -> M : Send(CreateBusinessExpenseCommand)
+M -> CEH : Handle(command)
+
+CEH -> CEH : Validate (FluentValidation)\n- amountCents > 0\n- hstPaidCents >= 0\n- hstPaidCents <= amountCents\n- category: valid enum\n- expenseDate: not in future\n- description: required, max 500 chars
+alt validation fails
+  CEH --> M : Result.Failure(errors)
+  M --> TPC : Result.Failure
+  TPC --> P : 400 Bad Request
+end
+
+CEH -> DB : BusinessExpenses.Add(\nphotographerId,\namountCents: 150000,\nhstPaidCents: 19500,\ncategory: Equipment,\nexpenseDate: 2026-02-15,\ndescription, vendorName)
+
+CEH -> DB : SaveChangesAsync()
+CEH --> M : Result.Success(BusinessExpenseDto)
+M --> TPC : Result.Success
+TPC --> P : 201 Created\n{id, amountCents, hstPaidCents,\ncategory, expenseDate,\ndescription, vendorName}
+@enduml

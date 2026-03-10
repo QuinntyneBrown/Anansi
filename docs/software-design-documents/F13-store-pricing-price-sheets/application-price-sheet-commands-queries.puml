@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Store" {
+  package "Commands" {
+    class CreatePriceSheetCommand <<record>> {
+      +Request : CreatePriceSheetRequest
+    }
+    class CreatePriceSheetHandler {
+      +Handle(cmd, ct) : Result<PriceSheetDto>
+    }
+
+    class UpdatePriceSheetCommand <<record>> {
+      +Id : Guid
+      +Request : UpdatePriceSheetRequest
+    }
+
+    class DeletePriceSheetCommand <<record>> {
+      +Id : Guid
+    }
+  }
+
+  package "Queries" {
+    class GetPriceSheetsQuery <<record>> {
+      +Page : int
+      +PageSize : int
+    }
+    class GetPriceSheetByIdQuery <<record>> {
+      +Id : Guid
+    }
+  }
+}
+
+package "Anansi.Application.DTOs.Store" {
+  class PriceSheetDto <<record>> {
+    +Id : Guid
+    +Name : string
+    +IsDownloadOnly : bool
+    +IsDefault : bool
+    +Items : List<PriceSheetItemDto>
+  }
+  class PriceSheetItemDto <<record>> {
+    +Id : Guid
+    +ProductVariationId : Guid
+    +ProductVariationName : string
+    +PriceCents : long
+  }
+  class CreatePriceSheetRequest <<record>> {
+    +Name : string
+    +Description : string?
+    +IsDownloadOnly : bool
+    +IsDefault : bool
+    +Items : List<CreatePriceSheetItemRequest>?
+  }
+}
+
+CreatePriceSheetCommand ..> CreatePriceSheetRequest
+CreatePriceSheetHandler ..> PriceSheetDto
+
+@enduml

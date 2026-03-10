@@ -1,0 +1,32 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ReportsController" as API
+participant "MediatR" as M
+participant "GetMonthlyRevenueHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/reports/revenue/monthly?\nyear=2025
+API -> M : Send(GetMonthlyRevenueQuery(2025))
+M -> Handler : Handle(query)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Query PaymentRecords\nfor year 2025
+DB --> Handler : List<PaymentRecord>
+
+Handler -> Handler : Group by Month,\ncalculate per-month:\nrevenue, net, count
+
+Handler --> M : Result<List<MonthlyRevenueDto>>
+M --> API : Result.Success
+API --> Photographer : 200 OK\n(12 months of chart data)
+
+note right of Handler
+  Busiest/slowest months
+  identifiable from monthly
+  totals and counts.
+end note
+
+@enduml

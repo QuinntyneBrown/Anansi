@@ -1,0 +1,44 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "EmailController" as API
+participant "MediatR" as M
+participant "ComposeMessageHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+participant "IEmailService" as Email
+
+Photographer -> API : POST /api/email/conversations\n{clientEmail, subject, body}\n+ file attachments (multipart)
+API -> Handler : Send(ComposeMessageCommand)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Find existing conversation\nby ClientEmail + PhotographerId
+DB --> Handler : null (no existing thread)
+
+Handler -> DB : Create EmailConversation\n{Subject, ClientEmail, ClientName}
+
+Handler -> DB : Create EmailMessage\n{IsFromPhotographer=true, Body}
+
+alt has attachments
+  Handler -> Handler : Validate total size <= 25MB
+  Handler -> Handler : Validate file types allowed
+  loop each attachment
+    Handler -> Storage : UploadAsync(file stream)
+    Storage --> Handler : storageUrl
+    Handler -> DB : Create EmailAttachment\n{FileName, ContentType,\nFileSizeBytes, StorageUrl}
+  end
+end
+
+Handler -> DB : Set LastMessageAt = UtcNow
+Handler -> DB : SaveChangesAsync()
+
+Handler -> Email : SendAsync(clientEmail,\nsubject, htmlBody)
+
+Handler --> M : Result<ConversationDto>
+M --> API : Result.Success
+API --> Photographer : 201 Created (ConversationDto)
+
+@enduml

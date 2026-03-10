@@ -134,6 +134,8 @@ Website ..> BlogLayoutType
 @enduml
 ```
 
+![Domain Layer -- Blog Entities](domain-layer-blog-entities.png)
+
 ### Application Layer -- Blog Commands & Queries
 
 ```plantuml
@@ -202,6 +204,8 @@ ImportBlogPostHandler ..> BlogPostDto : returns
 @enduml
 ```
 
+![Application Layer -- Blog Commands & Queries](application-layer-blog-commands-queries.png)
+
 ### Application Layer -- Category Management
 
 ```plantuml
@@ -252,6 +256,8 @@ ListBlogCategoriesHandler ..> BlogCategoryDto : returns
 @enduml
 ```
 
+![Application Layer -- Category Management](application-layer-category-management.png)
+
 ### API Layer -- BlogController
 
 ```plantuml
@@ -284,6 +290,8 @@ BlogController --> "IMediator" : sends commands/queries
 
 @enduml
 ```
+
+![API Layer -- BlogController](api-layer-blogcontroller.png)
 
 ## Sequence Diagrams
 
@@ -346,6 +354,8 @@ C --> P : 201 Created { blogPostDto }
 @enduml
 ```
 
+![Create a Blog Post (WEB-3.3.1)](create-a-blog-post-web-3-3-1.png)
+
 ### Duplicate a Blog Post (WEB-3.3.1)
 
 ```plantuml
@@ -384,6 +394,8 @@ C --> P : 201 Created { duplicatedPostDto }
 
 @enduml
 ```
+
+![Duplicate a Blog Post (WEB-3.3.1)](duplicate-a-blog-post-web-3-3-1.png)
 
 ### List Blog Posts with Pagination and Filters (WEB-3.3.2)
 
@@ -433,6 +445,8 @@ C --> P : 200 OK { items, page,\npageSize, totalCount }
 @enduml
 ```
 
+![List Blog Posts with Pagination and Filters (WEB-3.3.2)](list-blog-posts-with-pagination-and-filters-web-3-3-2.png)
+
 ### Import Blog Post from External Platform (WEB-3.3.3)
 
 ```plantuml
@@ -480,6 +494,8 @@ C --> P : 201 Created { importedPostDto }
 @enduml
 ```
 
+![Import Blog Post from External Platform (WEB-3.3.3)](import-blog-post-from-external-platform-web-3-3-3.png)
+
 ### Publish Scheduled Posts (Background Job)
 
 ```plantuml
@@ -513,3 +529,5 @@ end note
 
 @enduml
 ```
+
+![Publish Scheduled Posts (Background Job)](publish-scheduled-posts-background-job.png)

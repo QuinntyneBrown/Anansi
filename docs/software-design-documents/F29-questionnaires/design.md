@@ -154,6 +154,8 @@ QuestionnaireQuestion --> QuestionType : uses
 @enduml
 ```
 
+![Domain Layer -- Questionnaire Entities](domain-layer-questionnaire-entities.png)
+
 ### Application Layer -- Questionnaire Commands
 
 ```plantuml
@@ -220,6 +222,8 @@ class AnswerInput <<record>> {
 }
 @enduml
 ```
+
+![Application Layer -- Questionnaire Commands](application-layer-questionnaire-commands.png)
 
 ### Application Layer -- Questionnaire Queries & Templates
 
@@ -304,6 +308,8 @@ class QuestionnaireDetailDto <<record>> {
 @enduml
 ```
 
+![Application Layer -- Questionnaire Queries & Templates](application-layer-questionnaire-queries-templates.png)
+
 ### API Layer -- Questionnaire Controllers
 
 ```plantuml
@@ -347,6 +353,8 @@ QuestionnairePublicController --> "IMediator" : sends commands/queries
 @enduml
 ```
 
+![API Layer -- Questionnaire Controllers](api-layer-questionnaire-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -381,6 +389,8 @@ M --> QC : Result.Success
 QC --> P : 201 Created {questionnaireId}
 @enduml
 ```
+
+![Create Questionnaire with Questions](create-questionnaire-with-questions.png)
 
 ### Send Questionnaire to Client
 
@@ -420,6 +430,8 @@ M --> QC : Result.Success
 QC --> P : 200 OK
 @enduml
 ```
+
+![Send Questionnaire to Client](send-questionnaire-to-client.png)
 
 ### Client Submits Questionnaire Response
 
@@ -470,6 +482,8 @@ QPC --> C : 200 OK
 @enduml
 ```
 
+![Client Submits Questionnaire Response](client-submits-questionnaire-response.png)
+
 ### Share Questionnaire Publicly
 
 ```plantuml
@@ -506,6 +520,8 @@ QC --> P : 200 OK {publicUrl}
 @enduml
 ```
 
+![Share Questionnaire Publicly](share-questionnaire-publicly.png)
+
 ### Questionnaire Expiry Background Job
 
 ```plantuml
@@ -530,6 +546,8 @@ PEH -> DB : SaveChangesAsync()
 PEH --> M : Result.Success(expiredCount)
 @enduml
 ```
+
+![Questionnaire Expiry Background Job](questionnaire-expiry-background-job.png)
 
 ### Questionnaire Reminder Background Job
 
@@ -557,6 +575,8 @@ SRH -> DB : SaveChangesAsync()
 SRH --> M : Result.Success(reminderCount)
 @enduml
 ```
+
+![Questionnaire Reminder Background Job](questionnaire-reminder-background-job.png)
 
 ### Apply Questionnaire Template
 
@@ -593,3 +613,5 @@ M --> QTC : Result.Success
 QTC --> P : 201 Created {questionnaireId}
 @enduml
 ```
+
+![Apply Questionnaire Template](apply-questionnaire-template.png)

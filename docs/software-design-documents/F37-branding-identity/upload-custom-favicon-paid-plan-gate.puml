@@ -1,0 +1,34 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "BrandingController" as API
+participant "UploadFaviconHandler" as Handler
+participant "IPlanService" as Plans
+participant "IStorageService" as Storage
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/branding/favicon\n[multipart: favicon.png]
+API -> Handler : Send(UploadFaviconCommand)
+
+Handler -> Handler : Verify PhotographerId
+
+Handler -> Plans : HasFeatureAsync(photographerId, "CustomFavicon")
+Plans --> Handler : true / false
+
+alt Plan does not include favicon
+  Handler --> API : Result.Failure("Custom favicon requires a paid plan", 403)
+  API --> Photographer : 403 Forbidden
+else Plan includes favicon
+  Handler -> Storage : UploadAsync(stream, "favicons/{id}/favicon.png")
+  Storage --> Handler : faviconUrl
+
+  Handler -> DB : Update Photographer.FaviconUrl
+  Handler -> DB : SaveChangesAsync()
+
+  Handler --> API : Result<BrandingProfileDto>
+  API --> Photographer : 200 OK {faviconUrl}
+end
+
+@enduml

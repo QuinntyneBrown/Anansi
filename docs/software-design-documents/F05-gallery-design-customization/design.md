@@ -142,6 +142,8 @@ Collection "1" *-- "many" CollectionSet
 @enduml
 ```
 
+![Domain Layer -- Design Properties on Collection](domain-layer-design-properties-on-collection.png)
+
 ### Application Layer -- Design-Related DTOs
 
 ```plantuml
@@ -214,6 +216,8 @@ CollectionDto *-- CollectionSetDto : contains sets
 @enduml
 ```
 
+![Application Layer -- Design-Related DTOs](application-layer-design-related-dtos.png)
+
 ### Design Configuration -- Fonts and Palettes
 
 ```plantuml
@@ -265,6 +269,8 @@ DesignOptions *-- ColorPaletteOption
 @enduml
 ```
 
+![Design Configuration -- Fonts and Palettes](design-configuration-fonts-and-palettes.png)
+
 ---
 
 ## Sequence Diagrams
@@ -315,6 +321,8 @@ CC --> P : 200 OK (CollectionDto)
 @enduml
 ```
 
+![Update Cover Style and Photo](update-cover-style-and-photo.png)
+
 ### Set Video/GIF Cover
 
 ```plantuml
@@ -352,6 +360,8 @@ M --> CC : Result.Success
 CC --> P : 200 OK
 @enduml
 ```
+
+![Set Video/GIF Cover](set-video-gif-cover.png)
 
 ### Toggle Theme and Set Typography
 
@@ -394,6 +404,8 @@ M --> CC : Result.Success
 CC --> P : 200 OK
 @enduml
 ```
+
+![Toggle Theme and Set Typography](toggle-theme-and-set-typography.png)
 
 ### Apply Color Palette with Custom Hex
 
@@ -441,6 +453,8 @@ CC --> P : 200 OK
 @enduml
 ```
 
+![Apply Color Palette with Custom Hex](apply-color-palette-with-custom-hex.png)
+
 ### Update Set Title and Description
 
 ```plantuml
@@ -482,6 +496,8 @@ note right
 end note
 @enduml
 ```
+
+![Update Set Title and Description](update-set-title-and-description.png)
 
 ### Configure Slideshow Mode
 
@@ -536,6 +552,8 @@ GUI -> GUI : Exit full-screen,\nreturn to gallery grid
 @enduml
 ```
 
+![Configure Slideshow Mode](configure-slideshow-mode.png)
+
 ### Set Collection Language
 
 ```plantuml
@@ -588,6 +606,8 @@ end note
 @enduml
 ```
 
+![Set Collection Language](set-collection-language.png)
+
 ### Gallery Layout Selection
 
 ```plantuml
@@ -628,3 +648,5 @@ note over CC
 end note
 @enduml
 ```
+
+![Gallery Layout Selection](gallery-layout-selection.png)

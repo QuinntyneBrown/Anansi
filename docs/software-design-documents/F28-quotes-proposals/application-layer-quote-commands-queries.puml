@@ -1,0 +1,73 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Quotes.Commands" {
+  class CreateQuoteCommand <<record>> {
+    +Title : string
+    +Notes : string?
+    +ContactId : Guid?
+    +ProjectId : Guid?
+    +Items : List<QuoteItemInput>
+  }
+
+  class UpdateQuoteCommand <<record>> {
+    +QuoteId : Guid
+    +Title : string
+    +Notes : string?
+    +Items : List<QuoteItemInput>
+  }
+
+  class SendQuoteCommand <<record>> {
+    +QuoteId : Guid
+  }
+
+  class AcceptQuoteCommand <<record>> {
+    +Token : string
+  }
+
+  class DeclineQuoteCommand <<record>> {
+    +Token : string
+  }
+
+  class CancelQuoteCommand <<record>> {
+    +QuoteId : Guid
+  }
+
+  class DeleteQuoteCommand <<record>> {
+    +QuoteId : Guid
+  }
+}
+
+package "Features.Quotes.Queries" {
+  class ViewQuoteQuery <<record>> {
+    +QuoteId : Guid
+  }
+
+  class ListQuotesQuery <<record>> {
+    +Status : QuoteStatus?
+    +ContactId : Guid?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetQuoteByTokenQuery <<record>> {
+    +Token : string
+  }
+}
+
+class QuoteItemInput <<record>> {
+  +Name : string
+  +Description : string?
+  +Quantity : int
+  +UnitPriceCents : long
+}
+
+interface IEmailService {
+  +SendAsync()
+  +SendTemplatedAsync()
+}
+
+SendQuoteCommand ..> IEmailService : uses
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "SslRenewalBackgroundJob" as Job
+participant "IApplicationDbContext" as DB
+participant "RenewSslCertificateHandler" as Handler
+participant "ISslProvisioningService" as SSL
+
+Job -> Job : Daily schedule trigger
+
+Job -> DB : Query CustomDomains where\nSslStatus = Active AND\nSslExpiresAt < now + 30 days
+DB --> Job : List<CustomDomain>\n(domains needing renewal)
+
+loop For each expiring domain
+  Job -> Handler : Send(RenewSslCertificateCommand)
+
+  Handler -> DB : Load CustomDomain
+  DB --> Handler : CustomDomain
+
+  Handler -> SSL : RenewAsync(certId)
+  SSL --> Handler : SslCertResult {newCertId, newExpiresAt}
+
+  alt Renewal successful
+    Handler -> Handler : Update SslCertificateId, SslExpiresAt
+    Handler -> DB : SaveChangesAsync()
+  else Renewal failed
+    Handler -> Handler : Set SslStatus = Failed
+    Handler -> DB : SaveChangesAsync()
+    note right of Handler
+      Alert sent to admin
+      and photographer via
+      notification system.
+    end note
+  end
+end
+
+@enduml

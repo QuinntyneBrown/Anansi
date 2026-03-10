@@ -1,0 +1,35 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "DomainRoutingMiddleware" as Middleware
+participant "DomainCache" as Cache
+participant "IApplicationDbContext" as DB
+participant "GalleryController" as Gallery
+participant "WebsiteController" as Website
+
+Client -> Middleware : GET https://gallery.janedoe.com/my-wedding
+Middleware -> Middleware : Extract Host: gallery.janedoe.com
+
+Middleware -> Cache : Lookup("gallery.janedoe.com")
+
+alt Cache hit
+  Cache --> Middleware : {photographerId, purpose: Gallery}
+else Cache miss
+  Middleware -> DB : Find CustomDomain\n(DomainName, IsVerified=true)
+  DB --> Middleware : CustomDomain {photographerId, Gallery}
+  Middleware -> Cache : Store(domain -> photographerId, purpose)
+end
+
+Middleware -> Middleware : Set HttpContext tenant:\nPhotographerId = {id}
+
+alt Purpose = Gallery
+  Middleware -> Gallery : Forward request\n/my-wedding (collection slug)
+  Gallery --> Client : 200 OK (gallery page)
+else Purpose = Website
+  Middleware -> Website : Forward request
+  Website --> Client : 200 OK (website page)
+end
+
+@enduml

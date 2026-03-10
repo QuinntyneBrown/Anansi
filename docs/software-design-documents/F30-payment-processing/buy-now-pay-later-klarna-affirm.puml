@@ -1,0 +1,30 @@
+@startuml
+actor Client as C
+participant "PaymentsController" as PC
+participant "MediatR" as M
+participant "ProcessBnplHandler" as BH
+participant "IPaymentService" as PS
+participant "ApplicationDbContext" as DB
+
+C -> PC : POST /api/payments/checkout-session\n{provider: "klarna",\namountCents, invoiceId,\nsuccessUrl, cancelUrl}
+PC -> M : Send(ProcessBnplPaymentCommand)
+M -> BH : Handle(command)
+
+BH -> DB : Load Invoice and\nPhotographer (StripeAccountId)
+
+BH -> PS : CreateCheckoutSessionAsync(\nstripeAccountId, lineItems,\nsuccessUrl, cancelUrl)\nwith payment_method_types:\n["klarna"] or ["affirm"]
+
+PS --> BH : sessionUrl
+
+BH --> M : Result.Success(sessionUrl)
+M --> PC : Result.Success
+PC --> C : 200 OK {sessionUrl}
+
+note right of C
+  Client completes BNPL flow
+  on Klarna/Affirm.
+  Photographer receives full
+  payment upfront via Stripe.
+  Stripe webhook confirms.
+end note
+@enduml

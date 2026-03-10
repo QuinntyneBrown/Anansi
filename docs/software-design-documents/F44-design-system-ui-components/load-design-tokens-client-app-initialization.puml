@@ -1,0 +1,20 @@
+@startuml
+actor "Client App" as App
+participant "DesignTokensController" as DTC
+participant "MediatR" as M
+participant "GetDesignTokensHandler" as H
+participant "DesignTokensProvider" as TP
+
+App -> DTC : GET /api/design-tokens
+DTC -> M : Send(GetDesignTokensQuery)
+M -> H : Handle(query)
+H -> TP : GetAllTokens()
+TP -> TP : Return cached token set\n(loaded from embedded\ndesign-tokens.json)
+TP --> H : IReadOnlyList<DesignToken>
+H -> H : Map to DesignTokenDto[]
+H --> M : Result.Success(tokens)
+M --> DTC : Result.Success
+DTC --> App : 200 OK {\n  colors: {page_bg: "#1A1A1C", ...},\n  typography: {display_family: "Cormorant Garamond", ...},\n  spacing: {gap_xs: "4px", ...},\n  radius: {sm: "16px", ...}\n}
+
+App -> App : Apply tokens as CSS\ncustom properties\n(--color-page-bg, etc.)
+@enduml

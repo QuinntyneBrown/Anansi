@@ -1,0 +1,76 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class SessionType {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Name : string
+  +Description : string?
+  +DurationMinutes : int
+  +PriceCents : long
+  +Location : string?
+  +Visibility : SessionVisibility
+  +SortOrder : int
+  +BufferBeforeMinutes : int
+  +BufferAfterMinutes : int
+  +RequireManualConfirmation : bool
+  +IsMiniSession : bool
+  +MiniSessionGapMinutes : int
+  +MiniSessionSpotsPerSlot : int
+  +AvailabilityWindows : string?
+  +VideoCallType : string?
+  +RequirePayment : bool
+  +DepositAmountCents : long?
+  +IntakeDocumentIds : string?
+  +CoverImageUrl : string?
+}
+
+class MiniSessionDate {
+  +Id : Guid
+  +SessionTypeId : Guid
+  +Date : DateTime
+  +StartTimes : string
+}
+
+class BookingRecord {
+  +Id : Guid
+  +PhotographerId : Guid
+  +SessionTypeId : Guid
+  +ContactId : Guid?
+  +ProjectId : Guid?
+  +ClientFirstName : string
+  +ClientLastName : string
+  +ClientEmail : string
+  +ClientPhone : string?
+  +StartTime : DateTime
+  +EndTime : DateTime
+  +Status : BookingStatus
+  +Location : string?
+  +VideoCallLink : string?
+  +GoogleCalendarEventId : string?
+  +AmountPaidCents : long
+  +CouponCode : string?
+  +DiscountCents : long
+}
+
+enum BookingStatus {
+  Pending
+  Confirmed
+  Declined
+  Cancelled
+  Completed
+  NoShow
+}
+
+enum SessionVisibility {
+  Public
+  Hidden
+}
+
+SessionType "1" --> "*" MiniSessionDate : MiniSessionDates
+SessionType "1" --> "*" BookingRecord : Bookings
+BookingRecord ..> BookingStatus
+SessionType ..> SessionVisibility
+@enduml

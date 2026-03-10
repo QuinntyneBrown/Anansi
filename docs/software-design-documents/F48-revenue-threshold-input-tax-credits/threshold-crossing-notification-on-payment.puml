@@ -1,0 +1,31 @@
+@startuml
+participant "ConfirmPaymentHandler" as CPH
+participant "MediatR" as M
+participant "CheckThresholdCrossingHandler" as TCH
+participant "ApplicationDbContext" as DB
+participant "NotificationEventHandler" as NEH
+participant "IApplicationDbContext" as NDB
+
+CPH -> M : Send(CheckThresholdCrossingCommand\n{photographerId, paymentAmountCents})
+M -> TCH : Handle(command)
+
+TCH -> DB : Query PaymentRecords\nfor last 4 calendar quarters\nSUM AmountCents
+DB --> TCH : rollingRevenue = 2300000
+
+TCH -> TCH : Determine alert level:\n2300000 / 3000000 = 76.7%\nalertLevel = Warning (>= 75%)
+
+TCH -> TCH : Determine current quarter:\nQ1-2026 starts 2026-01-01
+
+TCH -> DB : Query ThresholdAlertRecords\nWHERE PhotographerId = {id}\nAND QuarterStart = 2026-01-01\nAND AlertLevel = Warning
+DB --> TCH : No existing record found
+
+TCH -> DB : ThresholdAlertRecords.Add(\nphotographerId,\nquarterStart = 2026-01-01,\nalertLevel = Warning)
+
+TCH -> M : Publish(NotificationEvent {\n  photographerId,\n  eventType: ThresholdWarning,\n  category: Tax,\n  title: "Revenue Threshold Alert",\n  message: "Your rolling revenue\n    has reached 76.7% of the\n    $30,000 CRA threshold.",\n  link: "/settings/tax-profile"\n})
+
+M -> NEH : Handle(NotificationEvent)
+NEH -> NDB : Create Notification entity\n(in-app)
+
+TCH -> DB : SaveChangesAsync()
+TCH --> M : Result.Success
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+actor Photographer as P
+participant "PresetsController" as PC
+participant "MediatR" as M
+participant "CreatePresetCommandHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> PC : POST /api/presets\n{name: "Deep Glow - Golden Hour",\nskinToneRange: "Deep",\nshootingContext: "GoldenHour",\nadjustments: {temperature: 6200, ...},\nhslChannels: [{channel: "Red", ...}, ...],\nsplitTone: {highlightHue: 45, ...}}
+PC -> M : Send(CreatePresetCommand)
+M -> H : Handle()
+
+H -> H : Set AuthorId = currentUserId\nSet AuthorName = currentUser.DisplayName\nSet IsSystemPreset = false
+
+H -> DB : Create EditingPreset\nwith owned PresetAdjustments\nand owned PresetSplitTone
+DB --> H : preset created
+
+H -> DB : Create 8 PresetHslChannel records\n(Red, Orange, Yellow, Green,\nAqua, Blue, Purple, Magenta)
+DB --> H : channels created
+
+H -> DB : SaveChanges
+DB --> H : saved
+
+H -> H : Map to PresetDetailDto
+
+H --> M : PresetDetailDto
+M --> PC : result
+PC --> P : 201 Created {\n  id, name, skinToneRange,\n  shootingContext, adjustments,\n  hslChannels[8], splitTone\n}
+@enduml

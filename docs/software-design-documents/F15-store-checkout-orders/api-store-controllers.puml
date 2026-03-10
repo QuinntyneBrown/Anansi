@@ -1,0 +1,40 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Api.Controllers" {
+  class OrdersController {
+    -_mediator : IMediator
+    +GetOrders(status?, search?, page, pageSize) : IActionResult
+    +GetOrder(id) : IActionResult
+    +CreateOrder(request) : IActionResult
+    +UpdateOrderStatus(id, request) : IActionResult
+  }
+
+  class TaxRatesController {
+    -_mediator : IMediator
+    +GetTaxRates() : IActionResult
+    +CreateTaxRate(request) : IActionResult
+    +UpdateTaxRate(id, request) : IActionResult
+    +DeleteTaxRate(id) : IActionResult
+  }
+
+  class ShippingMethodsController {
+    -_mediator : IMediator
+    +GetShippingMethods() : IActionResult
+    +CreateShippingMethod(request) : IActionResult
+    +UpdateShippingMethod(id, request) : IActionResult
+    +DeleteShippingMethod(id) : IActionResult
+  }
+}
+
+package "MediatR" {
+  interface IMediator
+}
+
+OrdersController --> IMediator
+TaxRatesController --> IMediator
+ShippingMethodsController --> IMediator
+
+@enduml

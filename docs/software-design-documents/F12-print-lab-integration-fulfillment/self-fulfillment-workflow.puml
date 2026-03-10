@@ -1,0 +1,38 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+actor Photographer
+participant "CreateOrderHandler" as orderHandler
+participant "IApplicationDbContext" as db
+participant "IEmailService" as email
+participant "OrdersController" as ctrl
+participant "IMediator" as med
+participant "UpdateOrderStatusHandler" as statusHandler
+
+Client -> orderHandler : Order placed\n(self-fulfilled product)
+orderHandler -> db : Create Order\n(FulfillmentType=SelfFulfilled,\nstatus=Processing)
+orderHandler -> db : SaveChangesAsync()
+db --> orderHandler : success
+
+orderHandler -> email : Send notification to photographer\n{orderDetails, shippingAddress, items}
+email --> orderHandler : sent
+orderHandler --> Client : Order confirmation
+
+== Photographer fulfills order ==
+
+Photographer -> ctrl : PUT /api/orders/{id}/status\n{status=Shipped,\ntrackingNumber, trackingUrl}
+ctrl -> med : Send(UpdateOrderStatusCommand)
+med -> statusHandler : Handle(command, ct)
+statusHandler -> db : Find Order by ID
+db --> statusHandler : Order entity
+statusHandler -> statusHandler : Set Status=Shipped,\nTrackingNumber, TrackingUrl
+statusHandler -> db : SaveChangesAsync()
+db --> statusHandler : success
+
+statusHandler -> email : Send shipping notification\nto client with tracking
+email --> statusHandler : sent
+
+statusHandler --> med : Result<OrderDto>
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK
+@enduml

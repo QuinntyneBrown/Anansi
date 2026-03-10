@@ -1,0 +1,29 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class GalleryAccessController <<ApiController>> {
+  -_mediator : IMediator
+  +Authenticate(collectionId, password) : IActionResult
+  +ValidatePin(collectionId, pin) : IActionResult
+}
+
+class GalleryMediaController <<ApiController>> {
+  -_mediator : IMediator
+  +GetMedia(collectionId, page, pageSize) : IActionResult
+  +GetProgressiveImages(mediaId) : IActionResult
+  +GetVideoStream(mediaId) : IActionResult
+}
+
+note right of GalleryAccessController
+  POST /api/galleries/{id}/authenticate
+  POST /api/galleries/{id}/validate-pin
+  Both return 401 on failure with
+  no content information leaked.
+end note
+
+GalleryAccessController --> "IMediator"
+GalleryMediaController --> "IMediator"
+
+@enduml

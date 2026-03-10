@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PaymentRecord {
+  +Id : Guid
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +InvoiceId : Guid?
+  +BookingId : Guid?
+  +AmountCents : long
+  +FeeCents : long
+  +NetAmountCents : long
+  +TipCents : long
+  +TaxCents : long
+  +Currency : string
+  +PaymentMethod : PaymentMethod
+  +ExternalPaymentId : string?
+  +CardLast4 : string?
+  +Description : string?
+  +IsOffline : bool
+  +IsRefund : bool
+  +GiftCardId : Guid?
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class PayoutRecord {
+  +Id : Guid
+  +PhotographerId : Guid
+  +AmountCents : long
+  +FeeCents : long
+  +NetAmountCents : long
+  +Currency : string
+  +Status : PayoutStatus
+  +StripePayoutId : string?
+  +ArrivalDate : DateTime?
+  +IsInstant : bool
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+enum PaymentMethod {
+  CreditCard
+  DebitCard
+  ApplePay
+  GooglePay
+  PayPal
+  BankTransfer
+  Klarna
+  Affirm
+  TapToPay
+  Offline
+  GiftCard
+}
+
+enum PayoutStatus {
+  Pending
+  InTransit
+  Paid
+  Failed
+  Cancelled
+}
+
+PaymentRecord --> PaymentMethod : uses
+PayoutRecord --> PayoutStatus : uses
+@enduml

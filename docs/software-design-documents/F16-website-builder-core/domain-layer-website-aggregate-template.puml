@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class Website {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Description : string?
+    +Status : WebsiteStatus
+    +TemplateId : Guid?
+    +Subdomain : string
+    +SslEnabled : bool
+    +CustomDomain : string?
+    +CustomDomainVerified : bool
+    +SitePasswordHash : string?
+    +RightClickProtectionEnabled : bool
+    +DefaultMetaTitle : string?
+    +DefaultMetaDescription : string?
+    +DefaultOgImageUrl : string?
+    +AnimationType : AnimationType
+    +AnimationsEnabled : bool
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+    +CreatedBy : string?
+    +UpdatedBy : string?
+    +CreatedAt : DateTime
+    +UpdatedAt : DateTime
+  }
+
+  class WebsiteTemplate {
+    +Id : Guid
+    +Name : string
+    +Description : string?
+    +Category : TemplateCategory
+    +PreviewImageUrl : string?
+    +ThumbnailUrl : string?
+    +LayoutDefinitionJson : string
+    +IsActive : bool
+    +SortOrder : int
+  }
+
+  class WebsitePage {
+    +Id : Guid
+    +PhotographerId : Guid
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +PageType : WebsitePageType
+    +SortOrder : int
+    +IsVisible : bool
+    +ShowInNavigation : bool
+    +IsDeleted : bool
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum WebsiteStatus {
+    Draft
+    Published
+    Archived
+  }
+
+  enum TemplateCategory {
+    Business
+    Portfolio
+    OnePage
+  }
+}
+
+Website --> "0..1" WebsiteTemplate : Template
+Website --> "*" WebsitePage : Pages
+Website ..> WebsiteStatus
+WebsiteTemplate ..> TemplateCategory
+
+@enduml

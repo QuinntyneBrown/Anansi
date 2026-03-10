@@ -118,6 +118,8 @@ EditingPreset ..> ShootingContext
 @enduml
 ```
 
+![Domain Layer -- Preset Core Entity & Enums](domain-layer-preset-core-entity-enums.png)
+
 ### Domain Layer -- Adjustment Values & HSL Channels
 
 ```plantuml
@@ -178,6 +180,8 @@ PresetHslChannel ..> HslColorChannel
 @enduml
 ```
 
+![Domain Layer -- Adjustment Values & HSL Channels](domain-layer-adjustment-values-hsl-channels.png)
+
 ### Domain Layer -- Favorites
 
 ```plantuml
@@ -202,6 +206,8 @@ class PresetFavorite {
 EditingPreset "1" --> "*" PresetFavorite : favorited by
 @enduml
 ```
+
+![Domain Layer -- Favorites](domain-layer-favorites.png)
 
 ### Application Layer -- Commands & Queries
 
@@ -268,6 +274,8 @@ package "Features.Presets.Queries" {
 }
 @enduml
 ```
+
+![Application Layer -- Commands & Queries](application-layer-commands-queries.png)
 
 ### Application Layer -- DTOs
 
@@ -339,6 +347,8 @@ PresetDetailDto *-- "1" SplitToneDto
 @enduml
 ```
 
+![Application Layer -- DTOs](application-layer-dtos.png)
+
 ### API Layer -- Preset Controllers
 
 ```plantuml
@@ -373,6 +383,8 @@ PresetsController --> "IMediator" : sends commands/queries
 PresetFavoritesController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Preset Controllers](api-layer-preset-controllers.png)
 
 ---
 
@@ -411,6 +423,8 @@ PC --> P : 201 Created {\n  id, name, skinToneRange,\n  shootingContext, adjustm
 @enduml
 ```
 
+![Create a New Preset](create-a-new-preset.png)
+
 ### Browse Presets with Filters
 
 ```plantuml
@@ -437,6 +451,8 @@ M --> PC : result
 PC --> P : 200 OK {\n  items: [{id, name,\n    authorName: "Anansi",\n    favoriteCount: 42,\n    isSystemPreset: true,\n    isFavorited: false}, ...],\n  page: 1, totalCount: 5\n}
 @enduml
 ```
+
+![Browse Presets with Filters](browse-presets-with-filters.png)
 
 ### Favorite / Unfavorite a Preset
 
@@ -493,6 +509,8 @@ FC --> P : 200 OK
 @enduml
 ```
 
+![Favorite / Unfavorite a Preset](favorite-unfavorite-a-preset.png)
+
 ### Get Full Preset Detail
 
 ```plantuml
@@ -526,6 +544,8 @@ M --> PC : result
 PC --> P : 200 OK {\n  id, name, authorName,\n  skinToneRange: "Deep",\n  shootingContext: "GoldenHour",\n  adjustments: {\n    temperature: 6200, tint: 12,\n    exposure: 0.3, contrast: 15, ...},\n  hslChannels: [\n    {channel: "Red", hue: 5,\n     saturation: -10, luminance: 8},\n    ...8 channels],\n  splitTone: {\n    highlightHue: 45,\n    highlightSaturation: 25,\n    shadowHue: 240,\n    shadowSaturation: 15}\n}
 @enduml
 ```
+
+![Get Full Preset Detail](get-full-preset-detail.png)
 
 ### Update Own Preset (with Ownership Check)
 
@@ -572,6 +592,8 @@ end
 @enduml
 ```
 
+![Update Own Preset (with Ownership Check)](update-own-preset-with-ownership-check.png)
+
 ### Soft-Delete Own Preset
 
 ```plantuml
@@ -615,3 +637,5 @@ else valid owner
 end
 @enduml
 ```
+
+![Soft-Delete Own Preset](soft-delete-own-preset.png)

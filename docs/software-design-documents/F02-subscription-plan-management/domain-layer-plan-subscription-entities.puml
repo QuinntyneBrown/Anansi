@@ -1,0 +1,94 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+interface ISoftDeletable {
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+interface ITenantEntity {
+  +PhotographerId : Guid
+}
+
+class Plan {
+  +Product : PlanProduct
+  +Tier : PlanTier
+  +Name : string
+  +Description : string?
+  +MonthlyPriceCents : long
+  +AnnualPriceCents : long
+  +IsSuiteBundle : bool
+  +IsActive : bool
+  +FeatureGates : ICollection<PlanFeatureGate>
+}
+
+class PlanFeatureGate {
+  +PlanId : Guid
+  +FeatureKey : string
+  +FeatureValue : string
+  +Description : string?
+}
+
+class Subscription {
+  +PhotographerId : Guid
+  +PlanId : Guid
+  +BillingInterval : BillingInterval
+  +Status : SubscriptionStatus
+  +CurrentPeriodStart : DateTime
+  +CurrentPeriodEnd : DateTime
+  +StripeSubscriptionId : string?
+  +PriceCents : long
+  +ProrationCreditCents : long
+  +CancelledAt : DateTime?
+  +CancelAtPeriodEnd : bool
+}
+
+enum PlanProduct {
+  Gallery
+  Website
+  StudioManager
+  Suite
+}
+
+enum PlanTier {
+  Free
+  Basic
+  Plus
+  Pro
+  Ultimate
+}
+
+enum BillingInterval {
+  Monthly
+  Annual
+}
+
+enum SubscriptionStatus {
+  Active
+  PastDue
+  Cancelled
+  Trialing
+}
+
+BaseEntity <|-- Plan
+BaseEntity <|-- PlanFeatureGate
+BaseEntity <|-- Subscription
+ISoftDeletable <|.. Plan
+ISoftDeletable <|.. Subscription
+ITenantEntity <|.. Subscription
+
+Plan "1" *-- "many" PlanFeatureGate : contains
+Subscription "many" --> "1" Plan : references
+Plan --> PlanProduct
+Plan --> PlanTier
+Subscription --> BillingInterval
+Subscription --> SubscriptionStatus
+@enduml

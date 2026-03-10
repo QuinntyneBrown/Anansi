@@ -1,0 +1,23 @@
+@startuml
+actor Photographer as P
+participant "HostingController" as HC
+participant "MediatR" as M
+participant "ConnectCustomDomainHandler" as CH
+participant "IPlanGateService" as PG
+participant "IDnsVerificationService" as DNS
+participant "ApplicationDbContext" as DB
+
+P -> HC : POST /api/websites/{id}/domain\n{domainName: "studio.example.com"}
+HC -> M : Send(ConnectCustomDomainCommand)
+M -> CH : Handle()
+CH -> PG : HasFeatureAsync("CustomDomain")
+PG --> CH : true (paid plan)
+CH -> DNS : GenerateInstructionsAsync("studio.example.com")
+DNS --> CH : DnsInstructions {cname, token}
+CH -> DB : Create CustomDomain entity\n(IsVerified=false, SslStatus=Pending)
+CH -> DB : Update Website.CustomDomain
+DB --> CH : saved
+CH --> M : DnsInstructions + verificationToken
+M --> HC : result
+HC --> P : 200 OK {dnsInstructions, verificationToken}
+@enduml

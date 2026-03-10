@@ -136,6 +136,8 @@ Photographer ..> StorageWarningLevel : uses
 @enduml
 ```
 
+![Domain Layer -- Identity & Account Entities](domain-layer-identity-account-entities.png)
+
 ### Application Layer -- Auth Commands & Interfaces
 
 ```plantuml
@@ -222,6 +224,8 @@ ForgotPasswordCommand ..> IEmailService : uses
 @enduml
 ```
 
+![Application Layer -- Auth Commands & Interfaces](application-layer-auth-commands-interfaces.png)
+
 ### Infrastructure Layer -- Identity Services
 
 ```plantuml
@@ -286,6 +290,8 @@ LoginCommandHandler --> ITokenService
 @enduml
 ```
 
+![Infrastructure Layer -- Identity Services](infrastructure-layer-identity-services.png)
+
 ### API Layer -- Controllers & Middleware
 
 ```plantuml
@@ -328,6 +334,8 @@ AuthController --> "IMediator" : sends commands
 AccountController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Controllers & Middleware](api-layer-controllers-middleware.png)
 
 ---
 
@@ -373,6 +381,8 @@ AC --> P : 200 OK {userId, photographerId, token}
 @enduml
 ```
 
+![User Registration](user-registration.png)
+
 ### User Login
 
 ```plantuml
@@ -406,6 +416,8 @@ M --> AC : Result.Success
 AC --> P : 200 OK {token, refreshToken, expiresAt, photographerId}
 @enduml
 ```
+
+![User Login](user-login.png)
 
 ### Password Recovery Flow
 
@@ -452,6 +464,8 @@ AC --> P : 200 OK "Password reset successfully"
 @enduml
 ```
 
+![Password Recovery Flow](password-recovery-flow.png)
+
 ### Session Timeout Enforcement
 
 ```plantuml
@@ -484,6 +498,8 @@ STM -> NXT : pass through
 NXT --> P : response
 @enduml
 ```
+
+![Session Timeout Enforcement](session-timeout-enforcement.png)
 
 ### Account Deletion with Data Export
 
@@ -518,6 +534,8 @@ AC --> P : 200 OK "Account has been deleted"
 @enduml
 ```
 
+![Account Deletion with Data Export](account-deletion-with-data-export.png)
+
 ### Storage Usage Monitoring
 
 ```plantuml
@@ -543,3 +561,5 @@ M --> AC : Result.Success
 AC --> P : 200 OK (StorageUsageDto)
 @enduml
 ```
+
+![Storage Usage Monitoring](storage-usage-monitoring.png)

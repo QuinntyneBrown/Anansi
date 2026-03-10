@@ -1,0 +1,56 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class InitiateTapToPayCommand <<Command>> {
+  +AmountCents : long
+  +TipCents : long
+  +Currency : string
+  +InvoiceId : Guid?
+  +ContactId : Guid?
+  +Description : string?
+}
+
+class CompleteTapToPayCommand <<Command>> {
+  +PaymentIntentId : string
+  +CardLast4 : string?
+  +InvoiceId : Guid?
+  +ContactId : Guid?
+  +TipCents : long
+}
+
+class GeneratePaymentQrCommand <<Command>> {
+  +AmountCents : long
+  +TipCents : long
+  +Currency : string
+  +InvoiceId : Guid?
+  +Description : string?
+}
+
+class TapToPayResultDto <<DTO>> {
+  +ClientSecret : string
+  +PaymentIntentId : string
+  +AmountCents : long
+  +TipCents : long
+}
+
+class PaymentQrDto <<DTO>> {
+  +PaymentUrl : string
+  +QrCodeDataUri : string
+  +ExpiresAt : DateTime
+}
+
+class RegisterDeviceCommand <<Command>> {
+  +DeviceToken : string
+  +Platform : string
+}
+
+class UnregisterDeviceCommand <<Command>> {
+  +DeviceToken : string
+}
+
+InitiateTapToPayCommand ..> TapToPayResultDto
+GeneratePaymentQrCommand ..> PaymentQrDto
+
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Store" {
+  class Coupon {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Code : string
+    +CouponType : CouponType
+    +Scope : CouponScope
+    +PercentageValue : decimal?
+    +FixedAmountCents : long?
+    +MinimumOrderCents : long?
+    +ExpirationDate : DateTime?
+    +UsageLimit : int?
+    +TimesUsed : int
+    +IsActive : bool
+    +BannerText : string?
+    +BannerColorHex : string?
+    +ShowBanner : bool
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum CouponType {
+    PercentageOff
+    FixedAmountOff
+    FreeGiveaway
+  }
+
+  enum CouponScope {
+    EntireOrder
+    SpecificItems
+  }
+}
+
+Coupon ..> CouponType
+Coupon ..> CouponScope
+
+note bottom of Coupon
+  STR-2.4.1: All three coupon types
+  STR-2.4.2: Banner fields for promotion display
+  Code is unique per photographer
+end note
+
+@enduml

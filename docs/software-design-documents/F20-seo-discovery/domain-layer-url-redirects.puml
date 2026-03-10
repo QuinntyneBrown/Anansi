@@ -1,0 +1,35 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class Website {
+    +Id : Guid
+    +PhotographerId : Guid
+  }
+
+  class UrlRedirect {
+    +Id : Guid
+    +PhotographerId : Guid
+    +WebsiteId : Guid
+    +SourcePath : string
+    +DestinationUrl : string
+    +RedirectType : RedirectType
+    +IsActive : bool
+    +CreatedAt : DateTime
+    +UpdatedAt : DateTime
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum RedirectType {
+    Permanent301 = 301
+    Temporary302 = 302
+  }
+}
+
+Website --> "*" UrlRedirect : UrlRedirects
+UrlRedirect ..> RedirectType
+
+@enduml

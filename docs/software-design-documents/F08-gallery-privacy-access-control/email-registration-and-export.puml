@@ -1,0 +1,22 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "PrivacyController" as API
+participant "ExportEmailRegistrationsHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/collections/{id}/registrations/export
+API -> Handler : Send(ExportEmailRegistrationsQuery)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Query GalleryEmailRegistrations\nWhere CollectionId & PhotographerId
+DB --> Handler : List<GalleryEmailRegistration>
+
+Handler -> Handler : Build CSV:\nName, Email, RegisteredAt
+
+Handler --> API : Result<byte[]>
+API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: attachment\nfilename="registrations.csv"
+
+@enduml

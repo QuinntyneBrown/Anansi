@@ -1,0 +1,36 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Api.Controllers" {
+  class WebsiteTypographyController <<ApiController>> {
+    -_mediator : IMediator
+    +ListFonts() : IActionResult
+    +UploadFont(command) : IActionResult
+    +DeleteFont(fontId) : IActionResult
+    +ListColorPalettes() : IActionResult
+    +CreateColorPalette(command) : IActionResult
+  }
+
+  class WebsitesController <<ApiController>> {
+    -_mediator : IMediator
+    +Update(id, command) : IActionResult
+  }
+}
+
+note right of WebsiteTypographyController
+  Route: api/website-typography
+  All endpoints require [Authorize]
+end note
+
+note right of WebsitesController
+  PUT /api/websites/{id}
+  updates font, color, and
+  animation settings
+end note
+
+WebsiteTypographyController --> "IMediator"
+WebsitesController --> "IMediator"
+
+@enduml

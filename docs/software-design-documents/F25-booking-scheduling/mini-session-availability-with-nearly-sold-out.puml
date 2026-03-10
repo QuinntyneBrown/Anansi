@@ -1,0 +1,30 @@
+@startuml
+actor Client as C
+participant "BookingSiteController" as BSC
+participant "MediatR" as M
+participant "GetAvailableSlotsHandler" as AH
+participant "ApplicationDbContext" as DB
+
+C -> BSC : GET /api/booking/janedoe/sessions/{id}/slots\n?startDate=2026-04-10&endDate=2026-04-10
+BSC -> M : Send(GetAvailableSlotsQuery)
+M -> AH : Handle()
+AH -> DB : Load SessionType (IsMiniSession=true)
+DB --> AH : sessionType\n(spotsPerSlot=5, gapMinutes=15)
+AH -> DB : Load MiniSessionDate\nWHERE SessionTypeId AND Date = 2026-04-10
+DB --> AH : miniDate\n(startTimes: ["09:00","09:30","10:00","10:30"])
+AH -> DB : Count BookingRecords per start time\nWHERE SessionTypeId AND Date
+DB --> AH : bookedCounts\n{09:00=3, 09:30=5, 10:00=4, 10:30=0}
+
+loop for each start time
+  AH -> AH : spotsRemaining = spotsPerSlot - bookedCount
+  alt spotsRemaining = 0
+    AH -> AH : exclude slot
+  else spotsRemaining <= 2
+    AH -> AH : mark isNearlySoldOut = true
+  end
+end
+
+AH --> M : AvailableSlotsDto
+M --> BSC : result
+BSC --> C : 200 OK {slots: [\n  {time: "09:00", spots: 2, nearlySoldOut: true},\n  {time: "10:00", spots: 1, nearlySoldOut: true},\n  {time: "10:30", spots: 5, nearlySoldOut: false}\n]}
+@enduml

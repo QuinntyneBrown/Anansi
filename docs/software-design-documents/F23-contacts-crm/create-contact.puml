@@ -1,0 +1,18 @@
+@startuml
+actor Photographer as P
+participant "ContactsController" as CC
+participant "MediatR" as M
+participant "CreateContactHandler" as CH
+participant "ApplicationDbContext" as DB
+
+P -> CC : POST /api/contacts\n{firstName, lastName, email,\nphone, contactType: "Lead"}
+CC -> M : Send(CreateContactCommand)
+M -> CH : Handle()
+CH -> DB : Check email uniqueness\nWHERE PhotographerId AND Email
+DB --> CH : no duplicate
+CH -> DB : Insert Contact
+DB --> CH : saved
+CH --> M : ContactDto
+M --> CC : result
+CC --> P : 201 Created {id, firstName, lastName, email}
+@enduml

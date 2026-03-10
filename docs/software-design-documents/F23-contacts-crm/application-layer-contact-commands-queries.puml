@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Contacts.Commands" {
+  class CreateContactCommand <<record>> {
+    +FirstName : string
+    +LastName : string
+    +Email : string
+    +Phone : string?
+    +Address : string?
+    +Notes : string?
+    +ContactType : ContactType
+  }
+
+  class UpdateContactCommand <<record>> {
+    +ContactId : Guid
+    +FirstName : string
+    +LastName : string
+    +Email : string
+    +Phone : string?
+    +Notes : string?
+  }
+
+  class ChangeContactTypeCommand <<record>> {
+    +ContactId : Guid
+    +NewType : ContactType
+  }
+
+  class ConvertLeadToClientCommand <<record>> {
+    +ContactId : Guid
+    +Reason : string
+  }
+
+  class DeleteContactCommand <<record>> {
+    +ContactId : Guid
+  }
+}
+
+package "Features.Contacts.Queries" {
+  class ListContactsQuery <<record>> {
+    +TypeFilter : ContactType?
+    +SearchTerm : string?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetContactProfileQuery <<record>> {
+    +ContactId : Guid
+  }
+
+  class ContactProfileDto <<record>> {
+    +Contact : ContactDto
+    +Documents : List<DocumentSummaryDto>
+    +EmailHistory : List<EmailSummaryDto>
+    +Bookings : List<BookingSummaryDto>
+    +Galleries : List<GallerySummaryDto>
+    +Payments : List<PaymentSummaryDto>
+  }
+}
+
+interface IContactImportService {
+  +ParseCsvAsync() : ImportPreview
+  +DetectDuplicatesAsync() : List<Duplicate>
+}
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "DownloadsController" as API
+participant "RequestDownloadHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+
+Client -> API : POST /api/collections/{id}/downloads\n{resolution, mediaIds, pin}
+API -> Handler : Send(RequestDownloadCommand)
+
+Handler -> DB : Find Collection by Id
+DB --> Handler : Collection
+
+Handler -> Handler : Validate PIN matches
+Handler -> Handler : Check DownloadCount < DownloadLimit
+Handler -> Handler : Verify resolution is allowed
+
+Handler -> DB : Create DownloadRequest
+Handler -> DB : Increment Collection.DownloadCount
+Handler -> DB : Create GalleryActivity (Download)
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<DownloadRequestDto>
+
+note right of Handler
+  For single-image downloads,
+  the file is served immediately
+  via a presigned URL.
+end note
+
+Client -> API : GET /api/downloads/{id}/file
+API -> Storage : GetPresignedUrlAsync(storageKey)
+Storage --> API : Presigned URL
+API --> Client : 302 Redirect to presigned URL
+
+@enduml

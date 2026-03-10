@@ -1,0 +1,31 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "OrdersController" as ctrl
+participant "IMediator" as med
+participant "UpdateOrderStatusHandler" as handler
+participant "IApplicationDbContext" as db
+participant "IEmailService" as email
+
+Photographer -> ctrl : PUT /api/orders/{id}/status\n{status=Shipped,\ntrackingNumber="1Z999...",\ntrackingUrl="https://ups.com/..."}
+ctrl -> med : Send(UpdateOrderStatusCommand)
+med -> handler : Handle(command, ct)
+
+handler -> db : Orders\n.Include(Items)\n.FirstAsync(id)
+db --> handler : Order entity
+
+handler -> handler : Verify ownership
+handler -> handler : Validate status transition\n(Processing -> Shipped)
+
+handler -> handler : Set Status = Shipped\nTrackingNumber = "1Z999..."\nTrackingUrl = "https://..."
+
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+handler -> email : Send shipping notification\nto client {trackingNumber, trackingUrl}
+email --> handler : sent
+
+handler --> med : Result<OrderDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK {OrderDto}
+@enduml

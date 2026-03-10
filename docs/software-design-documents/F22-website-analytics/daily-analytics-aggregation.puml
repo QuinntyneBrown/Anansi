@@ -1,0 +1,28 @@
+@startuml
+participant "AnalyticsAggregationBackgroundService" as BG
+participant "IAnalyticsAggregationService" as AGG
+participant "ApplicationDbContext" as DB
+
+BG -> AGG : AggregateAsync(yesterday)
+
+AGG -> DB : Query AnalyticsPageHit\nWHERE Date = yesterday\nGROUP BY WebsiteId
+DB --> AGG : grouped raw events
+
+loop for each website
+  AGG -> AGG : Count TotalVisitors (all hits)
+  AGG -> AGG : Count UniqueVisitors\n(distinct fingerprints)
+  AGG -> AGG : Count PageViews
+  AGG -> AGG : Compute avg session duration
+  AGG -> AGG : Aggregate TopPages JSON
+  AGG -> AGG : Aggregate GeographicDistribution JSON
+  AGG -> DB : Upsert WebsiteAnalyticsSnapshot
+  DB --> AGG : saved
+end
+
+AGG --> BG : aggregation complete
+
+BG -> AGG : PruneRawEventsAsync(90)
+AGG -> DB : DELETE AnalyticsPageHit\nWHERE Timestamp < NOW - 90 days
+DB --> AGG : pruned
+AGG --> BG : pruning complete
+@enduml

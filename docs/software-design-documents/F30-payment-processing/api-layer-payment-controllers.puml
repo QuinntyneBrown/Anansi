@@ -1,0 +1,43 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PaymentsController <<ApiController>> {
+  -_mediator : IMediator
+  +CreateIntent(CreatePaymentIntentCommand) : IActionResult
+  +CreateCheckoutSession(CreateCheckoutSessionCommand) : IActionResult
+  +RecordOffline(RecordOfflinePaymentCommand) : IActionResult
+  +Refund(Guid, RefundPaymentCommand) : IActionResult
+  +List(ListPaymentRecordsQuery) : IActionResult
+  +Get(Guid) : IActionResult
+  +GetMethods() : IActionResult
+}
+
+class PayoutsController <<ApiController>> {
+  -_mediator : IMediator
+  +GetSummary() : IActionResult
+  +List(ListPayoutsQuery) : IActionResult
+  +RequestInstant(RequestInstantPayoutCommand) : IActionResult
+}
+
+class TapToPayController <<ApiController>> {
+  -_mediator : IMediator
+  +Initiate(ProcessTapToPayCommand) : IActionResult
+  +QrFallback(GenerateQrFallbackCommand) : IActionResult
+}
+
+class StripeWebhookController <<ApiController>> {
+  -_mediator : IMediator
+  +HandleWebhook() : IActionResult
+}
+
+class PayPalWebhookController <<ApiController>> {
+  -_mediator : IMediator
+  +HandleWebhook() : IActionResult
+}
+
+PaymentsController --> "IMediator" : sends commands/queries
+PayoutsController --> "IMediator" : sends commands/queries
+TapToPayController --> "IMediator" : sends commands/queries
+@enduml

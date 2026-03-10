@@ -1,0 +1,34 @@
+@startuml
+actor Photographer as P
+participant "ContractsController" as CC
+participant "MediatR" as M
+participant "SendContractHandler" as SH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+P -> CC : POST /api/contracts/{id}/send\n{customVariableValues}
+CC -> M : Send(SendContractCommand)
+M -> SH : Handle(command)
+
+SH -> DB : Load Contract with Fields\nand linked Contact
+alt contract not in Draft status
+  SH --> M : Result.Failure("Only draft contracts can be sent")
+  M --> CC : Result.Failure
+  CC --> P : 400 Bad Request
+end
+
+SH -> SH : Resolve auto-population variables\nfrom Contact profile data\n(client_name, client_email, etc.)
+
+SH -> SH : Apply custom variable values\nfrom photographer input
+
+SH -> SH : Generate secure access token\nfor client viewing
+
+SH -> DB : contract.Status = Sent\ncontract.SentAt = UtcNow\ncontract.ExpiresAt = SentAt + ExpiryDays
+SH -> DB : SaveChangesAsync()
+
+SH -> ES : SendTemplatedAsync(\nclient.Email,\n"Contract for Review",\ncontractViewLink)
+
+SH --> M : Result.Success
+M --> CC : Result.Success
+CC --> P : 200 OK
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+actor Visitor as V
+participant "Website Page" as WP
+participant "AnalyticsCollectorController" as AC
+participant "MediatR" as M
+participant "RecordPageHitHandler" as RH
+participant "IGeoLocationService" as GEO
+participant "ApplicationDbContext" as DB
+
+V -> WP : Loads page
+WP -> WP : Tracking script fires
+WP -> AC : POST /api/collect\n{websiteId, pagePath, sessionId}
+AC -> M : Send(RecordPageHitCommand)
+M -> RH : Handle()
+RH -> GEO : ResolveCountryAsync(ipAddress)
+GEO --> RH : "CA" (Canada)
+RH -> RH : Generate visitorFingerprint\n(hash of IP + UserAgent)
+RH -> DB : Insert AnalyticsPageHit
+DB --> RH : saved
+RH --> M : success
+M --> AC : result
+AC --> WP : 204 No Content
+@enduml

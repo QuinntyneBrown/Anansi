@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Website {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Name : string
+  +Status : WebsiteStatus
+  +Subdomain : string
+  +SslEnabled : bool
+  +CustomDomain : string?
+  +CustomDomainVerified : bool
+  +SitePasswordHash : string?
+  +RightClickProtectionEnabled : bool
+}
+
+class WebsitePage {
+  +Id : Guid
+  +WebsiteId : Guid
+  +Title : string
+  +Slug : string
+  +PagePasswordHash : string?
+  +IsVisible : bool
+}
+
+class CustomDomain {
+  +Id : Guid
+  +PhotographerId : Guid
+  +DomainName : string
+  +Purpose : DomainPurpose
+  +IsVerified : bool
+  +SslStatus : SslStatus
+  +SslCertificateId : string?
+  +SslExpiresAt : DateTime?
+  +DnsInstructions : string?
+  +VerificationToken : string?
+  +VerifiedAt : DateTime?
+}
+
+enum DomainPurpose {
+  Gallery
+  Website
+}
+
+enum SslStatus {
+  Pending
+  Active
+  Expired
+  Failed
+}
+
+enum WebsiteStatus {
+  Draft
+  Published
+  Archived
+}
+
+Website "1" --> "*" WebsitePage : Pages
+Website ..> WebsiteStatus
+CustomDomain ..> DomainPurpose
+CustomDomain ..> SslStatus
+@enduml

@@ -1,0 +1,79 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Payouts" {
+  class RequestInstantPayoutCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+  }
+
+  class GetPayoutSummaryQuery <<record>>
+
+  class ListPayoutsQuery <<record>> {
+    +Status : PayoutStatus?
+    +FromDate : DateTime?
+    +ToDate : DateTime?
+    +Page : int
+    +PageSize : int
+  }
+}
+
+package "Features.Payments.Queries" {
+  class ListPaymentRecordsQuery <<record>> {
+    +PaymentMethod : PaymentMethod?
+    +InvoiceId : Guid?
+    +BookingId : Guid?
+    +FromDate : DateTime?
+    +ToDate : DateTime?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetPaymentRecordQuery <<record>> {
+    +PaymentRecordId : Guid
+  }
+
+  class GetPaymentMethodsQuery <<record>>
+}
+
+package "Features.Payments.Webhooks" {
+  class HandleStripeWebhookCommand <<record>> {
+    +WebhookBody : string
+    +StripeSignature : string
+  }
+}
+
+class PaymentRecordDto <<record>> {
+  +Id : Guid
+  +AmountCents : long
+  +FeeCents : long
+  +NetAmountCents : long
+  +PaymentMethod : PaymentMethod
+  +Description : string?
+  +IsOffline : bool
+  +CreatedAt : DateTime
+}
+
+class PayoutDto <<record>> {
+  +Id : Guid
+  +AmountCents : long
+  +FeeCents : long
+  +Status : PayoutStatus
+  +ArrivalDate : DateTime?
+  +IsInstant : bool
+}
+
+class PaymentMethodsDto <<record>> {
+  +CardEnabled : bool
+  +ApplePayEnabled : bool
+  +GooglePayEnabled : bool
+  +LinkEnabled : bool
+  +KlarnaEnabled : bool
+  +AffirmEnabled : bool
+  +AchEnabled : bool
+  +PayPalEnabled : bool
+  +TapToPayEnabled : bool
+}
+@enduml

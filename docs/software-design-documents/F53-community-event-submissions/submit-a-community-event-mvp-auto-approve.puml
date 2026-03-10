@@ -1,0 +1,33 @@
+@startuml
+actor Photographer as P
+participant "EventsController" as EC
+participant "MediatR" as M
+participant "CreateCommunityEventCommandHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> EC : POST /api/events\n{name: "Afro-Caribbean Art Show",\nstartDate: "2026-09-15",\nendDate: "2026-09-17",\nvenue: "Harbourfront Centre",\nneighborhood: "Downtown Core",\ncategory: "Cultural",\nrecurrence: "Annual",\nwebsiteUrl: "https://example.com"}
+EC -> M : Send(CreateCommunityEventCommand)
+M -> H : Handle()
+
+H -> H : Validate command\n(name required, date in future, etc.)
+
+H -> H : Set SubmittedById = currentUserId\nSet IsSeeded = false
+
+alt MVP auto-approve path
+  H -> H : CurrentUser is a photographer\n=> Set Status = Approved
+else standard path
+  H -> H : Set Status = Pending
+end
+
+H -> DB : Create CulturalEvent {\n  Name, Description, StartDate,\n  EndDate, Venue, Neighborhood,\n  Category, Recurrence, WebsiteUrl,\n  Status, SubmittedById, IsSeeded=false\n}
+DB --> H : event created
+
+H -> DB : SaveChanges
+DB --> H : saved
+
+H -> H : Map to CommunityEventDto
+
+H --> M : CommunityEventDto
+M --> EC : result
+EC --> P : 201 Created {\n  id, name: "Afro-Caribbean Art Show",\n  status: "Approved",\n  startDate: "2026-09-15",\n  category: "Cultural"\n}
+@enduml

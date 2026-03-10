@@ -1,0 +1,35 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface INeighborhoodLookupService {
+  +GetCoordinatesAsync(name : string) : Task<(double, double)?>
+}
+
+interface IHaversineCalculator {
+  +CalculateDistanceKm(lat1, lng1, lat2, lng2) : double
+}
+
+class SearchDirectoryQueryHandler {
+  -_dbContext : IApplicationDbContext
+  -_neighborhoodLookup : INeighborhoodLookupService
+  -_haversine : IHaversineCalculator
+  +Handle(query, ct) : PaginatedResult<DirectorySearchResultDto>
+}
+
+class NeighborhoodLookupService {
+  -_neighborhoods : Dictionary<string, (double, double)>
+  -_dbContext : IApplicationDbContext
+  +GetCoordinatesAsync(name) : Task<(double, double)?>
+}
+
+class HaversineCalculator {
+  +CalculateDistanceKm(lat1, lng1, lat2, lng2) : double
+}
+
+INeighborhoodLookupService <|.. NeighborhoodLookupService
+IHaversineCalculator <|.. HaversineCalculator
+SearchDirectoryQueryHandler --> INeighborhoodLookupService
+SearchDirectoryQueryHandler --> IHaversineCalculator
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "DownloadsController" as API
+participant "RequestDownloadHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+
+Client -> API : POST /api/collections/{id}/downloads\n{resolution: Original, mediaIds: [...]}
+API -> Handler : Send(RequestDownloadCommand)
+
+Handler -> DB : Validate PIN, limits, resolution
+Handler -> DB : Create DownloadRequest
+
+note right of Handler
+  Full-resolution downloads serve
+  the ORIGINAL file from storage.
+  The watermark is display-only
+  and is NOT applied to downloads.
+end note
+
+Handler -> DB : SaveChangesAsync()
+Handler --> API : DownloadRequestDto
+
+Client -> API : GET /api/downloads/{id}/file
+API -> Storage : GetPresignedUrlAsync(\nmedia.OriginalStorageKey)
+note right of Storage
+  Uses the original storage key,
+  bypassing the watermark
+  compositor entirely.
+end note
+Storage --> API : Presigned URL (clean original)
+API --> Client : 302 Redirect to clean image
+
+@enduml

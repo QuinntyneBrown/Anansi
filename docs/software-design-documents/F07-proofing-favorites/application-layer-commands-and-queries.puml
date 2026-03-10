@@ -1,0 +1,75 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CreateFavoriteListCommand <<Command>> {
+  +CollectionId : Guid
+  +Name : string
+  +ClientName : string?
+  +ClientEmail : string?
+  +IsPreset : bool
+}
+
+class AddFavoriteItemCommand <<Command>> {
+  +FavoriteListId : Guid
+  +MediaId : Guid
+}
+
+class RemoveFavoriteItemCommand <<Command>> {
+  +FavoriteItemId : Guid
+}
+
+class UpdateFavoriteCommentCommand <<Command>> {
+  +FavoriteItemId : Guid
+  +Comment : string
+}
+
+class CompleteFavoriteListCommand <<Command>> {
+  +FavoriteListId : Guid
+}
+
+class DownloadFavoriteListCommand <<Command>> {
+  +FavoriteListId : Guid
+  +Resolution : DownloadResolution
+  +Pin : string?
+}
+
+class DeliverFavoriteListCommand <<Command>> {
+  +FavoriteListId : Guid
+  +RecipientEmail : string
+  +Resolution : DownloadResolution
+}
+
+class ExportFavoriteListQuery <<Query>> {
+  +FavoriteListId : Guid
+  +Format : ExportFormat
+}
+
+class ListFavoriteActivityQuery <<Query>> {
+  +Page : int
+  +PageSize : int
+}
+
+enum ExportFormat {
+  LightroomCopyList
+  Csv
+}
+
+class FavoriteListDto <<DTO>> {
+  +Id : Guid
+  +Name : string
+  +ClientName : string?
+  +ItemCount : int
+  +IsCompleted : bool
+  +ShareToken : string?
+}
+
+class FavoriteItemDto <<DTO>> {
+  +Id : Guid
+  +MediaId : Guid
+  +Comment : string?
+  +MediaFileName : string?
+}
+
+@enduml

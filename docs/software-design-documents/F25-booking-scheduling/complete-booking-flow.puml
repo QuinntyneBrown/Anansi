@@ -1,0 +1,65 @@
+@startuml
+actor Client as C
+participant "BookingsController" as BC
+participant "MediatR" as M
+participant "CreateBookingHandler" as BH
+participant "ApplicationDbContext" as DB
+participant "IPaymentService" as PS
+participant "IVideoCallService" as VC
+participant "IEmailService" as ES
+
+C -> BC : POST /api/bookings\n{sessionTypeId, date, startTime,\nclientInfo, couponCode, paymentMethodId}
+BC -> M : Send(CreateBookingCommand)
+M -> BH : Handle()
+
+BH -> DB : Load SessionType
+DB --> BH : sessionType
+
+BH -> BH : Re-validate slot availability\n(double-booking guard)
+
+alt couponCode provided
+  BH -> DB : Load BookingCoupon by code
+  DB --> BH : coupon (valid, not expired)
+  BH -> BH : Calculate discount
+end
+
+alt requirePayment = true
+  BH -> BH : Calculate final amount\n(price - discount)
+  BH -> PS : CreatePaymentIntentAsync(\namount, currency, stripeAccountId)
+  PS --> BH : paymentIntentId
+
+  alt deposit only
+    BH -> BH : Create auto-invoice\nfor remaining balance
+  end
+end
+
+BH -> DB : Find or create Contact by email
+DB --> BH : contact
+
+BH -> DB : Create BookingRecord\n{status = Pending or Confirmed}
+DB --> BH : booking
+
+alt videoCallType != null
+  BH -> VC : CreateMeetingAsync(provider, booking)
+  VC --> BH : meetingLink
+  BH -> DB : booking.VideoCallLink = meetingLink
+end
+
+alt coupon used
+  BH -> DB : Increment BookingCoupon.TimesUsed
+end
+
+BH -> DB : SaveChanges
+DB --> BH : saved
+
+alt !requireManualConfirmation
+  BH -> BH : Raise BookingConfirmedEvent
+end
+
+BH -> ES : SendTemplatedAsync(clientEmail,\n"booking_confirmation", variables)
+ES --> BH : sent
+
+BH --> M : BookingResultDto
+M --> BC : result
+BC --> C : 201 Created {bookingId, status,\nvideoCallLink, confirmationSent}
+@enduml

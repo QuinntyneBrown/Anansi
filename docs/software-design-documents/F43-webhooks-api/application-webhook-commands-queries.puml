@@ -1,0 +1,60 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Webhooks.Commands" {
+  class CreateWebhookSubscriptionCommand <<record>> {
+    +Url : string
+    +EventType : WebhookEventType
+    +Secret : string?
+  }
+
+  class UpdateWebhookSubscriptionCommand <<record>> {
+    +Id : Guid
+    +Url : string?
+    +EventType : WebhookEventType?
+    +Secret : string?
+    +IsActive : bool?
+  }
+
+  class DeleteWebhookSubscriptionCommand <<record>> {
+    +Id : Guid
+  }
+
+  class TestWebhookCommand <<record>> {
+    +Id : Guid
+  }
+}
+
+package "Features.Webhooks.Queries" {
+  class GetWebhookSubscriptionsQuery <<record>>
+
+  class GetWebhookDeliveriesQuery <<record>> {
+    +SubscriptionId : Guid
+    +Page : int
+    +PageSize : int
+  }
+}
+
+interface IWebhookService {
+  +DeliverAsync(photographerId, eventType, payload) : Task
+}
+
+class WebhookSubscriptionDto <<record>> {
+  +Id : Guid
+  +Url : string
+  +EventType : WebhookEventType
+  +IsActive : bool
+  +CreatedAt : DateTime
+}
+
+class WebhookDeliveryDto <<record>> {
+  +Id : Guid
+  +Payload : string
+  +HttpStatusCode : int
+  +Success : bool
+  +DeliveredAt : DateTime
+}
+
+@enduml

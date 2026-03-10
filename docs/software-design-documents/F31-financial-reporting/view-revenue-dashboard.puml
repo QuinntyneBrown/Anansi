@@ -1,0 +1,31 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ReportsController" as API
+participant "MediatR" as M
+participant "GetRevenueDashboardHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/reports/revenue?\nfrom=2025-01-01&to=2025-12-31
+API -> M : Send(GetRevenueDashboardQuery)
+M -> Handler : Handle(query)
+
+Handler -> Handler : Resolve PhotographerId\nfrom ICurrentUserService
+
+Handler -> DB : Query PaymentRecords\n(filtered by date range)
+DB --> Handler : List<PaymentRecord>
+
+Handler -> Handler : Calculate totals:\ntotalRevenue, fees, refunds,\ntips, tax, netRevenue
+
+Handler -> Handler : Group by PaymentMethod\nfor breakdown
+
+Handler -> DB : Count Invoices by status\n(Paid, Pending, Overdue)
+DB --> Handler : paidCount, pendingCount,\noverdueCount
+
+Handler --> M : Result<RevenueDashboardDto>
+M --> API : Result.Success
+API --> Photographer : 200 OK (RevenueDashboardDto)
+
+@enduml

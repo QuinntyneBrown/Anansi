@@ -1,0 +1,46 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteTypographyController" as TC
+participant "WebsitesController" as WC
+participant "IMediator" as M
+participant "ListColorPalettesHandler" as LH
+participant "UpdateWebsiteHandler" as UH
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+== Browse Color Palettes ==
+P -> TC : GET /api/website-typography/color-palettes
+TC -> M : Send(ListColorPalettesQuery)
+M -> LH : Handle(query)
+LH -> U : PhotographerId
+U --> LH : photographerId
+
+LH -> DB : Query ColorPalette\nWhere(IsSystem == true\nOR PhotographerId == pid)\nOrderBy(SortOrder)
+DB --> LH : List<ColorPalette>
+
+LH --> M : Result<List<ColorPaletteDto>>
+M --> TC : result
+TC --> P : 200 OK [palettes]
+
+== Apply Palette to Website ==
+P -> WC : PUT /api/websites/{id}\n{ websiteId, colorPaletteJson:\n  '["#1A1A1C","#C9A962","#F5F5F0"]' }
+WC -> M : Send(UpdateWebsiteCommand)
+M -> UH : Handle(command)
+UH -> U : PhotographerId
+U --> UH : photographerId
+
+UH -> DB : Load Website
+DB --> UH : Website
+
+UH -> H : Update ColorPaletteJson
+UH -> DB : SaveChangesAsync()
+DB --> UH : saved
+
+UH --> M : Result.Success(WebsiteDto)
+M --> WC : result
+WC --> P : 200 OK { websiteDto }
+
+@enduml

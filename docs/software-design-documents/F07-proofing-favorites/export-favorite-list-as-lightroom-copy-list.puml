@@ -1,0 +1,26 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "FavoritesController" as API
+participant "ExportFavoriteListHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/favorites/{listId}/export?format=lightroom
+API -> Handler : Send(ExportFavoriteListQuery)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Find FavoriteList with Items\ninclude GalleryMedia
+DB --> Handler : FavoriteList + Items + Media
+
+alt format = LightroomCopyList
+  Handler -> Handler : Build newline-separated list\nof OriginalFileName values
+else format = Csv
+  Handler -> Handler : Build CSV with columns:\nFileName, Comment, DateAdded
+end
+
+Handler --> API : Result<byte[]>
+API --> Photographer : 200 OK\nContent-Disposition: attachment\nfilename="AlbumPicks_copylist.txt"
+
+@enduml

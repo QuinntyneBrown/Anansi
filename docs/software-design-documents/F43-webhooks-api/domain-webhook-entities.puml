@@ -1,0 +1,37 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class WebhookSubscription {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Url : string
+  +EventType : WebhookEventType
+  +Secret : string?
+  +IsActive : bool
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+class WebhookDelivery {
+  +Id : Guid
+  +WebhookSubscriptionId : Guid
+  +Payload : string
+  +HttpStatusCode : int
+  +ResponseBody : string?
+  +Success : bool
+  +DeliveredAt : DateTime
+}
+
+enum WebhookEventType {
+  BookingCreated
+  PaymentReceived
+  ContractSigned
+  FormSubmitted
+}
+
+WebhookSubscription "1" --> "*" WebhookDelivery : deliveries
+WebhookSubscription ..> WebhookEventType
+
+@enduml

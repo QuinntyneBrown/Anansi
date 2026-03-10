@@ -1,0 +1,36 @@
+@startuml
+actor Photographer as P
+participant "GalleryMediaController" as GMC
+participant "MediatR" as M
+participant "MoveMediaHandler" as MH
+participant "ApplicationDbContext" as DB
+
+P -> GMC : POST /api/collections/{cid}/media/{mid}/move\n{targetSetId: "set-uuid" or null}
+GMC -> M : Send(MoveMediaCommand(mid, targetSetId))
+M -> MH : Handle(command)
+
+MH -> DB : Find GalleryMedia by Id
+alt media not found
+  MH --> M : Result.Failure("Media not found")
+  M --> GMC : 404
+  GMC --> P : 404 Not Found
+end
+
+alt targetSetId is not null
+  MH -> DB : Find CollectionSet by targetSetId
+  alt set not found or different collection
+    MH --> M : Result.Failure("Target set not found")
+    M --> GMC : 400
+    GMC --> P : 400 Bad Request
+  end
+end
+
+MH -> DB : media.SetId = targetSetId
+note right: null means "move to\ncollection root"
+
+MH -> DB : Recalculate SortOrder\nin target set (append at end)
+MH -> DB : SaveChangesAsync()
+MH --> M : Result.Success
+M --> GMC : Result.Success
+GMC --> P : 200 OK
+@enduml

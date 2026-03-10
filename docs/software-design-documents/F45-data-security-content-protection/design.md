@@ -138,6 +138,8 @@ Watermark ..> WatermarkPosition
 @enduml
 ```
 
+![Domain -- Security-Related Entity Fields](domain-security-related-entity-fields.png)
+
 ### Application -- Security Commands & Queries
 
 ```plantuml
@@ -205,6 +207,8 @@ GetAdaptiveVideoStreamQuery ..> AdaptiveStreamDto
 @enduml
 ```
 
+![Application -- Security Commands & Queries](application-security-commands-queries.png)
+
 ### Application -- Service Interfaces
 
 ```plantuml
@@ -241,6 +245,8 @@ ICdnService ..> ProgressiveImageSet
 
 @enduml
 ```
+
+![Application -- Service Interfaces](application-service-interfaces.png)
 
 ### Infrastructure -- Security Services
 
@@ -296,6 +302,8 @@ IWatermarkService <|.. WatermarkService
 @enduml
 ```
 
+![Infrastructure -- Security Services](infrastructure-security-services.png)
+
 ### API -- Security Controllers
 
 ```plantuml
@@ -329,6 +337,8 @@ GalleryMediaController --> "IMediator"
 
 @enduml
 ```
+
+![API -- Security Controllers](api-security-controllers.png)
 
 ---
 
@@ -387,6 +397,8 @@ end note
 @enduml
 ```
 
+![Gallery Password Authentication (Content Gate)](gallery-password-authentication-content-gate.png)
+
 ### Download PIN Validation
 
 ```plantuml
@@ -433,6 +445,8 @@ M --> GAC : Result.Success
 GAC --> C : 200 OK {authorized: true}
 @enduml
 ```
+
+![Download PIN Validation](download-pin-validation.png)
 
 ### Server-Side Watermark Application
 
@@ -486,6 +500,8 @@ end note
 @enduml
 ```
 
+![Server-Side Watermark Application](server-side-watermark-application.png)
+
 ### Progressive Image Loading (Client-Side)
 
 ```plantuml
@@ -518,6 +534,8 @@ end
 B --> C : Sharp, full-resolution image\n(perceived instant load)
 @enduml
 ```
+
+![Progressive Image Loading (Client-Side)](progressive-image-loading-client-side.png)
 
 ### Adaptive Video Streaming with Cast Support
 
@@ -565,6 +583,8 @@ end
 @enduml
 ```
 
+![Adaptive Video Streaming with Cast Support](adaptive-video-streaming-with-cast-support.png)
+
 ### Right-Click Protection on Gallery Images
 
 ```plantuml
@@ -600,6 +620,8 @@ end note
 @enduml
 ```
 
+![Right-Click Protection on Gallery Images](right-click-protection-on-gallery-images.png)
+
 ### TLS & Security Headers Enforcement
 
 ```plantuml
@@ -632,3 +654,5 @@ TLS --> LB : Response
 LB --> C : Secured response with\nall security headers
 @enduml
 ```
+
+![TLS & Security Headers Enforcement](tls-security-headers-enforcement.png)

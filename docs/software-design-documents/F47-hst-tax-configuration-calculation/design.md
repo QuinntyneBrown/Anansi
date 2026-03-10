@@ -84,6 +84,8 @@ TaxProfile --> "1" Photographer : PhotographerId
 @enduml
 ```
 
+![Domain Layer -- Tax Profile Entity](domain-layer-tax-profile-entity.png)
+
 ### Domain Layer -- Extended Invoice & Quote Line Items
 
 ```plantuml
@@ -135,6 +137,8 @@ end note
 @enduml
 ```
 
+![Domain Layer -- Extended Invoice & Quote Line Items](domain-layer-extended-invoice-quote-line-items.png)
+
 ### Application Layer -- Tax Profile Commands & Queries
 
 ```plantuml
@@ -171,6 +175,8 @@ UpdateTaxProfileCommand ..> TaxProfileValidator : validated by
 GetTaxProfileQuery ..> TaxProfileDto : returns
 @enduml
 ```
+
+![Application Layer -- Tax Profile Commands & Queries](application-layer-tax-profile-commands-queries.png)
 
 ### Application Layer -- Extended Invoice Creation
 
@@ -221,6 +227,8 @@ end note
 @enduml
 ```
 
+![Application Layer -- Extended Invoice Creation](application-layer-extended-invoice-creation.png)
+
 ### API Layer -- Tax Profile Controller
 
 ```plantuml
@@ -238,6 +246,8 @@ class TaxProfileController <<ApiController>> {
 TaxProfileController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Tax Profile Controller](api-layer-tax-profile-controller.png)
 
 ---
 
@@ -278,6 +288,8 @@ TPC --> P : 200 OK\n{hstRate: 13.0,\nhstRegistrationNumber:\n"123456789RT0001",\
 @enduml
 ```
 
+![Update Tax Profile](update-tax-profile.png)
+
 ### Get Tax Profile
 
 ```plantuml
@@ -305,6 +317,8 @@ M --> TPC : Result.Success
 TPC --> P : 200 OK\n{hstRate, hstRegistrationNumber,\nregistrationStatus}
 @enduml
 ```
+
+![Get Tax Profile](get-tax-profile.png)
 
 ### Create Invoice with HST Calculation
 
@@ -347,6 +361,8 @@ IC --> P : 201 Created\n{invoiceId, invoiceNumber,\nsubtotalCents: 365000,\ntaxA
 @enduml
 ```
 
+![Create Invoice with HST Calculation](create-invoice-with-hst-calculation.png)
+
 ### HST Carry-Through from Quote to Invoice
 
 ```plantuml
@@ -386,3 +402,5 @@ GIH -> DB : SaveChangesAsync()
 GIH --> M : Result.Success(invoiceId)
 @enduml
 ```
+
+![HST Carry-Through from Quote to Invoice](hst-carry-through-from-quote-to-invoice.png)

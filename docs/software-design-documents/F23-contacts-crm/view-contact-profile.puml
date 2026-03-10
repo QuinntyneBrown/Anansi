@@ -1,0 +1,29 @@
+@startuml
+actor Photographer as P
+participant "ContactsController" as CC
+participant "MediatR" as M
+participant "GetContactProfileHandler" as PH
+participant "ApplicationDbContext" as DB
+
+P -> CC : GET /api/contacts/{id}/profile
+CC -> M : Send(GetContactProfileQuery)
+M -> PH : Handle()
+PH -> DB : Load Contact with Id
+DB --> PH : contact
+PH -> DB : Query Contracts\nWHERE ContactId = {id}
+DB --> PH : contracts
+PH -> DB : Query Invoices\nWHERE ContactId = {id}
+DB --> PH : invoices
+PH -> DB : Query Questionnaires\nWHERE ContactId = {id}
+DB --> PH : questionnaires
+PH -> DB : Query EmailMessages\nWHERE ContactId = {id}
+DB --> PH : emails
+PH -> DB : Query BookingRecords\nWHERE ContactId = {id}
+DB --> PH : bookings
+PH -> DB : Query PaymentRecords\nWHERE ContactId = {id}
+DB --> PH : payments
+PH -> PH : Assemble ContactProfileDto
+PH --> M : ContactProfileDto
+M --> CC : result
+CC --> P : 200 OK {contact, documents,\nemailHistory, bookings, payments}
+@enduml

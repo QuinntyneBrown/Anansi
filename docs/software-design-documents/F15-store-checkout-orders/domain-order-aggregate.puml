@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Store" {
+  class Order {
+    +Id : Guid
+    +PhotographerId : Guid
+    +ClientName : string
+    +ClientEmail : string
+    +ClientPhone : string?
+    +ShippingAddress : string?
+    +ShippingCity : string?
+    +ShippingProvince : string?
+    +ShippingPostalCode : string?
+    +ShippingCountry : string?
+    +Status : OrderStatus
+    +PaymentMethod : PaymentMethod
+    +PaymentIntentId : string?
+    +SubtotalCents : long
+    +TaxCents : long
+    +ShippingCents : long
+    +DiscountCents : long
+    +TotalCents : long
+    +CommissionCents : long
+    +CommissionPercentage : decimal
+    +CouponCode : string?
+    +GiftCardCode : string?
+    +TrackingNumber : string?
+    +TrackingUrl : string?
+    +ShippingMethodId : Guid?
+    +FulfillmentType : FulfillmentType
+    +LabPartner : LabPartner?
+    +LabOrderReference : string?
+    +IsDeleted : bool
+  }
+
+  class OrderItem {
+    +Id : Guid
+    +OrderId : Guid
+    +ProductId : Guid
+    +ProductVariationId : Guid?
+    +ProductName : string
+    +VariationName : string?
+    +Quantity : int
+    +UnitPriceCents : long
+    +TotalCents : long
+    +SelectedPhotoUrl : string?
+  }
+
+  class ShippingMethod {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Description : string?
+    +CostCents : long
+    +EstimatedDelivery : string?
+    +IsActive : bool
+  }
+}
+
+Order "1" --> "*" OrderItem : Items
+Order --> "0..1" ShippingMethod : ShippingMethodNavigation
+OrderItem --> "1" Product : Product
+OrderItem --> "0..1" ProductVariation : ProductVariation
+
+@enduml

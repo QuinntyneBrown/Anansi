@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class PageElement {
+    +Id : Guid
+    +PageId : Guid
+    +ElementType : ElementType
+    +ContentJson : string?
+    +PositionX : double
+    +PositionY : double
+    +Width : double
+    +Height : double
+    +ZIndex : int
+    +ParentElementId : Guid?
+  }
+
+  class LandingPageTemplate {
+    +Id : Guid
+    +Name : string
+    +Description : string?
+    +UseCase : string
+    +LayoutDefinitionJson : string
+    +PreviewImageUrl : string?
+    +IsActive : bool
+    +SortOrder : int
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum ElementType {
+    Image
+    Text
+    VideoEmbed
+    Button
+    Shape
+    Slider
+    Carousel
+    ImageGrid
+    Accordion
+    **ClientGalleryBlock**
+    **InstagramFeed**
+    **CustomEmbed**
+    **LandingPageBlock**
+    LayoutBlock
+  }
+
+  enum GalleryDisplayType {
+    Grid
+    FeaturedCollection
+  }
+}
+
+note right of PageElement
+  ContentJson examples:
+  - ClientGalleryBlock: { collectionIds, displayType }
+  - InstagramFeed: { photoCount, size, clickBehavior }
+  - CustomEmbed: { html, sandboxed }
+  - LandingPageBlock: { templateId, overrides }
+end note
+
+PageElement ..> ElementType
+PageElement ..> LandingPageTemplate : references via\nContentJson.templateId
+
+@enduml

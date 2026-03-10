@@ -1,0 +1,35 @@
+@startuml
+actor Photographer as P
+participant "Lightroom Classic" as LR
+participant "LightroomController" as LC
+participant "MediatR" as M
+participant "GetFavoriteListsHandler" as FLH
+participant "GetFavoriteItemsHandler" as FIH
+participant "IApplicationDbContext" as DB
+
+P -> LR : Open "Favorites" panel\nin Anansi plugin
+
+LR -> LC : GET /api/lightroom/favorites/{collectionId}
+LC -> M : Send(GetLightroomFavoriteListsQuery)
+M -> FLH : Handle(query)
+FLH -> DB : FavoriteLists\n.Where(CollectionId == collectionId)\n.Select(id, name, items.Count)
+DB --> FLH : favoriteListDtos[]
+FLH --> M : Result.Success
+M --> LC : Result.Success
+LC --> LR : 200 OK [{name, photoCount}]
+
+LR --> P : Show favorite lists\nwith photo counts
+
+P -> LR : Click on a favorite list
+LR -> LC : GET /api/lightroom/favorites/{collectionId}/{listId}/items
+LC -> M : Send(GetLightroomFavoriteItemsQuery)
+M -> FIH : Handle(query)
+FIH -> DB : FavoriteItems\n.Where(FavoriteListId == listId)\n.Include(GalleryMedia)\n.Select(mediaId, lightroomId, fileName)
+DB --> FIH : items[]
+FIH --> M : Result.Success
+M --> LC : Result.Success
+LC --> LR : 200 OK [{lightroomId, fileName}]
+
+LR -> LR : Highlight photos in catalog\nmatching returned LightroomIds
+LR --> P : Favorited photos highlighted\nin Lightroom grid view
+@enduml

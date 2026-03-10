@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "ProjectsController" as PC
+participant "MediatR" as M
+participant "GetProjectDetailHandler" as DH
+participant "ApplicationDbContext" as DB
+
+P -> PC : GET /api/projects/{id}
+PC -> M : Send(GetProjectDetailQuery)
+M -> DH : Handle()
+DH -> DB : Load Project with Contact
+DB --> DH : project
+DH -> DB : Query ProjectDocument\nWHERE ProjectId = {id}
+DB --> DH : linkedDocs [{docId, type: Contract},\n{docId, type: Invoice}]
+
+loop for each linked document
+  alt DocumentType = Contract
+    DH -> DB : Load Contract by DocumentId
+    DB --> DH : contract
+  else DocumentType = Invoice
+    DH -> DB : Load Invoice by DocumentId
+    DB --> DH : invoice
+  else DocumentType = Questionnaire
+    DH -> DB : Load Questionnaire by DocumentId
+    DB --> DH : questionnaire
+  end
+end
+
+DH -> DB : Query BookingRecords\nWHERE ProjectId = {id}
+DB --> DH : bookings
+DH -> DB : Query PaymentRecords\nWHERE related to project
+DB --> DH : payments
+DH -> DH : Assemble ProjectDetailDto
+DH --> M : ProjectDetailDto
+M --> PC : result
+PC --> P : 200 OK {project, contracts,\ninvoices, questionnaires,\nsessions, payments}
+@enduml

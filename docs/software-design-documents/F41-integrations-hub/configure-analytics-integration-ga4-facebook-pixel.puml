@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "IntegrationsController" as IC
+participant "MediatR" as M
+participant "ConfigureGAHandler" as GAH
+participant "ICurrentUserService" as US
+participant "IApplicationDbContext" as DB
+
+== Configure Google Analytics GA4 ==
+P -> IC : PUT /api/integrations/google-analytics\n{measurementId: "G-XXXXXXXXXX"}
+IC -> M : Send(ConfigureGoogleAnalyticsCommand)
+M -> GAH : Handle(command)
+GAH -> US : PhotographerId
+US --> GAH : Guid
+GAH -> GAH : Validate Measurement ID format\n(starts with "G-")
+GAH -> DB : Photographer.GoogleAnalyticsId = measurementId
+GAH -> DB : SaveChangesAsync()
+GAH --> M : Result.Success
+M --> IC : Result.Success
+IC --> P : 200 OK
+
+== Configure Facebook Pixel ==
+P -> IC : PUT /api/integrations/facebook-pixel\n{pixelId: "1234567890"}
+IC -> M : Send(ConfigureFacebookPixelCommand)
+M -> GAH : Handle(command)
+GAH -> DB : Photographer.FacebookPixelId = pixelId
+GAH -> DB : SaveChangesAsync()
+GAH --> M : Result.Success
+M --> IC : Result.Success
+IC --> P : 200 OK
+
+note over IC
+  Client-facing pages automatically inject
+  GA4/Pixel scripts at render time by
+  reading these fields from the Photographer entity.
+end note
+@enduml

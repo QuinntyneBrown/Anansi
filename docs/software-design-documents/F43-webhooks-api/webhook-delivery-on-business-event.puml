@@ -1,0 +1,35 @@
+@startuml
+participant "ConfirmBookingHandler" as BH
+participant "IWebhookService" as WS
+participant "IApplicationDbContext" as DB
+participant "HttpClient" as HC
+participant "External URL" as EXT
+
+BH -> WS : DeliverAsync(photographerId,\nBookingCreated, bookingPayload)
+
+WS -> DB : WebhookSubscriptions\n.Where(PhotographerId == id\n&& EventType == BookingCreated\n&& IsActive)
+DB --> WS : subscriptions[]
+
+loop for each subscription
+  WS -> WS : Serialize payload to JSON\n{event, timestamp, photographerId, data}
+
+  alt subscription.Secret is set
+    WS -> WS : HMAC-SHA256 sign payload
+    WS -> WS : Add X-Anansi-Signature header
+  end
+
+  WS -> HC : POST subscription.Url\nContent-Type: application/json\nBody: {event, timestamp, data}
+  HC -> EXT : HTTP POST
+  EXT --> HC : response (status, body)
+  HC --> WS : httpResponse
+
+  WS -> DB : WebhookDeliveries.Add(\nnew WebhookDelivery {\nPayload, HttpStatusCode,\nResponseBody, Success,\nDeliveredAt})
+
+  alt status >= 400 or timeout
+    WS -> WS : Schedule retry via Hangfire\n(exponential backoff)
+  end
+end
+
+WS -> DB : SaveChangesAsync()
+WS --> BH : (fire-and-forget)
+@enduml

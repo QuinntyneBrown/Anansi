@@ -1,0 +1,18 @@
+@startuml
+participant "InvoiceOverdueJob" as JOB
+participant "MediatR" as M
+participant "ProcessOverdueHandler" as POH
+participant "ApplicationDbContext" as DB
+
+JOB -> M : Send(ProcessOverdueInvoicesCommand)
+M -> POH : Handle(command)
+
+POH -> DB : Query Invoices WHERE\nStatus IN (Sent, Viewed, PartiallyPaid)\nAND has unpaid schedules\nwith DueDate < UtcNow
+
+loop each newly overdue invoice
+  POH -> DB : invoice.Status = Overdue
+end
+
+POH -> DB : SaveChangesAsync()
+POH --> M : Result.Success(overdueCount)
+@enduml

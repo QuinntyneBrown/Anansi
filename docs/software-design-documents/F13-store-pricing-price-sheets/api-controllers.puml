@@ -1,0 +1,29 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Api.Controllers" {
+  class ProductsController {
+    -_mediator : IMediator
+    +ApplyBulkMarkup(request) : IActionResult
+  }
+
+  class PriceSheetsController {
+    -_mediator : IMediator
+    +GetPriceSheets(page, pageSize) : IActionResult
+    +GetPriceSheet(id) : IActionResult
+    +CreatePriceSheet(request) : IActionResult
+    +UpdatePriceSheet(id, request) : IActionResult
+    +DeletePriceSheet(id) : IActionResult
+  }
+}
+
+package "MediatR" {
+  interface IMediator
+}
+
+ProductsController --> IMediator
+PriceSheetsController --> IMediator
+
+@enduml

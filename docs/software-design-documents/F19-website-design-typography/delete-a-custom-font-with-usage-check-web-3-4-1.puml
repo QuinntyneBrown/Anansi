@@ -1,0 +1,47 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteTypographyController" as C
+participant "IMediator" as M
+participant "DeleteCustomFontHandler" as H
+participant "ICurrentUserService" as U
+participant "IStorageService" as S
+participant "IApplicationDbContext" as DB
+
+P -> C : DELETE /api/website-typography/fonts/{fontId}
+C -> M : Send(DeleteCustomFontCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load WebsiteFont\n(fontId, photographerId)
+DB --> H : WebsiteFont
+
+alt font not found
+  H --> M : Result.NotFound
+  M --> C : failure
+  C --> P : 404 Not Found
+else font found
+  H -> DB : Check if font is in use\nas PrimaryFontFamily or\nSecondaryFontFamily on any Website
+  DB --> H : inUse
+
+  alt font in use
+    H --> M : Result.Failure\n("Font is currently in use")
+    M --> C : failure
+    C --> P : 400 Bad Request
+  else not in use
+    H -> S : DeleteAsync(font.FileUrl)
+    S --> H : deleted
+
+    H -> DB : Remove(font)\nSaveChangesAsync()
+    DB --> H : saved
+
+    H --> M : Result.Success
+    M --> C : result
+    C --> P : 204 No Content
+  end
+end
+
+@enduml

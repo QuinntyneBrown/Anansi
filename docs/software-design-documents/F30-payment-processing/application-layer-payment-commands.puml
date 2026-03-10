@@ -1,0 +1,59 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Payments.Commands" {
+  class CreatePaymentIntentCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+    +InvoiceId : Guid?
+    +BookingId : Guid?
+    +Metadata : Dictionary<string, string>?
+  }
+
+  class ProcessCardPaymentCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+    +InvoiceId : Guid?
+    +BookingId : Guid?
+  }
+
+  class ProcessDigitalWalletPaymentCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+    +WalletType : string
+    +InvoiceId : Guid?
+    +BookingId : Guid?
+  }
+
+  class ProcessBnplPaymentCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+    +Provider : string
+    +InvoiceId : Guid?
+    +SuccessUrl : string
+    +CancelUrl : string
+  }
+
+  class ProcessBankTransferCommand <<record>> {
+    +AmountCents : long
+    +Currency : string
+    +InvoiceId : Guid?
+  }
+
+  class ConfirmPaymentCommand <<record>> {
+    +StripeEventId : string
+    +PaymentIntentId : string
+    +AmountCents : long
+    +PaymentMethodType : string
+  }
+}
+
+interface IPaymentService {
+  +CreatePaymentIntentAsync()
+  +CreateCheckoutSessionAsync()
+  +RefundAsync()
+  +CreateConnectedAccountAsync()
+}
+@enduml

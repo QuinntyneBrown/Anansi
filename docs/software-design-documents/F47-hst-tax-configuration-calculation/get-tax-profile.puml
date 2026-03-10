@@ -1,0 +1,23 @@
+@startuml
+actor Photographer as P
+participant "TaxProfileController" as TPC
+participant "MediatR" as M
+participant "GetTaxProfileHandler" as GH
+participant "ApplicationDbContext" as DB
+
+P -> TPC : GET /api/tax-profile
+TPC -> M : Send(GetTaxProfileQuery)
+M -> GH : Handle(query)
+
+GH -> DB : Find TaxProfile\nby PhotographerId
+alt profile exists
+  DB --> GH : TaxProfile entity
+  GH -> GH : Map to TaxProfileDto
+else no profile found
+  GH -> GH : Return defaults:\nhstRate = 13.0,\nregistrationNumber = null,\nstatus = NotRegistered
+end
+
+GH --> M : Result.Success(TaxProfileDto)
+M --> TPC : Result.Success
+TPC --> P : 200 OK\n{hstRate, hstRegistrationNumber,\nregistrationStatus}
+@enduml

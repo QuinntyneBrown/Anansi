@@ -1,0 +1,28 @@
+@startuml
+actor Client as C
+participant "Browser" as B
+participant "ProgressiveImageLoader" as PIL
+participant "CDN" as CDN
+
+C -> B : Scroll gallery into viewport
+
+B -> PIL : IntersectionObserver triggers\nfor visible image elements
+
+PIL -> CDN : GET placeholder URL\n(~2KB inline blur-up)
+CDN --> PIL : placeholder image (base64)
+PIL -> B : Show blurred placeholder\n(immediate render)
+
+PIL -> CDN : GET low-res URL (640px)
+CDN --> PIL : low-res image
+PIL -> B : Crossfade from placeholder\nto low-res
+
+PIL -> PIL : Check if user is viewing\nthis image (in viewport)
+
+alt image is in viewport or lightbox
+  PIL -> CDN : GET full-res URL (2048px+)
+  CDN --> PIL : full-res image
+  PIL -> B : Crossfade from low-res\nto full-res
+end
+
+B --> C : Sharp, full-resolution image\n(perceived instant load)
+@enduml

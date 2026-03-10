@@ -1,0 +1,36 @@
+@startuml
+actor Client as C
+participant "BookingSiteController" as BSC
+participant "MediatR" as M
+participant "GetBookingSiteHandler" as SH
+participant "GetAvailableSlotsHandler" as AH
+participant "IGoogleCalendarService" as GC
+participant "ApplicationDbContext" as DB
+
+C -> BSC : GET /api/booking/janedoe
+BSC -> M : Send(GetBookingSiteQuery{slug})
+M -> SH : Handle()
+SH -> DB : Load BookingSiteConfig by slug
+DB --> SH : config
+SH -> DB : Load SessionTypes\nWHERE PhotographerId\nAND Visibility = Public\nORDER BY SortOrder
+DB --> SH : sessionTypes
+SH --> M : BookingSiteDto
+M --> BSC : result
+BSC --> C : 200 OK {coverImage, profilePhoto,\nwelcomeMessage, sessions[]}
+
+C -> BSC : GET /api/booking/janedoe/sessions/{id}/slots\n?startDate=2026-03-15&endDate=2026-03-22
+BSC -> M : Send(GetAvailableSlotsQuery)
+M -> AH : Handle()
+AH -> DB : Load SessionType
+DB --> AH : sessionType (duration, availability, buffer)
+AH -> DB : Load existing BookingRecords\nfor date range
+DB --> AH : existingBookings
+AH -> GC : GetBusyBlocksAsync(calendarId, range)
+GC --> AH : busyBlocks
+AH -> AH : Generate slots from\navailability windows
+AH -> AH : Subtract booked slots + buffers
+AH -> AH : Subtract Google Calendar busy blocks
+AH --> M : AvailableSlotsDto
+M --> BSC : result
+BSC --> C : 200 OK {slots: [{date, startTime,\nendTime, spotsRemaining}]}
+@enduml

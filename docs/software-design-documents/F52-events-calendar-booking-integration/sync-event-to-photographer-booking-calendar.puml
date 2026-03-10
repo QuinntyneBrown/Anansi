@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "EventsController" as EC
+participant "MediatR" as M
+participant "SyncEventToCalendarCommandHandler" as H
+participant "IEventRecurrenceService" as RS
+participant "ApplicationDbContext" as DB
+
+P -> EC : POST /api/events/{caribanaId}/sync\n{blockType: "Available",\nnotes: "Offering carnival portraits"}
+EC -> M : Send(SyncEventToCalendarCommand)
+M -> H : Handle()
+
+H -> DB : Load CulturalEvent by Id
+DB --> H : event (Caribana, Annual,\ntypicalStart: 8, typicalEnd: 8)
+
+alt event not found or not approved
+  H --> M : throw NotFoundException
+end
+
+H -> DB : Check EventCalendarBlock\nWHERE PhotographerId AND CulturalEventId
+DB --> H : null (no existing sync)
+
+H -> RS : GenerateInstances(event,\nnow, now + 1 year)
+RS --> H : next occurrence:\nstartDate: 2026-08-01,\nendDate: 2026-08-04
+
+H -> DB : Create EventCalendarBlock {\n  PhotographerId, CulturalEventId,\n  BlockType: Available,\n  StartDate: 2026-08-01,\n  EndDate: 2026-08-04,\n  Notes: "Offering carnival portraits"\n}
+DB --> H : block created
+
+H -> DB : SaveChanges
+DB --> H : saved
+
+H -> H : Raise EventSyncedEvent
+
+H --> M : EventCalendarBlockDto
+M --> EC : result
+EC --> P : 201 Created {\n  id, eventId, eventName: "Caribana",\n  blockType: "Available",\n  startDate: "2026-08-01",\n  endDate: "2026-08-04"\n}
+@enduml

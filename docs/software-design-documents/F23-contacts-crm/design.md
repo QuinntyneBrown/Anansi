@@ -121,6 +121,8 @@ Contact ..> ContactType
 @enduml
 ```
 
+![Domain Layer -- Contact & CRM Entities](domain-layer-contact-crm-entities.png)
+
 ### Domain Layer -- Lead Capture Form Entities
 
 ```plantuml
@@ -176,6 +178,8 @@ LeadCaptureFormSubmission --> "0..1" Contact : Contact
 LeadCaptureFormField ..> QuestionType
 @enduml
 ```
+
+![Domain Layer -- Lead Capture Form Entities](domain-layer-lead-capture-form-entities.png)
 
 ### Application Layer -- Contact Commands & Queries
 
@@ -250,6 +254,8 @@ interface IContactImportService {
 @enduml
 ```
 
+![Application Layer -- Contact Commands & Queries](application-layer-contact-commands-queries.png)
+
 ### Application Layer -- Import & Form Commands
 
 ```plantuml
@@ -313,6 +319,8 @@ SubmitLeadCaptureFormCommand ..> IEmailService : emails photographer
 @enduml
 ```
 
+![Application Layer -- Import & Form Commands](application-layer-import-form-commands.png)
+
 ### API Layer -- Contact & Form Controllers
 
 ```plantuml
@@ -365,6 +373,8 @@ FormSubmissionController --> "IMediator" : sends commands
 @enduml
 ```
 
+![API Layer -- Contact & Form Controllers](api-layer-contact-form-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -391,6 +401,8 @@ M --> CC : result
 CC --> P : 201 Created {id, firstName, lastName, email}
 @enduml
 ```
+
+![Create Contact](create-contact.png)
 
 ### View Contact Profile
 
@@ -426,6 +438,8 @@ CC --> P : 200 OK {contact, documents,\nemailHistory, bookings, payments}
 @enduml
 ```
 
+![View Contact Profile](view-contact-profile.png)
+
 ### Automatic Lead-to-Client Conversion
 
 ```plantuml
@@ -449,6 +463,8 @@ ND --> CLH : sent
 CLH --> M : success
 @enduml
 ```
+
+![Automatic Lead-to-Client Conversion](automatic-lead-to-client-conversion.png)
 
 ### CSV Contact Import
 
@@ -495,6 +511,8 @@ IC --> P : 200 OK {created, merged, skipped, errors}
 @enduml
 ```
 
+![CSV Contact Import](csv-contact-import.png)
+
 ### Lead Capture Form Submission
 
 ```plantuml
@@ -532,3 +550,5 @@ M --> FSC : result
 FSC --> V : 201 Created {message: "Submitted"}
 @enduml
 ```
+
+![Lead Capture Form Submission](lead-capture-form-submission.png)

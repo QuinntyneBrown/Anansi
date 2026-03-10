@@ -157,6 +157,8 @@ Subscription --> SubscriptionStatus
 @enduml
 ```
 
+![Domain Layer -- Plan & Subscription Entities](domain-layer-plan-subscription-entities.png)
+
 ### Application Layer -- Subscription Commands & Queries
 
 ```plantuml
@@ -227,6 +229,8 @@ CheckFeatureAccessQuery ..> FeatureAccessResult : returns
 @enduml
 ```
 
+![Application Layer -- Subscription Commands & Queries](application-layer-subscription-commands-queries.png)
+
 ### API Layer -- Plans Controller
 
 ```plantuml
@@ -262,6 +266,8 @@ PlansController --> "IMediator"
 @enduml
 ```
 
+![API Layer -- Plans Controller](api-layer-plans-controller.png)
+
 ---
 
 ## Sequence Diagrams
@@ -291,6 +297,8 @@ M --> PC : Result.Success
 PC --> V : 200 OK [{Free}, {Basic},\n{Plus}, {Pro}, {Ultimate}]
 @enduml
 ```
+
+![Browse Available Plans (Public)](browse-available-plans-public.png)
 
 ### Subscribe to a Paid Plan
 
@@ -335,6 +343,8 @@ M --> PC : Result.Success
 PC --> P : 201 Created
 @enduml
 ```
+
+![Subscribe to a Paid Plan](subscribe-to-a-paid-plan.png)
 
 ### Upgrade/Downgrade Plan with Proration
 
@@ -383,6 +393,8 @@ PC --> P : 200 OK (updated subscription)
 @enduml
 ```
 
+![Upgrade/Downgrade Plan with Proration](upgrade-downgrade-plan-with-proration.png)
+
 ### Cancel Subscription
 
 ```plantuml
@@ -422,6 +434,8 @@ PC --> P : 204 No Content
 @enduml
 ```
 
+![Cancel Subscription](cancel-subscription.png)
+
 ### Check Feature Access (Runtime Gating)
 
 ```plantuml
@@ -454,6 +468,8 @@ end
 M --> FH : FeatureAccessResult
 @enduml
 ```
+
+![Check Feature Access (Runtime Gating)](check-feature-access-runtime-gating.png)
 
 ### Feature Gate Reference Table
 

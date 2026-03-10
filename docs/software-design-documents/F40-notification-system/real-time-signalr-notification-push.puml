@@ -1,0 +1,24 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor "Dashboard Browser" as Browser
+participant "NotificationHub" as Hub
+participant "CreateNotificationHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+== Connection Setup ==
+Browser -> Hub : Connect WebSocket\n(JWT auth, join photographer group)
+Hub --> Browser : Connected
+
+== Notification Arrives ==
+Handler -> DB : Create Notification
+Handler -> DB : SaveChangesAsync()
+
+Handler -> Hub : SendToGroupAsync(\nphotographerId,\n"NewNotification",\n{id, eventType, title, message,\nclientName, link, createdAt})
+
+Hub -> Browser : WebSocket message:\n"NewNotification" payload
+
+Browser -> Browser : Update bell badge count\nShow toast notification\nPrepend to notification panel
+
+@enduml

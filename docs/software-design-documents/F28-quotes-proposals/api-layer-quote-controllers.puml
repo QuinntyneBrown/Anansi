@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class QuotesController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(CreateQuoteCommand) : IActionResult
+  +Update(Guid, UpdateQuoteCommand) : IActionResult
+  +Delete(Guid) : IActionResult
+  +Send(Guid) : IActionResult
+  +Cancel(Guid) : IActionResult
+  +List(ListQuotesQuery) : IActionResult
+  +Get(Guid) : IActionResult
+}
+
+class QuoteTemplatesController <<ApiController>> {
+  -_mediator : IMediator
+  +SaveTemplate(SaveQuoteTemplateCommand) : IActionResult
+  +ListTemplates() : IActionResult
+  +ApplyTemplate(Guid, ApplyQuoteTemplateCommand) : IActionResult
+}
+
+class QuotePublicController <<ApiController>> {
+  -_mediator : IMediator
+  +ViewQuote(string token) : IActionResult
+  +AcceptQuote(string token) : IActionResult
+  +DeclineQuote(string token) : IActionResult
+}
+
+QuotesController --> "IMediator" : sends commands/queries
+QuoteTemplatesController --> "IMediator" : sends commands/queries
+QuotePublicController --> "IMediator" : sends commands/queries
+@enduml

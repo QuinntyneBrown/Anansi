@@ -1,0 +1,53 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BookingSiteController <<ApiController>> {
+  -_mediator : IMediator
+  +GetSite(slug) : IActionResult
+  +GetAvailableSlots(slug, sessionTypeId, start, end) : IActionResult
+  +UpdateSite(cmd) : IActionResult
+  +GetSiteConfig() : IActionResult
+}
+
+class SessionTypesController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(cmd) : IActionResult
+  +List() : IActionResult
+  +GetById(id) : IActionResult
+  +Update(id, cmd) : IActionResult
+  +Delete(id) : IActionResult
+  +Reorder(cmd) : IActionResult
+}
+
+class BookingsController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(cmd) : IActionResult
+  +List(query) : IActionResult
+  +GetDetail(id) : IActionResult
+  +Confirm(id) : IActionResult
+  +Decline(id, reason) : IActionResult
+  +Cancel(id) : IActionResult
+  +ValidateCoupon(code, price) : IActionResult
+}
+
+class BookingCouponsController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(cmd) : IActionResult
+  +List() : IActionResult
+  +Update(id, cmd) : IActionResult
+  +Delete(id) : IActionResult
+}
+
+note right of BookingSiteController
+  GetSite and GetAvailableSlots
+  are public (no [Authorize]).
+  UpdateSite requires [Authorize].
+end note
+
+BookingSiteController --> "IMediator" : sends queries/commands
+SessionTypesController --> "IMediator" : sends commands/queries
+BookingsController --> "IMediator" : sends commands/queries
+BookingCouponsController --> "IMediator" : sends commands
+@enduml

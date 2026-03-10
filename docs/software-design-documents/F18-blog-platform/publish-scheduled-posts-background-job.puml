@@ -1,0 +1,29 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "ScheduledPostsJob" as J
+participant "IServiceScopeFactory" as F
+participant "IApplicationDbContext" as DB
+
+J -> F : CreateScope()
+F --> J : scope
+
+J -> DB : Query BlogPosts\nWhere Status == Scheduled\nAND ScheduledPublishDate <= UtcNow
+DB --> J : List<BlogPost>
+
+loop each scheduled post
+  J -> J : post.Status = Published
+  J -> J : post.PublishDate = UtcNow
+end
+
+J -> DB : SaveChangesAsync()
+DB --> J : saved
+
+note right of J
+  Runs via IHostedService
+  or Hangfire recurring job.
+  Interval: every 1 minute.
+end note
+
+@enduml

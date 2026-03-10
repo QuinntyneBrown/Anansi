@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitesController" as C
+participant "IMediator" as M
+participant "CreateWebsiteValidator" as V
+participant "CreateWebsiteHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites\n{ name, subdomain, templateId }
+C -> M : Send(CreateWebsiteCommand)
+M -> V : Validate(command)
+V --> M : valid
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Count websites\n(photographerId, Draft)
+DB --> H : draftCount
+
+alt draftCount >= 10
+  H --> M : Result.Failure("Max 10 drafts")
+  M --> C : failure
+  C --> P : 400 "Maximum of 10 draft sites allowed"
+else draftCount < 10
+  H -> DB : AnyAsync(subdomain)
+  DB --> H : false
+  H -> DB : AnyAsync(templateId, active)
+  DB --> H : true
+  H -> DB : Add(website)\nSaveChangesAsync()
+  DB --> H : saved
+  H --> M : Result.Success(WebsiteDto)
+  M --> C : result
+  C --> P : 201 Created { websiteDto }
+end
+
+@enduml

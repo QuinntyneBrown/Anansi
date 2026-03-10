@@ -115,6 +115,8 @@ PageElement --> "*" ElementBreakpointOverride : BreakpointOverrides
 @enduml
 ```
 
+![Domain Layer -- Font System](domain-layer-font-system.png)
+
 ### Domain Layer -- Color System & Animations
 
 ```plantuml
@@ -165,6 +167,8 @@ Website ..> ColorPalette : applies via\nColorPaletteJson
 
 @enduml
 ```
+
+![Domain Layer -- Color System & Animations](domain-layer-color-system-animations.png)
 
 ### Application Layer -- Typography Commands & Queries
 
@@ -241,6 +245,8 @@ CreateCustomColorPaletteHandler ..> ColorPaletteDto : returns
 @enduml
 ```
 
+![Application Layer -- Typography Commands & Queries](application-layer-typography-commands-queries.png)
+
 ### API Layer -- WebsiteTypographyController
 
 ```plantuml
@@ -281,6 +287,8 @@ WebsitesController --> "IMediator"
 
 @enduml
 ```
+
+![API Layer -- WebsiteTypographyController](api-layer-websitetypographycontroller.png)
 
 ## Sequence Diagrams
 
@@ -329,6 +337,8 @@ end
 @enduml
 ```
 
+![Upload a Custom Font (WEB-3.4.1)](upload-a-custom-font-web-3-4-1.png)
+
 ### Apply a Font Theme to Website (WEB-3.4.1)
 
 ```plantuml
@@ -363,6 +373,8 @@ C --> P : 200 OK { websiteDto }
 
 @enduml
 ```
+
+![Apply a Font Theme to Website (WEB-3.4.1)](apply-a-font-theme-to-website-web-3-4-1.png)
 
 ### List and Apply a Color Palette (WEB-3.4.2)
 
@@ -415,6 +427,8 @@ WC --> P : 200 OK { websiteDto }
 @enduml
 ```
 
+![List and Apply a Color Palette (WEB-3.4.2)](list-and-apply-a-color-palette-web-3-4-2.png)
+
 ### Create a Custom Color Palette (WEB-3.4.2)
 
 ```plantuml
@@ -454,6 +468,8 @@ end
 
 @enduml
 ```
+
+![Create a Custom Color Palette (WEB-3.4.2)](create-a-custom-color-palette-web-3-4-2.png)
 
 ### Configure Scroll Animations (WEB-3.4.3)
 
@@ -499,6 +515,8 @@ end note
 
 @enduml
 ```
+
+![Configure Scroll Animations (WEB-3.4.3)](configure-scroll-animations-web-3-4-3.png)
 
 ### Delete a Custom Font with Usage Check (WEB-3.4.1)
 
@@ -551,3 +569,5 @@ end
 
 @enduml
 ```
+
+![Delete a Custom Font with Usage Check (WEB-3.4.1)](delete-a-custom-font-with-usage-check-web-3-4-1.png)

@@ -1,0 +1,36 @@
+@startuml
+actor Photographer as P
+participant "UploadMediaHandler" as UH
+participant "CheckFeatureAccessHandler" as CFA
+participant "IStorageService" as SS
+participant "RawProcessingService" as RPS
+participant "ICdnService" as CDN
+participant "ApplicationDbContext" as DB
+
+P -> UH : Upload .CR3 file (Canon RAW)
+UH -> CFA : CheckFeatureAccess("raw_upload")
+CFA --> UH : IsAllowed: true (Pro plan)
+
+UH -> SS : UploadAsync(rawStream, "photo.cr3",\n"image/x-canon-cr3")
+SS --> UH : originalStorageKey
+
+== Background Processing ==
+
+RPS -> SS : DownloadAsync(originalStorageKey)
+SS --> RPS : raw file stream
+
+RPS -> RPS : Decode RAW using\nLibRaw/dcraw:\n  - Extract embedded JPEG preview\n  - Generate full-res JPEG render
+RPS -> RPS : Extract EXIF metadata:\n  Camera, Lens, ISO,\n  Aperture, Shutter, GPS
+
+RPS -> SS : UploadAsync(previewJpeg)
+SS --> RPS : previewStorageKey
+
+RPS -> CDN : GenerateThumbnailAsync(\npreviewStorageKey, 400, 400)
+CDN --> RPS : thumbnailKey
+
+RPS -> CDN : GenerateProgressiveImagesAsync(\npreviewStorageKey)
+CDN --> RPS : ProgressiveImageSet
+
+RPS -> DB : Update GalleryMedia:\n  ThumbnailStorageKey = thumbnailKey\n  Width, Height, EXIF fields\n  MediaType = Raw
+RPS -> DB : SaveChangesAsync()
+@enduml

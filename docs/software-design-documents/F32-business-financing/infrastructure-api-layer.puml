@@ -1,0 +1,35 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class FinancingController <<ApiController>> {
+  -_mediator : IMediator
+  +Apply(command) : IActionResult
+  +GetApplication(id) : IActionResult
+  +AcceptOffer(id) : IActionResult
+  +DeclineOffer(id) : IActionResult
+  +ListHistory() : IActionResult
+  +ListRepayments(id, page) : IActionResult
+}
+
+class FinancingService <<Service>> {
+  -_db : IApplicationDbContext
+  -_paymentService : IPaymentService
+  +EvaluateEligibilityAsync() : bool
+  +GenerateOfferAsync() : FinancingOfferDto
+  +DisburseFundsAsync() : Task
+}
+
+interface IFinancingService <<Interface>> {
+  +EvaluateEligibilityAsync() : bool
+  +GenerateOfferAsync() : FinancingOfferDto
+  +DisburseFundsAsync() : Task
+}
+
+FinancingService ..|> IFinancingService
+FinancingController ..> ApplyForFinancingCommand
+FinancingController ..> AcceptFinancingOfferCommand
+FinancingController ..> GetFinancingApplicationQuery
+
+@enduml

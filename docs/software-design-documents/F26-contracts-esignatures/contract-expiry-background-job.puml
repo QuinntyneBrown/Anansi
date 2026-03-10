@@ -1,0 +1,20 @@
+@startuml
+participant "ContractExpiryJob" as JOB
+participant "MediatR" as M
+participant "ProcessContractExpiryHandler" as PEH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+JOB -> M : Send(ProcessContractExpiryCommand)
+M -> PEH : Handle(command)
+
+PEH -> DB : Query Contracts WHERE\nExpiresAt < UtcNow\nAND Status IN (Sent, Viewed)
+
+loop each expired contract
+  PEH -> DB : contract.Status = Expired
+  PEH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Contract Expired",\ncontractTitle)
+end
+
+PEH -> DB : SaveChangesAsync()
+PEH --> M : Result.Success(expiredCount)
+@enduml

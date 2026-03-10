@@ -1,0 +1,31 @@
+@startuml
+actor Photographer as P
+participant "PipelineBoardController" as PBC
+participant "MediatR" as M
+participant "ApplicationDbContext" as DB
+
+== Add New Stage ==
+P -> PBC : POST /api/pipeline/stages\n{name: "Editing", sortOrder: 2}
+PBC -> M : Send(CreateStageCommand)
+M -> DB : Shift existing stages >= sortOrder by +1
+M -> DB : Insert ProjectStage\n{name: "Editing", sortOrder: 2}
+DB --> M : saved
+M --> PBC : StageDto
+PBC --> P : 201 Created {id, name, sortOrder}
+
+== Rename Stage ==
+P -> PBC : PUT /api/pipeline/stages/{id}\n{name: "Color Grading"}
+PBC -> M : Send(UpdateStageCommand)
+M -> DB : Update ProjectStage.Name
+DB --> M : saved
+M --> PBC : success
+PBC --> P : 200 OK
+
+== Reorder All Stages ==
+P -> PBC : PUT /api/pipeline/stages/reorder\n{stageOrders: [{id, sortOrder: 0}, ...]}
+PBC -> M : Send(ReorderStagesCommand)
+M -> DB : Batch update SortOrder for each stage
+DB --> M : saved
+M --> PBC : success
+PBC --> P : 200 OK
+@enduml

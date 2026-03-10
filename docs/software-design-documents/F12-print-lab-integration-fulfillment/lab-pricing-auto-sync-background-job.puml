@@ -1,0 +1,29 @@
+@startuml
+skinparam maxMessageSize 200
+participant "LabPricingSyncJob" as job
+participant "ILabAdapter" as adapter
+participant "Print Lab API" as labApi
+participant "IApplicationDbContext" as db
+
+[-> job : Timer triggers\n(every 24 hours)
+
+loop for each LabPartner [WHCC, ProDPI, Millers, LoxleyColour]
+  job -> adapter : GetPricingAsync(ct)
+  adapter -> labApi : GET /pricing
+  labApi --> adapter : pricing catalog
+  adapter --> job : List<LabPricingResult>
+
+  loop for each LabPricingResult
+    job -> db : Find LabProduct by\n(labName, productName, size)
+    alt exists
+      job -> db : Update LabCostCents,\nPriceLastUpdated
+    else new product
+      job -> db : Create new LabProduct
+    end
+  end
+
+  job -> db : SaveChangesAsync()
+end
+
+[<-- job : Sync complete
+@enduml

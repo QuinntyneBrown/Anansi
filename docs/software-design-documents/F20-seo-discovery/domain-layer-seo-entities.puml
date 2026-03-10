@@ -1,0 +1,55 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class Website {
+    +Id : Guid
+    +PhotographerId : Guid
+    +DefaultMetaTitle : string?
+    +DefaultMetaDescription : string?
+    +DefaultOgImageUrl : string?
+  }
+
+  class WebsitePage {
+    +Id : Guid
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +MetaTitle : string?
+    +MetaDescription : string?
+    +OgImageUrl : string?
+  }
+
+  class BlogPost {
+    +Id : Guid
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +MetaTitle : string?
+    +MetaDescription : string?
+    +OgImageUrl : string?
+  }
+
+  class PageElement {
+    +Id : Guid
+    +PageId : Guid
+    +ElementType : ElementType
+    +ContentJson : string?
+  }
+}
+
+note right of PageElement
+  For Image elements,
+  ContentJson includes:
+  { imageUrl, altText }
+  SEO audit checks altText
+  is present and non-empty.
+end note
+
+Website --> "*" WebsitePage : Pages
+Website --> "*" BlogPost : BlogPosts
+WebsitePage --> "*" PageElement : Elements
+
+@enduml

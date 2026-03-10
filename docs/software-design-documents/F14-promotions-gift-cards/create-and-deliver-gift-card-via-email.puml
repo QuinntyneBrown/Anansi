@@ -1,0 +1,33 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "GiftCardsController" as ctrl
+participant "IMediator" as med
+participant "CreateGiftCardHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+participant "IEmailService" as email
+
+Photographer -> ctrl : POST /api/giftcards\n{amountCents=5000,\nrecipientEmail="client@example.com",\nrecipientName="Jane",\nsenderName="Studio ABC",\nmessage="Happy Birthday!"}
+ctrl -> med : Send(CreateGiftCardCommand)
+med -> handler : Handle(command, ct)
+
+handler -> user : PhotographerId
+user --> handler : Guid
+
+handler -> handler : Generate unique code\n(e.g., "GC-A1B2C3D4")
+handler -> handler : Build GiftCard entity\n(BalanceCents = AmountCents)
+
+handler -> db : GiftCards.Add(giftCard)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+alt recipientEmail is provided
+  handler -> email : SendBrandedGiftCardEmail(\nrecipient, senderName,\namount, code, message)
+  email --> handler : sent
+end
+
+handler --> med : Result<GiftCardDto>.Success
+med --> ctrl : Result
+ctrl --> Photographer : 201 Created {GiftCardDto}
+@enduml

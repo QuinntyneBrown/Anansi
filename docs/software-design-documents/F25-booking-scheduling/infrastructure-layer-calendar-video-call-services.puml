@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface IGoogleCalendarService {
+  +CreateEventAsync(booking) : string
+  +UpdateEventAsync(eventId, booking) : void
+  +DeleteEventAsync(eventId) : void
+  +GetBusyBlocksAsync(calendarId, start, end) : List<TimeBlock>
+  +SyncIncomingChangesAsync(calendarId) : void
+}
+
+interface IVideoCallService {
+  +CreateMeetingAsync(provider, booking) : string
+}
+
+class GoogleCalendarService {
+  -_calendarClient : CalendarService
+  -_dbContext : IApplicationDbContext
+  +CreateEventAsync() : string
+  +UpdateEventAsync() : void
+  +DeleteEventAsync() : void
+  +GetBusyBlocksAsync() : List<TimeBlock>
+  +SyncIncomingChangesAsync() : void
+}
+
+class GoogleCalendarSyncBackgroundService {
+  -_serviceScopeFactory : IServiceScopeFactory
+  +ExecuteAsync(ct) : Task
+}
+
+class VideoCallService {
+  -_zoomClient : IZoomApiClient
+  -_meetClient : IGoogleMeetClient
+  +CreateMeetingAsync(provider, booking) : string
+}
+
+class GetAvailableSlotsHandler {
+  -_dbContext : IApplicationDbContext
+  -_calendarService : IGoogleCalendarService
+  +Handle(query, ct) : AvailableSlotsDto
+}
+
+IGoogleCalendarService <|.. GoogleCalendarService
+IVideoCallService <|.. VideoCallService
+GoogleCalendarSyncBackgroundService --> IGoogleCalendarService
+GetAvailableSlotsHandler --> IGoogleCalendarService
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+actor Photographer as P
+participant "UploadMediaHandler" as UH
+participant "FileValidator" as FV
+
+P -> UH : Upload file
+
+UH -> FV : Check format supported?
+alt unsupported format
+  FV --> UH : "Unsupported format: .{ext}.\nSupported: JPEG, PNG, GIF,\nRAW (Pro+), MP4, MOV, AVI, M4V"
+  UH --> P : 400
+end
+
+UH -> FV : Check file size <= max?
+alt image > 50MB
+  FV --> UH : "Image exceeds 50MB limit"
+  UH --> P : 400
+end
+
+alt is RAW file
+  UH -> FV : Check plan allows RAW?
+  alt plan < Pro
+    FV --> UH : "RAW upload requires\nPro or Ultimate plan"
+    UH --> P : 403
+  end
+end
+
+alt is video file
+  UH -> FV : Check video resolution\nand duration vs plan
+  alt exceeds plan limit
+    FV --> UH : "Video exceeds plan limit.\nYour plan allows {X}min {quality}"
+    UH --> P : 403
+  end
+end
+
+UH -> FV : Check storage quota
+alt would exceed storage limit
+  FV --> UH : "Upload would exceed\nstorage limit ({used}/{limit}GB)"
+  UH --> P : 403
+end
+
+FV --> UH : All validations passed
+UH -> UH : Proceed with upload
+@enduml

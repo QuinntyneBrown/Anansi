@@ -1,0 +1,31 @@
+@startuml
+actor Photographer as P
+participant "QuotesController" as QC
+participant "MediatR" as M
+participant "SendQuoteHandler" as SH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+P -> QC : POST /api/quotes/{id}/send
+QC -> M : Send(SendQuoteCommand)
+M -> SH : Handle(command)
+
+SH -> DB : Load Quote with Contact
+
+alt quote not in Draft status
+  SH --> M : Result.Failure("Only drafts can be sent")
+  M --> QC : Result.Failure
+  QC --> P : 400 Bad Request
+end
+
+SH -> SH : Generate secure client\naccess token
+
+SH -> DB : quote.Status = Sent\nquote.SentAt = UtcNow
+SH -> DB : SaveChangesAsync()
+
+SH -> ES : SendTemplatedAsync(\nclient.Email,\n"Quote from {businessName}",\nquoteViewLink, totalAmount)
+
+SH --> M : Result.Success
+M --> QC : Result.Success
+QC --> P : 200 OK
+@enduml

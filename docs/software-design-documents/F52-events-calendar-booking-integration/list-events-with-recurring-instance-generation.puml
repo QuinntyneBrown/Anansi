@@ -1,0 +1,37 @@
+@startuml
+actor Client as C
+participant "EventsController" as EC
+participant "MediatR" as M
+participant "ListEventsQueryHandler" as H
+participant "IEventRecurrenceService" as RS
+participant "ApplicationDbContext" as DB
+
+C -> EC : GET /api/events\n?from=2026-01-01&to=2026-12-31\n&category=Festival
+EC -> M : Send(ListEventsQuery)
+M -> H : Handle()
+
+H -> DB : Load CulturalEvents\nWHERE Status = Approved\nAND IsDeleted = false\nAND (Category = 'Festival' OR @category IS NULL)
+DB --> H : events[]
+
+H -> H : Separate one-time vs recurring events
+
+loop for each recurring event
+  H -> RS : GenerateInstances(event,\nfrom: 2026-01-01, to: 2026-12-31)
+
+  RS -> RS : For Annual recurrence:\nMap TypicalStartMonth -> 2026 date\nMap TypicalEndMonth -> 2026 date\nCaribana: Aug 1 - Aug 4, 2026
+
+  RS --> H : List<EventInstance>\n[{startDate, endDate, isRecurring: true}]
+end
+
+H -> H : Filter one-time events\nwhere StartDate within range
+
+H -> H : Merge one-time + generated instances\nOrder by StartDate ASC
+
+H -> H : Apply pagination
+
+H -> H : Map to EventSummaryDto[]
+
+H --> M : PaginatedResult<EventSummaryDto>
+M --> EC : result
+EC --> C : 200 OK {\n  items: [\n    {name: "Black History Month",\n     startDate: "2026-02-01",\n     category: "Cultural",\n     isRecurringInstance: true},\n    {name: "Caribana",\n     startDate: "2026-08-01",\n     category: "Festival",\n     isRecurringInstance: true},\n    ...],\n  totalCount: 6\n}
+@enduml

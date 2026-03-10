@@ -1,0 +1,42 @@
+@startuml
+actor Client as C
+participant "QuotePublicController" as QPC
+participant "MediatR" as M
+participant "AcceptQuoteHandler" as AH
+participant "ApplicationDbContext" as DB
+participant "GenerateInvoiceFromQuoteHandler" as GIH
+participant "IEmailService" as ES
+
+C -> QPC : POST /api/quotes/accept/{token}
+QPC -> M : Send(AcceptQuoteCommand)
+M -> AH : Handle(command)
+
+AH -> DB : Load Quote by access token\nwith Items and Contact
+
+alt quote not in Sent/Viewed status
+  AH --> M : Result.Failure("Quote cannot be accepted")
+  M --> QPC : Result.Failure
+  QPC --> C : 400 Bad Request
+end
+
+AH -> DB : quote.Status = Accepted\nquote.AcceptedAt = UtcNow
+AH -> DB : SaveChangesAsync()
+
+AH -> M : Send(GenerateInvoiceFromQuoteCommand)
+M -> GIH : Handle(command)
+
+GIH -> GIH : Map QuoteItems\nto InvoiceLineItems
+GIH -> GIH : Calculate subtotal, total
+GIH -> DB : Generate invoice number
+GIH -> DB : Invoices.Add(draftInvoice)
+GIH -> DB : InvoiceLineItems.AddRange(items)
+GIH -> DB : quote.GeneratedInvoiceId\n= newInvoice.Id
+GIH -> DB : SaveChangesAsync()
+GIH --> M : Result.Success(invoiceId)
+
+AH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Quote Accepted by {clientName}",\nquoteTitle, invoiceLink)
+
+AH --> M : Result.Success
+M --> QPC : Result.Success
+QPC --> C : 200 OK "Quote accepted.\nYou will receive an invoice shortly."
+@enduml

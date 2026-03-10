@@ -1,0 +1,29 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "EmailController" as API
+participant "MediatR" as M
+participant "MarkReadHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : PUT /api/email/conversations/{id}/read
+API -> M : Send(MarkConversationReadCommand)
+M -> Handler : Handle(command)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Find EmailConversation\n(Id, PhotographerId)
+DB --> Handler : EmailConversation
+
+Handler -> DB : Set Conversation.IsRead = true
+Handler -> DB : Update all Messages\nwhere IsRead = false\nSet IsRead = true
+
+Handler -> DB : SaveChangesAsync()
+
+Handler --> M : Result.Success
+M --> API : Result.Success
+API --> Photographer : 200 OK
+
+@enduml

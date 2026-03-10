@@ -1,0 +1,31 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "FavoritesController" as API
+participant "DownloadFavoriteListHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "RequestDownloadHandler" as DownloadHandler
+
+Client -> API : POST /api/favorites/{listId}/download\n{resolution, pin}
+API -> Handler : Send(DownloadFavoriteListCommand)
+
+Handler -> DB : Find FavoriteList with Items
+DB --> Handler : FavoriteList + Items
+
+Handler -> Handler : Collect MediaIds from items
+
+Handler -> DownloadHandler : Delegate to RequestDownloadCommand\n{collectionId, resolution, mediaIds, pin}
+
+note right of Handler
+  Reuses F06 download flow:
+  PIN validation, limit checks,
+  ZIP packaging, async notification
+end note
+
+DownloadHandler --> Handler : Result<DownloadRequestDto>
+Handler --> API : Result<DownloadRequestDto>
+API --> Client : 202 Accepted (if async)\nor redirect (if immediate)
+
+@enduml

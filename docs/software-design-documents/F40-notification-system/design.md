@@ -136,6 +136,8 @@ NotificationPreference --> EmailDigestOption
 @enduml
 ```
 
+![Domain Layer - Notification Entities](domain-layer-notification-entities.png)
+
 ### Application Layer - Commands, Queries, and Event Flow
 
 ```plantuml
@@ -213,6 +215,8 @@ CreateNotificationCommandHandler ..> CreateNotificationCommand
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Event Flow](application-layer-commands-queries-and-event-flow.png)
+
 ### Application Layer - DTOs and Service Interfaces
 
 ```plantuml
@@ -265,6 +269,8 @@ CreateNotificationCommandHandler --> IPushNotificationService
 
 @enduml
 ```
+
+![Application Layer - DTOs and Service Interfaces](application-layer-dtos-and-service-interfaces.png)
 
 ### Infrastructure & API Layer
 
@@ -328,6 +334,8 @@ DeviceTokenController ..> RegisterDeviceTokenCommand
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ---
 
 ## Sequence Diagrams
@@ -384,6 +392,8 @@ CmdHandler --> Bus : Result<Guid> (notificationId)
 @enduml
 ```
 
+![Event Triggers Notification (Full Fan-Out)](event-triggers-notification-full-fan-out.png)
+
 ### Notification Center - List and Filter
 
 ```plantuml
@@ -415,6 +425,8 @@ API --> Photographer : 200 OK
 @enduml
 ```
 
+![Notification Center - List and Filter](notification-center-list-and-filter.png)
+
 ### Mark Notification as Read
 
 ```plantuml
@@ -443,6 +455,8 @@ API --> Photographer : 200 OK
 @enduml
 ```
 
+![Mark Notification as Read](mark-notification-as-read.png)
+
 ### Get Unread Count (Bell Badge)
 
 ```plantuml
@@ -467,6 +481,8 @@ API --> Photographer : 200 OK {unreadCount: 7}
 
 @enduml
 ```
+
+![Get Unread Count (Bell Badge)](get-unread-count-bell-badge.png)
 
 ### Update Notification Preferences
 
@@ -501,6 +517,8 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Update Notification Preferences](update-notification-preferences.png)
 
 ### Daily Digest Email
 
@@ -538,6 +556,8 @@ Job -> Job : Update last-run timestamp
 @enduml
 ```
 
+![Daily Digest Email](daily-digest-email.png)
+
 ### Register Device Token for Push
 
 ```plantuml
@@ -569,6 +589,8 @@ API --> App : 200 OK
 @enduml
 ```
 
+![Register Device Token for Push](register-device-token-for-push.png)
+
 ### Real-Time SignalR Notification Push
 
 ```plantuml
@@ -597,3 +619,5 @@ Browser -> Browser : Update bell badge count\nShow toast notification\nPrepend t
 
 @enduml
 ```
+
+![Real-Time SignalR Notification Push](real-time-signalr-notification-push.png)

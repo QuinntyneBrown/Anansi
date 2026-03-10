@@ -1,0 +1,25 @@
+@startuml
+actor Photographer as P
+participant "ContractsController" as CC
+participant "MediatR" as M
+participant "CreateContractHandler" as CH
+participant "ApplicationDbContext" as DB
+
+P -> CC : POST /api/contracts\n{title, content, fields[], contactId}
+CC -> M : Send(CreateContractCommand)
+M -> CH : Handle(command)
+
+CH -> CH : Validate (FluentValidation)
+alt validation fails
+  CH --> M : Result.Failure(errors)
+  M --> CC : Result.Failure
+  CC --> P : 400 Bad Request
+end
+
+CH -> DB : Contracts.Add(contract)
+CH -> DB : ContractFields.AddRange(fields)
+CH -> DB : SaveChangesAsync()
+CH --> M : Result.Success(contractId)
+M --> CC : Result.Success
+CC --> P : 201 Created {contractId}
+@enduml

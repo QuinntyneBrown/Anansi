@@ -138,6 +138,8 @@ Product ..> FulfillmentType
 @enduml
 ```
 
+![Domain -- Product Aggregate](domain-product-aggregate.png)
+
 ### Application -- Commands, Queries, and DTOs
 
 ```plantuml
@@ -215,6 +217,8 @@ CreateProductHandler ..> ProductDto
 @enduml
 ```
 
+![Application -- Commands, Queries, and DTOs](application-commands-queries-and-dtos.png)
+
 ### API -- ProductsController
 
 ```plantuml
@@ -245,6 +249,8 @@ ProductsController --> IMediator
 
 @enduml
 ```
+
+![API -- ProductsController](api-productscontroller.png)
 
 ---
 
@@ -281,6 +287,8 @@ ctrl --> Photographer : 201 Created {ProductDto}
 @enduml
 ```
 
+![Create Product with Variations](create-product-with-variations.png)
+
 ### Get Products (Filtered & Paginated)
 
 ```plantuml
@@ -306,6 +314,8 @@ med --> ctrl : Result
 ctrl --> Photographer : 200 OK {items, page, totalCount}
 @enduml
 ```
+
+![Get Products (Filtered & Paginated)](get-products-filtered-paginated.png)
 
 ### Create Package (Bundle of Products)
 
@@ -338,6 +348,8 @@ ctrl --> Photographer : 201 Created
 @enduml
 ```
 
+![Create Package (Bundle of Products)](create-package-bundle-of-products.png)
+
 ### Update Product
 
 ```plantuml
@@ -368,6 +380,8 @@ ctrl --> Photographer : 200 OK {ProductDto}
 @enduml
 ```
 
+![Update Product](update-product.png)
+
 ### Delete Product (Soft Delete)
 
 ```plantuml
@@ -396,6 +410,8 @@ med --> ctrl : Result
 ctrl --> Photographer : 204 No Content
 @enduml
 ```
+
+![Delete Product (Soft Delete)](delete-product-soft-delete.png)
 
 ### Digital Download Auto-Delivery on Payment
 
@@ -433,3 +449,5 @@ handler --> checkout : Result<OrderDto>
 checkout --> Client : Order confirmation\n+ download links
 @enduml
 ```
+
+![Digital Download Auto-Delivery on Payment](digital-download-auto-delivery-on-payment.png)

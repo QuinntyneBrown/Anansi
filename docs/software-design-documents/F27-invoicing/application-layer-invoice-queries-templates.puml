@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Invoices.Queries" {
+  class ViewInvoiceQuery <<record>> {
+    +InvoiceId : Guid
+  }
+
+  class ListInvoicesQuery <<record>> {
+    +Status : InvoiceStatus?
+    +ContactId : Guid?
+    +FromDate : DateTime?
+    +ToDate : DateTime?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetInvoiceByTokenQuery <<record>> {
+    +Token : string
+  }
+
+  class GetInvoicePaymentSummaryQuery <<record>> {
+    +InvoiceId : Guid
+  }
+}
+
+package "Features.Invoices.Templates" {
+  class SaveInvoiceTemplateCommand <<record>> {
+    +InvoiceId : Guid
+    +TemplateName : string
+  }
+
+  class ListInvoiceTemplatesQuery <<record>>
+
+  class ApplyInvoiceTemplateCommand <<record>> {
+    +TemplateId : Guid
+    +ContactId : Guid?
+    +ProjectId : Guid?
+  }
+}
+
+package "Features.Invoices.BackgroundJobs" {
+  class ProcessOverdueInvoicesCommand <<record>>
+  class SendPaymentRemindersCommand <<record>>
+}
+
+class GenerateInvoiceFromQuoteCommand <<record>> {
+  +QuoteId : Guid
+  +DueDate : DateTime?
+}
+
+class InvoiceDto <<record>> {
+  +Id : Guid
+  +InvoiceNumber : string
+  +Title : string
+  +Status : InvoiceStatus
+  +TotalCents : long
+  +PaidCents : long
+  +ContactName : string?
+  +DueDate : DateTime?
+}
+
+class InvoiceDetailDto <<record>> {
+  +Id : Guid
+  +InvoiceNumber : string
+  +Title : string
+  +Status : InvoiceStatus
+  +LineItems : List<LineItemDto>
+  +Schedules : List<PaymentScheduleDto>
+  +SubtotalCents : long
+  +TaxAmountCents : long
+  +TotalCents : long
+  +PaidCents : long
+  +TipAmountCents : long
+}
+@enduml

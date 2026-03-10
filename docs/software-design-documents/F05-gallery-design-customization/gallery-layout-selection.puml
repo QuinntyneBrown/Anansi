@@ -1,0 +1,36 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "UpdateCollectionHandler" as UCH
+participant "ApplicationDbContext" as DB
+
+P -> CC : PUT /api/collections/{id}\n{layout: "Horizontal"}
+CC -> M : Send(UpdateCollectionCommand)
+M -> UCH : Handle(command)
+
+UCH -> DB : Load Collection
+UCH -> UCH : collection.Layout = Horizontal
+UCH -> DB : SaveChangesAsync()
+UCH --> M : Result.Success(CollectionDto)
+M --> CC : Result.Success
+CC --> P : 200 OK
+
+== Client-Facing Rendering ==
+
+note over CC
+  **Vertical Grid** (portrait emphasis):
+  - Multi-column masonry layout
+  - Images maintain aspect ratio
+  - Columns adjust by screen width:
+    - Mobile: 2 columns
+    - Tablet: 3 columns
+    - Desktop: 4 columns
+
+  **Horizontal Grid** (landscape emphasis):
+  - Justified row layout
+  - Images align to consistent row height
+  - Rows adjust by screen width
+  - Landscape photos displayed wider
+end note
+@enduml

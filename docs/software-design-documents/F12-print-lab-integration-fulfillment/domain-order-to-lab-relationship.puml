@@ -1,0 +1,46 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Store" {
+  class Order {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Status : OrderStatus
+    +FulfillmentType : FulfillmentType
+    +LabPartner : LabPartner?
+    +LabOrderReference : string?
+    +TrackingNumber : string?
+    +TrackingUrl : string?
+  }
+
+  class OrderItem {
+    +Id : Guid
+    +OrderId : Guid
+    +ProductId : Guid
+    +ProductVariationId : Guid?
+    +SelectedPhotoUrl : string?
+  }
+
+  class Product {
+    +Id : Guid
+    +FulfillmentType : FulfillmentType
+    +LabPartner : LabPartner?
+    +LabColorCorrectionEnabled : bool
+  }
+}
+
+package "Anansi.Domain.Entities.Integrations" {
+  class LabOrder {
+    +Id : Guid
+    +StoreOrderId : Guid?
+    +ExternalLabOrderId : string?
+    +Status : LabOrderStatus
+  }
+}
+
+Order "1" --> "*" OrderItem : Items
+OrderItem --> "1" Product
+Order "1" ..> "0..*" LabOrder : StoreOrderId
+@enduml

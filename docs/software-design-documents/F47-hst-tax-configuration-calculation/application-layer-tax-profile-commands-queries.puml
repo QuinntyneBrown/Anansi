@@ -1,0 +1,32 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Tax.Commands" {
+  class UpdateTaxProfileCommand <<record>> {
+    +HstRate : decimal
+    +HstRegistrationNumber : string?
+    +RegistrationStatus : HstRegistrationStatus
+  }
+}
+
+package "Features.Tax.Queries" {
+  class GetTaxProfileQuery <<record>>
+}
+
+class TaxProfileDto <<record>> {
+  +HstRate : decimal
+  +HstRegistrationNumber : string?
+  +RegistrationStatus : HstRegistrationStatus
+}
+
+class TaxProfileValidator <<Validator>> {
+  +HstRate : 0..100
+  +HstRegistrationNumber : optional BN regex
+  +RegistrationStatus : valid enum
+}
+
+UpdateTaxProfileCommand ..> TaxProfileValidator : validated by
+GetTaxProfileQuery ..> TaxProfileDto : returns
+@enduml

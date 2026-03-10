@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Store" {
+  package "Commands" {
+    class CreateCouponCommand <<record>> {
+      +Request : CreateCouponRequest
+    }
+    class CreateCouponHandler {
+      -_db : IApplicationDbContext
+      -_currentUser : ICurrentUserService
+      +Handle(cmd, ct) : Result<CouponDto>
+    }
+
+    class UpdateCouponCommand <<record>> {
+      +Id : Guid
+      +Request : UpdateCouponRequest
+    }
+
+    class DeleteCouponCommand <<record>> {
+      +Id : Guid
+    }
+  }
+
+  package "Queries" {
+    class ValidateCouponQuery <<record>> {
+      +Code : string
+      +OrderSubtotalCents : long
+      +ItemIds : List<Guid>?
+    }
+    class ValidateCouponHandler {
+      +Handle(query, ct) : Result<CouponValidationResult>
+    }
+  }
+}
+
+package "Anansi.Application.DTOs.Store" {
+  class CouponValidationResult <<record>> {
+    +IsValid : bool
+    +DiscountCents : long
+    +ErrorMessage : string?
+  }
+}
+
+ValidateCouponQuery ..> CouponValidationResult
+CreateCouponHandler ..> CreateCouponCommand
+
+@enduml

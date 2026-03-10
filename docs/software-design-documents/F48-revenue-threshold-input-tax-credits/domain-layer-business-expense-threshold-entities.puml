@@ -1,0 +1,47 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BusinessExpense {
+  +Id : Guid
+  +PhotographerId : Guid
+  +AmountCents : long
+  +HstPaidCents : long
+  +Category : ExpenseCategory
+  +ExpenseDate : DateTime
+  +Description : string
+  +VendorName : string?
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class ThresholdAlertRecord {
+  +Id : Guid
+  +PhotographerId : Guid
+  +QuarterStart : DateTime
+  +AlertLevel : ThresholdAlertLevel
+  +CreatedAt : DateTime
+}
+
+enum ExpenseCategory {
+  Equipment
+  Software
+  Studio
+  Travel
+  Supplies
+  Marketing
+  ProfessionalServices
+  Other
+}
+
+enum ThresholdAlertLevel {
+  None
+  Warning
+  Critical
+  Exceeded
+}
+
+BusinessExpense --> ExpenseCategory : uses
+ThresholdAlertRecord --> ThresholdAlertLevel : uses
+@enduml

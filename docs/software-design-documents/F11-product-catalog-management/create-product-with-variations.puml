@@ -1,0 +1,26 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "ProductsController" as ctrl
+participant "IMediator" as med
+participant "CreateProductValidator" as val
+participant "CreateProductHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : POST /api/products\n{name, productType, fulfillmentType, variations[]}
+ctrl -> med : Send(CreateProductCommand)
+med -> val : Validate(command)
+val --> med : ValidationResult (pass)
+med -> handler : Handle(command, ct)
+handler -> user : PhotographerId
+user --> handler : Guid
+handler -> handler : Build Product entity\nwith Variations
+handler -> db : Products.Add(product)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+handler -> handler : MapToDto(product)
+handler --> med : Result<ProductDto>.Success
+med --> ctrl : Result<ProductDto>
+ctrl --> Photographer : 201 Created {ProductDto}
+@enduml

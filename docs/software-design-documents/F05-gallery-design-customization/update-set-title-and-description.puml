@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "CollectionSetsController" as CSC
+participant "MediatR" as M
+participant "UpdateSetHandler" as USH
+participant "ApplicationDbContext" as DB
+
+P -> CSC : PUT /api/collections/{cid}/sets/{sid}\n{title: "Reception Highlights",\ndescription: "**Best moments**\nfrom the evening\n\n*Captured at sunset*"}
+CSC -> M : Send(UpdateSetCommand)
+M -> USH : Handle(command)
+
+USH -> DB : Load CollectionSet by id
+alt set not found
+  USH --> M : Result.Failure("Set not found")
+  M --> CSC : 404
+  CSC --> P : 404
+end
+
+USH -> USH : Sanitize description:\n  Allow: **bold**, *italic*,\n  line breaks\n  Strip: HTML tags,\n  scripts, unsafe content
+
+USH -> USH : set.Title = "Reception Highlights"
+USH -> USH : set.Description = sanitized text
+
+USH -> DB : SaveChangesAsync()
+USH --> M : Result.Success(CollectionSetDto)
+M --> CSC : Result.Success
+CSC --> P : 200 OK
+
+note right
+  Client-facing rendering
+  displays the title and
+  description above the
+  set's photos with basic
+  formatting (bold, italic,
+  line breaks)
+end note
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class TaxProfile {
+  +Id : Guid
+  +PhotographerId : Guid
+  +HstRate : decimal
+  +HstRegistrationNumber : string?
+  +RegistrationStatus : HstRegistrationStatus
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+enum HstRegistrationStatus {
+  NotRegistered
+  Voluntary
+  Mandatory
+}
+
+TaxProfile --> HstRegistrationStatus : uses
+TaxProfile --> "1" Photographer : PhotographerId
+@enduml

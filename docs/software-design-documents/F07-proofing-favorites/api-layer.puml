@@ -1,0 +1,27 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class FavoritesController <<Controller>> {
+  +CreateList() : ActionResult
+  +AddItem() : ActionResult
+  +RemoveItem() : ActionResult
+  +UpdateComment() : ActionResult
+  +CompleteList() : ActionResult
+  +GetListItems() : ActionResult
+  +ListLists() : ActionResult
+  +ShareList() : ActionResult
+  +DownloadList() : ActionResult
+  +DeliverList() : ActionResult
+  +ExportList() : ActionResult
+  +GetDashboard() : ActionResult
+}
+
+class FavoritesController
+note right of FavoritesController
+  Route: /api/collections/{collectionId}/favorites
+  Dashboard: /api/favorites/dashboard
+end note
+
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+actor "External System" as EXT
+participant "TemplatesApiController" as TC
+participant "ApiKeyAuthHandler" as AH
+participant "IApplicationDbContext" as DB
+participant "MediatR" as M
+participant "GetTemplatesHandler" as H
+
+EXT -> TC : GET /api/v1/templates/email?page=1&pageSize=20\nX-Api-Key: anan_xyz...
+
+TC -> AH : Authenticate request
+AH -> AH : Hash provided key with SHA256
+AH -> DB : ApiKeys.FirstOrDefault(\nKeyHash == hash\n&& IsActive\n&& (ExpiresAt == null || ExpiresAt > now))
+DB --> AH : apiKey (or null)
+
+alt key not found or expired
+  AH --> TC : AuthenticateResult.Fail
+  TC --> EXT : 401 Unauthorized
+end
+
+AH -> DB : apiKey.LastUsedAt = UtcNow
+AH -> DB : SaveChangesAsync()
+AH --> TC : AuthenticateResult.Success\n(claims with PhotographerId)
+
+TC -> M : Send(GetTemplatesQuery {\nType: "email", Page: 1, PageSize: 20})
+M -> H : Handle(query)
+H -> DB : EmailTemplates\n.Where(PhotographerId == id)\n.OrderBy(CreatedAt)\n.Skip(0).Take(20)
+DB --> H : templates[]
+H --> M : Result.Success(PagedList<TemplateDto>)
+M --> TC : Result.Success
+TC --> EXT : 200 OK {\nitems: [{id, name, subject, body}],\npage: 1, pageSize: 20,\ntotalCount: 42\n}
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+actor Photographer as P
+participant "CollectionSetsController" as CSC
+participant "MediatR" as M
+participant "ApplicationDbContext" as DB
+
+== Create a Set ==
+P -> CSC : POST /api/collections/{collectionId}/sets\n{title, description, sortOrder, isClientExclusive}
+CSC -> M : Send(CreateSetCommand)
+M -> DB : Verify Collection exists\nand belongs to photographer
+M -> DB : CollectionSets.Add(newSet)
+M -> DB : SaveChangesAsync()
+M --> CSC : Result.Success(CollectionSetDto)
+CSC --> P : 200 OK
+
+== Reorder Sets ==
+P -> CSC : PUT /api/collections/{collectionId}/sets/reorder\n{setIdsInOrder: [id3, id1, id2]}
+CSC -> M : Send(ReorderSetsCommand)
+M -> DB : Load all sets for collection
+
+loop each setId with index
+  M -> M : set.SortOrder = index
+end
+
+M -> DB : SaveChangesAsync()
+M --> CSC : Result.Success
+CSC --> P : 200 OK
+@enduml

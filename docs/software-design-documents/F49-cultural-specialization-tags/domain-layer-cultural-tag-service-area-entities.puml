@@ -1,0 +1,40 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CulturalTag {
+  +Id : Guid
+  +PhotographerId : Guid
+  +TagName : string
+  +IsPredefined : bool
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class ServiceArea {
+  +Id : Guid
+  +PhotographerId : Guid
+  +PrimaryNeighborhood : string
+  +Latitude : double
+  +Longitude : double
+  +RadiusKm : int
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+CulturalTag --> "1" Photographer : PhotographerId
+ServiceArea --> "1" Photographer : PhotographerId
+
+note bottom of CulturalTag
+  Max 20 tags per photographer.
+  IsPredefined = true for library tags.
+  Custom tags: max 50 chars.
+end note
+
+note bottom of ServiceArea
+  RadiusKm: 5..100 km.
+  Neighborhood: predefined Toronto list.
+  Lat/Lng: geocoded coordinates.
+end note
+@enduml

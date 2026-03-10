@@ -118,6 +118,8 @@ Quote --> QuoteStatus : uses
 @enduml
 ```
 
+![Domain Layer -- Quote Entities](domain-layer-quote-entities.png)
+
 ### Application Layer -- Quote Commands & Queries
 
 ```plantuml
@@ -196,6 +198,8 @@ SendQuoteCommand ..> IEmailService : uses
 @enduml
 ```
 
+![Application Layer -- Quote Commands & Queries](application-layer-quote-commands-queries.png)
+
 ### Application Layer -- Quote Templates
 
 ```plantuml
@@ -250,6 +254,8 @@ class QuoteTemplateDto <<record>> {
 @enduml
 ```
 
+![Application Layer -- Quote Templates](application-layer-quote-templates.png)
+
 ### API Layer -- Quote Controllers
 
 ```plantuml
@@ -289,6 +295,8 @@ QuotePublicController --> "IMediator" : sends commands/queries
 @enduml
 ```
 
+![API Layer -- Quote Controllers](api-layer-quote-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -327,6 +335,8 @@ QC --> P : 201 Created {quoteId}
 @enduml
 ```
 
+![Create Quote](create-quote.png)
+
 ### Send Quote to Client
 
 ```plantuml
@@ -362,6 +372,8 @@ M --> QC : Result.Success
 QC --> P : 200 OK
 @enduml
 ```
+
+![Send Quote to Client](send-quote-to-client.png)
 
 ### Client Accepts Quote (Auto-generates Invoice)
 
@@ -410,6 +422,8 @@ QPC --> C : 200 OK "Quote accepted.\nYou will receive an invoice shortly."
 @enduml
 ```
 
+![Client Accepts Quote (Auto-generates Invoice)](client-accepts-quote-auto-generates-invoice.png)
+
 ### Client Declines Quote
 
 ```plantuml
@@ -443,6 +457,8 @@ M --> QPC : Result.Success
 QPC --> C : 200 OK
 @enduml
 ```
+
+![Client Declines Quote](client-declines-quote.png)
 
 ### Apply Quote Template
 
@@ -479,3 +495,5 @@ M --> QTC : Result.Success
 QTC --> P : 201 Created {quoteId}
 @enduml
 ```
+
+![Apply Quote Template](apply-quote-template.png)

@@ -1,0 +1,34 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+participant "CheckoutFlow" as checkout
+participant "RedeemGiftCardHandler" as handler
+participant "IApplicationDbContext" as db
+
+Client -> checkout : Apply gift card code\n"GC-A1B2C3D4" to order
+
+checkout -> handler : Handle(RedeemGiftCardCommand\n{code, amountCents=8000, orderId})
+
+handler -> db : GiftCards\n.FirstOrDefaultAsync(\nCode == "GC-A1B2C3D4")
+db --> handler : GiftCard\n(BalanceCents = 5000)
+
+handler -> handler : Check IsActive == true
+handler -> handler : Check ExpiryDate > now or null
+
+alt balance >= order amount
+  handler -> handler : deduct = amountCents\nremaining = balance - amountCents
+else balance < order amount
+  handler -> handler : deduct = BalanceCents\nremaining = 0
+  note right: Client pays difference\nvia payment method
+end
+
+handler -> handler : GiftCard.BalanceCents = remaining (0)
+handler -> db : SaveChangesAsync()
+db --> handler : success
+
+handler --> checkout : Result<long>\n(remainingBalance = 0)
+
+checkout -> checkout : DiscountCents += deduct (5000)\nRemaining 3000 charged\nto payment method
+
+checkout --> Client : Order summary updated\n(Gift card: -$50.00)
+@enduml

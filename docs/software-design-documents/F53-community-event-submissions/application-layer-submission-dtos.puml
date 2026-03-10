@@ -1,0 +1,30 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CommunityEventDto <<record>> {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +StartDate : DateTime
+  +EndDate : DateTime?
+  +Venue : string?
+  +Neighborhood : string?
+  +Category : string
+  +Recurrence : string
+  +WebsiteUrl : string?
+  +Status : string
+  +RejectionReason : string?
+  +SubmittedByName : string?
+  +CreatedAt : DateTime
+}
+
+class "PaginatedResult<CommunityEventDto>" as PaginatedResult {
+  +Items : List<CommunityEventDto>
+  +Page : int
+  +PageSize : int
+  +TotalCount : int
+  +TotalPages : int
+}
+@enduml

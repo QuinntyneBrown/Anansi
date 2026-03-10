@@ -1,0 +1,65 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class Notification {
+  +PhotographerId : Guid
+  +EventType : NotificationEventType
+  +Category : NotificationCategory
+  +Title : string
+  +Message : string
+  +ClientName : string?
+  +Link : string?
+  +IsRead : bool
+  +ReadAt : DateTime?
+}
+
+class NotificationPreference {
+  +PhotographerId : Guid
+  +EventType : NotificationEventType
+  +EmailEnabled : bool
+  +PushEnabled : bool
+  +InAppEnabled : bool
+  +EmailDigestOption : EmailDigestOption
+}
+
+enum NotificationEventType {
+  PhotoDownloaded
+  StoreOrderPlaced
+  FavoriteListUpdated
+  ContractSigned
+  InvoicePaymentReceived
+  SessionBooked
+  QuoteAccepted
+  MessageReceived
+  FormSubmissionReceived
+  GalleryExpiring
+}
+
+enum NotificationCategory {
+  ClientGallery
+  Store
+  StudioManager
+  Other
+}
+
+enum EmailDigestOption {
+  RealTime
+  DailySummary
+}
+
+BaseEntity <|-- Notification
+BaseEntity <|-- NotificationPreference
+Notification --> NotificationEventType
+Notification --> NotificationCategory
+NotificationPreference --> NotificationEventType
+NotificationPreference --> EmailDigestOption
+
+@enduml

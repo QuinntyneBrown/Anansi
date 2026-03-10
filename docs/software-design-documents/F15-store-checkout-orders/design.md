@@ -141,6 +141,8 @@ OrderItem --> "0..1" ProductVariation : ProductVariation
 @enduml
 ```
 
+![Domain -- Order Aggregate](domain-order-aggregate.png)
+
 ### Domain -- Tax & Shipping Configuration
 
 ```plantuml
@@ -210,6 +212,8 @@ end note
 @enduml
 ```
 
+![Domain -- Tax & Shipping Configuration](domain-tax-shipping-configuration.png)
+
 ### Application -- Checkout Command & Payment Interfaces
 
 ```plantuml
@@ -266,6 +270,8 @@ CreateOrderHandler --> IEmailService
 @enduml
 ```
 
+![Application -- Checkout Command & Payment Interfaces](application-checkout-command-payment-interfaces.png)
+
 ### API -- Store Controllers
 
 ```plantuml
@@ -310,6 +316,8 @@ ShippingMethodsController --> IMediator
 
 @enduml
 ```
+
+![API -- Store Controllers](api-store-controllers.png)
 
 ---
 
@@ -390,6 +398,8 @@ ctrl --> Client : 201 Created {OrderDto}
 @enduml
 ```
 
+![Complete Checkout Flow (Stripe)](complete-checkout-flow-stripe.png)
+
 ### Checkout with PayPal
 
 ```plantuml
@@ -429,6 +439,8 @@ handler --> ctrl : Result<OrderDto>
 ctrl --> Client : 201 Created {OrderDto}
 @enduml
 ```
+
+![Checkout with PayPal](checkout-with-paypal.png)
 
 ### Offline Payment Recording
 
@@ -471,6 +483,8 @@ end note
 @enduml
 ```
 
+![Offline Payment Recording](offline-payment-recording.png)
+
 ### Tax Rate Configuration
 
 ```plantuml
@@ -499,6 +513,8 @@ med --> ctrl : Result
 ctrl --> Photographer : 201 Created {TaxRateDto}
 @enduml
 ```
+
+![Tax Rate Configuration](tax-rate-configuration.png)
 
 ### Order Status Update with Tracking
 
@@ -536,6 +552,8 @@ ctrl --> Photographer : 200 OK {OrderDto}
 @enduml
 ```
 
+![Order Status Update with Tracking](order-status-update-with-tracking.png)
+
 ### Search and Filter Orders
 
 ```plantuml
@@ -564,3 +582,5 @@ med --> ctrl : Result
 ctrl --> Photographer : 200 OK\n{items[], page, totalCount, totalPages}
 @enduml
 ```
+
+![Search and Filter Orders](search-and-filter-orders.png)

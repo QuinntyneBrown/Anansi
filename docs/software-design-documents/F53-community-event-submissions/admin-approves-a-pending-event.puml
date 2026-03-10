@@ -1,0 +1,39 @@
+@startuml
+actor Admin as A
+participant "EventModerationController" as MC
+participant "MediatR" as M
+participant "ModerateEventCommandHandler" as H
+participant "ApplicationDbContext" as DB
+
+A -> MC : PUT /api/events/{id}/status\n{status: "Approved"}
+MC -> M : Send(ModerateEventCommand)
+M -> H : Handle()
+
+H -> DB : Load CulturalEvent by Id
+DB --> H : event (Status = Pending)
+
+alt event not found
+  H --> M : throw NotFoundException
+else event.Status != Pending
+  H --> M : throw ValidationException\n("Only pending events can be moderated")
+end
+
+H -> DB : event.Status = Approved
+H -> DB : SaveChanges
+DB --> H : saved
+
+H -> H : Raise EventApprovedEvent
+
+H -> H : Map to CommunityEventDto
+
+H --> M : CommunityEventDto
+M --> MC : result
+MC --> A : 200 OK {\n  id, name, status: "Approved"\n}
+
+note right of H
+  The event is now visible
+  in GET /api/events public listings
+  (ListEventsQuery filters by
+  Status = Approved).
+end note
+@enduml

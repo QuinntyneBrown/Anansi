@@ -1,0 +1,42 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface IAnalyticsAggregationService {
+  +AggregateAsync(date) : Task
+  +PruneRawEventsAsync(days) : Task
+}
+
+interface IGeoLocationService {
+  +ResolveCountryAsync(ip) : string?
+}
+
+class AnalyticsAggregationService {
+  -_dbContext : IApplicationDbContext
+  +AggregateAsync(date) : Task
+  +PruneRawEventsAsync(retentionDays) : Task
+}
+
+class GeoLocationService {
+  -_geoDatabase : DatabaseReader
+  +ResolveCountryAsync(ip) : string?
+}
+
+class AnalyticsAggregationBackgroundService {
+  -_serviceScopeFactory : IServiceScopeFactory
+  -_logger : ILogger
+  +ExecuteAsync(ct) : Task
+}
+
+class RecordPageHitHandler {
+  -_dbContext : IApplicationDbContext
+  -_geoService : IGeoLocationService
+  +Handle(cmd, ct) : Task
+}
+
+IAnalyticsAggregationService <|.. AnalyticsAggregationService
+IGeoLocationService <|.. GeoLocationService
+AnalyticsAggregationBackgroundService --> IAnalyticsAggregationService
+RecordPageHitHandler --> IGeoLocationService
+@enduml

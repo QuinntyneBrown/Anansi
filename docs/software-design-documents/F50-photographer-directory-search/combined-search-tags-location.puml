@@ -1,0 +1,50 @@
+@startuml
+actor Client as C
+participant "DirectoryController" as DC
+participant "MediatR" as M
+participant "SearchDirectoryQueryHandler" as H
+participant "INeighborhoodLookupService" as NL
+participant "IHaversineCalculator" as HC
+participant "ApplicationDbContext" as DB
+
+C -> DC : GET /api/directory/search\n?tags=Nigerian+Traditional\n&neighborhood=Little+Jamaica\n&page=1&pageSize=20
+DC -> M : Send(SearchDirectoryQuery)
+M -> H : Handle()
+
+H -> H : Detect combined search mode\n(tags AND location provided)
+
+== Tag Matching Phase ==
+
+H -> DB : SELECT PhotographerId,\nCOUNT(*) AS MatchingTagCount\nFROM PhotographerCulturalTags pct\nJOIN CulturalTags ct\nWHERE ct.Name IN ('Nigerian Traditional')\nGROUP BY PhotographerId
+DB --> H : tagMatches (photographerId -> count)
+
+== Location Filtering Phase ==
+
+H -> NL : GetCoordinatesAsync("Little Jamaica")
+NL --> H : (43.6896, -79.4285)
+
+H -> DB : Load PhotographerServiceArea\nWHERE PhotographerId IN (tagMatches)
+DB --> H : serviceAreas[]
+
+loop for each service area in tag-matched set
+  H -> HC : CalculateDistanceKm(\nsearchLat, searchLng,\nphotographerLat, photographerLng)
+  HC --> H : distanceKm
+
+  H -> H : Exclude if distanceKm > radiusKm
+end
+
+== Scoring Phase ==
+
+H -> H : Compute composite score:\nmaxTags = max(matchingTagCounts)\nmaxDist = max(distances)\nFor each photographer:\n  tagScore = matchCount / maxTags\n  distScore = 1 - (distance / maxDist)\n  composite = (tagScore * 0.6) + (distScore * 0.4)
+
+H -> H : Sort by composite score descending
+
+H -> H : Apply pagination
+
+H -> DB : Load full profile + all tags\nfor result set
+DB --> H : profiles + tags
+
+H --> M : PaginatedResult<DirectorySearchResultDto>
+M --> DC : result
+DC --> C : 200 OK {\n  items: [{name, tags,\n    matchingTagCount: 1,\n    distanceKm: 3.1,\n    relevanceScore: 0.82}],\n  page: 1, totalCount: 4\n}
+@enduml

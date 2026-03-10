@@ -1,0 +1,33 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ReportsController" as API
+participant "MediatR" as M
+participant "ListInvoicesByStatusHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/reports/invoices?\nstatus=Overdue&page=1
+API -> M : Send(ListInvoicesByStatusQuery)
+M -> Handler : Handle(query)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Query Invoices\n(PhotographerId, Status filter,\nexclude templates)
+Handler -> DB : Include Contact for client name
+DB --> Handler : IQueryable<Invoice>
+
+Handler -> DB : CountAsync()
+DB --> Handler : totalCount
+
+Handler -> DB : OrderBy(DueDate)\n.Skip().Take()
+DB --> Handler : List<Invoice>
+
+Handler -> Handler : Project to InvoiceSummaryDto,\nset IsOverdue = Status == Overdue\nor DueDate < UtcNow
+
+Handler --> M : Result<PagedList<InvoiceSummaryDto>>
+M --> API : Result.Success
+API --> Photographer : 200 OK (paginated invoices\nwith overdue highlighting)
+
+@enduml

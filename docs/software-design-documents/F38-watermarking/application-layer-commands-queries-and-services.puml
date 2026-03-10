@@ -1,0 +1,72 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CreateWatermarkCommand <<Command>> {
+  +Name : string
+  +Type : WatermarkType
+  +Text : string?
+  +FontFamily : string?
+  +ImageUrl : string?
+  +Opacity : double
+  +Scale : double
+  +Position : WatermarkPosition
+  +IsDefault : bool
+}
+
+class UpdateWatermarkCommand <<Command>> {
+  +WatermarkId : Guid
+  +Name : string?
+  +Text : string?
+  +FontFamily : string?
+  +ImageUrl : string?
+  +Opacity : double?
+  +Scale : double?
+  +Position : WatermarkPosition?
+  +IsDefault : bool?
+}
+
+class ApplyWatermarkToCollectionCommand <<Command>> {
+  +CollectionId : Guid
+  +WatermarkId : Guid
+}
+
+class RemoveWatermarkFromCollectionCommand <<Command>> {
+  +CollectionId : Guid
+}
+
+class GetWatermarkedImageQuery <<Query>> {
+  +MediaId : Guid
+  +CollectionId : Guid
+  +Width : int?
+  +Height : int?
+}
+
+class WatermarkDto <<DTO>> {
+  +Id : Guid
+  +Name : string
+  +Type : WatermarkType
+  +Text : string?
+  +FontFamily : string?
+  +ImageUrl : string?
+  +Opacity : double
+  +Scale : double
+  +Position : WatermarkPosition
+  +IsDefault : bool
+  +CreatedAt : DateTime
+}
+
+interface IWatermarkCompositorService <<Interface>> {
+  +CompositeAsync(image, watermark, width, height) : Stream
+}
+
+interface ICdnService <<Interface>> {
+  +InvalidateAsync(patterns) : Task
+  +GetUrlAsync(key) : string
+}
+
+GetWatermarkedImageQuery --> IWatermarkCompositorService
+ApplyWatermarkToCollectionCommand --> ICdnService
+
+@enduml

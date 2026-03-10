@@ -1,0 +1,29 @@
+@startuml
+actor Client as C
+participant "QuotePublicController" as QPC
+participant "MediatR" as M
+participant "DeclineQuoteHandler" as DH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+C -> QPC : POST /api/quotes/decline/{token}
+QPC -> M : Send(DeclineQuoteCommand)
+M -> DH : Handle(command)
+
+DH -> DB : Load Quote by access token
+
+alt quote not in Sent/Viewed status
+  DH --> M : Result.Failure("Quote cannot be declined")
+  M --> QPC : Result.Failure
+  QPC --> C : 400 Bad Request
+end
+
+DH -> DB : quote.Status = Declined
+DH -> DB : SaveChangesAsync()
+
+DH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Quote Declined",\nquoteTitle, clientName)
+
+DH --> M : Result.Success
+M --> QPC : Result.Success
+QPC --> C : 200 OK
+@enduml

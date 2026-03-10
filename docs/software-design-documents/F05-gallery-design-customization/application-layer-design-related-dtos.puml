@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CollectionDto {
+  +Id : Guid
+  +Title : string
+  +Description : string?
+  +Status : CollectionStatus
+  +Slug : string
+  --Cover--
+  +CoverStyle : CoverStyle
+  +CoverPhotoId : Guid?
+  +CoverPhotoUrl : string?
+  +CoverFocalPointX : double?
+  +CoverFocalPointY : double?
+  +CoverVideoUrl : string?
+  +CoverVideoAutoplay : bool
+  --Design--
+  +Theme : ThemeMode
+  +FontFamily : string
+  +ColorPalette : string
+  +CustomColorHex : string?
+  +Layout : GridLayout
+  --Slideshow--
+  +SlideshowSpeed : SlideshowSpeed
+  +SlideshowAutoLoop : bool
+  --Language--
+  +Language : GalleryLanguage
+}
+
+class CollectionSetDto {
+  +Id : Guid
+  +CollectionId : Guid
+  +Title : string
+  +Description : string?
+  +SortOrder : int
+  +IsClientExclusive : bool
+  +MediaCount : int
+}
+
+class CoverStylePreview {
+  +Style : CoverStyle
+  +Name : string
+  +ThumbnailUrl : string
+  +Description : string
+}
+
+class FontOption {
+  +Family : string
+  +DisplayName : string
+  +Category : string
+  +PreviewUrl : string
+}
+
+class ColorPaletteOption {
+  +Name : string
+  +Primary : string
+  +Secondary : string
+  +Accent : string
+  +Background : string
+  +Text : string
+}
+
+CollectionDto *-- CollectionSetDto : contains sets
+@enduml

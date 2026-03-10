@@ -1,0 +1,69 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ApplyForFinancingCommand <<Command>> {
+  +RequestedAmountCents : long
+}
+
+class AcceptFinancingOfferCommand <<Command>> {
+  +ApplicationId : Guid
+}
+
+class DeclineFinancingOfferCommand <<Command>> {
+  +ApplicationId : Guid
+}
+
+class ProcessFinancingRepaymentCommand <<Command>> {
+  +PaymentRecordId : Guid
+}
+
+class GetFinancingApplicationQuery <<Query>> {
+  +Id : Guid
+}
+
+class ListFinancingHistoryQuery <<Query>> {
+}
+
+class ListRepaymentsQuery <<Query>> {
+  +ApplicationId : Guid
+  +Page : int
+  +PageSize : int
+}
+
+class FinancingApplicationDto <<DTO>> {
+  +Id : Guid
+  +RequestedAmountCents : long
+  +OfferedAmountCents : long?
+  +FlatFeeCents : long?
+  +RepaymentPercentage : decimal?
+  +RepaidCents : long
+  +Status : string
+}
+
+class FinancingRepaymentDto <<DTO>> {
+  +Id : Guid
+  +ApplicationId : Guid
+  +PaymentRecordId : Guid
+  +DeductedAmountCents : long
+  +CreatedAt : DateTime
+}
+
+class FinancingOfferDto <<DTO>> {
+  +OfferedAmountCents : long
+  +FlatFeeCents : long
+  +RepaymentPercentage : decimal
+  +EstimatedRepaymentMonths : int
+}
+
+interface IFinancingService <<Interface>> {
+  +EvaluateEligibilityAsync() : bool
+  +GenerateOfferAsync() : FinancingOfferDto
+  +DisburseFundsAsync() : Task
+}
+
+ApplyForFinancingCommand ..> IFinancingService
+AcceptFinancingOfferCommand ..> IFinancingService
+
+@enduml

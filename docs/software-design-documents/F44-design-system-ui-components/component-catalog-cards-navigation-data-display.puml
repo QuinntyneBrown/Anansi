@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Layout Components" {
+  class Card <<component>> {
+    +header : Slot
+    +content : Slot
+    +actions : Slot
+    +variant : "standard" | "metric"
+    +hoverable : bool
+    --
+    bg: #242426
+    radius: 24px
+  }
+
+  class Sidebar <<component>> {
+    +collapsed : bool
+    +menuItems : MenuItem[]
+    --
+    width: 260px
+    bg: #1A1A1C
+  }
+
+  class TopBar <<component>> {
+    +breadcrumbs : string[]
+    +showSearch : bool
+    +notificationCount : int
+    --
+    height: 64px
+  }
+
+  class MobileTabBar <<component>> {
+    +tabs : TabItem[]
+    +activeIndex : int
+    --
+    height: 62px
+    pill radius: 34px
+  }
+}
+
+package "Data Components" {
+  class DataTable <<component>> {
+    +columns : ColumnDef[]
+    +rows : object[]
+    +sortable : bool
+    +pagination : bool
+    +pageSize : int
+  }
+
+  class Badge <<component>> {
+    +variant : ComponentVariant
+    +label : string
+    --
+    success: #6E9E6E
+    warning: amber
+    error: red
+    info: blue
+    neutral: #4A4A4C
+  }
+}
+
+@enduml

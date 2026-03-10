@@ -1,0 +1,42 @@
+@startuml
+actor Photographer as P
+participant "EventsController" as EC
+participant "MediatR" as M
+participant "UpdateCommunityEventCommandHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> EC : PUT /api/events/{id}\n{name: "Afro-Caribbean Art Show 2026",\nendDate: "2026-09-18"}
+EC -> M : Send(UpdateCommunityEventCommand)
+M -> H : Handle()
+
+H -> DB : Load CulturalEvent by Id
+DB --> H : event
+
+alt event.SubmittedById != currentUserId
+  H --> M : throw ForbiddenException\n("You can only edit your own events")
+  M --> EC : 403 Forbidden
+  EC --> P : 403 Forbidden
+end
+
+alt event.Status = Approved
+  H -> H : Reset Status to Pending
+  H -> H : Raise EventResetToPendingEvent
+  note right of H
+    Event will no longer appear
+    in public listings until
+    re-approved by an admin.
+  end note
+else event.Status = Pending
+  H -> H : Changes apply immediately\n(no status change needed)
+end
+
+H -> DB : Update event fields:\nName, EndDate (and any\nother provided fields)
+H -> DB : SaveChanges
+DB --> H : saved
+
+H -> H : Map to CommunityEventDto
+
+H --> M : CommunityEventDto
+M --> EC : result
+EC --> P : 200 OK {\n  id, name: "Afro-Caribbean Art Show 2026",\n  status: "Pending",\n  endDate: "2026-09-18"\n}
+@enduml

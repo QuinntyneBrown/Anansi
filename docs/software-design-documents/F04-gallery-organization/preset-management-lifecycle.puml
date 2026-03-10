@@ -1,0 +1,43 @@
+@startuml
+actor Photographer as P
+participant "CollectionPresetsController" as CPC
+participant "MediatR" as M
+participant "ApplicationDbContext" as DB
+
+== Save Settings as Preset ==
+P -> CPC : POST /api/collection-presets\n{name, coverStyle, theme, fontFamily,\ncolorPalette, layout, downloadsEnabled,\ndownloadPinEnabled, allowedResolutions,\nrequireEmailRegistration, language}
+CPC -> M : Send(CreatePresetCommand)
+M -> DB : CollectionPresets.Add(preset)
+M -> DB : SaveChangesAsync()
+M --> CPC : Result.Success(PresetDto)
+CPC --> P : 200 OK
+
+== Apply Preset to Existing Collection ==
+P -> CPC : PUT /api/collections/{id}\n{presetId: "preset-uuid"}
+note right: UpdateCollectionCommand\ndetects presetId and\ncopies all settings
+CPC -> M : Send(UpdateCollectionCommand)
+M -> DB : Load preset
+M -> DB : Load collection
+M -> M : Copy all preset fields\nto collection
+M -> DB : collection.PresetId = presetId
+M -> DB : SaveChangesAsync()
+M --> CPC : Result.Success(CollectionDto)
+CPC --> P : 200 OK
+
+== Update Preset ==
+P -> CPC : PUT /api/collection-presets/{id}\n{name: "Wedding Premium", theme: Dark}
+CPC -> M : Send(UpdatePresetCommand)
+M -> DB : Load preset, update fields
+M -> DB : SaveChangesAsync()
+M --> CPC : Result.Success
+CPC --> P : 200 OK
+
+== Delete Preset ==
+P -> CPC : DELETE /api/collection-presets/{id}
+CPC -> M : Send(DeletePresetCommand)
+M -> DB : preset.IsDeleted = true
+note right: Collections referencing\nthis preset keep their\ncurrent settings
+M -> DB : SaveChangesAsync()
+M --> CPC : Result.Success
+CPC --> P : 200 OK
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+participant "BookingConfirmedEventHandler" as BEH
+participant "MediatR" as M
+participant "ConvertLeadToClientHandler" as CLH
+participant "ApplicationDbContext" as DB
+participant "INotificationDispatcher" as ND
+
+BEH -> M : Send(ConvertLeadToClientCommand\n{contactId, reason: "Booking confirmed"})
+M -> CLH : Handle()
+CLH -> DB : Load Contact
+DB --> CLH : contact (Type = Lead)
+CLH -> CLH : contact.ContactType = Client
+CLH -> DB : Update Contact
+DB --> CLH : saved
+CLH -> CLH : Raise ContactConvertedEvent
+CLH -> ND : Dispatch("Lead converted to Client")
+ND --> CLH : sent
+CLH --> M : success
+@enduml

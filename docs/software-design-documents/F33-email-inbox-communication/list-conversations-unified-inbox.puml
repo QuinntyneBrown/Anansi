@@ -1,0 +1,32 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "EmailController" as API
+participant "MediatR" as M
+participant "ListConversationsHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/email/conversations?\npage=1&pageSize=25
+API -> M : Send(ListConversationsQuery)
+M -> Handler : Handle(query)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Query EmailConversations\n(PhotographerId, not deleted)\nOrderByDescending(LastMessageAt)
+
+Handler -> DB : For each conversation,\ncount unread messages\nand get last message preview
+
+DB --> Handler : List with unread counts
+
+Handler -> DB : CountAsync() for total
+DB --> Handler : totalCount
+
+Handler -> Handler : Project to ConversationDto\nwith UnreadCount,\nLastMessagePreview
+
+Handler --> M : Result<PagedList<ConversationDto>>
+M --> API : Result.Success
+API --> Photographer : 200 OK\n(paginated conversations)
+
+@enduml

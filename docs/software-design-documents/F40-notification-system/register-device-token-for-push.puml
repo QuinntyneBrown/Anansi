@@ -1,0 +1,26 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor "Mobile App" as App
+participant "DeviceTokenController" as API
+participant "RegisterDeviceTokenHandler" as Handler
+participant "IPushNotificationService" as Push
+
+App -> API : POST /api/device-tokens\n{token: "fcm_token_abc123",\nplatform: "android"}
+API -> Handler : Send(RegisterDeviceTokenCommand)
+
+Handler -> Handler : Verify authenticated user\n(ICurrentUserService.UserId)
+
+Handler -> Push : RegisterDeviceTokenAsync(\nuserId, "fcm_token_abc123", "android")
+note right of Push
+  Stores DeviceToken entity.
+  If token already exists for
+  this user, it is a no-op.
+end note
+Push --> Handler : OK
+
+Handler --> API : Result.Success()
+API --> App : 200 OK
+
+@enduml

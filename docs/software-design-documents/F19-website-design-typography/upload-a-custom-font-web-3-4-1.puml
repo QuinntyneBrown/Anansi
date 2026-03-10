@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteTypographyController" as C
+participant "IMediator" as M
+participant "UploadCustomFontHandler" as H
+participant "ICurrentUserService" as U
+participant "IStorageService" as S
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/website-typography/fonts\n{ fontFamily, fileBase64,\n  fileFormat, fontWeight, fontStyle }
+C -> M : Send(UploadCustomFontCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> H : Validate fileFormat\n(woff, woff2, ttf, otf)
+
+alt invalid format
+  H --> M : Result.Failure\n("Unsupported font format")
+  M --> C : failure
+  C --> P : 400 Bad Request
+else valid format
+  H -> H : Decode Base64 to Stream
+  H -> S : UploadAsync(stream,\n"fonts/{photographerId}/{family}.{fmt}",\ncontent-type)
+  S --> H : fileUrl
+
+  H -> H : Create WebsiteFont entity\n{ fontFamily, fileUrl,\n  fileFormat, fontWeight, fontStyle }
+
+  H -> DB : Add(font)\nSaveChangesAsync()
+  DB --> H : saved
+
+  H --> M : Result.Success(WebsiteFontDto)
+  M --> C : result
+  C --> P : 201 Created { fontDto }
+end
+
+@enduml

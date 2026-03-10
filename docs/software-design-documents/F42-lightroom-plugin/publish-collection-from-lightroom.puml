@@ -1,0 +1,47 @@
+@startuml
+actor Photographer as P
+participant "Lightroom Classic" as LR
+participant "LightroomController" as LC
+participant "MediatR" as M
+participant "PublishCollectionHandler" as H
+participant "ILightroomSyncService" as LS
+participant "IStorageService" as SS
+participant "ICdnService" as CDN
+participant "IApplicationDbContext" as DB
+
+P -> LR : Click "Publish" on\nAnansi publish collection
+LR -> LR : Render photos to JPEG
+
+LR -> LC : POST /api/lightroom/publish\nmultipart/form-data\n{lightroomCollectionId, images[]}
+note right of LC : X-Api-Key header validated\nby ApiKeyAuthenticationHandler
+
+LC -> M : Send(PublishLightroomCollectionCommand)
+M -> H : Handle(command)
+H -> LS : PublishCollectionAsync(\nphotographerId, collectionId, images)
+
+loop for each LightroomImage
+  LS -> DB : GalleryMedia.FirstOrDefault(\nLightroomId == image.LightroomId)
+
+  alt existing media found (re-publish)
+    LS -> SS : DeleteAsync(existing.StorageKey)
+    LS -> SS : UploadAsync(image.ImageStream)
+    SS --> LS : newStorageKey
+    LS -> CDN : GenerateThumbnailAsync(storageKey)
+    CDN --> LS : thumbnailKey
+    LS -> LS : Update existing GalleryMedia\n(StorageKey, ThumbnailStorageKey,\nFileSizeBytes, UpdatedAt)
+  else new image
+    LS -> SS : UploadAsync(image.ImageStream)
+    SS --> LS : storageKey
+    LS -> CDN : GenerateThumbnailAsync(storageKey)
+    CDN --> LS : thumbnailKey
+    LS -> DB : GalleryMedia.Add(new media\nwith LightroomId set)
+  end
+end
+
+LS -> DB : SaveChangesAsync()
+LS --> H : LightroomPublishResult\n{uploaded: N, updated: M, failed: []}
+H --> M : Result.Success
+M --> LC : Result.Success
+LC --> LR : 200 OK {uploaded, updated, failed}
+LR --> P : "Published N photos,\nupdated M photos"
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+actor Client as C
+participant "ContractPublicController" as CPC
+participant "MediatR" as M
+participant "GetContractByTokenHandler" as GH
+participant "SignContractHandler" as SH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+== View Contract ==
+C -> CPC : GET /api/contracts/view/{token}
+CPC -> M : Send(GetContractByTokenQuery)
+M -> GH : Handle(query)
+
+GH -> DB : Load Contract by access token\nwith Fields and Signatures
+
+alt contract expired or cancelled
+  GH --> M : Result.Failure("Contract is no longer available")
+  M --> CPC : Result.Failure
+  CPC --> C : 410 Gone
+end
+
+GH -> DB : contract.Status = Viewed\n(if currently Sent)
+GH -> DB : SaveChangesAsync()
+GH --> M : ContractDetailDto
+M --> CPC : Result.Success
+CPC --> C : 200 OK (contract detail\nwith fillable fields)
+
+== Sign Contract ==
+C -> CPC : POST /api/contracts/sign/{token}\n{signerName, signerEmail,\nsignerRole, signatureData}
+CPC -> M : Send(SignContractCommand)
+M -> SH : Handle(command)
+
+SH -> DB : Load Contract with Signatures
+SH -> SH : Validate signer role\nnot already signed
+
+SH -> DB : ContractSignatures.Add(\nsignature with timestamp,\nIP, user-agent)
+
+SH -> SH : Check if all required\nsignatures collected
+
+alt all signatures collected
+  SH -> DB : contract.Status = Signed
+  SH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Contract Signed")
+end
+
+SH -> DB : SaveChangesAsync()
+SH --> M : Result.Success
+M --> CPC : Result.Success
+CPC --> C : 200 OK
+@enduml

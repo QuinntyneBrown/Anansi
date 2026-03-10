@@ -1,0 +1,43 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitesController" as C
+participant "IMediator" as M
+participant "PublishWebsiteHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{id}/publish
+C -> M : Send(PublishWebsiteCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load Website (id, photographerId)
+DB --> H : Website
+
+alt website not found
+  H --> M : Result.NotFound
+  M --> C : failure
+  C --> P : 404 Not Found
+else website found
+  H -> DB : Count pages for website
+  DB --> H : pageCount
+
+  alt pageCount == 0
+    H --> M : Result.Failure\n("At least one page required")
+    M --> C : failure
+    C --> P : 400 Bad Request
+  else has pages
+    H -> H : Set Status = Published
+    H -> DB : SaveChangesAsync()
+    DB --> H : saved
+    H --> M : Result.Success(WebsiteDto)
+    M --> C : result
+    C --> P : 200 OK { websiteDto }
+  end
+end
+
+@enduml

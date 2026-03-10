@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface ICdnService
+interface IWatermarkService
+
+class CdnService {
+  -_cdnClient : ICdnClient
+  -_storageService : IStorageService
+  +GetCdnUrlAsync(storageKey) : Task<string>
+  +GenerateThumbnailAsync(storageKey, w, h) : Task<string>
+  +GenerateProgressiveImagesAsync(storageKey) : Task<ProgressiveImageSet>
+  +InvalidateCacheAsync(storageKey) : Task
+}
+
+class WatermarkService {
+  -_storageService : IStorageService
+  +ApplyWatermarkAsync(sourceKey, watermark) : Task<string>
+  +ApplyWatermarkBatchAsync(sourceKeys, watermark) : Task<IReadOnlyList<string>>
+}
+
+class AdaptiveVideoService {
+  -_storageService : IStorageService
+  +TranscodeAsync(videoKey) : Task<AdaptiveStreamResult>
+  +GetManifestUrlAsync(videoKey) : Task<string>
+}
+
+class GalleryAccessTokenService {
+  -_configuration : IConfiguration
+  +GenerateToken(collectionId, accessLevel) : string
+  +ValidateToken(token) : GalleryAccessClaims?
+}
+
+class TlsEnforcementMiddleware {
+  -_next : RequestDelegate
+  +InvokeAsync(HttpContext) : Task
+}
+
+class SecurityHeadersMiddleware {
+  -_next : RequestDelegate
+  +InvokeAsync(HttpContext) : Task
+}
+
+ICdnService <|.. CdnService
+IWatermarkService <|.. WatermarkService
+
+@enduml

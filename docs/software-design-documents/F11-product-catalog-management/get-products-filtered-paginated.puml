@@ -1,0 +1,21 @@
+@startuml
+skinparam maxMessageSize 200
+actor Photographer
+participant "ProductsController" as ctrl
+participant "IMediator" as med
+participant "GetProductsHandler" as handler
+participant "ICurrentUserService" as user
+participant "IApplicationDbContext" as db
+
+Photographer -> ctrl : GET /api/products?productType=Print&page=1&pageSize=20
+ctrl -> med : Send(GetProductsQuery)
+med -> handler : Handle(query, ct)
+handler -> user : PhotographerId
+user --> handler : Guid
+handler -> db : Products\n.Where(type, photographer)\n.Include(Variations)\n.Skip/Take
+db --> handler : List<Product>
+handler -> handler : Map to ProductDto list
+handler --> med : Result<PagedList<ProductDto>>
+med --> ctrl : Result
+ctrl --> Photographer : 200 OK {items, page, totalCount}
+@enduml

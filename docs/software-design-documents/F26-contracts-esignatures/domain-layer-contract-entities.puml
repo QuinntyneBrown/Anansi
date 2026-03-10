@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Contract {
+  +Id : Guid
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +ProjectId : Guid?
+  +Title : string
+  +Content : string
+  +HeaderImageUrl : string?
+  +Status : ContractStatus
+  +ExpiryDays : int?
+  +SentAt : DateTime?
+  +ExpiresAt : DateTime?
+  +AutoRemindersEnabled : bool
+  +ReminderIntervalDays : int?
+  +LastReminderSentAt : DateTime?
+  +IsTemplate : bool
+  +TemplateName : string?
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+  +CreatedBy : string?
+  +UpdatedBy : string?
+}
+
+class ContractField {
+  +Id : Guid
+  +ContractId : Guid
+  +Label : string
+  +DefaultValue : string?
+  +Value : string?
+  +IsVariable : bool
+  +VariableKey : string?
+  +SortOrder : int
+}
+
+class ContractSignature {
+  +Id : Guid
+  +ContractId : Guid
+  +SignerName : string
+  +SignerEmail : string
+  +SignerRole : string
+  +SignatureData : string?
+  +SignedAt : DateTime?
+  +IpAddress : string?
+  +UserAgent : string?
+}
+
+enum ContractStatus {
+  Draft
+  Sent
+  Viewed
+  Signed
+  Expired
+  Cancelled
+}
+
+Contract "1" --> "*" ContractField : Fields
+Contract "1" --> "*" ContractSignature : Signatures
+Contract --> ContractStatus : uses
+@enduml

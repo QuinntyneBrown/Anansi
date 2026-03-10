@@ -1,0 +1,45 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "Mobile App" as App
+participant "BookingsController" as API
+participant "MediatR" as M
+participant "ListBookingsHandler" as LH
+participant "UpdateStatusHandler" as UH
+participant "IApplicationDbContext" as DB
+
+== View Upcoming Sessions ==
+
+Photographer -> App : Open Calendar tab
+App -> API : GET /api/bookings?\nstatus=Confirmed&from=today
+API -> M : Send(ListBookingsQuery)
+M -> LH : Handle(query)
+LH -> DB : Query BookingRecords\n(PhotographerId, Status, DateRange)
+DB --> LH : List<BookingRecord>
+LH --> M : Result<PagedList<BookingDto>>
+M --> API : Result.Success
+API --> App : (paginated bookings)
+App -> App : Display calendar\nwith booked slots
+
+== Accept Pending Booking ==
+
+Photographer -> App : Tap pending booking\n-> "Accept"
+App -> API : PUT /api/bookings/{id}/status\n{newStatus: "Confirmed"}
+API -> M : Send(UpdateBookingStatusCommand)
+M -> UH : Handle(command)
+
+UH -> DB : Find BookingRecord
+DB --> UH : BookingRecord (Pending)
+
+UH -> DB : Set Status = Confirmed
+UH -> DB : SaveChangesAsync()
+
+UH --> M : Result.Success
+M --> API : Result.Success
+API --> App : 200 OK
+
+App -> App : Update calendar view
+
+@enduml

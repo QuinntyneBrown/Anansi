@@ -1,0 +1,31 @@
+@startuml
+actor Photographer as P
+participant "ContractsController" as CC
+participant "MediatR" as M
+participant "PreSignContractHandler" as PSH
+participant "ApplicationDbContext" as DB
+
+P -> CC : POST /api/contracts/{id}/pre-sign\n{signatureData}
+CC -> M : Send(PreSignContractCommand)
+M -> PSH : Handle(command)
+
+PSH -> DB : Load Contract with Signatures
+
+alt contract not in Draft status
+  PSH --> M : Result.Failure("Can only pre-sign drafts")
+  M --> CC : Result.Failure
+  CC --> P : 400 Bad Request
+end
+
+alt photographer already signed
+  PSH --> M : Result.Failure("Already pre-signed")
+  M --> CC : Result.Failure
+  CC --> P : 409 Conflict
+end
+
+PSH -> DB : ContractSignatures.Add(\nrole="Photographer",\nsignatureData, timestamp)
+PSH -> DB : SaveChangesAsync()
+PSH --> M : Result.Success
+M --> CC : Result.Success
+CC --> P : 200 OK
+@enduml

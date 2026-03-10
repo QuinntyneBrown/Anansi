@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class GalleryMedia {
+  +Id : Guid
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +SetId : Guid?
+  +FileName : string
+  +OriginalFileName : string
+  +MediaType : MediaType
+  +FileSizeBytes : long
+  +StorageKey : string
+  +ThumbnailStorageKey : string?
+  +LightroomId : string?
+  +Width : int?
+  +Height : int?
+  +SortOrder : int
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+class Collection {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Title : string
+  +Slug : string
+  +Status : CollectionStatus
+}
+
+class CollectionSet {
+  +Id : Guid
+  +CollectionId : Guid
+  +Title : string
+  +SortOrder : int
+}
+
+class FavoriteList {
+  +Id : Guid
+  +CollectionId : Guid
+  +Name : string
+}
+
+class FavoriteItem {
+  +Id : Guid
+  +FavoriteListId : Guid
+  +GalleryMediaId : Guid
+}
+
+class ApiKey {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Name : string
+  +KeyHash : string
+  +KeyPrefix : string
+  +ExpiresAt : DateTime?
+  +IsActive : bool
+}
+
+Collection "1" --> "*" GalleryMedia : Media
+Collection "1" --> "*" CollectionSet : Sets
+Collection "1" --> "*" FavoriteList : FavoriteLists
+FavoriteList "1" --> "*" FavoriteItem : Items
+FavoriteItem --> "1" GalleryMedia : references
+
+@enduml

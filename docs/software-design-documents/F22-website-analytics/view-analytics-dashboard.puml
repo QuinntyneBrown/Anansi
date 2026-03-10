@@ -1,0 +1,19 @@
+@startuml
+actor Photographer as P
+participant "AnalyticsDashboardController" as DC
+participant "MediatR" as M
+participant "GetAnalyticsDashboardHandler" as DH
+participant "ApplicationDbContext" as DB
+
+P -> DC : GET /api/websites/{id}/analytics\n?startDate=2026-02-01&endDate=2026-02-28
+DC -> M : Send(GetAnalyticsDashboardQuery)
+M -> DH : Handle()
+DH -> DB : Query WebsiteAnalyticsSnapshot\nWHERE WebsiteId = {id}\nAND Date BETWEEN startDate AND endDate
+DB --> DH : List<WebsiteAnalyticsSnapshot>
+DH -> DH : Sum TotalVisitors, UniqueVisitors, PageViews
+DH -> DH : Weighted average SessionDuration
+DH -> DH : Map to AnalyticsDashboardDto
+DH --> M : AnalyticsDashboardDto
+M --> DC : result
+DC --> P : 200 OK {totalVisitors, uniqueVisitors,\npageViews, avgSessionDuration, dailySnapshots[]}
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class DirectoryController <<ApiController>> {
+  -_mediator : IMediator
+  +Search(tags, neighborhood, lat, lng, page, pageSize) : IActionResult
+}
+
+note right of DirectoryController
+  GET /api/directory/search
+  Public endpoint (no [Authorize]).
+  All parameters are optional query strings.
+  At least one of tags or neighborhood/lat+lng
+  must be provided (validated server-side).
+end note
+
+DirectoryController --> "IMediator" : sends SearchDirectoryQuery
+@enduml

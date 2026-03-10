@@ -1,0 +1,34 @@
+@startuml
+actor Photographer as P
+participant "SessionTypesController" as SC
+participant "MediatR" as M
+participant "CreateEventLinkedSessionTypeHandler" as H
+participant "IEventRecurrenceService" as RS
+participant "ApplicationDbContext" as DB
+
+P -> SC : POST /api/session-types\n{name: "Caribana Portrait Session",\ndurationMinutes: 60,\npriceCents: 25000,\nlocation: "Lakeshore Blvd",\neventId: "{caribanaId}"}
+SC -> M : Send(CreateEventLinkedSessionTypeCommand)
+M -> H : Handle()
+
+H -> DB : Load CulturalEvent by EventId
+DB --> H : event (Caribana, approved)
+
+alt event not found or not approved
+  H --> M : throw ValidationException
+end
+
+H -> RS : GenerateInstances(event,\nnow, now + 1 year)
+RS --> H : next occurrence:\n2026-08-01 to 2026-08-04
+
+H -> H : Build availability windows\nscoped to event dates:\n[{date: "2026-08-01", start: "09:00",\n  end: "18:00"}, ... for each event day]
+
+H -> DB : Create SessionType {\n  Name, DurationMinutes, PriceCents,\n  Location, EventId,\n  AvailabilityWindows: (event-scoped),\n  Visibility: Public\n}
+DB --> H : sessionType created
+
+H -> DB : SaveChanges
+DB --> H : saved
+
+H --> M : SessionTypeDto
+M --> SC : result
+SC --> P : 201 Created {\n  id, name: "Caribana Portrait Session",\n  eventId: "{caribanaId}",\n  eventName: "Caribana",\n  availabilityWindows: [...]\n}
+@enduml

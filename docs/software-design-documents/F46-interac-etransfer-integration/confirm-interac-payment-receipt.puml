@@ -1,0 +1,48 @@
+@startuml
+actor Photographer as P
+participant "InteracController" as IC
+participant "MediatR" as M
+participant "ConfirmInteracPaymentHandler" as CH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+P -> IC : POST /api/interac/payment-requests/{id}/confirm
+IC -> M : Send(ConfirmInteracPaymentCommand)
+M -> CH : Handle(command)
+
+CH -> DB : Load InteracPaymentRequest\nby Id and PhotographerId
+alt request not found
+  CH --> M : Result.Failure("Request not found")
+  M --> IC : Result.Failure
+  IC --> P : 404 Not Found
+end
+
+alt request not Pending
+  CH --> M : Result.Failure("Request is not\nin Pending status")
+  M --> IC : Result.Failure
+  IC --> P : 400 Bad Request
+end
+
+CH -> DB : Load linked Invoice\nwith PaymentSchedules
+
+CH -> DB : PaymentRecords.Add(\namountCents = request.AmountCents,\nfeeCents = 0,\nnetAmountCents = request.AmountCents,\npaymentMethod = InteracETransfer,\ninvoiceId = request.InvoiceId,\nexternalPaymentId = request.PaymentReference,\nisOffline = false)
+
+CH -> DB : invoice.PaidCents\n+= request.AmountCents
+
+CH -> CH : Check all installments paid?
+alt fully paid
+  CH -> DB : invoice.Status = Paid
+else some remaining
+  CH -> DB : invoice.Status = PartiallyPaid
+end
+
+CH -> DB : request.Status = Completed\nrequest.ConfirmedAt = UtcNow
+
+CH -> DB : SaveChangesAsync()
+
+CH -> ES : SendTemplatedAsync(\nclient.Email,\n"Payment Confirmation",\namountPaid, invoiceNumber)
+
+CH --> M : Result.Success
+M --> IC : Result.Success
+IC --> P : 200 OK
+@enduml

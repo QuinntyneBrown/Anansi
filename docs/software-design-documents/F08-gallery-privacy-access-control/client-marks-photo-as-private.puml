@@ -1,0 +1,32 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "PrivacyController" as API
+participant "TogglePrivatePhotoHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Client -> API : POST /api/media/{mediaId}/private\n{clientName, clientEmail}
+API -> Handler : Send(TogglePrivatePhotoCommand)
+
+Handler -> DB : Find GalleryMedia by Id
+DB --> Handler : GalleryMedia
+
+Handler -> Handler : Toggle IsPrivate flag
+Handler -> Handler : Set MarkedPrivateByClientId (if marking)
+
+Handler -> DB : Create GalleryActivity\n(PrivatePhoto, "Marked as private")
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<bool> (new IsPrivate state)
+API --> Client : 200 OK {isPrivate: true}
+
+note right of Handler
+  Private photos are filtered
+  out of gallery queries for
+  all viewers except the marking
+  client and the photographer.
+end note
+
+@enduml

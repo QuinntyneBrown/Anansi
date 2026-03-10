@@ -1,0 +1,21 @@
+@startuml
+actor Visitor as V
+participant "PlansController" as PC
+participant "MediatR" as M
+participant "GetPlansHandler" as GPH
+participant "ApplicationDbContext" as DB
+
+V -> PC : GET /api/plans?product=Gallery
+PC -> M : Send(GetPlansQuery(Gallery))
+M -> GPH : Handle(query)
+
+GPH -> DB : Plans\n  .Where(p => p.Product == Gallery && p.IsActive)\n  .Include(p => p.FeatureGates)\n  .OrderBy(p => p.Tier)
+
+DB --> GPH : List<Plan>
+
+GPH -> GPH : Map to List<PlanDto>\nwith feature descriptions\nand pricing
+
+GPH --> M : Result.Success(plans)
+M --> PC : Result.Success
+PC --> V : 200 OK [{Free}, {Basic},\n{Plus}, {Pro}, {Ultimate}]
+@enduml

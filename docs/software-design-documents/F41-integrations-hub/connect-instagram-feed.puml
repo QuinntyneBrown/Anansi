@@ -1,0 +1,27 @@
+@startuml
+actor Photographer as P
+participant "IntegrationsOAuthController" as OC
+participant "MediatR" as M
+participant "ConnectInstagramHandler" as H
+participant "Instagram API" as IG
+participant "IApplicationDbContext" as DB
+
+P -> OC : GET /api/integrations/oauth/instagram/callback\n?code=AUTH_CODE
+OC -> M : Send(ConnectInstagramCommand)
+M -> H : Handle(command)
+H -> IG : Exchange short-lived token\nfor long-lived token (60 days)
+IG --> H : longLivedToken
+H -> DB : Photographer.InstagramAccessToken = encrypted(token)
+
+H -> DB : Check for existing InstagramFeedConfig
+alt not exists
+  H -> DB : Create InstagramFeedConfig(\nnumberOfPosts=9, imageSize="medium",\nclickBehavior="open_instagram", isActive=true)
+else exists
+  H -> DB : config.IsActive = true
+end
+
+H -> DB : SaveChangesAsync()
+H --> M : Result.Success
+M --> OC : Result.Success
+OC --> P : 302 Redirect to integration settings
+@enduml

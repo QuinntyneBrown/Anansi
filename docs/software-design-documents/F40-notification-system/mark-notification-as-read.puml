@@ -1,0 +1,23 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "NotificationsController" as API
+participant "MarkNotificationReadHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : PUT /api/notifications/{id}/read
+API -> Handler : Send(MarkNotificationReadCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Load Notification by Id & PhotographerId
+DB --> Handler : Notification
+
+Handler -> Handler : Set IsRead = true, ReadAt = now
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+@enduml

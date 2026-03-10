@@ -1,0 +1,39 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "CollectionWatermarkController" as API
+participant "ApplyWatermarkToCollectionHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "ICdnService" as CDN
+
+Photographer -> API : PUT /api/collections/{collId}/watermark\n{watermarkId: "abc-123"}
+API -> Handler : Send(ApplyWatermarkToCollectionCommand)
+
+Handler -> Handler : Verify PhotographerId
+
+Handler -> DB : Load Watermark by Id & PhotographerId
+DB --> Handler : Watermark
+Handler -> Handler : Verify watermark exists and belongs to photographer
+
+Handler -> DB : Load Collection by Id & PhotographerId
+DB --> Handler : Collection
+
+Handler -> Handler : Set Collection.WatermarkId = watermarkId
+Handler -> Handler : Set Collection.WatermarkEnabled = true
+Handler -> DB : SaveChangesAsync()
+
+Handler -> CDN : InvalidateAsync("collections/{collId}/images/*")
+note right of CDN
+  Purges all cached image
+  variants for this collection
+  so new requests will be
+  composited with the watermark.
+end note
+CDN --> Handler : OK
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+@enduml

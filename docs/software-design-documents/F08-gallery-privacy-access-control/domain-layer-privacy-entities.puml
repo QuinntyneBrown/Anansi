@@ -1,0 +1,61 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Collection {
+  +Password : string?
+  +ClientExclusivePassword : string?
+  +RequireEmailRegistration : bool
+  +ExpiresAt : DateTime?
+  +ExpiryReminderRecipients : string?
+  +ExpiryReminderDays : string?
+  +ExpiryReminderEmailTemplate : string?
+  +Status : CollectionStatus
+}
+
+class CollectionSet {
+  +IsClientExclusive : bool
+}
+
+class GalleryMedia {
+  +IsPrivate : bool
+  +MarkedPrivateByClientId : Guid?
+}
+
+class GalleryEmailRegistration {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +Name : string
+  +Email : string
+}
+
+class GalleryActivity {
+  +ActivityType : ActivityType
+  +ActorName : string?
+  +ActorEmail : string?
+  +MediaId : Guid?
+  +Details : string?
+}
+
+enum CollectionStatus {
+  Draft
+  Published
+  Hidden
+}
+
+enum ExpiryReminderRecipientType {
+  SpecificClients
+  AllViewers
+  AllDownloaders
+  AllFavoriters
+  AllPurchasers
+}
+
+Collection "1" --> "*" CollectionSet
+Collection "1" --> "*" GalleryMedia
+Collection "1" --> "*" GalleryEmailRegistration
+Collection "1" --> "*" GalleryActivity
+Collection --> CollectionStatus
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "RecordPaymentHandler" as PayHandler
+participant "MediatR" as M
+participant "ProcessRepaymentHandler" as RepayHandler
+participant "IApplicationDbContext" as DB
+
+PayHandler -> DB : Create PaymentRecord
+PayHandler -> DB : SaveChangesAsync()
+
+PayHandler -> M : Send(ProcessFinancingRepaymentCommand\n{paymentRecordId})
+M -> RepayHandler : Handle(command)
+
+RepayHandler -> DB : Find active FinancingApplication\nfor PhotographerId
+DB --> RepayHandler : FinancingApplication\n{RepaymentPercentage: 10%}
+
+alt no active financing
+  RepayHandler --> M : Result.Success (no-op)
+end
+
+RepayHandler -> DB : Find PaymentRecord
+DB --> RepayHandler : PaymentRecord\n{NetAmountCents: 10000}
+
+RepayHandler -> RepayHandler : Calculate deduction:\n10000 * 10% = 1000 cents
+
+RepayHandler -> RepayHandler : Cap deduction at\nremaining balance
+
+RepayHandler -> DB : Create FinancingRepayment\n{deductedAmountCents: 1000}
+RepayHandler -> DB : Update application\nRepaidCents += 1000
+
+RepayHandler -> RepayHandler : Check if fully repaid:\nRepaidCents >= OfferedAmountCents\n+ FlatFeeCents
+
+alt fully repaid
+  RepayHandler -> DB : Set Status = "Repaid"\nSet RepaidAt = UtcNow
+end
+
+RepayHandler -> DB : SaveChangesAsync()
+RepayHandler --> M : Result.Success
+
+@enduml

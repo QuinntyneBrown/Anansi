@@ -1,0 +1,22 @@
+@startuml
+actor Photographer as P
+participant "Website Builder UI" as WB
+participant "ComponentManifestController" as CMC
+participant "MediatR" as M
+participant "GetComponentManifestHandler" as H
+
+P -> WB : Open website builder\nelement toolbox
+WB -> CMC : GET /api/components/manifest
+CMC -> M : Send(GetComponentManifestQuery)
+M -> H : Handle(query)
+
+H -> H : Build manifest from\nstatic component registry
+
+H --> M : Result.Success([\n  {name: "Button", variants: [...],\n   props: [{name: "label", type: "string"}]},\n  {name: "Card", variants: ["standard","metric"]},\n  {name: "FormInput", variants: [...],\n   props: [{name: "type", type: "enum"}]},\n  ...\n])
+
+M --> CMC : Result.Success
+CMC --> WB : 200 OK [{components}]
+
+WB -> WB : Render element toolbox\nwith component cards
+WB --> P : Drag-and-drop components\navailable in sidebar
+@enduml

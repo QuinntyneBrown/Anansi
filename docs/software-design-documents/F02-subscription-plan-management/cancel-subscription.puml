@@ -1,0 +1,34 @@
+@startuml
+actor Photographer as P
+participant "PlansController" as PC
+participant "MediatR" as M
+participant "CancelSubscriptionHandler" as CH
+participant "ApplicationDbContext" as DB
+participant "IPaymentService" as PS
+
+P -> PC : DELETE /api/plans/subscription?immediate=false
+PC -> M : Send(CancelSubscriptionCommand(false))
+M -> CH : Handle(command)
+
+CH -> DB : Load active Subscription
+alt no active subscription
+  CH --> M : Result.Failure("No active subscription")
+end
+
+alt subscription has StripeSubscriptionId
+  alt immediate == true
+    CH -> PS : Cancel Stripe subscription immediately
+    CH -> DB : subscription.Status = Cancelled\nsubscription.CancelledAt = UtcNow
+  else cancel at period end
+    CH -> PS : Set Stripe cancel_at_period_end = true
+    CH -> DB : subscription.CancelAtPeriodEnd = true\nsubscription.CancelledAt = UtcNow
+  end
+else free plan
+  CH -> DB : subscription.Status = Cancelled\nsubscription.CancelledAt = UtcNow
+end
+
+CH -> DB : SaveChangesAsync()
+CH --> M : Result.Success
+M --> PC : Result.Success
+PC --> P : 204 No Content
+@enduml

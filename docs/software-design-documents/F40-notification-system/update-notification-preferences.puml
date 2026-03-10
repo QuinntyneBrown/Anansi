@@ -1,0 +1,29 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "NotificationsController" as API
+participant "UpdateNotificationPreferenceHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : PUT /api/notifications/preferences/StoreOrderPlaced\n{emailEnabled: true,\npushEnabled: false,\ninAppEnabled: true,\nemailDigestOption: DailySummary}
+API -> Handler : Send(UpdateNotificationPreferenceCommand)
+
+Handler -> Handler : Verify PhotographerId
+
+Handler -> DB : Find NotificationPreference\n(PhotographerId, StoreOrderPlaced)
+DB --> Handler : Preference? (may be null)
+
+alt Existing preference found
+  Handler -> Handler : Update fields
+else No existing preference
+  Handler -> DB : Create NotificationPreference\n(all fields from command)
+end
+
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+@enduml

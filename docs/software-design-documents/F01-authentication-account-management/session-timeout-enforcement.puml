@@ -1,0 +1,28 @@
+@startuml
+actor Photographer as P
+participant "SessionTimeoutMiddleware" as STM
+participant "Session Store" as SS
+participant "Next Middleware/Controller" as NXT
+
+P -> STM : Any authenticated request
+STM -> STM : Check User.Identity.IsAuthenticated
+
+alt not authenticated
+  STM -> NXT : pass through
+  NXT --> P : response
+end
+
+STM -> SS : GetString("LastActivity")
+
+alt LastActivity exists
+  STM -> STM : Parse timestamp,\ncalculate elapsed time
+  alt elapsed > timeout (default 30 min)
+    STM -> SS : Clear()
+    STM --> P : 401 "Session has expired\ndue to inactivity"
+  end
+end
+
+STM -> SS : SetString("LastActivity",\nDateTime.UtcNow)
+STM -> NXT : pass through
+NXT --> P : response
+@enduml

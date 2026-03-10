@@ -1,0 +1,30 @@
+@startuml
+actor Client as C
+participant "Website Rendering" as WR
+participant "MediatR" as M
+participant "GetActiveInjectionsHandler" as H
+participant "IApplicationDbContext" as DB
+
+C -> WR : Request website page\n(GET photographer.anansi.io/about)
+
+WR -> M : Send(GetActiveInjectionsForSiteQuery\n{PhotographerId})
+M -> H : Handle(query)
+H -> DB : CustomCodeInjections\n.Where(PhotographerId == id\n&& IsActive)\n.ToList()
+DB --> H : injections[]
+H -> H : Group by Location\n(Header vs Footer)
+H --> M : {headerCode: [...], footerCode: [...]}
+M --> WR : injections
+
+WR -> WR : Build HTML response
+WR -> WR : Inject headerCode snippets\ninto <head> section
+WR -> WR : Inject footerCode snippets\nbefore </body>
+
+note right of WR
+  Also injects GA4 script if
+  Photographer.GoogleAnalyticsId is set,
+  and Facebook Pixel if
+  Photographer.FacebookPixelId is set.
+end note
+
+WR --> C : Full HTML page with\ninjected tracking/chat/analytics code
+@enduml

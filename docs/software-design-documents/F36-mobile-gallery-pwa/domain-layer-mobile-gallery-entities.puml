@@ -1,0 +1,52 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class MobileGalleryApp {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +Title : string
+  +Slug : string
+  +Status : MobileGalleryAppStatus
+  +CuratedMediaIds : string
+  +AppIconMediaId : Guid?
+  +CoverImageUrl : string?
+  +ThemeMode : ThemeMode
+  +Layout : GridLayout
+  +FontFamily : string
+  +BrandColorHex : string?
+  +CtaType : CtaButtonType
+  +CtaLabel : string?
+  +CtaUrl : string?
+  +ContactPhone : string?
+  +ContactEmail : string?
+  +SocialLinks : string?
+  +RemovePlatformBranding : bool
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+enum MobileGalleryAppStatus {
+  Draft
+  Published
+  Archived
+}
+
+enum CtaButtonType {
+  BookAgain
+  ReferAFriend
+  Custom
+}
+
+BaseEntity <|-- MobileGalleryApp
+MobileGalleryApp --> MobileGalleryAppStatus
+MobileGalleryApp --> CtaButtonType
+
+@enduml

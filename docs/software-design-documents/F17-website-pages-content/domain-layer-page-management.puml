@@ -1,0 +1,59 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class Website {
+    +Id : Guid
+    +PhotographerId : Guid
+    +Name : string
+    +Status : WebsiteStatus
+  }
+
+  class WebsitePage {
+    +Id : Guid
+    +PhotographerId : Guid
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string
+    +PageType : WebsitePageType
+    +SortOrder : int
+    +IsVisible : bool
+    +ShowInNavigation : bool
+    +PagePasswordHash : string?
+    +MetaTitle : string?
+    +MetaDescription : string?
+    +OgImageUrl : string?
+    +IsDeleted : bool
+    +DeletedAt : DateTime?
+  }
+
+  class PageElement {
+    +Id : Guid
+    +PageId : Guid
+    +ElementType : ElementType
+    +ContentJson : string?
+    +SortOrder : int
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum WebsitePageType {
+    Homepage
+    Portfolio
+    About
+    Services
+    Contact
+    Pricing
+    Gallery
+    Blog
+    Custom
+  }
+}
+
+Website --> "*" WebsitePage : Pages
+WebsitePage --> "*" PageElement : Elements
+WebsitePage ..> WebsitePageType
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitePagesController" as C
+participant "IMediator" as M
+participant "CreatePageFromTemplateHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/pages/from-template\n{ landingPageTemplateId, title, slug }
+C -> M : Send(CreatePageFromTemplateCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Find Website\n(websiteId, photographerId)
+DB --> H : Website
+
+H -> DB : Find LandingPageTemplate\n(templateId, IsActive)
+DB --> H : LandingPageTemplate
+
+H -> H : Parse LayoutDefinitionJson\nfrom template
+
+H -> H : Create WebsitePage\n(PageType = Custom, title, slug)
+
+H -> DB : Add(page)
+
+loop each element in template layout
+  H -> H : Create PageElement\nfrom layout definition
+  H -> DB : Add(element)
+end
+
+H -> DB : SaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(WebsitePageDto)
+M --> C : result
+C --> P : 201 Created { pageDto }
+
+@enduml

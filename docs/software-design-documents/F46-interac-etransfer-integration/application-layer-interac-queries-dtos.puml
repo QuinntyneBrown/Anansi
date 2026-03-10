@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Interac.Queries" {
+  class ListInteracPaymentRequestsQuery <<record>> {
+    +Status : InteracPaymentRequestStatus?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetInteracSettingsQuery <<record>>
+}
+
+class InteracPaymentRequestDto <<record>> {
+  +Id : Guid
+  +InvoiceId : Guid?
+  +OrderId : Guid?
+  +PaymentReference : string
+  +AmountCents : long
+  +RecipientEmail : string
+  +Status : InteracPaymentRequestStatus
+  +ExpiryDate : DateTime
+  +ConfirmedAt : DateTime?
+  +CreatedAt : DateTime
+}
+
+class InteracSettingsDto <<record>> {
+  +InteracEmail : string
+  +IsEnabled : bool
+}
+
+class InteracCheckoutResultDto <<record>> {
+  +OrderId : Guid
+  +PaymentReference : string
+  +AmountCents : long
+  +InteracEmail : string
+  +Instructions : string
+}
+@enduml

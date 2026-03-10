@@ -113,6 +113,8 @@ Photographer "1" --> "0..*" CustomDomain : Domains
 @enduml
 ```
 
+![Domain Layer - Custom Domain Entities](domain-layer-custom-domain-entities.png)
+
 ### Application Layer - Commands, Queries, and Services
 
 ```plantuml
@@ -185,6 +187,8 @@ CheckDomainDnsCommand --> IDnsVerificationService
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Services](application-layer-commands-queries-and-services.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -245,6 +249,8 @@ CustomDomainsController ..> CheckDomainDnsCommand
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ---
 
 ## Sequence Diagrams
@@ -287,6 +293,8 @@ API --> Photographer : 201 Created\n{id, domainName, dnsInstructions, sslStatus:
 
 @enduml
 ```
+
+![Register Custom Domain](register-custom-domain.png)
 
 ### Verify Domain and Provision SSL
 
@@ -337,6 +345,8 @@ API --> Photographer : 200 OK\n{isVerified: true, sslStatus: Active,\nsslExpires
 @enduml
 ```
 
+![Verify Domain and Provision SSL](verify-domain-and-provision-ssl.png)
+
 ### DNS Diagnostic Check
 
 ```plantuml
@@ -377,6 +387,8 @@ end note
 @enduml
 ```
 
+![DNS Diagnostic Check](dns-diagnostic-check.png)
+
 ### Domain Routing (Incoming Request)
 
 ```plantuml
@@ -416,6 +428,8 @@ end
 
 @enduml
 ```
+
+![Domain Routing (Incoming Request)](domain-routing-incoming-request.png)
 
 ### SSL Certificate Renewal
 
@@ -460,6 +474,8 @@ end
 @enduml
 ```
 
+![SSL Certificate Renewal](ssl-certificate-renewal.png)
+
 ### Delete Custom Domain
 
 ```plantuml
@@ -498,3 +514,5 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Delete Custom Domain](delete-custom-domain.png)

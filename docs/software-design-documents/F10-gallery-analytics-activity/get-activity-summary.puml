@@ -1,0 +1,23 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ActivitiesController" as API
+participant "GetActivitySummaryHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/collections/{id}/activities/summary\n?from=2026-01-01&to=2026-03-10
+API -> Handler : Send(GetActivitySummaryQuery)
+
+Handler -> Handler : Verify PhotographerId
+
+Handler -> DB : Query GalleryActivities\nWhere CollectionId & PhotographerId\nGroupBy ActivityType\nSelect {ActivityType, Count}
+DB --> Handler : Grouped counts
+
+Handler -> Handler : Map to ActivitySummaryDto:\n- DownloadCount: 42\n- FavoriteCount: 18\n- PrivatePhotoCount: 3\n- EmailRegistrationCount: 12\n- CommentCount: 7\n- ViewCount: 256
+
+Handler --> API : Result<ActivitySummaryDto>
+API --> Photographer : 200 OK
+
+@enduml

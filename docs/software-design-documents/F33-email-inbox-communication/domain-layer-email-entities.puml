@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class EmailConversation {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +Subject : string
+  +ClientEmail : string?
+  +ClientName : string?
+  +IsRead : bool
+  +LastMessageAt : DateTime?
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+class EmailMessage {
+  +ConversationId : Guid
+  +IsFromPhotographer : bool
+  +SenderEmail : string
+  +SenderName : string?
+  +Body : string
+  +HtmlBody : string?
+  +IsRead : bool
+  +SentAt : DateTime
+}
+
+class EmailAttachment {
+  +MessageId : Guid
+  +FileName : string
+  +ContentType : string
+  +FileSizeBytes : long
+  +StorageUrl : string
+}
+
+BaseEntity <|-- EmailConversation
+BaseEntity <|-- EmailMessage
+BaseEntity <|-- EmailAttachment
+
+EmailConversation "1" --> "*" EmailMessage : Messages
+EmailMessage "1" --> "*" EmailAttachment : Attachments
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class NotificationsController <<Controller>> {
+  +GetNotifications() : ActionResult
+  +GetUnreadCount() : ActionResult
+  +MarkRead() : ActionResult
+  +MarkAllRead() : ActionResult
+  +GetPreferences() : ActionResult
+  +UpdatePreference() : ActionResult
+}
+
+class DeviceTokenController <<Controller>> {
+  +Register() : ActionResult
+  +Unregister() : ActionResult
+}
+
+class NotificationHub <<SignalR Hub>> {
+  +OnConnectedAsync() : Task
+  +OnDisconnectedAsync() : Task
+}
+
+class PushNotificationService <<Service>> {
+  +SendAsync(userId, title, message, link, ct) : Task
+  +RegisterDeviceTokenAsync(userId, token, platform, ct) : Task
+  +UnregisterDeviceTokenAsync(userId, token, ct) : Task
+}
+
+class NotificationDigestBackgroundJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_email : IEmailService
+  -_mediator : IMediator
+  +RunAsync() : Task
+}
+
+class DeviceToken <<Entity>> {
+  +UserId : string
+  +Token : string
+  +Platform : string
+  +CreatedAt : DateTime
+}
+
+interface IPushNotificationService <<Interface>>
+interface IEmailService <<Interface>>
+
+PushNotificationService ..|> IPushNotificationService
+PushNotificationService --> DeviceToken
+NotificationDigestBackgroundJob --> IEmailService
+
+NotificationsController ..> GetNotificationsQuery
+NotificationsController ..> MarkNotificationReadCommand
+NotificationsController ..> UpdateNotificationPreferenceCommand
+DeviceTokenController ..> RegisterDeviceTokenCommand
+
+@enduml

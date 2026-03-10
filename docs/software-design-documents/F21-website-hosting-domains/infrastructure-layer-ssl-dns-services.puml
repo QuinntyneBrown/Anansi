@@ -1,0 +1,44 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface ISslService {
+  +ProvisionAsync(domain) : SslCertResult
+  +RenewAsync(certId) : SslCertResult
+  +RevokeAsync(certId) : void
+}
+
+interface IDnsVerificationService {
+  +VerifyAsync(domain, token) : bool
+  +GenerateInstructionsAsync(domain) : DnsInstructions
+}
+
+class SslService {
+  -_acmeClient : IAcmeClient
+  -_dbContext : IApplicationDbContext
+  +ProvisionAsync(domain) : SslCertResult
+  +RenewAsync(certId) : SslCertResult
+  +RevokeAsync(certId) : void
+}
+
+class DnsVerificationService {
+  -_dnsClient : IDnsClient
+  +VerifyAsync(domain, token) : bool
+  +GenerateInstructionsAsync(domain) : DnsInstructions
+}
+
+class SslRenewalBackgroundService {
+  -_serviceScopeFactory : IServiceScopeFactory
+  +ExecuteAsync(ct) : Task
+}
+
+class PasswordHashingService {
+  +Hash(plaintext) : string
+  +Verify(plaintext, hash) : bool
+}
+
+ISslService <|.. SslService
+IDnsVerificationService <|.. DnsVerificationService
+SslRenewalBackgroundService --> ISslService : renews certificates
+@enduml

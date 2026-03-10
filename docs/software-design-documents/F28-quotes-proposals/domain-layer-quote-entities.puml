@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Quote {
+  +Id : Guid
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +ProjectId : Guid?
+  +Title : string
+  +Notes : string?
+  +Status : QuoteStatus
+  +TotalCents : long
+  +SentAt : DateTime?
+  +AcceptedAt : DateTime?
+  +GeneratedInvoiceId : Guid?
+  +IsTemplate : bool
+  +TemplateName : string?
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+  +CreatedBy : string?
+  +UpdatedBy : string?
+}
+
+class QuoteItem {
+  +Id : Guid
+  +QuoteId : Guid
+  +Name : string
+  +Description : string?
+  +Quantity : int
+  +UnitPriceCents : long
+  +TotalCents : long
+  +SortOrder : int
+}
+
+enum QuoteStatus {
+  Draft
+  Sent
+  Viewed
+  Accepted
+  Declined
+  Expired
+  Cancelled
+}
+
+Quote "1" --> "*" QuoteItem : Items
+Quote --> QuoteStatus : uses
+@enduml

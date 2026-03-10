@@ -1,0 +1,46 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "Mobile App" as App
+participant "InvoicesController" as API
+participant "MediatR" as M
+participant "CreateInvoiceHandler" as CH
+participant "SendInvoiceHandler" as SH
+participant "IApplicationDbContext" as DB
+participant "IEmailService" as Email
+
+== Create Invoice ==
+
+Photographer -> App : Tap "New Invoice"
+Photographer -> App : Add line items,\nset tax, due date
+App -> API : POST /api/invoices\n{contactId, title, lineItems,\ntaxRatePercent, dueDate}
+API -> M : Send(CreateInvoiceCommand)
+M -> CH : Handle(command)
+
+CH -> DB : Create Invoice\nwith line items
+CH -> DB : Calculate totals
+CH -> DB : SaveChangesAsync()
+
+CH --> M : Result<InvoiceDto>
+M --> API : Result.Success
+API --> App : 201 Created (InvoiceDto)
+
+== Send Invoice ==
+
+Photographer -> App : Tap "Send"
+App -> API : POST /api/invoices/{id}/send
+API -> M : Send(SendInvoiceCommand)
+M -> SH : Handle(command)
+
+SH -> DB : Update Status = Sent\nSet SentAt = UtcNow
+SH -> DB : Get Contact email
+SH -> Email : SendAsync(contactEmail,\n"Invoice from {photographer}")
+SH -> DB : SaveChangesAsync()
+
+SH --> M : Result.Success
+M --> API : Result.Success
+API --> App : 200 OK
+
+@enduml

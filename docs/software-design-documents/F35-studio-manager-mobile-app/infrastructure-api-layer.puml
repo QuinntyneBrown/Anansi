@@ -1,0 +1,51 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class TapToPayController <<ApiController>> {
+  -_mediator : IMediator
+  +Initiate(command) : IActionResult
+  +Complete(command) : IActionResult
+  +QrFallback(command) : IActionResult
+}
+
+class DevicesController <<ApiController>> {
+  -_mediator : IMediator
+  +Register(command) : IActionResult
+  +Unregister(token) : IActionResult
+}
+
+class StripeTerminalService <<Service>> {
+  -_stripeConfig : StripeOptions
+  +CreateConnectionTokenAsync() : string
+  +CreatePaymentIntentAsync(amount, tip) : PaymentIntent
+}
+
+class PushNotificationService <<Service>> {
+  +SendAsync(userId, title, message) : Task
+  +RegisterDeviceTokenAsync(userId, token, platform) : Task
+  +UnregisterDeviceTokenAsync(userId, token) : Task
+}
+
+class PushNotificationDispatcher <<Service>> {
+  -_db : IApplicationDbContext
+  -_pushService : IPushNotificationService
+  +OnBookingConfirmed(booking) : Task
+  +OnPaymentReceived(payment) : Task
+  +OnContractSigned(contract) : Task
+  +OnMessageReceived(conversation) : Task
+  +OnFormSubmitted(questionnaire) : Task
+}
+
+interface IPushNotificationService <<Interface>>
+interface IPaymentService <<Interface>>
+
+PushNotificationService ..|> IPushNotificationService
+PushNotificationDispatcher --> IPushNotificationService
+TapToPayController ..> InitiateTapToPayCommand
+TapToPayController ..> CompleteTapToPayCommand
+TapToPayController ..> GeneratePaymentQrCommand
+DevicesController ..> RegisterDeviceCommand
+
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+actor Photographer as P
+participant "AccountController" as AC
+participant "MediatR" as M
+participant "DeleteAccountHandler" as DH
+participant "IStorageService" as SS
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+P -> AC : DELETE /api/account?exportFirst=true
+AC -> M : Send(DeleteAccountCommand(true))
+M -> DH : Handle(command)
+
+DH -> DB : Load Photographer with\nall related data
+
+alt exportFirst == true
+  DH -> DH : Package galleries,\ndocuments, invoices,\ncontacts into ZIP
+  DH -> SS : UploadAsync(exportZip)
+  SS --> DH : exportUrl
+  DH -> ES : SendAsync(photographer.Email,\n"Your data export is ready",\ndownload link)
+end
+
+DH -> DB : photographer.IsDeleted = true\nphotographer.DeletedAt = UtcNow
+DH -> DB : SaveChangesAsync()
+DH --> M : Result.Success
+M --> AC : Result.Success
+AC --> P : 200 OK "Account has been deleted"
+@enduml

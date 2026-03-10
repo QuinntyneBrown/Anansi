@@ -1,0 +1,77 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class GetBrandingProfileQuery <<Query>> {
+}
+
+class UpdateBrandingProfileCommand <<Command>> {
+  +ProfileIconUrl : string?
+  +LogoUrl : string?
+  +FaviconUrl : string?
+  +BrandColorHex : string?
+  +FontTheme : string?
+}
+
+class UploadLogoCommand <<Command>> {
+  +FileStream : Stream
+  +FileName : string
+  +ContentType : string
+}
+
+class UploadFaviconCommand <<Command>> {
+  +FileStream : Stream
+  +FileName : string
+}
+
+class UploadProfileIconCommand <<Command>> {
+  +FileStream : Stream
+  +FileName : string
+}
+
+class GetDocumentBrandingQuery <<Query>> {
+}
+
+class UpsertDocumentBrandingCommand <<Command>> {
+  +DocumentType : DocumentType
+  +HeaderImageUrl : string?
+  +BrandColorHex : string?
+  +SecondaryColorHex : string?
+  +FontTheme : string?
+}
+
+class BrandingProfileDto <<DTO>> {
+  +PhotographerId : Guid
+  +ProfileIconUrl : string?
+  +LogoUrl : string?
+  +CoverLogoUrl : string?
+  +FaviconUrl : string?
+  +BrandColorHex : string?
+  +FontTheme : string?
+  +PlatformBrandingRemoved : bool
+}
+
+class DocumentBrandingDto <<DTO>> {
+  +Id : Guid
+  +DocumentType : DocumentType
+  +HeaderImageUrl : string?
+  +BrandColorHex : string?
+  +SecondaryColorHex : string?
+  +FontTheme : string?
+}
+
+interface IImageProcessingService <<Interface>> {
+  +GenerateWhiteVariantAsync(stream) : string
+}
+
+interface IPlanService <<Interface>> {
+  +HasFeatureAsync(photographerId, feature) : bool
+}
+
+UploadLogoCommand ..> IImageProcessingService
+UploadFaviconCommand ..> IPlanService
+GetBrandingProfileQuery ..> BrandingProfileDto
+UpsertDocumentBrandingCommand ..> DocumentBrandingDto
+
+@enduml

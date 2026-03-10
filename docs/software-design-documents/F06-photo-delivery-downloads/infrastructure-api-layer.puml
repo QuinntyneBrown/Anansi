@@ -1,0 +1,47 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class DownloadsController <<Controller>> {
+  +RequestDownload() : ActionResult
+  +GetStatus() : ActionResult
+  +GetFile() : ActionResult
+  +ListActivity() : ActionResult
+  +ResetLimit() : ActionResult
+  +ExportActivityCsv() : ActionResult
+}
+
+class ImageResizeService <<Service>> {
+  +ResizeAsync(storageKey, resolution) : Stream
+}
+
+class ZipArchiveService <<Service>> {
+  +CreateZipAsync(storageKeys) : string
+}
+
+class DownloadBackgroundJob <<BackgroundJob>> {
+  -_db : IApplicationDbContext
+  -_imageResize : IImageResizeService
+  -_zip : IZipArchiveService
+  -_email : IEmailService
+  -_storage : IStorageService
+  +ProcessPendingDownloads() : Task
+}
+
+interface IImageResizeService <<Interface>>
+interface IZipArchiveService <<Interface>>
+interface IStorageService <<Interface>>
+interface IEmailService <<Interface>>
+
+ImageResizeService ..|> IImageResizeService
+ZipArchiveService ..|> IZipArchiveService
+DownloadBackgroundJob --> IImageResizeService
+DownloadBackgroundJob --> IZipArchiveService
+DownloadBackgroundJob --> IStorageService
+DownloadBackgroundJob --> IEmailService
+DownloadsController ..> RequestDownloadCommand
+DownloadsController ..> GetDownloadStatusQuery
+DownloadsController ..> ListDownloadActivityQuery
+
+@enduml

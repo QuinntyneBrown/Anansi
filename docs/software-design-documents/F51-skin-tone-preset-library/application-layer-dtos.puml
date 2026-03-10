@@ -1,0 +1,65 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PresetSummaryDto <<record>> {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +AuthorName : string
+  +SkinToneRange : string
+  +ShootingContext : string
+  +FavoriteCount : int
+  +IsSystemPreset : bool
+  +IsFavorited : bool
+  +IsAvailable : bool
+}
+
+class PresetDetailDto <<record>> {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +AuthorName : string
+  +SkinToneRange : string
+  +ShootingContext : string
+  +FavoriteCount : int
+  +IsSystemPreset : bool
+  +IsFavorited : bool
+  +Adjustments : AdjustmentsDto
+  +HslChannels : HslChannelDto[]
+  +SplitTone : SplitToneDto
+}
+
+class AdjustmentsDto <<record>> {
+  +Temperature : double
+  +Tint : double
+  +Exposure : double
+  +Contrast : double
+  +Highlights : double
+  +Shadows : double
+  +Whites : double
+  +Blacks : double
+  +Clarity : double
+  +Vibrance : double
+  +Saturation : double
+}
+
+class HslChannelDto <<record>> {
+  +Channel : string
+  +Hue : double
+  +Saturation : double
+  +Luminance : double
+}
+
+class SplitToneDto <<record>> {
+  +HighlightHue : double
+  +HighlightSaturation : double
+  +ShadowHue : double
+  +ShadowSaturation : double
+}
+
+PresetDetailDto *-- "1" AdjustmentsDto
+PresetDetailDto *-- "8" HslChannelDto
+PresetDetailDto *-- "1" SplitToneDto
+@enduml

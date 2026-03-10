@@ -1,0 +1,33 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "MobileGalleryController" as API
+participant "CreateMobileGalleryAppHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/mobile-galleries\n{collectionId, title, curatedMediaIds, theme, cta}
+API -> Handler : Send(CreateMobileGalleryAppCommand)
+
+Handler -> Handler : Verify PhotographerId via ICurrentUserService
+Handler -> DB : Count existing apps for photographer
+DB --> Handler : appCount
+
+Handler -> Handler : Check plan limits\n(Free: appCount < 3, Paid: unlimited)
+
+Handler -> DB : Load Collection & verify ownership
+DB --> Handler : Collection
+
+Handler -> Handler : Validate curatedMediaIds <= 200\nand belong to collection
+
+Handler -> DB : Find client's favorite photo\n(FavoriteList for collection)
+DB --> Handler : FavoriteItem (AppIconMediaId)
+
+Handler -> DB : Create MobileGalleryApp\n(Status = Draft, slug generated)
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<MobileGalleryAppDto>
+API --> Photographer : 201 Created {appId, slug, status: Draft}
+
+@enduml

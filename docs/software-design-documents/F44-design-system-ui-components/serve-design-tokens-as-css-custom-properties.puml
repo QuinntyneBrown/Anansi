@@ -1,0 +1,25 @@
+@startuml
+actor Browser as B
+participant "DesignTokensController" as DTC
+participant "MediatR" as M
+participant "GetDesignTokensHandler" as H
+participant "DesignTokensProvider" as TP
+
+B -> DTC : GET /api/design-tokens/css
+DTC -> M : Send(GetDesignTokensQuery)
+M -> H : Handle(query)
+H -> TP : GetAllTokens()
+TP --> H : tokens[]
+
+H -> H : Generate CSS:\n:root {\n  --color-page-bg: #1A1A1C;\n  --color-card-bg: #242426;\n  --color-accent-gold: #C9A962;\n  --font-display: "Cormorant Garamond";\n  --font-body: "Inter";\n  --spacing-gap-sm: 8px;\n  --radius-md: 20px;\n  ...\n}
+
+H --> M : CSS string
+M --> DTC : Result.Success
+DTC --> B : 200 OK\nContent-Type: text/css\n:root { --color-page-bg: #1A1A1C; ... }
+
+note right of B
+  Linked in <head> as:
+  <link rel="stylesheet"
+    href="/api/design-tokens/css">
+end note
+@enduml

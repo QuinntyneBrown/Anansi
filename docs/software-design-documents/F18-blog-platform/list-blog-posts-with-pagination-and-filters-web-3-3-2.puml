@@ -1,0 +1,43 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "BlogController" as C
+participant "IMediator" as M
+participant "ListBlogPostsHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : GET /api/websites/{wId}/blog/posts\n?status=Published&categoryId=xyz\n&page=1&pageSize=10
+C -> M : Send(ListBlogPostsQuery)
+M -> H : Handle(query)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Query BlogPosts\nWhere(websiteId, !IsDeleted)
+DB --> H : IQueryable
+
+opt status filter
+  H -> H : .Where(Status == status)
+end
+
+opt categoryId filter
+  H -> H : .Where(BlogPostCategories\n.Any(c => c.BlogCategoryId == categoryId))
+end
+
+H -> H : .OrderByDescending(PublishDate)
+
+H -> DB : Count total matching
+DB --> H : totalCount
+
+H -> DB : .Skip((page-1)*pageSize)\n.Take(pageSize)\ninclude Categories
+DB --> H : List<BlogPost>
+
+H -> H : Map to BlogPostDto list
+
+H --> M : Result.Success(\nPagedList<BlogPostDto>)
+M --> C : result
+C --> P : 200 OK { items, page,\npageSize, totalCount }
+
+@enduml

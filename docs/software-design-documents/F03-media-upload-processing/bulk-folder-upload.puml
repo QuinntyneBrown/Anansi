@@ -1,0 +1,35 @@
+@startuml
+actor Photographer as P
+participant "GalleryMediaController" as GMC
+participant "MediatR" as M
+participant "BulkFolderUploadHandler" as BFH
+participant "ApplicationDbContext" as DB
+participant "UploadMediaHandler" as UMH
+
+P -> GMC : POST /api/collections/bulk-folder-upload\n{folders: [{name, files}, {name, parent, files}]}
+GMC -> M : Send(BulkFolderUploadCommand)
+M -> BFH : Handle(command)
+
+loop each root folder
+  BFH -> DB : Create Collection(title = folderName)
+
+  loop each sub-folder
+    BFH -> DB : Create CollectionSet(\ncollectionId, title = subFolderName)
+  end
+
+  BFH -> DB : SaveChangesAsync()
+
+  loop each file in folder/sub-folder
+    BFH -> M : Send(UploadMediaCommand(\ncollectionId, setId, file...))
+    M -> UMH : Handle (validates & uploads)
+    UMH --> M : Result
+    alt upload failed
+      BFH -> BFH : Record failure,\ncontinue with next file
+    end
+  end
+end
+
+BFH --> M : BulkUploadResult {\n  collectionsCreated,\n  setsCreated,\n  filesUploaded,\n  filesFailed[]\n}
+M --> GMC : Result.Success
+GMC --> P : 200 OK (BulkUploadResult)
+@enduml

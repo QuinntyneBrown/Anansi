@@ -1,0 +1,54 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class Website {
+    +Id : Guid
+    +PhotographerId : Guid
+    +PrimaryFontFamily : string?
+    +SecondaryFontFamily : string?
+    +CustomFontUrl : string?
+    +AnimationType : AnimationType
+    +AnimationsEnabled : bool
+  }
+
+  class WebsiteFont {
+    +Id : Guid
+    +PhotographerId : Guid
+    +FontFamily : string
+    +FileUrl : string
+    +FileFormat : string
+    +FontWeight : string?
+    +FontStyle : string?
+    +CreatedAt : DateTime
+  }
+
+  class PageElement {
+    +Id : Guid
+    +ContentJson : string?
+  }
+
+  class ElementBreakpointOverride {
+    +Id : Guid
+    +StyleOverridesJson : string?
+  }
+}
+
+note right of WebsiteFont
+  FileFormat: woff, woff2, ttf, otf
+  FontWeight: e.g. "400", "700"
+  FontStyle: "normal", "italic"
+end note
+
+note right of PageElement
+  ContentJson may include:
+  { fontFamily, fontSize,
+    fontWeight, letterSpacing }
+end note
+
+Website ..> WebsiteFont : references via\nCustomFontUrl
+PageElement --> "*" ElementBreakpointOverride : BreakpointOverrides
+
+@enduml

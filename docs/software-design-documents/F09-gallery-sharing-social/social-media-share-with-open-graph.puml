@@ -1,0 +1,47 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "Client Browser" as Browser
+participant "OpenGraphController" as OG
+participant "GetShareMetadataHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as Storage
+actor "Social Platform Crawler" as Crawler
+
+Client -> Browser : Click "Share to Facebook"\non collection or photo
+
+Browser -> Browser : Build share URL:\nhttps://gallery.example.com/{slug}\nor .../photos/{mediaId}
+
+Browser -> Browser : Open Facebook share dialog\nwith URL
+
+Crawler -> OG : GET /gallery/{slug}\n(User-Agent: facebookexternalhit)
+OG -> Handler : Send(GetShareMetadataQuery)
+
+Handler -> DB : Find Collection by slug
+DB --> Handler : Collection
+
+alt MediaId is provided
+  Handler -> DB : Find GalleryMedia by Id
+  DB --> Handler : GalleryMedia
+  Handler -> Storage : GetPresignedUrlAsync(thumbnailKey)
+  Storage --> Handler : Preview image URL
+  Handler -> Handler : Build metadata:\ntitle=photo filename,\ndescription=collection title,\nimage=preview URL
+else Collection-level share
+  Handler -> Storage : GetPresignedUrlAsync(coverPhotoKey)
+  Storage --> Handler : Cover image URL
+  Handler -> Handler : Build metadata:\ntitle=collection title,\ndescription=collection description,\nimage=cover URL
+end
+
+Handler --> OG : ShareMetadataDto
+OG --> Crawler : HTML with og: meta tags
+
+note right of Crawler
+  <meta property="og:title" content="..." />
+  <meta property="og:description" content="..." />
+  <meta property="og:image" content="..." />
+  <meta property="og:url" content="..." />
+end note
+
+@enduml

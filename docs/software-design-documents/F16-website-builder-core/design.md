@@ -147,6 +147,8 @@ WebsiteTemplate ..> TemplateCategory
 @enduml
 ```
 
+![Domain Layer -- Website Aggregate & Template](domain-layer-website-aggregate-template.png)
+
 ### Domain Layer -- Page Elements & Breakpoint Overrides
 
 ```plantuml
@@ -227,6 +229,8 @@ ElementBreakpointOverride ..> Breakpoint
 @enduml
 ```
 
+![Domain Layer -- Page Elements & Breakpoint Overrides](domain-layer-page-elements-breakpoint-overrides.png)
+
 ### Application Layer -- Commands, Queries & DTOs
 
 ```plantuml
@@ -301,6 +305,8 @@ CreateElementHandler ..> PageElementDto : returns
 @enduml
 ```
 
+![Application Layer -- Commands, Queries & DTOs](application-layer-commands-queries-dtos.png)
+
 ### API Layer -- Controllers
 
 ```plantuml
@@ -347,6 +353,8 @@ PageElementsController --> IMediator
 @enduml
 ```
 
+![API Layer -- Controllers](api-layer-controllers.png)
+
 ## Sequence Diagrams
 
 ### Select and Preview a Template (WEB-3.1.1)
@@ -385,6 +393,8 @@ C --> P : 200 OK { layoutDefinitionJson }
 
 @enduml
 ```
+
+![Select and Preview a Template (WEB-3.1.1)](select-and-preview-a-template-web-3-1-1.png)
 
 ### Create a New Draft Website (WEB-3.1.3)
 
@@ -430,6 +440,8 @@ end
 
 @enduml
 ```
+
+![Create a New Draft Website (WEB-3.1.3)](create-a-new-draft-website-web-3-1-3.png)
 
 ### Add Element via Flex Editor (WEB-3.1.2)
 
@@ -480,6 +492,8 @@ C --> P : 201 Created { pageElementDto }
 @enduml
 ```
 
+![Add Element via Flex Editor (WEB-3.1.2)](add-element-via-flex-editor-web-3-1-2.png)
+
 ### Switch Template Preserving Content (WEB-3.1.1)
 
 ```plantuml
@@ -524,6 +538,8 @@ C --> P : 200 OK { updated websiteDto }
 
 @enduml
 ```
+
+![Switch Template Preserving Content (WEB-3.1.1)](switch-template-preserving-content-web-3-1-1.png)
 
 ### Publish a Draft Website (WEB-3.1.3)
 
@@ -572,3 +588,5 @@ end
 
 @enduml
 ```
+
+![Publish a Draft Website (WEB-3.1.3)](publish-a-draft-website-web-3-1-3.png)

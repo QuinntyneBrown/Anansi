@@ -1,0 +1,25 @@
+@startuml
+participant "PaymentReminderJob" as JOB
+participant "MediatR" as M
+participant "SendPaymentRemindersHandler" as SRH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+JOB -> M : Send(SendPaymentRemindersCommand)
+M -> SRH : Handle(command)
+
+SRH -> DB : Query InvoicePaymentSchedules\nWHERE IsPaid = false\nAND Invoice.AutoRemindersEnabled = true\nAND Invoice.Status IN\n  (Sent, Viewed, PartiallyPaid)
+
+SRH -> DB : Join Photographer to verify\nplan supports reminders
+
+loop each installment needing reminder
+  SRH -> SRH : Determine reminder type:\n- "upcoming" if DueDate > UtcNow\n- "due today" if DueDate = today\n- "overdue" if DueDate < UtcNow
+
+  SRH -> ES : SendTemplatedAsync(\nclient.Email,\nreminderType template,\namount, dueDate,\npaymentLink)
+
+  SRH -> DB : invoice.LastReminderSentAt\n= UtcNow
+end
+
+SRH -> DB : SaveChangesAsync()
+SRH --> M : Result.Success(reminderCount)
+@enduml

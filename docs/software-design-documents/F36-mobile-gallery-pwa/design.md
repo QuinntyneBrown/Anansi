@@ -112,6 +112,8 @@ MobileGalleryApp --> CtaButtonType
 @enduml
 ```
 
+![Domain Layer - Mobile Gallery Entities](domain-layer-mobile-gallery-entities.png)
+
 ### Application Layer - Commands, Queries, and DTOs
 
 ```plantuml
@@ -197,6 +199,8 @@ GetPublicMobileGalleryQuery ..> PublicMobileGalleryDto
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and DTOs](application-layer-commands-queries-and-dtos.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -255,6 +259,8 @@ PublicMobileGalleryController ..> GetPublicMobileGalleryQuery
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ---
 
 ## Sequence Diagrams
@@ -296,6 +302,8 @@ API --> Photographer : 201 Created {appId, slug, status: Draft}
 
 @enduml
 ```
+
+![Create Mobile Gallery App](create-mobile-gallery-app.png)
 
 ### Publish and Client Installation
 
@@ -355,6 +363,8 @@ PubAPI --> Client : sw.js (pre-cache image list)
 @enduml
 ```
 
+![Publish and Client Installation](publish-and-client-installation.png)
+
 ### Browse Gallery and Share Image
 
 ```plantuml
@@ -398,6 +408,8 @@ Client -> Client : Native Web Share API\n(social platforms)
 @enduml
 ```
 
+![Browse Gallery and Share Image](browse-gallery-and-share-image.png)
+
 ### Delete Mobile Gallery App
 
 ```plantuml
@@ -429,3 +441,5 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Delete Mobile Gallery App](delete-mobile-gallery-app.png)

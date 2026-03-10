@@ -1,0 +1,37 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "BrandingController" as API
+participant "UploadLogoHandler" as Handler
+participant "IStorageService" as Storage
+participant "IImageProcessingService" as ImgProc
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/branding/logo\n[multipart: logo.png, 3.2 MB]
+API -> Handler : Send(UploadLogoCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> Handler : Validate PNG format, size <= 5 MB
+
+Handler -> Storage : UploadAsync(stream, "logos/{id}/logo.png")
+Storage --> Handler : logoUrl
+
+Handler -> ImgProc : GenerateWhiteVariantAsync(stream)
+note right of ImgProc
+  Converts all opaque pixels
+  to white, preserving alpha.
+  Uploads as "logos/{id}/cover-logo.png"
+end note
+ImgProc -> Storage : UploadAsync(whiteStream, "logos/{id}/cover-logo.png")
+Storage --> ImgProc : coverLogoUrl
+ImgProc --> Handler : coverLogoUrl
+
+Handler -> DB : Update Photographer.LogoUrl = logoUrl
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<BrandingProfileDto>
+API --> Photographer : 200 OK {logoUrl, coverLogoUrl}
+
+@enduml

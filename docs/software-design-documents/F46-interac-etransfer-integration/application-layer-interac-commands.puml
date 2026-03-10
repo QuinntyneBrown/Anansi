@@ -1,0 +1,38 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Interac.Commands" {
+  class CreateInteracPaymentRequestCommand <<record>> {
+    +InvoiceId : Guid
+  }
+
+  class ConfirmInteracPaymentCommand <<record>> {
+    +PaymentRequestId : Guid
+  }
+
+  class ExpireStaleInteracRequestsCommand <<record>>
+
+  class UpdateInteracSettingsCommand <<record>> {
+    +InteracEmail : string
+    +IsEnabled : bool
+  }
+
+  class CreateStoreOrderWithInteracCommand <<record>> {
+    +ClientName : string
+    +ClientEmail : string
+    +ShippingAddress : string?
+    +Items : List<CheckoutItemInput>
+    +ShippingMethodId : Guid?
+    +CouponCode : string?
+  }
+}
+
+class CheckoutItemInput <<record>> {
+  +ProductId : Guid
+  +ProductVariationId : Guid?
+  +Quantity : int
+  +SelectedPhotoUrl : string?
+}
+@enduml

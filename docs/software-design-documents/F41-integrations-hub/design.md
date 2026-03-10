@@ -114,6 +114,8 @@ Photographer "1" --> "0..1" InstagramFeedConfig : owns
 @enduml
 ```
 
+![Domain -- Integration Fields on Photographer](domain-integration-fields-on-photographer.png)
+
 ### Application -- Integration Commands & Queries
 
 ```plantuml
@@ -164,6 +166,8 @@ package "Features.Integrations.Queries" {
 @enduml
 ```
 
+![Application -- Integration Commands & Queries](application-integration-commands-queries.png)
+
 ### Application -- Instagram & Payment Commands
 
 ```plantuml
@@ -203,6 +207,8 @@ package "Features.Integrations.Queries" {
 
 @enduml
 ```
+
+![Application -- Instagram & Payment Commands](application-instagram-payment-commands.png)
 
 ### Application -- Service Interfaces
 
@@ -275,6 +281,8 @@ IInstagramService ..> InstagramPost
 @enduml
 ```
 
+![Application -- Service Interfaces](application-service-interfaces.png)
+
 ### Infrastructure -- Service Implementations
 
 ```plantuml
@@ -341,6 +349,8 @@ IPayPalService <|.. PayPalService
 @enduml
 ```
 
+![Infrastructure -- Service Implementations](infrastructure-service-implementations.png)
+
 ### API -- Integration Controllers
 
 ```plantuml
@@ -380,6 +390,8 @@ IntegrationsOAuthController --> "IMediator" : sends commands
 @enduml
 ```
 
+![API -- Integration Controllers](api-integration-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -417,6 +429,8 @@ M --> OC : Result.Success
 OC --> P : 200 OK + redirect to settings
 @enduml
 ```
+
+![Connect Google Calendar (OAuth Flow)](connect-google-calendar-oauth-flow.png)
 
 ### Two-Way Google Calendar Sync (Background Job)
 
@@ -459,6 +473,8 @@ loop for each photographer
 end
 @enduml
 ```
+
+![Two-Way Google Calendar Sync (Background Job)](two-way-google-calendar-sync-background-job.png)
 
 ### Auto-Generate Video Call Link on Booking Confirmation
 
@@ -505,6 +521,8 @@ BC --> P : 200 OK {BookingDto with videoCallLink}
 @enduml
 ```
 
+![Auto-Generate Video Call Link on Booking Confirmation](auto-generate-video-call-link-on-booking-confirmation.png)
+
 ### Configure Analytics Integration (GA4 / Facebook Pixel)
 
 ```plantuml
@@ -547,6 +565,8 @@ end note
 @enduml
 ```
 
+![Configure Analytics Integration (GA4 / Facebook Pixel)](configure-analytics-integration-ga4-facebook-pixel.png)
+
 ### Connect Instagram Feed
 
 ```plantuml
@@ -578,6 +598,8 @@ M --> OC : Result.Success
 OC --> P : 302 Redirect to integration settings
 @enduml
 ```
+
+![Connect Instagram Feed](connect-instagram-feed.png)
 
 ### Connect Stripe (OAuth Connect)
 
@@ -612,6 +634,8 @@ OC --> P : 302 Redirect to integration settings
 @enduml
 ```
 
+![Connect Stripe (OAuth Connect)](connect-stripe-oauth-connect.png)
+
 ### Get All Integration Statuses
 
 ```plantuml
@@ -640,3 +664,5 @@ M --> IC : Result.Success
 IC --> P : 200 OK [{provider, isConnected, accountLabel}]
 @enduml
 ```
+
+![Get All Integration Statuses](get-all-integration-statuses.png)

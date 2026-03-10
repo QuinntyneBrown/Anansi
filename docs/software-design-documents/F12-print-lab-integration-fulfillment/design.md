@@ -122,6 +122,8 @@ LabOrder ..> LabPartner : LabName maps to
 @enduml
 ```
 
+![Domain -- Lab Integration Entities](domain-lab-integration-entities.png)
+
 ### Domain -- Order-to-Lab Relationship
 
 ```plantuml
@@ -172,6 +174,8 @@ OrderItem --> "1" Product
 Order "1" ..> "0..*" LabOrder : StoreOrderId
 @enduml
 ```
+
+![Domain -- Order-to-Lab Relationship](domain-order-to-lab-relationship.png)
 
 ### Application -- Lab Integration Service Interface
 
@@ -232,6 +236,8 @@ ILabIntegrationService ..> LabPricingResult
 @enduml
 ```
 
+![Application -- Lab Integration Service Interface](application-lab-integration-service-interface.png)
+
 ### Infrastructure -- Lab Adapters
 
 ```plantuml
@@ -285,6 +291,8 @@ LabPricingSyncJob --> ILabAdapter : polls pricing
 @enduml
 ```
 
+![Infrastructure -- Lab Adapters](infrastructure-lab-adapters.png)
+
 ---
 
 ## Sequence Diagrams
@@ -327,6 +335,8 @@ orderHandler --> checkout : Result<OrderDto>
 checkout --> Client : Order confirmation
 @enduml
 ```
+
+![Automatic Lab Fulfillment on Payment](automatic-lab-fulfillment-on-payment.png)
 
 ### Self-Fulfillment Workflow
 
@@ -371,6 +381,8 @@ ctrl --> Photographer : 200 OK
 @enduml
 ```
 
+![Self-Fulfillment Workflow](self-fulfillment-workflow.png)
+
 ### Fetch Lab Pricing
 
 ```plantuml
@@ -407,6 +419,8 @@ ctrl --> Photographer : 200 OK {labPricing[]}
 @enduml
 ```
 
+![Fetch Lab Pricing](fetch-lab-pricing.png)
+
 ### Lab Pricing Auto-Sync (Background Job)
 
 ```plantuml
@@ -440,6 +454,8 @@ end
 [<-- job : Sync complete
 @enduml
 ```
+
+![Lab Pricing Auto-Sync (Background Job)](lab-pricing-auto-sync-background-job.png)
 
 ### Lab Order Status Polling
 
@@ -476,3 +492,5 @@ job -> db : SaveChangesAsync()
 [<-- job : Poll complete
 @enduml
 ```
+
+![Lab Order Status Polling](lab-order-status-polling.png)

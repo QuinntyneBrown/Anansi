@@ -1,0 +1,47 @@
+@startuml
+participant "Media Upload Pipeline" as MUP
+participant "IStorageService" as SS
+participant "IWatermarkService" as WMS
+participant "ICdnService" as CDN
+participant "IApplicationDbContext" as DB
+
+MUP -> SS : UploadAsync(imageStream, storageKey)
+SS --> MUP : storageKey
+
+MUP -> DB : Get Photographer's default Watermark
+DB --> MUP : watermark (or null)
+
+alt watermark exists and collection has watermark enabled
+  MUP -> WMS : ApplyWatermarkAsync(\nstorageKey, watermark)
+
+  WMS -> SS : Download source image
+  SS --> WMS : imageBytes
+  WMS -> WMS : Load image with ImageSharp
+
+  alt watermark.Type == Text
+    WMS -> WMS : Render text at position\nwith font, opacity, scale
+  else watermark.Type == Image
+    WMS -> WMS : Composite watermark image\nat position with opacity, scale
+  end
+
+  WMS -> SS : Upload watermarked version\n(storageKey + "_wm")
+  SS --> WMS : watermarkedKey
+  WMS --> MUP : watermarkedKey
+end
+
+MUP -> CDN : GenerateProgressiveImagesAsync(\nwatermarkedKey or storageKey)
+CDN -> CDN : Generate placeholder (20px blur-up)
+CDN -> CDN : Generate low-res (640px)
+CDN -> CDN : Generate display-res (2048px)
+CDN --> MUP : ProgressiveImageSet {\nplaceholder, lowRes, fullRes}
+
+MUP -> DB : Update GalleryMedia\n(ThumbnailStorageKey, CDN URLs)
+MUP -> DB : SaveChangesAsync()
+
+note right of WMS
+  Watermarks are burned into the
+  display-size image on the server.
+  They cannot be removed via CSS
+  or developer tools.
+end note
+@enduml

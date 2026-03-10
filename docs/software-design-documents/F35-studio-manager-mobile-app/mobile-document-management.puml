@@ -1,0 +1,42 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "Mobile App" as App
+participant "ContractsController" as CAPI
+participant "QuestionnairesController" as QAPI
+participant "MediatR" as M
+participant "IApplicationDbContext" as DB
+participant "IEmailService" as Email
+
+== View Document Status ==
+
+Photographer -> App : Open Documents tab
+App -> CAPI : GET /api/contracts?\npage=1
+CAPI -> M : Send(ListContractsQuery)
+M --> CAPI : PagedList<ContractDto>
+CAPI --> App : contracts with status\n(Draft, Sent, Signed)
+
+App -> QAPI : GET /api/questionnaires?\npage=1
+QAPI -> M : Send(ListQuestionnairesQuery)
+M --> QAPI : PagedList<QuestionnaireDto>
+QAPI --> App : questionnaires with status\n(Draft, Sent, Completed)
+
+App -> App : Display documents\nwith status badges
+
+== Share Contract from Mobile ==
+
+Photographer -> App : Tap contract -> "Send"
+App -> CAPI : POST /api/contracts/{id}/send
+CAPI -> M : Send(SendContractCommand)
+
+M -> DB : Update Contract\nStatus = Sent, SentAt = UtcNow
+M -> DB : Get Contact email
+M -> Email : SendAsync(contactEmail,\n"Contract for review")
+M -> DB : SaveChangesAsync()
+
+CAPI --> App : 200 OK
+App -> App : Update status badge\nto "Sent"
+
+@enduml

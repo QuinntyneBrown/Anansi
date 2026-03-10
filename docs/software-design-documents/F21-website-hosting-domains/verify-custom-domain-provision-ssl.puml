@@ -1,0 +1,26 @@
+@startuml
+actor Photographer as P
+participant "HostingController" as HC
+participant "MediatR" as M
+participant "VerifyCustomDomainHandler" as VH
+participant "IDnsVerificationService" as DNS
+participant "ISslService" as SSL
+participant "ApplicationDbContext" as DB
+
+P -> HC : POST /api/websites/{id}/domain/verify
+HC -> M : Send(VerifyCustomDomainCommand)
+M -> VH : Handle()
+VH -> DB : Load CustomDomain entity
+DB --> VH : customDomain
+VH -> DNS : VerifyAsync(domainName, token)
+DNS --> VH : true (DNS propagated)
+VH -> DB : CustomDomain.IsVerified = true
+VH -> SSL : ProvisionAsync(domainName)
+SSL --> VH : SslCertResult {certId, expiresAt}
+VH -> DB : Update SslStatus=Active,\nSslCertificateId, SslExpiresAt
+VH -> DB : Website.CustomDomainVerified = true
+DB --> VH : saved
+VH --> M : success
+M --> HC : result
+HC --> P : 200 OK {verified: true, sslActive: true}
+@enduml

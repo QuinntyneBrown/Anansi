@@ -1,0 +1,30 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PlansController <<ApiController>> {
+  -_mediator : IMediator
+  +GetPlans(product?) : IActionResult
+  +CreatePlan(request) : IActionResult
+  +UpdatePlan(id, request) : IActionResult
+  +GetCurrentSubscription() : IActionResult
+  +CreateSubscription(request) : IActionResult
+  +ChangeSubscription(request) : IActionResult
+  +CancelSubscription(immediate?) : IActionResult
+  +CheckFeatureAccess(featureKey) : IActionResult
+}
+
+note right of PlansController
+  GET    /api/plans              [AllowAnonymous]
+  POST   /api/plans              [Authorize]
+  PUT    /api/plans/{id}         [Authorize]
+  GET    /api/plans/subscription [Authorize]
+  POST   /api/plans/subscription [Authorize]
+  PUT    /api/plans/subscription [Authorize]
+  DELETE /api/plans/subscription [Authorize]
+  GET    /api/plans/features/{key} [Authorize]
+end note
+
+PlansController --> "IMediator"
+@enduml

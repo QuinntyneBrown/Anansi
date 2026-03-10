@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor "Social Platform" as Social
+participant "GalleryShareController" as API
+participant "GetWatermarkedImageHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IWatermarkCompositorService" as Compositor
+participant "IStorageService" as Storage
+
+Social -> API : GET /api/galleries/{collId}/share/{mediaId}\n(Open Graph og:image URL)
+API -> Handler : Send(GetWatermarkedImageQuery\n{mediaId, collectionId, width: 1200})
+
+Handler -> DB : Load Collection
+DB --> Handler : Collection (WatermarkEnabled = true)
+
+Handler -> DB : Load Watermark
+DB --> Handler : Watermark
+
+Handler -> Storage : DownloadAsync(media.StorageKey)
+Storage --> Handler : imageStream
+
+Handler -> Compositor : CompositeAsync(imageStream, watermark, 1200, 630)
+Compositor --> Handler : watermarkedStream
+
+Handler -> Storage : UploadAsync(watermarkedStream, cacheKey)
+Storage --> Handler : watermarkedUrl
+
+Handler --> API : watermarkedUrl
+API --> Social : 302 Redirect to watermarked image
+
+note right of Social
+  Social platforms crawl og:image
+  and display the watermarked
+  version, protecting the
+  photographer's work.
+end note
+
+@enduml

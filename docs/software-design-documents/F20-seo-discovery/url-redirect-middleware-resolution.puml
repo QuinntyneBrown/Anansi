@@ -1,0 +1,25 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Visitor as V
+participant "RedirectMiddleware" as MW
+participant "IApplicationDbContext" as DB
+participant "Next Middleware" as NX
+
+V -> MW : GET /old-gallery
+MW -> MW : Extract request path\n"/old-gallery"
+
+MW -> DB : Find UrlRedirect\nWhere(SourcePath == "/old-gallery"\nAND IsActive == true)
+DB --> MW : UrlRedirect?
+
+alt redirect found
+  MW -> MW : Determine status code\n(301 or 302)
+  MW --> V : HTTP 301 Redirect\nLocation: /portfolio
+else no redirect found
+  MW -> NX : next.Invoke(context)
+  NX --> MW : response
+  MW --> V : normal response
+end
+
+@enduml

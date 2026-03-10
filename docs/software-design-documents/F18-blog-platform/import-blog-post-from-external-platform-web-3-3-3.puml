@@ -1,0 +1,42 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "BlogController" as C
+participant "IMediator" as M
+participant "ImportBlogPostHandler" as H
+participant "ICurrentUserService" as U
+participant "IBlogMigrationService" as MS
+participant "IStorageService" as SS
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/blog/posts/import\n{ sourceUrl, title, categoryIds }
+C -> M : Send(ImportBlogPostCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Verify website\n(websiteId, photographerId)
+DB --> H : Website
+
+H -> MS : FetchAndParseAsync(sourceUrl)
+MS -> MS : HTTP GET sourceUrl\nParse HTML content\nExtract title, body, images
+MS --> H : BlogImportResult\n{ title, bodyHtml, imageUrls[] }
+
+loop each image URL in content
+  H -> SS : UploadAsync(imageStream,\nfileName, contentType)
+  SS --> H : new hosted URL
+  H -> H : Rewrite image URL\nin bodyHtml
+end
+
+H -> H : Create BlogPost entity\nTitle = provided or parsed\nBodyHtml = rewritten HTML\nStatus = Draft\nImportedFromUrl = sourceUrl\nImportedAt = DateTime.UtcNow
+
+H -> DB : Add(post)\nSaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(BlogPostDto)
+M --> C : result
+C --> P : 201 Created { importedPostDto }
+
+@enduml

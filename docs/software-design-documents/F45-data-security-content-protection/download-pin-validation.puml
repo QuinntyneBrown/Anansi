@@ -1,0 +1,42 @@
+@startuml
+actor Client as C
+participant "GalleryAccessController" as GAC
+participant "MediatR" as M
+participant "ValidateDownloadPinHandler" as H
+participant "IApplicationDbContext" as DB
+participant "IStorageService" as SS
+
+C -> GAC : POST /api/galleries/{id}/validate-pin\n{pin: "1234"}
+GAC -> M : Send(ValidateDownloadPinCommand)
+M -> H : Handle(command)
+
+H -> DB : Collections.FindAsync(collectionId)
+DB --> H : collection
+
+alt collection.DownloadPinEnabled == false
+  H --> M : Result.Success (no PIN required)
+  M --> GAC : Result.Success
+  GAC --> C : 200 OK
+end
+
+H -> H : Compare provided PIN\nwith collection.DownloadPin
+
+alt PIN incorrect
+  H --> M : Result.Failure("Invalid PIN")
+  M --> GAC : Result.Failure
+  GAC --> C : 401 Unauthorized
+end
+
+alt collection.DownloadLimit is set
+  H -> H : Check collection.DownloadCount\n< collection.DownloadLimit
+  alt limit reached
+    H --> M : Result.Failure("Download limit reached")
+    M --> GAC : Result.Failure
+    GAC --> C : 403 Forbidden
+  end
+end
+
+H --> M : Result.Success\n(download authorized)
+M --> GAC : Result.Success
+GAC --> C : 200 OK {authorized: true}
+@enduml

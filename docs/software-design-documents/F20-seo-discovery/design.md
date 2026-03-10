@@ -122,6 +122,8 @@ WebsitePage --> "*" PageElement : Elements
 @enduml
 ```
 
+![Domain Layer -- SEO Entities](domain-layer-seo-entities.png)
+
 ### Domain Layer -- URL Redirects
 
 ```plantuml
@@ -161,6 +163,8 @@ UrlRedirect ..> RedirectType
 
 @enduml
 ```
+
+![Domain Layer -- URL Redirects](domain-layer-url-redirects.png)
 
 ### Application Layer -- SEO Audit & AI Content
 
@@ -236,6 +240,8 @@ SaveAltTextCommand --> ATE
 @enduml
 ```
 
+![Application Layer -- SEO Audit & AI Content](application-layer-seo-audit-ai-content.png)
+
 ### Application Layer -- URL Redirect Commands
 
 ```plantuml
@@ -295,6 +301,8 @@ ListUrlRedirectsHandler ..> UrlRedirectDto : returns
 @enduml
 ```
 
+![Application Layer -- URL Redirect Commands](application-layer-url-redirect-commands.png)
+
 ### API & Infrastructure Layer
 
 ```plantuml
@@ -338,6 +346,8 @@ AiContentService ..|> "IAiContentService"
 
 @enduml
 ```
+
+![API & Infrastructure Layer](api-infrastructure-layer.png)
 
 ## Sequence Diagrams
 
@@ -403,6 +413,8 @@ C --> P : 200 OK { websiteId, issues[] }
 @enduml
 ```
 
+![Run SEO Audit (WEB-3.5.1)](run-seo-audit-web-3-5-1.png)
+
 ### Generate AI Alt Text for Images (WEB-3.5.2)
 
 ```plantuml
@@ -447,6 +459,8 @@ end note
 @enduml
 ```
 
+![Generate AI Alt Text for Images (WEB-3.5.2)](generate-ai-alt-text-for-images-web-3-5-2.png)
+
 ### Save Reviewed Alt Text (WEB-3.5.2)
 
 ```plantuml
@@ -485,6 +499,8 @@ C --> P : 200 OK
 
 @enduml
 ```
+
+![Save Reviewed Alt Text (WEB-3.5.2)](save-reviewed-alt-text-web-3-5-2.png)
 
 ### Generate AI Page Description (WEB-3.5.3)
 
@@ -528,6 +544,8 @@ end note
 @enduml
 ```
 
+![Generate AI Page Description (WEB-3.5.3)](generate-ai-page-description-web-3-5-3.png)
+
 ### Create a URL Redirect (WEB-3.5.4)
 
 ```plantuml
@@ -569,6 +587,8 @@ C --> P : 201 Created { redirectDto }
 @enduml
 ```
 
+![Create a URL Redirect (WEB-3.5.4)](create-a-url-redirect-web-3-5-4.png)
+
 ### URL Redirect Middleware Resolution
 
 ```plantuml
@@ -598,6 +618,8 @@ end
 
 @enduml
 ```
+
+![URL Redirect Middleware Resolution](url-redirect-middleware-resolution.png)
 
 ### Configure Open Graph Image (WEB-3.5.5)
 
@@ -641,3 +663,5 @@ end note
 
 @enduml
 ```
+
+![Configure Open Graph Image (WEB-3.5.5)](configure-open-graph-image-web-3-5-5.png)

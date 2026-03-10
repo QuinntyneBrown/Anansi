@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Quotes.Templates" {
+  class SaveQuoteTemplateCommand <<record>> {
+    +QuoteId : Guid
+    +TemplateName : string
+  }
+
+  class ListQuoteTemplatesQuery <<record>>
+
+  class ApplyQuoteTemplateCommand <<record>> {
+    +TemplateId : Guid
+    +ContactId : Guid?
+    +ProjectId : Guid?
+  }
+}
+
+class QuoteDto <<record>> {
+  +Id : Guid
+  +Title : string
+  +Status : QuoteStatus
+  +TotalCents : long
+  +ContactName : string?
+  +SentAt : DateTime?
+  +AcceptedAt : DateTime?
+}
+
+class QuoteDetailDto <<record>> {
+  +Id : Guid
+  +Title : string
+  +Notes : string?
+  +Status : QuoteStatus
+  +TotalCents : long
+  +Items : List<QuoteItemDto>
+  +GeneratedInvoiceId : Guid?
+  +ContactName : string?
+}
+
+class QuoteTemplateDto <<record>> {
+  +Id : Guid
+  +TemplateName : string
+  +ItemCount : int
+  +TotalCents : long
+  +CreatedAt : DateTime
+}
+@enduml

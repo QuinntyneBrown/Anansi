@@ -1,0 +1,63 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class ListActivitiesQuery <<Query>> {
+  +CollectionId : Guid
+  +ActivityType : ActivityType?
+  +From : DateTime?
+  +To : DateTime?
+  +Page : int
+  +PageSize : int
+}
+
+class ExportActivitiesCsvQuery <<Query>> {
+  +CollectionId : Guid
+  +ActivityType : ActivityType?
+  +From : DateTime?
+  +To : DateTime?
+}
+
+class GetActivitySummaryQuery <<Query>> {
+  +CollectionId : Guid
+  +From : DateTime?
+  +To : DateTime?
+}
+
+class SetGoogleAnalyticsCommand <<Command>> {
+  +CollectionId : Guid
+  +GoogleAnalyticsPropertyId : string?
+}
+
+class GalleryActivityDto <<DTO>> {
+  +Id : Guid
+  +CollectionId : Guid
+  +ActivityType : ActivityType
+  +ActorName : string?
+  +ActorEmail : string?
+  +MediaId : Guid?
+  +FavoriteListId : Guid?
+  +Details : string?
+  +Resolution : DownloadResolution?
+  +IsFullGallery : bool?
+  +CreatedAt : DateTime
+}
+
+class ActivitySummaryDto <<DTO>> {
+  +DownloadCount : int
+  +FavoriteCount : int
+  +PrivatePhotoCount : int
+  +EmailRegistrationCount : int
+  +CommentCount : int
+  +ViewCount : int
+}
+
+interface IGa4Service <<Interface>> {
+  +TrackEventAsync(propertyId, eventName, params) : Task
+}
+
+ListActivitiesQuery ..> GalleryActivityDto
+GetActivitySummaryQuery ..> ActivitySummaryDto
+
+@enduml

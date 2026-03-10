@@ -1,0 +1,48 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class NotificationDto <<DTO>> {
+  +Id : Guid
+  +EventType : NotificationEventType
+  +Category : NotificationCategory
+  +Title : string
+  +Message : string
+  +ClientName : string?
+  +Link : string?
+  +IsRead : bool
+  +ReadAt : DateTime?
+  +CreatedAt : DateTime
+}
+
+class NotificationPreferenceDto <<DTO>> {
+  +EventType : NotificationEventType
+  +InAppEnabled : bool
+  +EmailEnabled : bool
+  +PushEnabled : bool
+  +EmailDigestOption : EmailDigestOption
+}
+
+interface IEmailService <<Interface>> {
+  +SendTemplatedAsync(to, template, data, ct) : Task
+}
+
+interface IPushNotificationService <<Interface>> {
+  +SendAsync(userId, title, message, link, ct) : Task
+  +RegisterDeviceTokenAsync(userId, token, platform, ct) : Task
+  +UnregisterDeviceTokenAsync(userId, token, ct) : Task
+}
+
+class "PagedList<NotificationDto>" as PagedNotifications {
+  +Items : List<NotificationDto>
+  +TotalCount : int
+  +Page : int
+  +PageSize : int
+}
+
+GetNotificationsQuery ..> PagedNotifications
+CreateNotificationCommandHandler --> IEmailService
+CreateNotificationCommandHandler --> IPushNotificationService
+
+@enduml

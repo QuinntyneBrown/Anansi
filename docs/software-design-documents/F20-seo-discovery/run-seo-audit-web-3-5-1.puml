@@ -1,0 +1,57 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteSeoController" as C
+participant "IMediator" as M
+participant "RunSeoAuditHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : GET /api/websites/{wId}/seo/audit
+C -> M : Send(RunSeoAuditQuery)
+M -> H : Handle(query)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load Website\n(websiteId, photographerId)
+DB --> H : Website
+
+H -> DB : Load all Pages\nwith Elements for website
+DB --> H : List<WebsitePage>
+
+H -> DB : Load all BlogPosts\nfor website
+DB --> H : List<BlogPost>
+
+H -> H : Initialize issues list
+
+loop each page
+  alt MetaTitle is null/empty
+    H -> H : Add SeoIssueDto\n("Missing meta title")
+  end
+  alt MetaDescription is null/empty
+    H -> H : Add SeoIssueDto\n("Missing meta description")
+  end
+  loop each Image element on page
+    H -> H : Parse ContentJson\nextract altText
+    alt altText is null/empty
+      H -> H : Add SeoIssueDto\n("Missing alt text for image")
+    end
+  end
+end
+
+loop each blog post
+  alt MetaTitle is null/empty
+    H -> H : Add SeoIssueDto\n("Missing blog post meta title")
+  end
+  alt MetaDescription is null/empty
+    H -> H : Add SeoIssueDto\n("Missing blog post meta description")
+  end
+end
+
+H --> M : Result.Success(\nSeoAuditResultDto { issues })
+M --> C : result
+C --> P : 200 OK { websiteId, issues[] }
+
+@enduml

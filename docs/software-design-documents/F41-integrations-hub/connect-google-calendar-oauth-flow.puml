@@ -1,0 +1,29 @@
+@startuml
+actor Photographer as P
+participant "IntegrationsOAuthController" as OC
+participant "MediatR" as M
+participant "ConnectGoogleCalendarHandler" as H
+participant "Google OAuth" as G
+participant "IApplicationDbContext" as DB
+participant "SyncGoogleCalendarHandler" as SH
+participant "IGoogleCalendarService" as GCS
+
+P -> OC : GET /api/integrations/oauth/google/callback\n?code=AUTH_CODE&state=...
+OC -> M : Send(ConnectGoogleCalendarCommand)
+M -> H : Handle(command)
+H -> G : Exchange authorization code\nfor access + refresh tokens
+G --> H : tokens
+H -> H : Encrypt and store tokens
+H -> DB : Photographer.GoogleCalendarId = primary calendar
+H -> DB : SaveChangesAsync()
+H -> M : Send(SyncGoogleCalendarCommand)
+M -> SH : Handle(sync command)
+SH -> GCS : GetEventsAsync(calendarId, now, +90 days)
+GCS --> SH : existing events
+SH -> DB : Reconcile with local bookings
+SH -> DB : SaveChangesAsync()
+SH --> M : Result.Success
+H --> M : Result.Success(IntegrationStatusDto)
+M --> OC : Result.Success
+OC --> P : 200 OK + redirect to settings
+@enduml

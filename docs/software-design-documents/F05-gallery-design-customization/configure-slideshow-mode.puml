@@ -1,0 +1,48 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "UpdateCollectionHandler" as UCH
+participant "ApplicationDbContext" as DB
+
+P -> CC : PUT /api/collections/{id}\n{slideshowSpeed: "Fast",\nslideshowAutoLoop: true}
+CC -> M : Send(UpdateCollectionCommand)
+M -> UCH : Handle(command)
+
+UCH -> DB : Load Collection
+UCH -> UCH : collection.SlideshowSpeed = Fast
+UCH -> UCH : collection.SlideshowAutoLoop = true
+UCH -> DB : SaveChangesAsync()
+UCH --> M : Result.Success(CollectionDto)
+M --> CC : Result.Success
+CC --> P : 200 OK
+
+== Client Activates Slideshow ==
+
+actor Client as C
+participant "GalleryUI" as GUI
+
+C -> GUI : Click "Slideshow" button
+GUI -> GUI : Enter full-screen mode
+GUI -> GUI : Load all images in\ncollection order
+
+loop slideshow active
+  GUI -> GUI : Display image with\nsmooth crossfade transition
+  GUI -> GUI : Wait interval:\n  Slow = 5s\n  Medium = 3s\n  Fast = 1.5s
+
+  alt client clicks Next/Previous
+    GUI -> GUI : Skip to adjacent image
+  end
+
+  alt last image reached
+    alt autoLoop enabled
+      GUI -> GUI : Return to first image
+    else autoLoop disabled
+      GUI -> GUI : Pause on last image
+    end
+  end
+end
+
+C -> GUI : Press Escape or click X
+GUI -> GUI : Exit full-screen,\nreturn to gallery grid
+@enduml

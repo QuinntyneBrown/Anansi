@@ -1,0 +1,41 @@
+@startuml
+actor Photographer as P
+actor Client as C
+participant "TapToPayController" as TPC
+participant "MediatR" as M
+participant "ProcessTapToPayHandler" as TPH
+participant "IPaymentService" as PS
+participant "ApplicationDbContext" as DB
+
+P -> TPC : POST /api/tap-to-pay/initiate\n{amountCents, tipCents,\ninvoiceId}
+TPC -> M : Send(ProcessTapToPayCommand)
+M -> TPH : Handle(command)
+
+TPH -> DB : Load Photographer (StripeAccountId)
+
+TPH -> PS : CreatePaymentIntentAsync(\namountCents + tipCents,\ncurrency, stripeAccountId,\n{payment_method_types:\n["card_present"]})
+PS --> TPH : paymentIntentId, clientSecret
+
+TPH --> M : Result.Success(\npaymentIntentId, clientSecret)
+M --> TPC : Result.Success
+TPC --> P : 200 OK {paymentIntentId,\nclientSecret}
+
+note right of P
+  Mobile app presents NFC
+  reader via Stripe Terminal SDK.
+  Client taps card/phone/watch.
+end note
+
+alt NFC succeeds
+  P -> P : Payment confirmed\nvia Stripe Terminal SDK
+else NFC fails or limit reached
+  P -> TPC : POST /api/tap-to-pay/qr-fallback\n{paymentIntentId, amountCents}
+  TPC -> M : Send(GenerateQrFallbackCommand)
+  M -> M : Generate payment URL\nwith paymentIntentId
+  M --> TPC : Result.Success(qrCodeUrl)
+  TPC --> P : 200 OK {qrCodeUrl,\nqrCodeImageBase64}
+
+  P -> C : Display QR code\non photographer's phone
+  C -> C : Client scans QR,\ncompletes payment\non their own device
+end
+@enduml

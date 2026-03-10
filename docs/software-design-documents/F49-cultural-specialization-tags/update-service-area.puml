@@ -1,0 +1,30 @@
+@startuml
+actor Photographer as P
+participant "ProfileServiceAreaController" as PSC
+participant "MediatR" as M
+participant "UpdateServiceAreaHandler" as USH
+participant "ApplicationDbContext" as DB
+
+P -> PSC : PUT /api/profile/service-area\n{primaryNeighborhood:\n  "Little Jamaica",\nlatitude: 43.6896,\nlongitude: -79.4480,\nradiusKm: 25}
+PSC -> M : Send(UpdateServiceAreaCommand)
+M -> USH : Handle(command)
+
+USH -> USH : Validate (FluentValidation)\n- neighborhood in predefined list\n- latitude: -90..90\n- longitude: -180..180\n- radiusKm: 5..100
+alt validation fails
+  USH --> M : Result.Failure(errors)
+  M --> PSC : Result.Failure
+  PSC --> P : 400 Bad Request
+end
+
+USH -> DB : Find ServiceArea\nby PhotographerId
+alt existing record found
+  USH -> DB : Update PrimaryNeighborhood,\nLatitude, Longitude, RadiusKm
+else no existing record
+  USH -> DB : ServiceAreas.Add(\nphotographerId,\nprimaryNeighborhood:\n  "Little Jamaica",\nlatitude: 43.6896,\nlongitude: -79.4480,\nradiusKm: 25)
+end
+
+USH -> DB : SaveChangesAsync()
+USH --> M : Result.Success(ServiceAreaDto)
+M --> PSC : Result.Success
+PSC --> P : 200 OK\n{primaryNeighborhood:\n  "Little Jamaica",\nlatitude: 43.6896,\nlongitude: -79.4480,\nradiusKm: 25}
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ActivitiesController" as API
+participant "SetGoogleAnalyticsHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : PUT /api/collections/{id}/activities/google-analytics\n{googleAnalyticsPropertyId: "G-ABC123XYZ"}
+API -> Handler : Send(SetGoogleAnalyticsCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Find Collection by Id & PhotographerId
+DB --> Handler : Collection
+
+Handler -> Handler : Validate GA4 property ID format\n(starts with "G-")
+
+Handler -> Handler : Set GoogleAnalyticsPropertyId
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+note right of Handler
+  Once set, the Ga4TagInjection
+  Middleware injects gtag.js into
+  all client-facing pages for
+  this collection.
+end note
+
+@enduml

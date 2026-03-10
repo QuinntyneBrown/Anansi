@@ -1,0 +1,29 @@
+@startuml
+actor Photographer as P
+participant "PresetsController" as PC
+participant "MediatR" as M
+participant "GetPresetDetailQueryHandler" as H
+participant "ApplicationDbContext" as DB
+
+P -> PC : GET /api/presets/{id}
+PC -> M : Send(GetPresetDetailQuery)
+M -> H : Handle()
+
+H -> DB : Load EditingPreset\nINCLUDE PresetAdjustments\nINCLUDE PresetSplitTone\nINCLUDE PresetHslChannels\nWHERE Id = @id\nAND IsDeleted = false
+DB --> H : preset with all adjustment data
+
+alt preset not found or deleted
+  H --> M : throw NotFoundException
+  M --> PC : 404 Not Found
+  PC --> P : 404 Not Found
+end
+
+H -> DB : Check PresetFavorite exists\nfor current user + preset
+DB --> H : isFavorited
+
+H -> H : Map to PresetDetailDto\nincluding all 8 HSL channels,\nadjustments, and split tone
+
+H --> M : PresetDetailDto
+M --> PC : result
+PC --> P : 200 OK {\n  id, name, authorName,\n  skinToneRange: "Deep",\n  shootingContext: "GoldenHour",\n  adjustments: {\n    temperature: 6200, tint: 12,\n    exposure: 0.3, contrast: 15, ...},\n  hslChannels: [\n    {channel: "Red", hue: 5,\n     saturation: -10, luminance: 8},\n    ...8 channels],\n  splitTone: {\n    highlightHue: 45,\n    highlightSaturation: 25,\n    shadowHue: 240,\n    shadowSaturation: 15}\n}
+@enduml

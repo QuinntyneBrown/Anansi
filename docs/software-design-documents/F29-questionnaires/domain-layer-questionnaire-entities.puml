@@ -1,0 +1,73 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Questionnaire {
+  +Id : Guid
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +ProjectId : Guid?
+  +Title : string
+  +Description : string?
+  +Status : QuestionnaireStatus
+  +SentAt : DateTime?
+  +CompletedAt : DateTime?
+  +AllowMultipleSubmissions : bool
+  +PublicSlug : string?
+  +ExpiryDays : int?
+  +ExpiresAt : DateTime?
+  +AutoRemindersEnabled : bool
+  +ReminderIntervalDays : int?
+  +LastReminderSentAt : DateTime?
+  +IsTemplate : bool
+  +TemplateName : string?
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+  +CreatedBy : string?
+  +UpdatedBy : string?
+}
+
+class QuestionnaireQuestion {
+  +Id : Guid
+  +QuestionnaireId : Guid
+  +Label : string
+  +QuestionType : QuestionType
+  +IsRequired : bool
+  +SortOrder : int
+  +Options : string?
+}
+
+class QuestionnaireResponse {
+  +Id : Guid
+  +QuestionnaireId : Guid
+  +ContactId : Guid?
+  +RespondentEmail : string?
+  +RespondentName : string?
+  +AnswersJson : string
+  +SubmittedAt : DateTime
+}
+
+enum QuestionnaireStatus {
+  Draft
+  Sent
+  Viewed
+  Completed
+  Expired
+  Cancelled
+}
+
+enum QuestionType {
+  ShortText
+  LongText
+  MultipleChoice
+  Checkboxes
+  Date
+  Email
+}
+
+Questionnaire "1" --> "*" QuestionnaireQuestion : Questions
+Questionnaire "1" --> "*" QuestionnaireResponse : Responses
+Questionnaire --> QuestionnaireStatus : uses
+QuestionnaireQuestion --> QuestionType : uses
+@enduml

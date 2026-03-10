@@ -1,0 +1,23 @@
+@startuml
+actor Photographer as P
+participant "PayoutsController" as PC
+participant "MediatR" as M
+participant "GetPayoutSummaryHandler" as GSH
+participant "ApplicationDbContext" as DB
+
+P -> PC : GET /api/payouts/summary
+PC -> M : Send(GetPayoutSummaryQuery)
+M -> GSH : Handle(query)
+
+GSH -> DB : Load Photographer (StripeAccountId)
+
+GSH -> DB : Query PayoutRecords\nGROUP BY Status\nSUM AmountCents
+
+GSH -> DB : Query PaymentRecords\nWHERE not yet paid out\nSUM NetAmountCents\n(available balance)
+
+GSH -> GSH : Determine next scheduled\npayout date:\n- US: +2 business days\n- Canada: +3 business days
+
+GSH --> M : PayoutSummaryDto {\n  pendingCents,\n  inTransitCents,\n  availableBalanceCents,\n  nextPayoutDate,\n  instantPayoutEligible\n}
+M --> PC : Result.Success
+PC --> P : 200 OK (PayoutSummaryDto)
+@enduml

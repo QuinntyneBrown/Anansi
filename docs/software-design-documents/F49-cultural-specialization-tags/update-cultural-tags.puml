@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "ProfileCulturalTagsController" as PTC
+participant "MediatR" as M
+participant "UpdateCulturalTagsHandler" as UTH
+participant "ApplicationDbContext" as DB
+
+P -> PTC : PUT /api/profile/cultural-tags\n{tags: [\n  "Caribbean Wedding",\n  "Melanin Portraiture",\n  "Natural Hair Photography",\n  "Toronto Street Style"\n]}
+PTC -> M : Send(UpdateCulturalTagsCommand)
+M -> UTH : Handle(command)
+
+UTH -> UTH : Validate (FluentValidation)\n- max 20 tags\n- each max 50 chars\n- no duplicates\n- no empty strings
+alt validation fails
+  UTH --> M : Result.Failure(errors)
+  M --> PTC : Result.Failure
+  PTC --> P : 400 Bad Request
+end
+
+UTH -> DB : Delete all CulturalTags\nWHERE PhotographerId = {id}
+
+loop each tag in command.Tags
+  UTH -> UTH : Check if tag is in\npredefined list
+  UTH -> DB : CulturalTags.Add(\nphotographerId,\ntagName,\nisPredefined = true/false)
+end
+
+note right of UTH
+  "Caribbean Wedding" -> isPredefined = true
+  "Melanin Portraiture" -> isPredefined = true
+  "Natural Hair Photography" -> isPredefined = true
+  "Toronto Street Style" -> isPredefined = false (custom)
+end note
+
+UTH -> DB : SaveChangesAsync()
+UTH --> M : Result.Success(\nList<CulturalTagDto>)
+M --> PTC : Result.Success
+PTC --> P : 200 OK\n[{tagName, isPredefined}, ...]
+@enduml

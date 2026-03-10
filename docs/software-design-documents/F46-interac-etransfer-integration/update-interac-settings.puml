@@ -1,0 +1,30 @@
+@startuml
+actor Photographer as P
+participant "InteracSettingsController" as ISC
+participant "MediatR" as M
+participant "UpdateInteracSettingsHandler" as USH
+participant "ApplicationDbContext" as DB
+
+P -> ISC : PUT /api/settings/interac\n{interacEmail: "photo@email.ca",\nisEnabled: true}
+ISC -> M : Send(UpdateInteracSettingsCommand)
+M -> USH : Handle(command)
+
+USH -> USH : Validate email format\n(FluentValidation)
+alt validation fails
+  USH --> M : Result.Failure(errors)
+  M --> ISC : Result.Failure
+  ISC --> P : 400 Bad Request
+end
+
+USH -> DB : Find InteracSettings\nby PhotographerId
+alt existing settings found
+  USH -> DB : Update InteracEmail\nand IsEnabled
+else no existing settings
+  USH -> DB : InteracSettings.Add(\nphotographerId, interacEmail,\nisEnabled)
+end
+
+USH -> DB : SaveChangesAsync()
+USH --> M : Result.Success(InteracSettingsDto)
+M --> ISC : Result.Success
+ISC --> P : 200 OK\n{interacEmail, isEnabled}
+@enduml

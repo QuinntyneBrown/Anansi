@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PipelineBoardController <<ApiController>> {
+  -_mediator : IMediator
+  +GetBoard() : IActionResult
+  +CreateStage(cmd) : IActionResult
+  +UpdateStage(stageId, cmd) : IActionResult
+  +DeleteStage(stageId) : IActionResult
+  +ReorderStages(cmd) : IActionResult
+}
+
+class ProjectsController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(cmd) : IActionResult
+  +GetDetail(projectId) : IActionResult
+  +Update(projectId, cmd) : IActionResult
+  +Delete(projectId) : IActionResult
+  +Move(projectId, cmd) : IActionResult
+}
+
+class ProjectDocumentsController <<ApiController>> {
+  -_mediator : IMediator
+  +LinkDocument(projectId, cmd) : IActionResult
+  +UnlinkDocument(projectId, docId) : IActionResult
+  +ListDocuments(projectId) : IActionResult
+}
+
+PipelineBoardController --> "IMediator" : sends commands/queries
+ProjectsController --> "IMediator" : sends commands/queries
+ProjectDocumentsController --> "IMediator" : sends commands
+@enduml

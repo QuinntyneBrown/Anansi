@@ -1,0 +1,22 @@
+@startuml
+participant "ContractReminderJob" as JOB
+participant "MediatR" as M
+participant "SendContractRemindersHandler" as SRH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+JOB -> M : Send(SendContractRemindersCommand)
+M -> SRH : Handle(command)
+
+SRH -> DB : Query Contracts WHERE\nStatus IN (Sent, Viewed)\nAND AutoRemindersEnabled = true\nAND (LastReminderSentAt is null\n  OR LastReminderSentAt +\n  ReminderIntervalDays < UtcNow)
+
+SRH -> DB : Join Photographer to\ncheck plan supports reminders
+
+loop each contract due for reminder
+  SRH -> ES : SendTemplatedAsync(\nclient.Email,\n"Reminder: Contract Awaiting\nYour Signature",\ncontractViewLink)
+  SRH -> DB : contract.LastReminderSentAt = UtcNow
+end
+
+SRH -> DB : SaveChangesAsync()
+SRH --> M : Result.Success(reminderCount)
+@enduml

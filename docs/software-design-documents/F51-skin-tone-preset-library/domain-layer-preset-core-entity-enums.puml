@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EditingPreset {
+  +Id : Guid
+  +Name : string
+  +Description : string?
+  +AuthorId : Guid?
+  +AuthorName : string
+  +IsSystemPreset : bool
+  +SkinToneRange : SkinToneRange
+  +ShootingContext : ShootingContext
+  +FavoriteCount : int
+  +IsPublic : bool
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+enum SkinToneRange {
+  Light
+  Medium
+  Deep
+  VeryDeep
+}
+
+enum ShootingContext {
+  StudioPortrait
+  OutdoorNatural
+  EventReception
+  GoldenHour
+  LowLight
+  Flash
+}
+
+EditingPreset ..> SkinToneRange
+EditingPreset ..> ShootingContext
+@enduml

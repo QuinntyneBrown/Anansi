@@ -1,0 +1,41 @@
+@startuml
+actor Client as C
+participant "AdaptiveVideoPlayer" as AVP
+participant "CDN" as CDN
+participant "Cast SDK" as CS
+
+C -> AVP : Click play on video
+
+AVP -> CDN : GET /video/{id}/manifest.m3u8
+CDN --> AVP : HLS manifest with\nquality levels:\n#EXT-X-STREAM-INF:480p\n#EXT-X-STREAM-INF:720p\n#EXT-X-STREAM-INF:1080p
+
+AVP -> AVP : Detect bandwidth\n(navigator.connection or\nsegment download timing)
+
+alt bandwidth >= 5 Mbps
+  AVP -> CDN : Request 1080p segments
+else bandwidth >= 2 Mbps
+  AVP -> CDN : Request 720p segments
+else bandwidth < 2 Mbps
+  AVP -> CDN : Request 480p segments
+end
+
+CDN --> AVP : Video segments (2s chunks)
+AVP --> C : Smooth video playback
+
+== Cast Detection ==
+AVP -> CS : Check for available\ncast devices
+
+alt Chromecast detected
+  CS --> AVP : Chromecast available
+  AVP -> AVP : Show Chromecast icon
+  C -> AVP : Click cast icon
+  AVP -> CS : Cast video stream\n(pass manifest URL)
+  CS --> C : Video plays on TV
+else AirPlay detected
+  CS --> AVP : AirPlay available
+  AVP -> AVP : Show AirPlay icon
+  C -> AVP : Click AirPlay icon
+  AVP -> CS : Start AirPlay session
+  CS --> C : Video plays on Apple TV
+end
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class PresetsController <<ApiController>> {
+  -_mediator : IMediator
+  +Create(cmd) : IActionResult
+  +Browse(skinTone, context, isSystem, search, page, pageSize) : IActionResult
+  +GetDetail(id) : IActionResult
+  +Update(id, cmd) : IActionResult
+  +Delete(id) : IActionResult
+}
+
+class PresetFavoritesController <<ApiController>> {
+  -_mediator : IMediator
+  +Favorite(id) : IActionResult
+  +Unfavorite(id) : IActionResult
+  +ListFavorites(page, pageSize) : IActionResult
+}
+
+note right of PresetsController
+  All endpoints require [Authorize].
+  PUT/DELETE validate ownership
+  and reject system presets.
+end note
+
+PresetsController --> "IMediator" : sends commands/queries
+PresetFavoritesController --> "IMediator" : sends commands/queries
+@enduml

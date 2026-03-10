@@ -1,0 +1,33 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "SharingController" as API
+participant "GenerateQrCodeHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IQrCodeService" as QR
+
+Photographer -> API : GET /api/collections/{id}/qr-code
+API -> Handler : Send(GenerateQrCodeQuery)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Find Collection by Id & PhotographerId
+DB --> Handler : Collection
+
+Handler -> Handler : Build URL: /gallery/{slug}
+Handler -> QR : GenerateAsync(url)
+QR --> Handler : byte[] (PNG image data)
+
+Handler -> Handler : Convert to base64 data URL
+
+Handler --> API : Result<QrCodeResult>\n{collectionUrl, qrCodeDataUrl}
+API --> Photographer : 200 OK
+
+note right of Photographer
+  Photographer can download
+  the QR code PNG for print
+  materials, event displays, etc.
+end note
+
+@enduml

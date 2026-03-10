@@ -1,0 +1,28 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ReportsController" as API
+participant "MediatR" as M
+participant "ExportTransactionsHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/reports/transactions/export?\nfrom=2025-01-01&to=2025-12-31
+API -> M : Send(ExportTransactionsQuery)
+M -> Handler : Handle(query)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Query PaymentRecords\n(filtered by date range)
+DB --> Handler : List<PaymentRecord>
+
+Handler -> Handler : Build CSV with header:\nDate, Description, Amount,\nFee, Net, Tip, Tax,\nMethod, CardLast4, ExternalId, IsRefund
+
+Handler -> Handler : Append each record as row,\nformat amounts as dollars
+
+Handler --> M : Result<string> (CSV content)
+M --> API : Result.Success
+API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: attachment;\nfilename="transactions.csv"
+
+@enduml

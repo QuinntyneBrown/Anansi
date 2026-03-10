@@ -1,0 +1,54 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "BlogController" as C
+participant "IMediator" as M
+participant "CreateBlogPostHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/blog/posts\n{ title, slug, bodyHtml,\n  categoryIds, scheduledPublishDate }
+C -> M : Send(CreateBlogPostCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load Website\n(websiteId, photographerId)
+DB --> H : Website
+
+H -> DB : Load Photographer\nwith Plan
+DB --> H : Photographer + Plan
+
+alt Free plan
+  H -> DB : Count blog posts\nfor website (non-deleted)
+  DB --> H : postCount
+  alt postCount >= 5
+    H --> M : Result.Failure\n("Free plan limited to 5 posts")
+    M --> C : failure
+    C --> P : 400 Bad Request
+  end
+end
+
+H -> H : Generate slug from title\nif not provided
+H -> DB : Check slug uniqueness\n(websiteId, slug)
+DB --> H : unique
+
+H -> H : Create BlogPost entity\n(Status = Draft or Scheduled)
+
+opt categoryIds provided
+  loop each categoryId
+    H -> DB : Verify category exists\nand belongs to photographer
+    H -> H : Create BlogPostCategory
+  end
+end
+
+H -> DB : Add(post) + categories\nSaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(BlogPostDto)
+M --> C : result
+C --> P : 201 Created { blogPostDto }
+
+@enduml

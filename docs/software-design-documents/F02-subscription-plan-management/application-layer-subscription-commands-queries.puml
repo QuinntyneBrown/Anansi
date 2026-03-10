@@ -1,0 +1,65 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Plans.Queries" {
+  class GetPlansQuery <<record>> {
+    +Product : PlanProduct?
+  }
+  class GetCurrentSubscriptionQuery <<record>>
+  class CheckFeatureAccessQuery <<record>> {
+    +FeatureKey : string
+  }
+  class FeatureAccessResult <<record>> {
+    +IsAllowed : bool
+    +FeatureKey : string
+    +CurrentValue : string?
+    +PlanLimit : string?
+    +PlanName : string
+  }
+}
+
+package "Features.Plans.Commands" {
+  class CreateSubscriptionCommand <<record>> {
+    +PlanId : Guid
+    +BillingInterval : BillingInterval
+    +PaymentMethodId : string?
+  }
+  class ChangeSubscriptionCommand <<record>> {
+    +NewPlanId : Guid
+    +NewBillingInterval : BillingInterval?
+  }
+  class CancelSubscriptionCommand <<record>> {
+    +Immediate : bool
+  }
+  class CreatePlanCommand <<record>>
+  class UpdatePlanCommand <<record>>
+}
+
+package "DTOs.Plans" {
+  class PlanDto {
+    +Id : Guid
+    +Product : PlanProduct
+    +Tier : PlanTier
+    +Name : string
+    +MonthlyPriceCents : long
+    +AnnualPriceCents : long
+    +IsSuiteBundle : bool
+    +Features : List<FeatureGateDto>
+  }
+  class SubscriptionDto {
+    +Id : Guid
+    +PlanId : Guid
+    +PlanName : string
+    +BillingInterval : BillingInterval
+    +Status : SubscriptionStatus
+    +CurrentPeriodEnd : DateTime
+    +PriceCents : long
+  }
+}
+
+GetPlansQuery ..> PlanDto : returns
+GetCurrentSubscriptionQuery ..> SubscriptionDto : returns
+CheckFeatureAccessQuery ..> FeatureAccessResult : returns
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+actor Photographer as P
+participant "BookingsController" as BC
+participant "MediatR" as M
+participant "ConfirmBookingHandler" as CH
+participant "ApplicationDbContext" as DB
+participant "IGoogleCalendarService" as GC
+participant "IEmailService" as ES
+
+P -> BC : PUT /api/bookings/{id}/confirm
+BC -> M : Send(ConfirmBookingCommand)
+M -> CH : Handle()
+CH -> DB : Load BookingRecord
+DB --> CH : booking (Status = Pending)
+CH -> DB : booking.Status = Confirmed
+CH -> DB : SaveChanges
+DB --> CH : saved
+
+CH -> CH : Raise BookingConfirmedEvent
+
+CH -> GC : CreateEventAsync(booking)
+GC --> CH : googleEventId
+CH -> DB : booking.GoogleCalendarEventId = googleEventId
+DB --> CH : saved
+
+CH -> ES : SendTemplatedAsync(clientEmail,\n"booking_confirmed", variables)
+ES --> CH : sent
+
+CH --> M : success
+M --> BC : result
+BC --> P : 200 OK {status: "Confirmed"}
+@enduml

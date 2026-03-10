@@ -1,0 +1,20 @@
+@startuml
+actor Photographer as P
+participant "ProfileCulturalTagsController" as PTC
+participant "MediatR" as M
+participant "GetCulturalTagsHandler" as GTH
+participant "ApplicationDbContext" as DB
+
+P -> PTC : GET /api/profile/cultural-tags
+PTC -> M : Send(GetCulturalTagsQuery)
+M -> GTH : Handle(query)
+
+GTH -> DB : Query CulturalTags\nWHERE PhotographerId = {id}\nORDER BY IsPredefined DESC,\nTagName ASC
+DB --> GTH : List<CulturalTag>
+
+GTH -> GTH : Map to List<CulturalTagDto>
+
+GTH --> M : Result.Success(\nList<CulturalTagDto>)
+M --> PTC : Result.Success
+PTC --> P : 200 OK\n[{tagName: "Caribbean Wedding",\n  isPredefined: true},\n {tagName: "Toronto Street Style",\n  isPredefined: false}]
+@enduml

@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BookingRecord {
+  +PhotographerId : Guid
+  +ClientEmail : string
+  +StartTime : DateTime
+  +Status : BookingStatus
+}
+
+class Contract {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +Status : ContractStatus
+  +AutoRemindersEnabled : bool
+  +ReminderIntervalDays : int?
+  +LastReminderSentAt : DateTime?
+}
+
+class Invoice {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +Status : InvoiceStatus
+  +DueDate : DateTime?
+  +AutoRemindersEnabled : bool
+  +ReminderIntervalDays : int?
+  +LastReminderSentAt : DateTime?
+}
+
+class Questionnaire {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +Status : QuestionnaireStatus
+  +AutoRemindersEnabled : bool
+  +ReminderIntervalDays : int?
+  +LastReminderSentAt : DateTime?
+}
+
+class Collection {
+  +PhotographerId : Guid
+  +ExpiryDate : DateTime?
+}
+
+note bottom of BookingRecord
+  Triggers:
+  BookingConfirmation
+  SessionReminder
+end note
+
+note bottom of Contract
+  Triggers:
+  ContractReminder
+end note
+
+note bottom of Invoice
+  Triggers:
+  InvoiceReminder
+end note
+
+@enduml

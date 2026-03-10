@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "GalleryMediaController" as GMC
+participant "MediatR" as M
+participant "ApplicationDbContext" as DB
+
+== Star a Collection ==
+P -> CC : POST /api/collections/{id}/star
+CC -> M : Send(ToggleStarCollectionCommand(id))
+M -> DB : Load Collection
+M -> M : collection.IsStarred =\n  !collection.IsStarred
+M -> DB : SaveChangesAsync()
+M --> CC : Result.Success({IsStarred: true})
+CC --> P : 200 OK
+
+== Bulk Star Photos ==
+P -> GMC : POST /api/collections/{cid}/media/bulk-star\n{mediaIds: [...], star: true}
+GMC -> M : Send(BulkStarMediaCommand)
+M -> DB : Load GalleryMedia\nwhere Id in mediaIds\nand CollectionId == cid
+
+loop each media item
+  M -> M : media.IsStarred = star
+end
+
+M -> DB : SaveChangesAsync()
+M --> GMC : Result.Success
+GMC --> P : 200 OK
+
+== List Starred Collections ==
+P -> CC : GET /api/collections?starredOnly=true
+CC -> M : Send(ListCollectionsQuery(starredOnly: true))
+M -> DB : Collections\n  .Where(c => c.IsStarred)\n  .OrderByDescending(c => c.UpdatedAt)
+DB --> M : List<Collection>
+M --> CC : PagedList<CollectionDto>
+CC --> P : 200 OK
+@enduml

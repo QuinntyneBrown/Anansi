@@ -1,0 +1,81 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Auth.Commands" {
+  class RegisterCommand <<record>> {
+    +Email : string
+    +Password : string
+    +FirstName : string
+    +LastName : string
+    +BusinessName : string
+  }
+
+  class RegisterResponse <<record>> {
+    +UserId : string
+    +PhotographerId : Guid
+    +Token : string
+  }
+
+  class LoginCommand <<record>> {
+    +Email : string
+    +Password : string
+  }
+
+  class LoginResponse <<record>> {
+    +Token : string
+    +RefreshToken : string
+    +ExpiresAt : DateTime
+    +PhotographerId : Guid?
+  }
+
+  class ForgotPasswordCommand <<record>> {
+    +Email : string
+  }
+
+  class ResetPasswordCommand <<record>> {
+    +Token : string
+    +NewPassword : string
+  }
+
+  class ChangePasswordCommand <<record>> {
+    +CurrentPassword : string
+    +NewPassword : string
+  }
+
+  class LogoutCommand <<record>>
+}
+
+package "Features.Account" {
+  class GetAccountSettingsQuery <<record>>
+  class UpdateAccountSettingsCommand <<record>>
+  class DeleteAccountCommand <<record>> {
+    +ExportFirst : bool
+  }
+}
+
+package "Features.Storage" {
+  class GetStorageUsageQuery <<record>>
+}
+
+interface ITokenService {
+  +GenerateAccessToken()
+  +GenerateRefreshToken()
+}
+
+interface ICurrentUserService {
+  +UserId : string?
+  +PhotographerId : Guid?
+  +IsAuthenticated : bool
+}
+
+interface IEmailService {
+  +SendAsync()
+  +SendTemplatedAsync()
+}
+
+RegisterCommand ..> ITokenService : uses
+LoginCommand ..> ITokenService : uses
+ForgotPasswordCommand ..> IEmailService : uses
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Presets.Commands" {
+  class CreatePresetCommand <<record>> {
+    +Name : string
+    +Description : string?
+    +SkinToneRange : SkinToneRange
+    +ShootingContext : ShootingContext
+    +IsPublic : bool
+    +Adjustments : AdjustmentsInput
+    +HslChannels : HslChannelInput[]
+    +SplitTone : SplitToneInput
+  }
+
+  class UpdatePresetCommand <<record>> {
+    +PresetId : Guid
+    +Name : string
+    +Description : string?
+    +SkinToneRange : SkinToneRange
+    +ShootingContext : ShootingContext
+    +Adjustments : AdjustmentsInput
+    +HslChannels : HslChannelInput[]
+    +SplitTone : SplitToneInput
+  }
+
+  class DeletePresetCommand <<record>> {
+    +PresetId : Guid
+  }
+
+  class FavoritePresetCommand <<record>> {
+    +PresetId : Guid
+  }
+
+  class UnfavoritePresetCommand <<record>> {
+    +PresetId : Guid
+  }
+}
+
+package "Features.Presets.Queries" {
+  class BrowsePresetsQuery <<record>> {
+    +SkinToneRange : SkinToneRange?
+    +ShootingContext : ShootingContext?
+    +IsSystem : bool?
+    +SearchTerm : string?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetPresetDetailQuery <<record>> {
+    +PresetId : Guid
+  }
+
+  class GetFavoritePresetsQuery <<record>> {
+    +Page : int
+    +PageSize : int
+  }
+}
+@enduml

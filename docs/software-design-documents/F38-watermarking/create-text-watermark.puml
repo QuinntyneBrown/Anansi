@@ -1,0 +1,28 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "WatermarksController" as API
+participant "CreateWatermarkHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/watermarks\n{name: "My Watermark", type: Text,\ntext: "Jane Doe Photography",\nfont: "Cormorant Garamond",\nopacity: 0.3, scale: 1.0,\nposition: BottomRight, isDefault: true}
+API -> Handler : Send(CreateWatermarkCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> Handler : Validate: text not empty (Text type),\nopacity 0-1, scale > 0
+
+alt IsDefault = true
+  Handler -> DB : Find existing default watermarks
+  DB --> Handler : List<Watermark> (defaults)
+  Handler -> Handler : Clear IsDefault on each
+end
+
+Handler -> DB : Create Watermark entity
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<WatermarkDto>
+API --> Photographer : 201 Created {id, name, type, settings}
+
+@enduml

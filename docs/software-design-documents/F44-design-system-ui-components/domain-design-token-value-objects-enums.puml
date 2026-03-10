@@ -1,0 +1,42 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class DesignToken <<record>> {
+  +Category : DesignTokenCategory
+  +Key : string
+  +Value : string
+  +Description : string?
+}
+
+enum DesignTokenCategory {
+  Color
+  Typography
+  Spacing
+  CornerRadius
+}
+
+enum ComponentVariant {
+  Primary
+  Secondary
+  Outline
+  Ghost
+  Destructive
+  Success
+  Warning
+  Error
+  Info
+  Neutral
+}
+
+enum InputState {
+  Default
+  Focused
+  Error
+  Disabled
+}
+
+DesignToken ..> DesignTokenCategory
+
+@enduml

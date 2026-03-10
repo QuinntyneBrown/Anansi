@@ -1,0 +1,52 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CollectionsController <<ApiController>> {
+  +Create(CreateCollectionCommand) : IActionResult
+  +List(page, pageSize, starred, status, search) : IActionResult
+  +Get(id) : IActionResult
+  +Update(id, UpdateCollectionCommand) : IActionResult
+  +Delete(id) : IActionResult
+  +BulkCreate(BulkCreateCollectionsCommand) : IActionResult
+  +ToggleStar(id) : IActionResult
+}
+
+class CollectionSetsController <<ApiController>> {
+  +List(collectionId) : IActionResult
+  +Create(collectionId, CreateSetRequest) : IActionResult
+  +Update(collectionId, id, UpdateSetRequest) : IActionResult
+  +Delete(collectionId, id) : IActionResult
+  +Reorder(collectionId, ReorderSetsRequest) : IActionResult
+}
+
+class CollectionPresetsController <<ApiController>> {
+  +List() : IActionResult
+  +Create(CreatePresetCommand) : IActionResult
+  +Update(id, UpdatePresetCommand) : IActionResult
+  +Delete(id) : IActionResult
+}
+
+class GalleryMediaController <<ApiController>> {
+  +Move(collectionId, id, MoveMediaRequest) : IActionResult
+  +ToggleStar(collectionId, id) : IActionResult
+  +BulkStar(collectionId, BulkStarRequest) : IActionResult
+}
+
+note bottom of CollectionsController
+  Route: /api/collections
+end note
+
+note bottom of CollectionSetsController
+  Route: /api/collections/{collectionId}/sets
+end note
+
+note bottom of CollectionPresetsController
+  Route: /api/collection-presets
+end note
+
+note bottom of GalleryMediaController
+  Route: /api/collections/{collectionId}/media
+end note
+@enduml

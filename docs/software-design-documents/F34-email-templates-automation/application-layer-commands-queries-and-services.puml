@@ -1,0 +1,79 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CreateEmailTemplateCommand <<Command>> {
+  +Name : string
+  +Category : string
+  +SubjectLine : string?
+  +Body : string
+  +HtmlBody : string?
+  +HeaderImageUrl : string?
+  +UseBranding : bool
+}
+
+class UpdateEmailTemplateCommand <<Command>> {
+  +Id : Guid
+  +Name : string
+  +SubjectLine : string?
+  +Body : string
+  +HtmlBody : string?
+}
+
+class ListEmailTemplatesQuery <<Query>> {
+  +Category : string?
+  +Page : int
+  +PageSize : int
+}
+
+class CreateAutomatedEmailConfigCommand <<Command>> {
+  +EventType : string
+  +IsEnabled : bool
+  +EmailTemplateId : Guid?
+  +TimingOffsetHours : int?
+  +ReminderFrequencyDays : int?
+  +RecipientTypes : string?
+  +DaysBeforeEvent : string?
+}
+
+class SendBrandedGalleryInviteCommand <<Command>> {
+  +CollectionId : Guid
+  +RecipientEmail : string
+  +RecipientName : string?
+  +TemplateId : Guid?
+  +IncludePassword : bool
+  +IncludeDownloadPin : bool
+}
+
+class SendPaymentConfirmationCommand <<Command>> {
+  +PaymentRecordId : Guid
+}
+
+interface ITemplateRenderService <<Interface>> {
+  +RenderAsync(templateId, variables) : string
+  +RenderBrandedAsync(templateId, variables, branding) : string
+}
+
+class EmailTemplateDto <<DTO>> {
+  +Id : Guid
+  +Name : string
+  +Category : string
+  +SubjectLine : string?
+  +Body : string
+  +UseBranding : bool
+}
+
+class AutomatedEmailConfigDto <<DTO>> {
+  +Id : Guid
+  +EventType : string
+  +IsEnabled : bool
+  +EmailTemplateId : Guid?
+  +TimingOffsetHours : int?
+  +ReminderFrequencyDays : int?
+}
+
+SendBrandedGalleryInviteCommand --> ITemplateRenderService
+SendPaymentConfirmationCommand --> ITemplateRenderService
+
+@enduml

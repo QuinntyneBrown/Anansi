@@ -1,0 +1,41 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "UpdateCollectionHandler" as UCH
+participant "CheckFeatureAccessHandler" as CFA
+participant "ApplicationDbContext" as DB
+
+P -> CC : PUT /api/collections/{id}\n{colorPalette: "Custom",\ncustomColorHex: "#B8860B"}
+CC -> M : Send(UpdateCollectionCommand)
+M -> UCH : Handle(command)
+
+UCH -> DB : Load Collection
+
+alt customColorHex is provided
+  UCH -> M : Send(CheckFeatureAccessQuery(\n"custom_color_hex"))
+  M -> CFA : Handle
+  CFA -> DB : Get active plan feature gates
+  CFA --> M : FeatureAccessResult
+
+  alt not allowed (Free plan)
+    UCH --> M : Result.Failure(\n"Custom hex colors require\na paid plan")
+    M --> CC : 403
+    CC --> P : 403 Forbidden
+  end
+
+  UCH -> UCH : Validate hex format\n(#RRGGBB or #RGB)
+  alt invalid hex
+    UCH --> M : Result.Failure("Invalid hex color")
+    M --> CC : 400
+    CC --> P : 400
+  end
+end
+
+UCH -> UCH : collection.ColorPalette = "Custom"
+UCH -> UCH : collection.CustomColorHex = "#B8860B"
+UCH -> DB : SaveChangesAsync()
+UCH --> M : Result.Success(CollectionDto)
+M --> CC : Result.Success
+CC --> P : 200 OK
+@enduml

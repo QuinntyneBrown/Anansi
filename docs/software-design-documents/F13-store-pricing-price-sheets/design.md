@@ -123,6 +123,8 @@ end note
 @enduml
 ```
 
+![Domain -- Pricing Model](domain-pricing-model.png)
+
 ### Application -- Bulk Markup Command
 
 ```plantuml
@@ -161,6 +163,8 @@ ApplyBulkMarkupValidator ..> ApplyBulkMarkupCommand
 
 @enduml
 ```
+
+![Application -- Bulk Markup Command](application-bulk-markup-command.png)
 
 ### Application -- Price Sheet Commands & Queries
 
@@ -229,6 +233,8 @@ CreatePriceSheetHandler ..> PriceSheetDto
 @enduml
 ```
 
+![Application -- Price Sheet Commands & Queries](application-price-sheet-commands-queries.png)
+
 ### API -- Controllers
 
 ```plantuml
@@ -262,6 +268,8 @@ PriceSheetsController --> IMediator
 
 @enduml
 ```
+
+![API -- Controllers](api-controllers.png)
 
 ---
 
@@ -308,6 +316,8 @@ ctrl --> Photographer : 200 OK {updatedCount: 12}
 @enduml
 ```
 
+![Apply Bulk Markup to Product Category](apply-bulk-markup-to-product-category.png)
+
 ### Create Price Sheet with Items
 
 ```plantuml
@@ -350,6 +360,8 @@ ctrl --> Photographer : 201 Created {PriceSheetDto}
 @enduml
 ```
 
+![Create Price Sheet with Items](create-price-sheet-with-items.png)
+
 ### Resolve Effective Price for Collection
 
 ```plantuml
@@ -382,6 +394,8 @@ handler --> ctrl : List<StoreProductDto>
 ctrl --> Client : 200 OK {products\nwith effective prices}
 @enduml
 ```
+
+![Resolve Effective Price for Collection](resolve-effective-price-for-collection.png)
 
 ### Commission Calculation on Order
 
@@ -421,6 +435,8 @@ end note
 @enduml
 ```
 
+![Commission Calculation on Order](commission-calculation-on-order.png)
+
 ### Set Individual Variation Price (Manual Override)
 
 ```plantuml
@@ -449,3 +465,5 @@ med --> ctrl : Result
 ctrl --> Photographer : 200 OK {variationDto}
 @enduml
 ```
+
+![Set Individual Variation Price (Manual Override)](set-individual-variation-price-manual-override.png)

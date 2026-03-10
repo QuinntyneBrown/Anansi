@@ -1,0 +1,34 @@
+@startuml
+actor Photographer as P
+participant "QuestionnairesController" as QC
+participant "MediatR" as M
+participant "SendQuestionnaireHandler" as SH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+P -> QC : POST /api/questionnaires/{id}/send
+QC -> M : Send(SendQuestionnaireCommand)
+M -> SH : Handle(command)
+
+SH -> DB : Load Questionnaire with Contact
+
+alt not in Draft status
+  SH --> M : Result.Failure("Only drafts can be sent")
+  M --> QC : Result.Failure
+  QC --> P : 400 Bad Request
+end
+
+SH -> SH : Generate secure access token
+
+SH -> DB : questionnaire.Status = Sent\nquestionnaire.SentAt = UtcNow
+alt expiryDays configured
+  SH -> DB : questionnaire.ExpiresAt =\nSentAt + ExpiryDays
+end
+SH -> DB : SaveChangesAsync()
+
+SH -> ES : SendTemplatedAsync(\nclient.Email,\n"Questionnaire from {businessName}",\nquestionnaireLink)
+
+SH --> M : Result.Success
+M --> QC : Result.Success
+QC --> P : 200 OK
+@enduml

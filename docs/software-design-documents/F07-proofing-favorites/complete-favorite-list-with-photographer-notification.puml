@@ -1,0 +1,28 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "FavoritesController" as API
+participant "CompleteFavoriteListHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IEmailService" as Email
+
+Client -> API : POST /api/favorites/{listId}/complete
+API -> Handler : Send(CompleteFavoriteListCommand)
+
+Handler -> DB : Find FavoriteList by Id
+DB --> Handler : FavoriteList
+
+Handler -> Handler : Set IsCompleted = true
+Handler -> DB : Create GalleryActivity\n(Favorite, "List completed")
+
+Handler -> DB : Create Notification entity\nfor Photographer (in-app)
+Handler -> DB : SaveChangesAsync()
+
+Handler -> Email : SendAsync(photographer,\n"Favorite list completed:\n{listName} by {clientName}")
+
+Handler --> API : Result.Success()
+API --> Client : 200 OK
+
+@enduml

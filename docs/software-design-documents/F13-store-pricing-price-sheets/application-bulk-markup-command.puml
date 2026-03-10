@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Store.Commands" {
+  class ApplyBulkMarkupCommand <<record>> {
+    +Request : BulkMarkupRequest
+  }
+
+  class ApplyBulkMarkupValidator {
+    +ApplyBulkMarkupValidator()
+  }
+
+  class ApplyBulkMarkupHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+    +Handle(cmd, ct) : Result<int>
+  }
+}
+
+package "Anansi.Application.DTOs.Store" {
+  class BulkMarkupRequest <<record>> {
+    +ProductType : ProductType
+    +MarkupPercentage : decimal
+    +OverrideCustomPriced : bool
+  }
+}
+
+ApplyBulkMarkupCommand ..> BulkMarkupRequest
+ApplyBulkMarkupHandler ..> ApplyBulkMarkupCommand
+ApplyBulkMarkupValidator ..> ApplyBulkMarkupCommand
+
+@enduml

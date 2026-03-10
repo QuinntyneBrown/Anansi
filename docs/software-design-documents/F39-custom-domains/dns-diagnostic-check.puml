@@ -1,0 +1,35 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "CustomDomainsController" as API
+participant "CheckDomainDnsHandler" as Handler
+participant "IDnsVerificationService" as DNS
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/domains/{id}/dns-check
+API -> Handler : Send(CheckDomainDnsCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Load CustomDomain by Id
+DB --> Handler : CustomDomain
+
+Handler -> DNS : CheckCnameAsync(domainName)
+DNS --> Handler : cnameTarget (or null)
+
+Handler -> DNS : CheckTxtRecordsAsync(domainName)
+DNS --> Handler : List<string> txtRecords
+
+Handler -> Handler : Check if any TXT record\nmatches "anansi-verify={token}"
+
+Handler --> API : DnsCheckResultDto\n{cnameTarget, txtRecords, verificationMatch}
+API --> Photographer : 200 OK\n{cnameTarget: null,\ntxtRecords: [],\nverificationMatch: false}
+
+note right of Photographer
+  Photographer sees that DNS
+  is not yet configured and
+  follows the instructions.
+end note
+
+@enduml

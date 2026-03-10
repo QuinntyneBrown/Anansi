@@ -1,0 +1,35 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CustomCodeInjection {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Code : string
+  +Location : CodeInjectionLocation
+  +IsActive : bool
+  +Label : string?
+}
+
+enum CodeInjectionLocation {
+  Header
+  Footer
+}
+
+class ApiKey {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Name : string
+  +KeyHash : string
+  +KeyPrefix : string
+  +ExpiresAt : DateTime?
+  +LastUsedAt : DateTime?
+  +IsActive : bool
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+CustomCodeInjection ..> CodeInjectionLocation
+
+@enduml

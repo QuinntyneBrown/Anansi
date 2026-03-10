@@ -1,0 +1,36 @@
+@startuml
+actor Client as C
+participant "StoreCheckoutController" as SCC
+participant "MediatR" as M
+participant "CreateStoreOrderWithInteracHandler" as COH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+C -> SCC : POST /api/store/checkout\n{paymentMethod: "InteracETransfer",\nclientName, clientEmail,\nitems[], shippingMethodId}
+SCC -> M : Send(CreateStoreOrderWithInteracCommand)
+M -> COH : Handle(command)
+
+COH -> DB : Load Photographer's\nInteracSettings
+alt Interac not enabled
+  COH --> M : Result.Failure("Interac e-Transfer\nis not available")
+  M --> SCC : Result.Failure
+  SCC --> C : 400 Bad Request
+end
+
+COH -> COH : Resolve item prices,\ncalculate subtotal,\ntax, shipping, total\n(same as standard checkout)
+
+COH -> DB : Orders.Add(\nstatus = Pending,\npaymentMethod = InteracETransfer,\nsubtotalCents, taxCents,\nshippingCents, totalCents)
+COH -> DB : OrderItems.AddRange(items)
+
+COH -> COH : Generate reference code\n"ANANSI-INV-" + 4-char alphanumeric
+
+COH -> DB : InteracPaymentRequests.Add(\norderId = order.Id,\npaymentReference,\namountCents = totalCents,\nrecipientEmail = settings.InteracEmail,\nstatus = Pending,\nexpiryDate = UtcNow + 30 days)
+
+COH -> DB : SaveChangesAsync()
+
+COH -> ES : SendTemplatedAsync(\nclientEmail,\n"Interac e-Transfer Instructions",\npaymentReference,\ninteracEmail, amount,\ninstructions)
+
+COH --> M : Result.Success(\nInteracCheckoutResultDto)
+M --> SCC : Result.Success
+SCC --> C : 201 Created\n{orderId, paymentReference,\namountCents, interacEmail,\ninstructions}
+@enduml

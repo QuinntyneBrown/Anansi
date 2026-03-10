@@ -1,0 +1,20 @@
+@startuml
+participant "QuestionnaireExpiryJob" as JOB
+participant "MediatR" as M
+participant "ProcessExpiryHandler" as PEH
+participant "ApplicationDbContext" as DB
+participant "IEmailService" as ES
+
+JOB -> M : Send(ProcessQuestionnaireExpiryCommand)
+M -> PEH : Handle(command)
+
+PEH -> DB : Query Questionnaires WHERE\nExpiresAt < UtcNow\nAND Status IN (Sent, Viewed)
+
+loop each expired questionnaire
+  PEH -> DB : questionnaire.Status = Expired
+  PEH -> ES : SendTemplatedAsync(\nphotographer.Email,\n"Questionnaire Expired",\nquestionnaireTitle)
+end
+
+PEH -> DB : SaveChangesAsync()
+PEH --> M : Result.Success(expiredCount)
+@enduml

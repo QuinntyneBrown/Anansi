@@ -1,0 +1,53 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Overlay Components" {
+  class Modal <<component>> {
+    +title : string
+    +content : Slot
+    +actions : Slot
+    +variant : "default" | "confirmation" | "destructive"
+    +onClose : Action
+    --
+    overlay: 70% opacity
+    maxWidth: 560px
+  }
+
+  class Toast <<component>> {
+    +message : string
+    +type : "success" | "error" | "warning" | "info"
+    +autoDismiss : bool
+    +duration : int
+    --
+    desktop: top-right
+    mobile: top-center
+    color bar left
+    auto-dismiss: 5s
+    max stack: 3
+  }
+}
+
+package "State Components" {
+  class EmptyState <<component>> {
+    +icon : string
+    +heading : string
+    +description : string
+    +ctaLabel : string?
+    +ctaAction : Action?
+    --
+    centered layout
+  }
+
+  class LoadingState <<component>> {
+    +variant : "skeleton" | "spinner" | "progress"
+    +progress : int?
+    --
+    skeleton: pulse animation
+    spinner: gold #C9A962
+    progress: gold bar
+  }
+}
+
+@enduml

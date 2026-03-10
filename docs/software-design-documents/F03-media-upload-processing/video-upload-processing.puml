@@ -1,0 +1,51 @@
+@startuml
+actor Photographer as P
+participant "GalleryMediaController" as GMC
+participant "MediatR" as M
+participant "UploadMediaHandler" as UH
+participant "FileValidator" as FV
+participant "IStorageService" as SS
+participant "VideoProcessingService" as VPS
+participant "ApplicationDbContext" as DB
+
+P -> GMC : POST /api/collections/{id}/media\n[video file: .mp4, 1.2GB]
+GMC -> M : Send(UploadMediaCommand)
+M -> UH : Handle(command)
+
+UH -> UH : Detect MediaType = Mp4
+
+UH -> FV : ValidateFormat (video/mp4)
+UH -> FV : ValidateVideoResolution(resolution, plan)
+alt exceeds plan video limit
+  FV --> UH : Failure("4K video requires Pro+")
+  UH --> M : Result.Failure
+  M --> GMC : 403
+  GMC --> P : 403 Forbidden
+end
+
+UH -> M : CheckFeatureAccessQuery("video_minutes_hd")
+note right: Check total video duration\nagainst plan limit
+
+UH -> SS : UploadAsync(stream, fileName, video/mp4)
+SS --> UH : storageKey
+
+UH -> DB : Create GalleryMedia\n(Duration, VideoResolution populated)
+UH -> DB : SaveChangesAsync()
+UH --> M : Result.Success(GalleryMediaDto)
+M --> GMC : 200 OK
+
+== Background Processing (async) ==
+
+VPS -> SS : DownloadAsync(storageKey)
+SS --> VPS : video stream
+
+VPS -> VPS : Transcode to adaptive\nbitrate (HLS/DASH):\n  - 360p\n  - 720p\n  - 1080p\n  - 2160p (if 4K source)
+
+VPS -> VPS : Extract frame thumbnails\nat 0s, 25%, 50%, 75%
+
+VPS -> SS : Upload transcoded\nstream variants
+
+VPS -> DB : Update GalleryMedia:\n  CustomVideoThumbnailKey,\n  adaptive bitrate manifest URL
+
+VPS -> DB : SaveChangesAsync()
+@enduml

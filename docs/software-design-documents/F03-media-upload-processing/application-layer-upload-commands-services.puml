@@ -1,0 +1,74 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Galleries.Media" {
+  class UploadMediaCommand <<record>> {
+    +CollectionId : Guid
+    +SetId : Guid?
+    +FileName : string
+    +ContentType : string
+    +FileSizeBytes : long
+    +FileStream : Stream
+  }
+
+  class BulkFolderUploadCommand <<record>> {
+    +Folders : List<FolderDescriptor>
+  }
+
+  class FolderDescriptor {
+    +FolderName : string
+    +ParentFolderName : string?
+    +Files : List<FileDescriptor>
+  }
+
+  class FileDescriptor {
+    +FileName : string
+    +ContentType : string
+    +FileSizeBytes : long
+    +Stream : Stream
+  }
+
+  class ListMediaQuery <<record>> {
+    +CollectionId : Guid
+    +SetId : Guid?
+    +StarredOnly : bool?
+    +Page : int
+    +PageSize : int
+  }
+
+  class DeleteMediaCommand <<record>> {
+    +Id : Guid
+  }
+
+  class MoveMediaCommand <<record>> {
+    +Id : Guid
+    +TargetSetId : Guid?
+  }
+}
+
+interface IStorageService {
+  +UploadAsync(stream, fileName, contentType) : string
+  +DownloadAsync(key) : Stream
+  +DeleteAsync(key)
+  +GetPresignedUrlAsync(key, expiry) : string
+}
+
+interface ICdnService {
+  +GetCdnUrlAsync(storageKey) : string
+  +GenerateThumbnailAsync(key, w, h) : string
+  +GenerateProgressiveImagesAsync(key) : ProgressiveImageSet
+  +InvalidateCacheAsync(key)
+}
+
+class ProgressiveImageSet {
+  +PlaceholderUrl : string
+  +LowResUrl : string
+  +FullResUrl : string
+}
+
+UploadMediaCommand ..> IStorageService : uses
+UploadMediaCommand ..> ICdnService : uses
+ICdnService ..> ProgressiveImageSet : returns
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+actor Photographer as P
+participant "AccountController" as AC
+participant "MediatR" as M
+participant "GetStorageUsageHandler" as SH
+participant "ApplicationDbContext" as DB
+
+P -> AC : GET /api/account/storage
+AC -> M : Send(GetStorageUsageQuery)
+M -> SH : Handle(query)
+
+SH -> DB : Get Photographer (StorageUsedBytes)
+SH -> DB : Get active Plan + FeatureGates\n(storage_gb limit)
+SH -> DB : GroupBy CollectionId\nSUM(FileSizeBytes)\nfrom GalleryMedia
+
+SH -> SH : Calculate warning level:\n>= 95% -> Critical95\n>= 90% -> Warning90\n>= 80% -> Warning80\nelse -> None
+
+SH --> M : StorageUsageDto {\n  usedBytes, limitBytes,\n  usedPercent, warningLevel,\n  perCollectionBreakdown[]\n}
+M --> AC : Result.Success
+AC --> P : 200 OK (StorageUsageDto)
+@enduml

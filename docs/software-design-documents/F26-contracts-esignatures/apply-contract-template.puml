@@ -1,0 +1,33 @@
+@startuml
+actor Photographer as P
+participant "ContractTemplatesController" as CTC
+participant "MediatR" as M
+participant "ApplyContractTemplateHandler" as ATH
+participant "ApplicationDbContext" as DB
+
+P -> CTC : POST /api/contract-templates/{id}/apply\n{contactId, projectId,\ncustomVariableValues}
+CTC -> M : Send(ApplyContractTemplateCommand)
+M -> ATH : Handle(command)
+
+ATH -> DB : Load template Contract\nwith Fields (IsTemplate = true)
+
+alt template not found
+  ATH --> M : Result.Failure("Template not found")
+  M --> CTC : Result.Failure
+  CTC --> P : 404 Not Found
+end
+
+ATH -> ATH : Clone contract entity\nfrom template
+
+ATH -> ATH : Copy all ContractFields\nto new contract
+
+ATH -> ATH : Identify custom variables\nand apply provided values
+
+ATH -> DB : Contracts.Add(newContract)
+ATH -> DB : ContractFields.AddRange(clonedFields)
+ATH -> DB : SaveChangesAsync()
+
+ATH --> M : Result.Success(newContractId)
+M --> CTC : Result.Success
+CTC --> P : 201 Created {contractId}
+@enduml

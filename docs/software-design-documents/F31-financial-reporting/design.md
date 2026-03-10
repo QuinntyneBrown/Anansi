@@ -132,6 +132,8 @@ Invoice --> InvoiceStatus
 @enduml
 ```
 
+![Domain Layer - Financial Entities](domain-layer-financial-entities.png)
+
 ### Application Layer - Queries, DTOs, and Handlers
 
 ```plantuml
@@ -214,6 +216,8 @@ class PaymentRecordDto <<DTO>> {
 @enduml
 ```
 
+![Application Layer - Queries, DTOs, and Handlers](application-layer-queries-dtos-and-handlers.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -270,6 +274,8 @@ ReportsController ..> ListInvoicesByStatusHandler
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ---
 
 ## Sequence Diagrams
@@ -310,6 +316,8 @@ API --> Photographer : 200 OK (RevenueDashboardDto)
 @enduml
 ```
 
+![View Revenue Dashboard](view-revenue-dashboard.png)
+
 ### Get Monthly Revenue for Charts
 
 ```plantuml
@@ -346,6 +354,8 @@ end note
 
 @enduml
 ```
+
+![Get Monthly Revenue for Charts](get-monthly-revenue-for-charts.png)
 
 ### List and Search Transactions
 
@@ -384,6 +394,8 @@ API --> Photographer : 200 OK (paginated results)
 @enduml
 ```
 
+![List and Search Transactions](list-and-search-transactions.png)
+
 ### Export Transactions as CSV
 
 ```plantuml
@@ -416,6 +428,8 @@ API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: atta
 
 @enduml
 ```
+
+![Export Transactions as CSV](export-transactions-as-csv.png)
 
 ### List Invoices by Status
 
@@ -454,3 +468,5 @@ API --> Photographer : 200 OK (paginated invoices\nwith overdue highlighting)
 
 @enduml
 ```
+
+![List Invoices by Status](list-invoices-by-status.png)

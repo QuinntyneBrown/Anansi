@@ -1,0 +1,23 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "FavoritesController" as API
+participant "ListFavoriteActivityHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/favorites/dashboard?page=1&pageSize=20
+API -> Handler : Send(ListFavoriteActivityQuery)
+
+Handler -> Handler : Get PhotographerId\nfrom ICurrentUserService
+
+Handler -> DB : Query FavoriteLists\nWhere PhotographerId matches\nInclude Items (count)\nInclude Collection (title)\nOrder by UpdatedAt desc
+DB --> Handler : List<FavoriteList> with counts
+
+Handler -> Handler : Map to dashboard DTOs:\n- ClientName\n- CollectionTitle\n- ItemCount\n- CommentCount\n- LastModified\n- IsCompleted
+
+Handler --> API : Result<PagedList<FavoriteDashboardDto>>
+API --> Photographer : 200 OK
+
+@enduml

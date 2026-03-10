@@ -1,0 +1,13 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class TaxProfileController <<ApiController>> {
+  -_mediator : IMediator
+  +UpdateTaxProfile(UpdateTaxProfileCommand) : IActionResult
+  +GetTaxProfile() : IActionResult
+}
+
+TaxProfileController --> "IMediator" : sends commands/queries
+@enduml

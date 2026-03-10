@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "FinancingController" as API
+participant "MediatR" as M
+participant "ApplyForFinancingHandler" as Handler
+participant "IFinancingService" as FS
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/financing/apply\n{requestedAmountCents: 500000}
+API -> M : Send(ApplyForFinancingCommand)
+M -> Handler : Handle(command)
+
+Handler -> Handler : Resolve PhotographerId
+
+Handler -> DB : Check for existing active\nFinancingApplication
+DB --> Handler : null (no active application)
+
+Handler -> FS : EvaluateEligibilityAsync(photographerId)
+FS --> Handler : true (eligible)
+
+Handler -> FS : GenerateOfferAsync(\nphotographerId, requestedAmount)
+FS --> Handler : FinancingOfferDto\n{offered: 500000, fee: 25000,\nrepayment: 10%}
+
+Handler -> DB : Create FinancingApplication\n(Status = "Approved",\noffered/fee/percentage populated)
+Handler -> DB : SaveChangesAsync()
+
+Handler --> M : Result<FinancingApplicationDto>
+M --> API : Result.Success
+API --> Photographer : 200 OK\n{id, offeredAmount, flatFee,\nrepaymentPercentage, status: "Approved"}
+
+note right of FS
+  No credit check required.
+  Eligibility based on
+  platform payment history.
+end note
+
+@enduml

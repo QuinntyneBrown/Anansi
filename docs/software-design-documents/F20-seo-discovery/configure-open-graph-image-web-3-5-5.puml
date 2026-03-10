@@ -1,0 +1,38 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitePagesController" as C
+participant "IMediator" as M
+participant "UpdatePageHandler" as H
+participant "ICurrentUserService" as U
+participant "IStorageService" as S
+participant "IApplicationDbContext" as DB
+
+P -> C : PUT /api/websites/{wId}/pages/{pId}\n{ pageId, ogImageUrl:\n  "https://storage/og-image.jpg" }
+C -> M : Send(UpdatePageCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load WebsitePage\n(pageId, photographerId)
+DB --> H : WebsitePage
+
+H -> H : Update page.OgImageUrl
+
+H -> DB : SaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(WebsitePageDto)
+M --> C : result
+C --> P : 200 OK { pageDto\n  with ogImageUrl }
+
+note right of P
+  The OG image URL is rendered
+  in the page <head> as:
+  <meta property="og:image"
+    content="...">
+end note
+
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EmailController <<ApiController>> {
+  -_mediator : IMediator
+  +ListConversations(page, search) : IActionResult
+  +GetConversation(id) : IActionResult
+  +ComposeMessage(command, files) : IActionResult
+  +ReplyToConversation(id, command, files) : IActionResult
+  +MarkRead(id) : IActionResult
+  +DeleteConversation(id) : IActionResult
+  +InboundWebhook(payload) : IActionResult
+}
+
+class InboundEmailWebhookHandler <<Service>> {
+  -_mediator : IMediator
+  +ProcessInboundEmail(payload) : Task
+}
+
+interface IEmailService <<Interface>> {
+  +SendAsync(to, subject, htmlBody) : Task
+  +SendTemplatedAsync(to, templateId, vars) : Task
+}
+
+interface IStorageService <<Interface>> {
+  +UploadAsync(stream, key) : Task<string>
+  +GetPresignedUrlAsync(key) : string
+}
+
+interface IPushNotificationService <<Interface>> {
+  +SendAsync(userId, title, message) : Task
+}
+
+EmailController ..> ComposeMessageCommand
+EmailController ..> ReplyToConversationCommand
+EmailController ..> ListConversationsQuery
+InboundEmailWebhookHandler ..> ReceiveInboundEmailCommand
+
+@enduml

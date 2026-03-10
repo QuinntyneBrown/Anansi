@@ -1,0 +1,34 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "BlogController" as C
+participant "IMediator" as M
+participant "DuplicateBlogPostHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/blog/posts/{postId}/duplicate
+C -> M : Send(DuplicateBlogPostCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load BlogPost with categories\n(postId, photographerId)
+DB --> H : original BlogPost
+
+H -> H : Create new BlogPost\nTitle = "Copy of " + original.Title\nSlug = original.Slug + "-copy"\nStatus = Draft\nBodyHtml = original.BodyHtml\nExcerpt = original.Excerpt
+
+loop each original category
+  H -> H : Create BlogPostCategory\nfor the duplicate
+end
+
+H -> DB : Add(duplicate)\nSaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(BlogPostDto)
+M --> C : result
+C --> P : 201 Created { duplicatedPostDto }
+
+@enduml

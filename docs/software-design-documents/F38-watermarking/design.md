@@ -119,6 +119,8 @@ Collection "0..*" --> "0..1" Watermark : WatermarkId
 @enduml
 ```
 
+![Domain Layer - Watermark Entities](domain-layer-watermark-entities.png)
+
 ### Application Layer - Commands, Queries, and Services
 
 ```plantuml
@@ -196,6 +198,8 @@ ApplyWatermarkToCollectionCommand --> ICdnService
 @enduml
 ```
 
+![Application Layer - Commands, Queries, and Services](application-layer-commands-queries-and-services.png)
+
 ### Infrastructure & API Layer
 
 ```plantuml
@@ -246,6 +250,8 @@ CollectionWatermarkController ..> RemoveWatermarkFromCollectionCommand
 @enduml
 ```
 
+![Infrastructure & API Layer](infrastructure-api-layer.png)
+
 ---
 
 ## Sequence Diagrams
@@ -283,6 +289,8 @@ API --> Photographer : 201 Created {id, name, type, settings}
 @enduml
 ```
 
+![Create Text Watermark](create-text-watermark.png)
+
 ### Create Image Watermark (Logo Upload)
 
 ```plantuml
@@ -310,6 +318,8 @@ API --> Photographer : 201 Created {id, name, type: Image, imageUrl}
 
 @enduml
 ```
+
+![Create Image Watermark (Logo Upload)](create-image-watermark-logo-upload.png)
 
 ### Apply Watermark to Collection
 
@@ -354,6 +364,8 @@ API --> Photographer : 200 OK
 
 @enduml
 ```
+
+![Apply Watermark to Collection](apply-watermark-to-collection.png)
 
 ### Serve Watermarked Image (Gallery Display)
 
@@ -418,6 +430,8 @@ API --> Client : 302 Redirect to image
 @enduml
 ```
 
+![Serve Watermarked Image (Gallery Display)](serve-watermarked-image-gallery-display.png)
+
 ### Download Full-Res (No Watermark)
 
 ```plantuml
@@ -459,6 +473,8 @@ API --> Client : 302 Redirect to clean image
 
 @enduml
 ```
+
+![Download Full-Res (No Watermark)](download-full-res-no-watermark.png)
 
 ### Social Share with Watermark
 
@@ -504,3 +520,5 @@ end note
 
 @enduml
 ```
+
+![Social Share with Watermark](social-share-with-watermark.png)

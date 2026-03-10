@@ -1,0 +1,57 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Booking.Queries" {
+  class GetBookingSiteQuery <<record>> {
+    +Slug : string
+  }
+
+  class BookingSiteDto <<record>> {
+    +CoverImageUrl : string?
+    +ProfilePhotoUrl : string?
+    +WelcomeMessage : string?
+    +BusinessName : string
+    +Sessions : List<SessionTypeSummaryDto>
+  }
+
+  class GetAvailableSlotsQuery <<record>> {
+    +SessionTypeId : Guid
+    +StartDate : DateTime
+    +EndDate : DateTime
+  }
+
+  class AvailableSlotsDto <<record>> {
+    +Slots : List<SlotDto>
+  }
+
+  class SlotDto <<record>> {
+    +Date : DateTime
+    +StartTime : TimeSpan
+    +EndTime : TimeSpan
+    +SpotsRemaining : int?
+    +IsNearlySoldOut : bool
+  }
+
+  class ValidateCouponQuery <<record>> {
+    +Code : string
+    +SessionTypePriceCents : long
+  }
+
+  class ListBookingsQuery <<record>> {
+    +StatusFilter : BookingStatus?
+    +StartDate : DateTime?
+    +EndDate : DateTime?
+    +Page : int
+    +PageSize : int
+  }
+
+  class GetBookingDetailQuery <<record>> {
+    +BookingId : Guid
+  }
+}
+
+GetAvailableSlotsQuery ..> AvailableSlotsDto : returns
+GetBookingSiteQuery ..> BookingSiteDto : returns
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+interface ICdnService {
+  +GetCdnUrlAsync(storageKey) : Task<string>
+  +GenerateThumbnailAsync(storageKey, width, height) : Task<string>
+  +GenerateProgressiveImagesAsync(storageKey) : Task<ProgressiveImageSet>
+  +InvalidateCacheAsync(storageKey) : Task
+}
+
+interface IWatermarkService {
+  +ApplyWatermarkAsync(sourceKey, watermark) : Task<string>
+  +ApplyWatermarkBatchAsync(sourceKeys, watermark) : Task<IReadOnlyList<string>>
+}
+
+interface IStorageService {
+  +UploadAsync(stream, key) : Task<string>
+  +DeleteAsync(key) : Task
+  +GeneratePresignedUrlAsync(key, expiry) : Task<string>
+}
+
+class ProgressiveImageSet <<record>> {
+  +PlaceholderUrl : string
+  +LowResUrl : string
+  +FullResUrl : string
+}
+
+ICdnService ..> ProgressiveImageSet
+
+@enduml

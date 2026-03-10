@@ -1,0 +1,63 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Website.Blog" {
+  class CreateBlogPostCommand <<record>> {
+    +WebsiteId : Guid
+    +Title : string
+    +Slug : string?
+    +Excerpt : string?
+    +BodyHtml : string
+    +FeaturedImageUrl : string?
+    +CategoryIds : List<Guid>?
+    +ScheduledPublishDate : DateTime?
+  }
+  class CreateBlogPostHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+  }
+
+  class UpdateBlogPostCommand <<record>> {
+    +BlogPostId : Guid
+    +Title : string
+    +Slug : string
+    +BodyHtml : string
+    +Status : BlogPostStatus
+  }
+  class UpdateBlogPostHandler
+
+  class DuplicateBlogPostCommand <<record>> {
+    +BlogPostId : Guid
+  }
+  class DuplicateBlogPostHandler
+
+  class ListBlogPostsQuery <<record>> {
+    +WebsiteId : Guid
+    +Status : BlogPostStatus?
+    +CategoryId : Guid?
+    +Page : int
+    +PageSize : int
+  }
+  class ListBlogPostsHandler
+
+  class ImportBlogPostCommand <<record>> {
+    +WebsiteId : Guid
+    +SourceUrl : string
+    +Title : string?
+    +CategoryIds : List<Guid>?
+  }
+  class ImportBlogPostHandler
+}
+
+package "Anansi.Application.DTOs.Website" {
+  class BlogPostDto <<record>>
+  class BlogCategoryDto <<record>>
+}
+
+CreateBlogPostHandler ..> BlogPostDto : returns
+ListBlogPostsHandler ..> BlogPostDto : returns
+ImportBlogPostHandler ..> BlogPostDto : returns
+
+@enduml

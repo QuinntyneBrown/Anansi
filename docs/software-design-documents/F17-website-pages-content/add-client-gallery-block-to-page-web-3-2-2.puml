@@ -1,0 +1,38 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "PageElementsController" as C
+participant "IMediator" as M
+participant "CreateElementHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/.../elements\n{ elementType: ClientGalleryBlock,\n  contentJson: { collectionIds: [...],\n    displayType: "Grid" },\n  posX, posY, width, height }
+C -> M : Send(CreateElementCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Find page (pageId, photographerId)
+DB --> H : WebsitePage
+
+H -> H : Parse contentJson\nextract collectionIds
+
+H -> DB : Verify collections exist\nand belong to photographer
+DB --> H : collections valid
+
+H -> DB : Max(SortOrder) for page
+DB --> H : maxSort
+
+H -> H : Build PageElement\n(ElementType = ClientGalleryBlock)
+
+H -> DB : Add(element)\nSaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success(PageElementDto)
+M --> C : result
+C --> P : 201 Created { elementDto }
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+actor Client as C
+participant "Browser" as B
+participant "RightClickProtection" as RCP
+
+C -> B : Load gallery page
+B -> RCP : Initialize protection\non all <img> elements\nwithin .gallery-container
+
+RCP -> B : Add event listeners:\n- contextmenu\n- dragstart\n- selectstart
+
+== Right-Click Attempt ==
+C -> B : Right-click on gallery image
+B -> RCP : contextmenu event fired
+RCP -> RCP : event.preventDefault()
+RCP -> RCP : event.stopPropagation()
+RCP --> C : Context menu suppressed\n(no "Save Image As..." option)
+
+== Drag Attempt ==
+C -> B : Try to drag image to desktop
+B -> RCP : dragstart event fired
+RCP -> RCP : event.preventDefault()
+RCP --> C : Drag suppressed
+
+note right of RCP
+  This is a deterrent, not absolute protection.
+  Combined with server-side watermarks
+  (which cannot be removed), it provides
+  layered content protection.
+end note
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "UpdateCollectionHandler" as UCH
+participant "ApplicationDbContext" as DB
+participant "ICdnService" as CDN
+
+P -> CC : PUT /api/collections/{id}\n{coverStyle: "Oakwood",\ncoverPhotoId: "photo-uuid",\ncoverFocalPointX: 0.45,\ncoverFocalPointY: 0.3}
+CC -> M : Send(UpdateCollectionCommand)
+M -> UCH : Handle(command)
+
+UCH -> DB : Load Collection by Id
+alt collection not found
+  UCH --> M : Result.Failure("Not found")
+  M --> CC : 404
+  CC --> P : 404
+end
+
+alt coverPhotoId provided
+  UCH -> DB : Verify GalleryMedia exists\nand belongs to this collection
+  alt photo not found
+    UCH --> M : Result.Failure("Cover photo not found")
+    M --> CC : 400
+    CC --> P : 400
+  end
+end
+
+UCH -> UCH : collection.CoverStyle = Oakwood
+UCH -> UCH : collection.CoverPhotoId = photoId
+UCH -> UCH : collection.CoverFocalPointX = 0.45
+UCH -> UCH : collection.CoverFocalPointY = 0.3
+UCH -> DB : SaveChangesAsync()
+
+UCH -> CDN : InvalidateCacheAsync(\ncoverPhotoKey)
+note right: Invalidate cached\ncover renderings
+
+UCH --> M : Result.Success(CollectionDto)
+M --> CC : Result.Success
+CC --> P : 200 OK (CollectionDto)
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "BrandingController" as API
+participant "UpsertDocumentBrandingHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : PUT /api/branding/documents/Contract\n{headerImageUrl, brandColorHex: "#C9A962",\nsecondaryColorHex: "#1A1A1C", fontTheme: "Cormorant Garamond"}
+API -> Handler : Send(UpsertDocumentBrandingCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> Handler : Validate hex color format
+
+Handler -> DB : Find DocumentBranding\n(PhotographerId, DocumentType.Contract)
+DB --> Handler : DocumentBranding? (may be null)
+
+alt Existing record found
+  Handler -> Handler : Update fields\n(headerImage, colors, font)
+else No existing record
+  Handler -> Handler : Create new DocumentBranding\n(PhotographerId, Contract)
+  Handler -> DB : Add DocumentBranding
+end
+
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<DocumentBrandingDto>
+API --> Photographer : 200 OK {id, documentType, headerImageUrl, colors, font}
+
+@enduml

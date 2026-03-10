@@ -1,0 +1,35 @@
+@startuml
+participant "AcceptQuoteCommandHandler" as AQH
+participant "MediatR" as M
+participant "GenerateInvoiceFromQuoteHandler" as GIH
+participant "ApplicationDbContext" as DB
+
+AQH -> M : Send(GenerateInvoiceFromQuoteCommand\n{quoteId})
+M -> GIH : Handle(command)
+
+GIH -> DB : Load Quote with QuoteItems
+DB --> GIH : Quote {\n  items: [\n    {name: "Photography",\n     unitPriceCents: 350000,\n     isTaxExempt: false},\n    {name: "Consultation",\n     unitPriceCents: 10000,\n     isTaxExempt: true}\n  ]\n}
+
+GIH -> DB : Load TaxProfile\nfor PhotographerId
+DB --> GIH : TaxProfile\n{hstRate: 13.0}
+
+GIH -> GIH : Map QuoteItems to\nInvoiceLineItems:\n- Copy name, description,\n  qty, unitPrice\n- **Copy IsTaxExempt flag**
+
+GIH -> GIH : Subtotal = 360000
+
+GIH -> GIH : Filter taxable items:\nPhotography (350000)\n(Consultation excluded)
+
+GIH -> GIH : TaxAmountCents =\n350000 * 13 / 100 = 45500
+
+GIH -> GIH : TotalCents =\n360000 + 45500 = 405500
+
+GIH -> DB : Generate invoice number
+
+GIH -> DB : Invoices.Add(draftInvoice\nwith Status = Draft,\nTaxRatePercent = 13.0,\nTaxAmountCents = 45500)
+GIH -> DB : InvoiceLineItems.AddRange(\nwith IsTaxExempt preserved)
+
+GIH -> DB : quote.GeneratedInvoiceId\n= newInvoice.Id
+GIH -> DB : SaveChangesAsync()
+
+GIH --> M : Result.Success(invoiceId)
+@enduml

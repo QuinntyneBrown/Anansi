@@ -135,6 +135,8 @@ FavoriteItem --> "1" GalleryMedia : references
 @enduml
 ```
 
+![Domain -- GalleryMedia with Lightroom Mapping](domain-gallerymedia-with-lightroom-mapping.png)
+
 ### Application -- Lightroom Commands, Queries & Service Interface
 
 ```plantuml
@@ -208,6 +210,8 @@ GetLightroomFavoriteListsQuery ..> ILightroomSyncService : delegates to
 @enduml
 ```
 
+![Application -- Lightroom Commands, Queries & Service Interface](application-lightroom-commands-queries-service-interface.png)
+
 ### Infrastructure -- LightroomSyncService
 
 ```plantuml
@@ -241,6 +245,8 @@ LightroomSyncService --> ICdnService
 @enduml
 ```
 
+![Infrastructure -- LightroomSyncService](infrastructure-lightroomsyncservice.png)
+
 ### API -- LightroomController
 
 ```plantuml
@@ -268,6 +274,8 @@ LightroomController --> "IMediator" : sends commands/queries
 
 @enduml
 ```
+
+![API -- LightroomController](api-lightroomcontroller.png)
 
 ---
 
@@ -325,6 +333,8 @@ LR --> P : "Published N photos,\nupdated M photos"
 @enduml
 ```
 
+![Publish Collection from Lightroom](publish-collection-from-lightroom.png)
+
 ### Sync Collection Structure
 
 ```plantuml
@@ -369,6 +379,8 @@ LR --> P : "Synced N collections,\nM sets"
 @enduml
 ```
 
+![Sync Collection Structure](sync-collection-structure.png)
+
 ### View Favorite Lists in Lightroom
 
 ```plantuml
@@ -409,6 +421,8 @@ LR --> P : Favorited photos highlighted\nin Lightroom grid view
 @enduml
 ```
 
+![View Favorite Lists in Lightroom](view-favorite-lists-in-lightroom.png)
+
 ### Plugin Installation and Authentication
 
 ```plantuml
@@ -443,3 +457,5 @@ LC --> LR : 200 OK [{collections}]
 LR --> P : "Connected to Anansi"\nShow available collections
 @enduml
 ```
+
+![Plugin Installation and Authentication](plugin-installation-and-authentication.png)

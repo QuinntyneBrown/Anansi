@@ -1,0 +1,40 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class WebsiteAnalyticsSnapshot {
+  +Id : Guid
+  +PhotographerId : Guid
+  +WebsiteId : Guid
+  +Date : DateTime
+  +TotalVisitors : int
+  +UniqueVisitors : int
+  +PageViews : int
+  +AverageSessionDurationSeconds : double
+  +GeographicDistributionJson : string?
+  +TopPagesJson : string?
+}
+
+class AnalyticsPageHit {
+  +Id : Guid
+  +WebsiteId : Guid
+  +PagePath : string
+  +VisitorFingerprint : string
+  +IpAddress : string
+  +UserAgent : string?
+  +CountryCode : string?
+  +SessionId : string
+  +Timestamp : DateTime
+}
+
+class Website {
+  +Id : Guid
+  +BuiltInAnalyticsEnabled : bool
+  +GoogleAnalyticsMeasurementId : string?
+  +FacebookPixelId : string?
+}
+
+Website "1" --> "*" WebsiteAnalyticsSnapshot : AnalyticsSnapshots
+Website "1" --> "*" AnalyticsPageHit : PageHits
+@enduml

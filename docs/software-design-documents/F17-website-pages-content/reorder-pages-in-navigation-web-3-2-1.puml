@@ -1,0 +1,34 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsitePagesController" as C
+participant "IMediator" as M
+participant "ReorderPagesHandler" as H
+participant "ICurrentUserService" as U
+participant "IApplicationDbContext" as DB
+
+P -> C : PUT /api/websites/{wId}/pages/reorder\n{ pageIds: [guid3, guid1, guid2] }
+C -> M : Send(ReorderPagesCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load all pages for website\nwhere photographerId matches
+DB --> H : List<WebsitePage>
+
+H -> H : Validate all pageIds exist\nin loaded pages
+
+loop each pageId in ordered list
+  H -> H : Set page.SortOrder = index + 1
+end
+
+H -> DB : SaveChangesAsync()
+DB --> H : saved
+
+H --> M : Result.Success()
+M --> C : result
+C --> P : 200 OK
+
+@enduml

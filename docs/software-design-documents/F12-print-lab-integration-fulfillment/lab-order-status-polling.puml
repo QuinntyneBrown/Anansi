@@ -1,0 +1,31 @@
+@startuml
+skinparam maxMessageSize 200
+participant "OrderStatusPollingJob" as job
+participant "IApplicationDbContext" as db
+participant "ILabIntegrationService" as labService
+participant "Print Lab API" as labApi
+participant "IEmailService" as email
+
+[-> job : Timer triggers\n(every 1 hour)
+
+job -> db : LabOrders\n.Where(Status in\n[Transmitted, InProduction])
+db --> job : List<LabOrder>
+
+loop for each pending LabOrder
+  job -> labService : GetOrderStatusAsync(\nlabName, externalOrderId)
+  labService -> labApi : GET /orders/{id}/status
+  labApi --> labService : {status, trackingNumber}
+  labService --> job : LabOrderStatusResult
+
+  alt status changed
+    job -> db : Update LabOrder.Status,\nTrackingNumber
+    alt status == Shipped
+      job -> db : Update parent Order\nTrackingNumber, Status
+      job -> email : Notify client\nwith tracking info
+    end
+  end
+end
+
+job -> db : SaveChangesAsync()
+[<-- job : Poll complete
+@enduml

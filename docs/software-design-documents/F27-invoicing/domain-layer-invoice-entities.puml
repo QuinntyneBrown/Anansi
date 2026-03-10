@@ -1,0 +1,73 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Invoice {
+  +Id : Guid
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +ProjectId : Guid?
+  +InvoiceNumber : string
+  +Title : string
+  +Notes : string?
+  +HeaderImageUrl : string?
+  +BrandColorHex : string?
+  +Status : InvoiceStatus
+  +SentAt : DateTime?
+  +DueDate : DateTime?
+  +SubtotalCents : long
+  +TaxRatePercent : decimal
+  +TaxAmountCents : long
+  +DiscountCents : long
+  +TotalCents : long
+  +PaidCents : long
+  +TipsEnabled : bool
+  +TipAmountCents : long
+  +DepositAmountCents : long?
+  +AutoRemindersEnabled : bool
+  +ReminderIntervalDays : int?
+  +LastReminderSentAt : DateTime?
+  +IsTemplate : bool
+  +TemplateName : string?
+  +CustomHeaderFields : string?
+}
+
+class InvoiceLineItem {
+  +Id : Guid
+  +InvoiceId : Guid
+  +Name : string
+  +Description : string?
+  +Quantity : int
+  +UnitPriceCents : long
+  +TotalCents : long
+  +SortOrder : int
+}
+
+class InvoicePaymentSchedule {
+  +Id : Guid
+  +InvoiceId : Guid
+  +Label : string
+  +AmountCents : long
+  +DueDate : DateTime
+  +IsPaid : bool
+  +PaidAt : DateTime?
+  +PaymentIntentId : string?
+  +SortOrder : int
+}
+
+enum InvoiceStatus {
+  Draft
+  Sent
+  Viewed
+  PartiallyPaid
+  Paid
+  Overdue
+  Cancelled
+  Refunded
+}
+
+Invoice "1" --> "*" InvoiceLineItem : LineItems
+Invoice "1" --> "*" InvoicePaymentSchedule : PaymentSchedules
+Invoice --> InvoiceStatus : uses
+@enduml

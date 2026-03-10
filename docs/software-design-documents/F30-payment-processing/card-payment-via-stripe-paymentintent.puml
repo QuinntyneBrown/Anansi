@@ -1,0 +1,30 @@
+@startuml
+actor Client as C
+participant "InvoicePublicController" as IPC
+participant "MediatR" as M
+participant "ProcessCardPaymentHandler" as CPH
+participant "IPaymentService" as PS
+participant "ApplicationDbContext" as DB
+
+C -> IPC : POST /api/invoices/pay/{token}\n{paymentMethodId, scheduleId}
+IPC -> M : Send(ProcessCardPaymentCommand)
+M -> CPH : Handle(command)
+
+CPH -> DB : Load Invoice and\nPaymentSchedule
+
+CPH -> DB : Load Photographer\n(StripeAccountId)
+
+CPH -> PS : CreatePaymentIntentAsync(\namountCents, currency,\nstripeAccountId, metadata)
+PS --> CPH : clientSecret
+
+CPH --> M : Result.Success(clientSecret)
+M --> IPC : Result.Success
+IPC --> C : 200 OK {clientSecret}
+
+note right of C
+  Client-side Stripe.js confirms
+  the PaymentIntent using
+  the clientSecret.
+  On success, Stripe fires webhook.
+end note
+@enduml

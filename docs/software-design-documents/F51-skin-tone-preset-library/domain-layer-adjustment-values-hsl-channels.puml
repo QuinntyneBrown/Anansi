@@ -1,0 +1,55 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class EditingPreset {
+  +Id : Guid
+  +Name : string
+}
+
+class PresetAdjustments <<owned>> {
+  +Temperature : double
+  +Tint : double
+  +Exposure : double
+  +Contrast : double
+  +Highlights : double
+  +Shadows : double
+  +Whites : double
+  +Blacks : double
+  +Clarity : double
+  +Vibrance : double
+  +Saturation : double
+}
+
+class PresetSplitTone <<owned>> {
+  +HighlightHue : double
+  +HighlightSaturation : double
+  +ShadowHue : double
+  +ShadowSaturation : double
+}
+
+class PresetHslChannel {
+  +PresetId : Guid
+  +Channel : HslColorChannel
+  +Hue : double
+  +Saturation : double
+  +Luminance : double
+}
+
+enum HslColorChannel {
+  Red
+  Orange
+  Yellow
+  Green
+  Aqua
+  Blue
+  Purple
+  Magenta
+}
+
+EditingPreset *-- "1" PresetAdjustments : owns
+EditingPreset *-- "1" PresetSplitTone : owns
+EditingPreset "1" --> "8" PresetHslChannel : channels
+PresetHslChannel ..> HslColorChannel
+@enduml

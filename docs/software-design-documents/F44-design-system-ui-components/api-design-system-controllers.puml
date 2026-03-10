@@ -1,0 +1,27 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class DesignTokensController <<ApiController>> {
+  -_mediator : IMediator
+  +GetTokens(category?) : IActionResult
+  +GetTokensCss() : ContentResult
+}
+
+class ComponentManifestController <<ApiController>> {
+  -_mediator : IMediator
+  +GetManifest() : IActionResult
+}
+
+note right of DesignTokensController
+  Public endpoints (no auth).
+  GET /api/design-tokens
+  GET /api/design-tokens/{category}
+  GET /api/design-tokens/css
+end note
+
+DesignTokensController --> "IMediator"
+ComponentManifestController --> "IMediator"
+
+@enduml

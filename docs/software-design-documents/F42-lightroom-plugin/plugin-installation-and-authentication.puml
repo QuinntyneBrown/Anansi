@@ -1,0 +1,30 @@
+@startuml
+actor Photographer as P
+participant "Lightroom Classic" as LR
+participant "Anansi Web UI" as UI
+participant "AccountController" as AC
+participant "IApplicationDbContext" as DB
+participant "LightroomController" as LC
+
+== Step 1: Generate API Key ==
+P -> UI : Navigate to Account > API Keys
+P -> UI : Click "Create API Key"
+UI -> AC : POST /api/account/api-keys\n{name: "Lightroom Plugin"}
+AC -> DB : Generate random key,\nhash with SHA256,\nstore ApiKey entity
+DB --> AC : success
+AC --> UI : {keyPrefix: "anan_", fullKey: "anan_xyz..."}
+note right of UI
+  Full key shown ONCE.
+  Only prefix + hash stored.
+end note
+UI --> P : Display API key (copy to clipboard)
+
+== Step 2: Install & Configure Plugin ==
+P -> LR : File > Plug-in Manager >\nAdd > select anansi.lrplugin
+LR -> LR : Load plugin, register\nAnansi Publish Service
+P -> LR : Enter Anansi API key\nin plugin settings
+LR -> LC : GET /api/lightroom/collections\n(X-Api-Key: anan_xyz...)
+LC -> LC : Validate API key\n(hash and compare)
+LC --> LR : 200 OK [{collections}]
+LR --> P : "Connected to Anansi"\nShow available collections
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class Watermark {
+  +PhotographerId : Guid
+  +Name : string
+  +Type : WatermarkType
+  +Text : string?
+  +FontFamily : string?
+  +ImageUrl : string?
+  +Opacity : double
+  +Scale : double
+  +Position : WatermarkPosition
+  +IsDefault : bool
+  +IsDeleted : bool
+  +DeletedAt : DateTime?
+}
+
+class Collection {
+  +PhotographerId : Guid
+  +Title : string
+  +WatermarkId : Guid?
+  +WatermarkEnabled : bool
+}
+
+enum WatermarkType {
+  Text
+  Image
+}
+
+enum WatermarkPosition {
+  Center
+  TopLeft
+  TopCenter
+  TopRight
+  MiddleLeft
+  MiddleRight
+  BottomLeft
+  BottomCenter
+  BottomRight
+}
+
+BaseEntity <|-- Watermark
+BaseEntity <|-- Collection
+Watermark --> WatermarkType
+Watermark --> WatermarkPosition
+Collection "0..*" --> "0..1" Watermark : WatermarkId
+
+@enduml

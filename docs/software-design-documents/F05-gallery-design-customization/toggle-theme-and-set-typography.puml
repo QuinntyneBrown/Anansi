@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "UpdateCollectionHandler" as UCH
+participant "ApplicationDbContext" as DB
+
+P -> CC : PUT /api/collections/{id}\n{theme: "Dark",\nfontFamily: "Playfair Display"}
+CC -> M : Send(UpdateCollectionCommand)
+M -> UCH : Handle(command)
+
+UCH -> DB : Load Collection
+
+UCH -> UCH : Validate fontFamily is\nin DesignOptions.AvailableFonts
+alt invalid font
+  UCH --> M : Result.Failure("Invalid font family")
+end
+
+UCH -> UCH : collection.Theme = Dark
+note right
+  Both Light and Dark themes
+  maintain WCAG AA contrast
+  ratios for all text
+end note
+
+UCH -> UCH : collection.FontFamily =\n"Playfair Display"
+note right
+  Font applies to all
+  client-facing text
+  in the collection
+end note
+
+UCH -> DB : SaveChangesAsync()
+UCH --> M : Result.Success(CollectionDto)
+M --> CC : Result.Success
+CC --> P : 200 OK
+@enduml

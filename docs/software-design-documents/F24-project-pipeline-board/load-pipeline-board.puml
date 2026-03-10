@@ -1,0 +1,22 @@
+@startuml
+actor Photographer as P
+participant "PipelineBoardController" as PBC
+participant "MediatR" as M
+participant "GetPipelineBoardHandler" as BH
+participant "ApplicationDbContext" as DB
+
+P -> PBC : GET /api/pipeline
+PBC -> M : Send(GetPipelineBoardQuery)
+M -> BH : Handle()
+BH -> DB : Query ProjectStages\nWHERE PhotographerId\nORDER BY SortOrder\nINCLUDE Projects.Contact
+DB --> BH : stages with projects
+
+loop for each project
+  BH -> BH : Map to ProjectCardDto\n(clientName, statusIndicators)
+end
+
+BH -> BH : Assemble PipelineBoardDto
+BH --> M : PipelineBoardDto
+M --> PBC : result
+PBC --> P : 200 OK {stages: [\n  {name: "Inquiry", projects: [...]},\n  {name: "Booked Session", projects: [...]},\n  ...]}
+@enduml

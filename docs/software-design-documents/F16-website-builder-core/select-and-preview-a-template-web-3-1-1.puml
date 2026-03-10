@@ -1,0 +1,32 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteTemplatesController" as C
+participant "IMediator" as M
+participant "ListTemplatesHandler" as LH
+participant "GetTemplatePreviewHandler" as PH
+participant "IApplicationDbContext" as DB
+
+== Browse Templates ==
+P -> C : GET /api/website-templates?category=Portfolio
+C -> M : Send(ListTemplatesQuery)
+M -> LH : Handle(query)
+LH -> DB : Set<WebsiteTemplate>()\n.Where(active, category)\n.OrderBy(SortOrder)
+DB --> LH : List<WebsiteTemplate>
+LH --> M : Result<List<WebsiteTemplateDto>>
+M --> C : result
+C --> P : 200 OK [templates]
+
+== Preview Template ==
+P -> C : GET /api/website-templates/{id}/preview
+C -> M : Send(GetTemplatePreviewQuery)
+M -> PH : Handle(query)
+PH -> DB : Set<WebsiteTemplate>()\n.FirstOrDefault(id)
+DB --> PH : WebsiteTemplate
+PH --> M : Result<TemplatePreviewDto>
+M --> C : result
+C --> P : 200 OK { layoutDefinitionJson }
+
+@enduml

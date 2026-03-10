@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Notification {
+  +PhotographerId : Guid
+  +EventType : NotificationEventType
+  +Category : NotificationCategory
+  +Title : string
+  +Message : string
+  +ClientName : string?
+  +Link : string?
+  +IsRead : bool
+  +ReadAt : DateTime?
+}
+
+class NotificationPreference {
+  +PhotographerId : Guid
+  +EventType : NotificationEventType
+  +InAppEnabled : bool
+  +EmailEnabled : bool
+  +PushEnabled : bool
+}
+
+enum NotificationEventType {
+  MessageReceived
+  ...
+}
+
+Notification --> NotificationEventType
+NotificationPreference --> NotificationEventType
+
+@enduml

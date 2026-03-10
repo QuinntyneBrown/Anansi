@@ -1,0 +1,51 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Application.Features.Store.Commands" {
+  class CreateOrderCommand <<record>> {
+    +Request : CreateOrderRequest
+  }
+  class CreateOrderHandler {
+    -_db : IApplicationDbContext
+    -_currentUser : ICurrentUserService
+    -_paymentService : IPaymentService
+    -_payPalService : IPayPalService
+    -_emailService : IEmailService
+    -_labService : ILabIntegrationService
+    +Handle(cmd, ct) : Result<OrderDto>
+  }
+
+  class UpdateOrderStatusCommand <<record>> {
+    +Id : Guid
+    +Request : UpdateOrderStatusRequest
+  }
+}
+
+package "Anansi.Application.Interfaces" {
+  interface IPaymentService {
+    +CreatePaymentIntentAsync(...) : Task<string>
+    +RefundAsync(...) : Task
+  }
+
+  interface IPayPalService {
+    +CreateOrderAsync(...) : Task<string>
+    +CaptureOrderAsync(...) : Task<PayPalCaptureResult>
+    +RefundAsync(...) : Task
+  }
+
+  interface ILabIntegrationService {
+    +SubmitOrderAsync(...) : Task<string>
+  }
+
+  interface IEmailService
+}
+
+CreateOrderHandler ..> CreateOrderCommand
+CreateOrderHandler --> IPaymentService
+CreateOrderHandler --> IPayPalService
+CreateOrderHandler --> ILabIntegrationService
+CreateOrderHandler --> IEmailService
+
+@enduml

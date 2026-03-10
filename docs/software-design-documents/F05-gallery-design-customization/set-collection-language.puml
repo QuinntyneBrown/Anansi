@@ -1,0 +1,47 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "UpdateCollectionHandler" as UCH
+participant "ApplicationDbContext" as DB
+
+P -> CC : PUT /api/collections/{id}\n{language: "French"}
+CC -> M : Send(UpdateCollectionCommand)
+M -> UCH : Handle(command)
+
+UCH -> DB : Load Collection
+UCH -> UCH : Validate language is\nin GalleryLanguage enum
+UCH -> UCH : collection.Language = French
+UCH -> DB : SaveChangesAsync()
+UCH --> M : Result.Success(CollectionDto)
+M --> CC : Result.Success
+CC --> P : 200 OK
+
+== Client Views Gallery ==
+
+actor Client as C
+participant "GalleryRenderer" as GR
+participant "GalleryLocalizationService" as GLS
+
+C -> GR : Open gallery URL
+GR -> GR : Load collection.Language = French
+GR -> GLS : GetTranslations("French")
+GLS --> GR : {
+GLS --> GR :   "download": "Telecharger",
+GLS --> GR :   "favorites": "Favoris",
+GLS --> GR :   "slideshow": "Diaporama",
+GLS --> GR :   "share": "Partager",
+GLS --> GR :   "password_prompt": "Entrez le mot de passe",
+GLS --> GR :   ...
+GLS --> GR : }
+GR -> GR : Render all UI text\nin French
+GR --> C : Gallery page in French
+
+note right of GLS
+  All client-facing text is
+  translated: buttons, labels,
+  prompts, messages, and
+  automated emails related
+  to this collection
+end note
+@enduml

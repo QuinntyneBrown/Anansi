@@ -160,6 +160,8 @@ PayoutRecord --> PayoutStatus : uses
 @enduml
 ```
 
+![Domain Layer -- Payment Entities](domain-layer-payment-entities.png)
+
 ### Application Layer -- Payment Commands
 
 ```plantuml
@@ -223,6 +225,8 @@ interface IPaymentService {
 }
 @enduml
 ```
+
+![Application Layer -- Payment Commands](application-layer-payment-commands.png)
 
 ### Application Layer -- PayPal, Tap to Pay, and Offline Commands
 
@@ -288,6 +292,8 @@ interface IPayPalService {
 ProcessPayPalPaymentCommand ..> IPayPalService : uses
 @enduml
 ```
+
+![Application Layer -- PayPal, Tap to Pay, and Offline Commands](application-layer-paypal-tap-to-pay-and-offline-commands.png)
 
 ### Application Layer -- Payout & Webhook Commands
 
@@ -373,6 +379,8 @@ class PaymentMethodsDto <<record>> {
 @enduml
 ```
 
+![Application Layer -- Payout & Webhook Commands](application-layer-payout-webhook-commands.png)
+
 ### API Layer -- Payment Controllers
 
 ```plantuml
@@ -421,6 +429,8 @@ TapToPayController --> "IMediator" : sends commands/queries
 @enduml
 ```
 
+![API Layer -- Payment Controllers](api-layer-payment-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -459,6 +469,8 @@ note right of C
 end note
 @enduml
 ```
+
+![Card Payment via Stripe PaymentIntent](card-payment-via-stripe-paymentintent.png)
 
 ### Stripe Webhook Confirms Payment
 
@@ -511,6 +523,8 @@ SWC --> S : 200 OK
 @enduml
 ```
 
+![Stripe Webhook Confirms Payment](stripe-webhook-confirms-payment.png)
+
 ### PayPal Payment Flow
 
 ```plantuml
@@ -555,6 +569,8 @@ PPWC --> PP : 200 OK
 @enduml
 ```
 
+![PayPal Payment Flow](paypal-payment-flow.png)
+
 ### Buy Now Pay Later (Klarna/Affirm)
 
 ```plantuml
@@ -589,6 +605,8 @@ note right of C
 end note
 @enduml
 ```
+
+![Buy Now Pay Later (Klarna/Affirm)](buy-now-pay-later-klarna-affirm.png)
 
 ### Tap to Pay with QR Fallback
 
@@ -636,6 +654,8 @@ end
 @enduml
 ```
 
+![Tap to Pay with QR Fallback](tap-to-pay-with-qr-fallback.png)
+
 ### Record Offline Payment
 
 ```plantuml
@@ -678,6 +698,8 @@ PC --> P : 201 Created {paymentRecordId}
 @enduml
 ```
 
+![Record Offline Payment](record-offline-payment.png)
+
 ### Request Instant Payout
 
 ```plantuml
@@ -717,6 +739,8 @@ PC --> P : 200 OK {payoutId,\nestimatedArrival: "minutes"}
 @enduml
 ```
 
+![Request Instant Payout](request-instant-payout.png)
+
 ### Get Payout Summary
 
 ```plantuml
@@ -744,3 +768,5 @@ M --> PC : Result.Success
 PC --> P : 200 OK (PayoutSummaryDto)
 @enduml
 ```
+
+![Get Payout Summary](get-payout-summary.png)

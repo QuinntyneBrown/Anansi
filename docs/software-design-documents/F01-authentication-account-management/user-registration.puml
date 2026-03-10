@@ -1,0 +1,35 @@
+@startuml
+actor Photographer as P
+participant "AuthController" as AC
+participant "MediatR" as M
+participant "RegisterCommandHandler" as RH
+participant "UserManager" as UM
+participant "ApplicationDbContext" as DB
+participant "TokenService" as TS
+
+P -> AC : POST /api/auth/register\n{email, password, firstName,\nlastName, businessName}
+AC -> M : Send(RegisterCommand)
+M -> RH : Handle(command)
+
+RH -> RH : Validate (FluentValidation)
+alt validation fails
+  RH --> M : Result.Failure(errors)
+  M --> AC : Result.Failure
+  AC --> P : 400 Bad Request
+end
+
+RH -> UM : CreateAsync(user, password)
+alt user already exists
+  RH --> M : Result.Failure("Email already registered")
+  M --> AC : Result.Failure
+  AC --> P : 409 Conflict
+end
+
+RH -> DB : Photographers.Add(photographer)
+RH -> DB : SaveChangesAsync()
+RH -> TS : GenerateAccessToken(userId, email, photographerId)
+TS --> RH : JWT token
+RH --> M : Result.Success(RegisterResponse)
+M --> AC : Result.Success
+AC --> P : 200 OK {userId, photographerId, token}
+@enduml

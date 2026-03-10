@@ -1,0 +1,39 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer as P
+participant "WebsiteSeoController" as C
+participant "IMediator" as M
+participant "GenerateAiAltTextHandler" as H
+participant "ICurrentUserService" as U
+participant "IAiContentService" as AI
+participant "IApplicationDbContext" as DB
+
+P -> C : POST /api/websites/{wId}/seo/ai-alt-text\n{ elementIds: [id1, id2, id3] }
+C -> M : Send(GenerateAiAltTextCommand)
+M -> H : Handle(command)
+H -> U : PhotographerId
+U --> H : photographerId
+
+H -> DB : Load PageElements\n(elementIds, photographerId,\nElementType == Image)
+DB --> H : List<PageElement>
+
+loop each image element
+  H -> H : Parse ContentJson\nextract imageUrl
+  H -> AI : GenerateAltTextAsync(imageUrl)
+  AI --> H : generatedAltText
+  H -> H : Add to results\n{ elementId, imageUrl, altText }
+end
+
+H --> M : Result.Success(\nList<AiAltTextResultDto>)
+M --> C : result
+C --> P : 200 OK [{ elementId,\nimageUrl, suggestedAltText }]
+
+note right of P
+  Photographer reviews/edits
+  each suggestion, then calls
+  SaveAltText to commit.
+end note
+
+@enduml

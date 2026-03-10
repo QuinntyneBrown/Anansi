@@ -140,6 +140,8 @@ Contract --> ContractStatus : uses
 @enduml
 ```
 
+![Domain Layer -- Contract Entities](domain-layer-contract-entities.png)
+
 ### Application Layer -- Contract Commands & Queries
 
 ```plantuml
@@ -229,6 +231,8 @@ SendContractCommand ..> IEmailService : uses
 @enduml
 ```
 
+![Application Layer -- Contract Commands & Queries](application-layer-contract-commands-queries.png)
+
 ### Application Layer -- Contract Template Commands
 
 ```plantuml
@@ -290,6 +294,8 @@ class ContractTemplateDto <<record>> {
 @enduml
 ```
 
+![Application Layer -- Contract Template Commands](application-layer-contract-template-commands.png)
+
 ### API Layer -- Contract Controllers
 
 ```plantuml
@@ -330,6 +336,8 @@ ContractPublicController --> "IMediator" : sends commands/queries
 @enduml
 ```
 
+![API Layer -- Contract Controllers](api-layer-contract-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -363,6 +371,8 @@ M --> CC : Result.Success
 CC --> P : 201 Created {contractId}
 @enduml
 ```
+
+![Create and Send Contract](create-and-send-contract.png)
 
 ### Send Contract to Client
 
@@ -402,6 +412,8 @@ M --> CC : Result.Success
 CC --> P : 200 OK
 @enduml
 ```
+
+![Send Contract to Client](send-contract-to-client.png)
 
 ### Client Views and Signs Contract
 
@@ -458,6 +470,8 @@ CPC --> C : 200 OK
 @enduml
 ```
 
+![Client Views and Signs Contract](client-views-and-signs-contract.png)
+
 ### Photographer Pre-Signs Contract
 
 ```plantuml
@@ -494,6 +508,8 @@ CC --> P : 200 OK
 @enduml
 ```
 
+![Photographer Pre-Signs Contract](photographer-pre-signs-contract.png)
+
 ### Contract Expiry Background Job
 
 ```plantuml
@@ -518,6 +534,8 @@ PEH -> DB : SaveChangesAsync()
 PEH --> M : Result.Success(expiredCount)
 @enduml
 ```
+
+![Contract Expiry Background Job](contract-expiry-background-job.png)
 
 ### Contract Reminder Background Job
 
@@ -545,6 +563,8 @@ SRH -> DB : SaveChangesAsync()
 SRH --> M : Result.Success(reminderCount)
 @enduml
 ```
+
+![Contract Reminder Background Job](contract-reminder-background-job.png)
 
 ### Apply Contract Template
 
@@ -583,3 +603,5 @@ M --> CTC : Result.Success
 CTC --> P : 201 Created {contractId}
 @enduml
 ```
+
+![Apply Contract Template](apply-contract-template.png)

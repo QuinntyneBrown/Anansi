@@ -1,0 +1,37 @@
+@startuml
+actor Photographer as P
+participant "CollectionsController" as CC
+participant "MediatR" as M
+participant "BulkCreateHandler" as BCH
+participant "ApplicationDbContext" as DB
+
+P -> CC : POST /api/collections/bulk\n{galleries: [{title, clientName, clientEmail}, ...],\npresetId}
+CC -> M : Send(BulkCreateCollectionsCommand)
+M -> BCH : Handle(command)
+
+alt presetId provided
+  BCH -> DB : Load CollectionPreset
+end
+
+loop each gallery entry
+  BCH -> BCH : Create Collection entity\nwith title from entry
+
+  alt preset loaded
+    BCH -> BCH : Apply preset settings\nto collection
+  end
+
+  BCH -> BCH : Generate unique slug
+  BCH -> BCH : Auto-generate DownloadPin
+
+  alt clientName/clientEmail provided
+    BCH -> BCH : Attach client info\nto collection metadata
+  end
+
+  BCH -> DB : Collections.Add(collection)
+end
+
+BCH -> DB : SaveChangesAsync()
+BCH --> M : Result.Success(List<CollectionDto>)
+M --> CC : Result.Success
+CC --> P : 200 OK [{collection1}, {collection2}, ...]
+@enduml

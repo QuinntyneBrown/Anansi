@@ -1,0 +1,26 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "PrivacyController" as API
+participant "SetCollectionExpiryHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : PUT /api/collections/{id}/expiry\n{expiresAt, reminderRecipients,\nreminderDays, reminderEmailTemplate}
+API -> Handler : Send(SetCollectionExpiryCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> DB : Find Collection by Id & PhotographerId
+DB --> Handler : Collection
+
+Handler -> Handler : Set ExpiresAt
+Handler -> Handler : Set ExpiryReminderRecipients\n(e.g. "AllViewers,AllDownloaders")
+Handler -> Handler : Set ExpiryReminderDays\n(e.g. "7,3,1")
+Handler -> Handler : Set ExpiryReminderEmailTemplate
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result.Success()
+API --> Photographer : 200 OK
+
+@enduml

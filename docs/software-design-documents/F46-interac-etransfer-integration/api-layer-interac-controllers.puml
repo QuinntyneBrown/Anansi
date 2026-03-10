@@ -1,0 +1,27 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class InteracController <<ApiController>> {
+  -_mediator : IMediator
+  +CreatePaymentRequest(CreateInteracPaymentRequestCommand) : IActionResult
+  +ConfirmPayment(Guid) : IActionResult
+  +ListPaymentRequests(ListInteracPaymentRequestsQuery) : IActionResult
+}
+
+class InteracSettingsController <<ApiController>> {
+  -_mediator : IMediator
+  +UpdateSettings(UpdateInteracSettingsCommand) : IActionResult
+  +GetSettings() : IActionResult
+}
+
+class StoreCheckoutController <<ApiController>> {
+  -_mediator : IMediator
+  +Checkout(CheckoutRequest) : IActionResult
+}
+
+InteracController --> "IMediator" : sends commands/queries
+InteracSettingsController --> "IMediator" : sends commands/queries
+StoreCheckoutController --> "IMediator" : sends commands/queries
+@enduml

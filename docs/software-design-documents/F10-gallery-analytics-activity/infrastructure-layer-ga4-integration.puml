@@ -1,0 +1,33 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class Ga4TagInjectionMiddleware <<Middleware>> {
+  -_db : IApplicationDbContext
+  +InvokeAsync(HttpContext) : Task
+  -InjectGtagScript(html, propertyId) : string
+}
+
+class Ga4MeasurementProtocolService <<Service>> {
+  -_httpClient : HttpClient
+  -_config : Ga4Config
+  +TrackEventAsync(propertyId, eventName, params) : Task
+}
+
+class Ga4Config <<Configuration>> {
+  +ApiSecret : string
+  +EndpointUrl : string
+}
+
+interface IGa4Service <<Interface>> {
+  +TrackEventAsync(propertyId, eventName, params) : Task
+}
+
+interface IApplicationDbContext <<Interface>>
+
+Ga4MeasurementProtocolService ..|> IGa4Service
+Ga4TagInjectionMiddleware --> IApplicationDbContext
+Ga4MeasurementProtocolService --> Ga4Config
+
+@enduml

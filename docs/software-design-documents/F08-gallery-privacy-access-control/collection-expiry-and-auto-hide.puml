@@ -1,0 +1,23 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+participant "CollectionExpiryBackgroundJob" as Job
+participant "IApplicationDbContext" as DB
+
+Job -> DB : Query Collections\nWhere ExpiresAt <= UtcNow\nAnd Status == Published
+DB --> Job : List<Collection>
+
+loop For each expired collection
+  Job -> Job : Set Status = Hidden
+  Job -> DB : SaveChangesAsync()
+
+  note right of Job
+    Content is NOT deleted.
+    Collection becomes inaccessible
+    to visitors but remains fully
+    intact for the photographer.
+  end note
+end
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "WatermarksController" as API
+participant "CreateWatermarkHandler" as Handler
+participant "IStorageService" as Storage
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : POST /api/watermarks\n{name: "Logo Mark", type: Image,\nimageUrl: (pre-uploaded URL),\nopacity: 0.5, scale: 0.8,\nposition: Center}
+API -> Handler : Send(CreateWatermarkCommand)
+
+Handler -> Handler : Verify PhotographerId
+Handler -> Handler : Validate: imageUrl not empty (Image type),\nopacity 0-1, scale > 0
+
+Handler -> DB : Create Watermark entity
+Handler -> DB : SaveChangesAsync()
+
+Handler --> API : Result<WatermarkDto>
+API --> Photographer : 201 Created {id, name, type: Image, imageUrl}
+
+@enduml

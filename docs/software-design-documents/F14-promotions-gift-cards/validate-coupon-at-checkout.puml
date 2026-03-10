@@ -1,0 +1,41 @@
+@startuml
+skinparam maxMessageSize 200
+actor Client
+participant "CheckoutController" as ctrl
+participant "IMediator" as med
+participant "ValidateCouponHandler" as handler
+participant "IApplicationDbContext" as db
+
+Client -> ctrl : POST /api/coupons/validate\n{code="WINTER25",\norderSubtotalCents=10000}
+ctrl -> med : Send(ValidateCouponQuery)
+med -> handler : Handle(query, ct)
+
+handler -> db : Coupons\n.FirstOrDefaultAsync(\nCode == "WINTER25")
+db --> handler : Coupon entity
+
+alt coupon not found
+  handler --> med : {isValid=false, error="Invalid code"}
+else coupon found
+  handler -> handler : Check IsActive == true
+  handler -> handler : Check ExpirationDate > now
+  handler -> handler : Check TimesUsed < UsageLimit
+  handler -> handler : Check orderSubtotal >= MinimumOrderCents
+
+  alt all checks pass
+    alt CouponType == PercentageOff
+      handler -> handler : discountCents =\norderSubtotalCents * 25 / 100
+    else CouponType == FixedAmountOff
+      handler -> handler : discountCents =\nFixedAmountCents
+    else CouponType == FreeGiveaway
+      handler -> handler : discountCents =\nprice of qualifying free item
+    end
+
+    handler --> med : {isValid=true,\ndiscountCents=2500}
+  else validation failed
+    handler --> med : {isValid=false,\nerror="reason"}
+  end
+end
+
+med --> ctrl : Result
+ctrl --> Client : 200 OK {CouponValidationResult}
+@enduml

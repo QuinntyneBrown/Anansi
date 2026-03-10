@@ -137,6 +137,8 @@ CustomDomain ..> SslStatus
 @enduml
 ```
 
+![Domain Layer -- Hosting & Domain Entities](domain-layer-hosting-domain-entities.png)
+
 ### Application Layer -- Hosting Commands & Interfaces
 
 ```plantuml
@@ -215,6 +217,8 @@ VerifyCustomDomainCommand ..> ISslService : provisions cert
 @enduml
 ```
 
+![Application Layer -- Hosting Commands & Interfaces](application-layer-hosting-commands-interfaces.png)
+
 ### Infrastructure Layer -- SSL & DNS Services
 
 ```plantuml
@@ -263,6 +267,8 @@ IDnsVerificationService <|.. DnsVerificationService
 SslRenewalBackgroundService --> ISslService : renews certificates
 @enduml
 ```
+
+![Infrastructure Layer -- SSL & DNS Services](infrastructure-layer-ssl-dns-services.png)
 
 ### API Layer -- Hosting & Security Controllers
 
@@ -314,6 +320,8 @@ SiteAccessController --> "IMediator" : sends commands
 @enduml
 ```
 
+![API Layer -- Hosting & Security Controllers](api-layer-hosting-security-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -346,6 +354,8 @@ HC --> P : 200 OK {dnsInstructions, verificationToken}
 @enduml
 ```
 
+![Connect Custom Domain](connect-custom-domain.png)
+
 ### Verify Custom Domain & Provision SSL
 
 ```plantuml
@@ -377,6 +387,8 @@ HC --> P : 200 OK {verified: true, sslActive: true}
 @enduml
 ```
 
+![Verify Custom Domain & Provision SSL](verify-custom-domain-provision-ssl.png)
+
 ### Visitor Accesses Password-Protected Site
 
 ```plantuml
@@ -407,6 +419,8 @@ MW --> V : 200 OK + rendered page\n(right-click protection JS injected)
 @enduml
 ```
 
+![Visitor Accesses Password-Protected Site](visitor-accesses-password-protected-site.png)
+
 ### SSL Certificate Auto-Renewal
 
 ```plantuml
@@ -428,3 +442,5 @@ end
 BG -> BG : Sleep until next check interval
 @enduml
 ```
+
+![SSL Certificate Auto-Renewal](ssl-certificate-auto-renewal.png)

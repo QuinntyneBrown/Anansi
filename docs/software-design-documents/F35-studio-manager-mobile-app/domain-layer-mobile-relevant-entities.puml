@@ -1,0 +1,68 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity <<abstract>> {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class DeviceToken {
+  +UserId : string
+  +Token : string
+  +Platform : string
+  +RegisteredAt : DateTime
+  +IsActive : bool
+}
+
+class BookingRecord {
+  +PhotographerId : Guid
+  +ClientEmail : string
+  +StartTime : DateTime
+  +EndTime : DateTime
+  +Status : BookingStatus
+}
+
+class Invoice {
+  +PhotographerId : Guid
+  +ContactId : Guid?
+  +InvoiceNumber : string
+  +Status : InvoiceStatus
+  +TotalCents : long
+  +PaidCents : long
+  +TipsEnabled : bool
+}
+
+class PaymentRecord {
+  +PhotographerId : Guid
+  +AmountCents : long
+  +TipCents : long
+  +PaymentMethod : PaymentMethod
+  +CardLast4 : string?
+}
+
+enum BookingStatus {
+  Pending
+  Confirmed
+  Declined
+  Cancelled
+  Completed
+}
+
+enum InvoiceStatus {
+  Draft
+  Sent
+  Paid
+  Overdue
+}
+
+BaseEntity <|-- DeviceToken
+BaseEntity <|-- BookingRecord
+BaseEntity <|-- Invoice
+BaseEntity <|-- PaymentRecord
+BookingRecord --> BookingStatus
+Invoice --> InvoiceStatus
+
+@enduml

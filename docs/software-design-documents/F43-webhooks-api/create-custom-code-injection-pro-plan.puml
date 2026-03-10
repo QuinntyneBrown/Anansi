@@ -1,0 +1,39 @@
+@startuml
+actor Photographer as P
+participant "CodeInjectionsController" as CC
+participant "MediatR" as M
+participant "CreateCodeInjectionHandler" as H
+participant "ICurrentUserService" as US
+participant "IApplicationDbContext" as DB
+participant "CodeInjectionSanitizer" as SAN
+
+P -> CC : POST /api/code-injections\n{code: "<script>...</script>",\nlocation: "Header",\nlabel: "Live Chat"}
+CC -> M : Send(CreateCustomCodeInjectionCommand)
+M -> H : Handle(command)
+H -> US : PhotographerId
+US --> H : Guid
+
+H -> DB : Check Photographer's plan\nvia PlanFeatureGates
+DB --> H : plan features
+
+alt plan does not include code_injection
+  H --> M : Result.Failure("Pro plan required")
+  M --> CC : Result.Failure
+  CC --> P : 403 Forbidden
+end
+
+H -> SAN : Validate(command.Code)
+SAN --> H : ValidationResult
+
+alt validation fails
+  H --> M : Result.Failure(sanitization errors)
+  M --> CC : Result.Failure
+  CC --> P : 400 Bad Request
+end
+
+H -> DB : CustomCodeInjections.Add(\nnew CustomCodeInjection {\nPhotographerId, Code,\nLocation, Label, IsActive=true})
+H -> DB : SaveChangesAsync()
+H --> M : Result.Success(CodeInjectionDto)
+M --> CC : Result.Success
+CC --> P : 201 Created {id, code, location, label}
+@enduml

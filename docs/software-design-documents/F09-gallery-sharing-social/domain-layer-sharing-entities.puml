@@ -1,0 +1,57 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BaseEntity {
+  +Id : Guid
+  +CreatedAt : DateTime
+  +UpdatedAt : DateTime
+}
+
+class EmailInvitation {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +RecipientEmail : string
+  +Subject : string
+  +Body : string
+  +HeaderImageUrl : string?
+  +IncludePassword : bool
+  +IsSent : bool
+  +SentAt : DateTime?
+  +IsOpened : bool
+  +OpenedAt : DateTime?
+}
+
+class QuickShareLink {
+  +PhotographerId : Guid
+  +CollectionId : Guid
+  +Token : string
+  +MediaIds : string
+  +IsRevoked : bool
+}
+
+class Collection {
+  +EmbeddingEnabled : bool
+  +EmbedCode : string?
+  +Slug : string
+  +Password : string?
+}
+
+enum SharePlatform {
+  Facebook
+  Instagram
+  Pinterest
+  WhatsApp
+  Messenger
+  Threads
+  Email
+  CopyLink
+}
+
+BaseEntity <|-- EmailInvitation
+BaseEntity <|-- QuickShareLink
+Collection "1" --> "*" EmailInvitation
+Collection "1" --> "*" QuickShareLink
+
+@enduml

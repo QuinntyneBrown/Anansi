@@ -1,0 +1,36 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "GalleryController" as GalAPI
+participant "RenderGalleryHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "IPlanService" as Plans
+
+Client -> GalAPI : GET /g/{slug}
+GalAPI -> Handler : Send(RenderGalleryQuery)
+
+Handler -> DB : Load Collection by slug
+DB --> Handler : Collection
+
+Handler -> DB : Load Photographer by Collection.PhotographerId
+DB --> Handler : Photographer
+
+Handler -> Plans : HasFeatureAsync(\nphotographerId, "BrandingRemoval")
+Plans --> Handler : isPaid (true/false)
+
+Handler -> Handler : Build gallery HTML
+note right of Handler
+  If isPaid = true:
+    No "Powered by Anansi" footer
+    Use photographer's favicon
+  If isPaid = false:
+    Show "Powered by Anansi" badge
+    Use default Anansi favicon
+end note
+
+Handler --> GalAPI : Gallery HTML
+GalAPI --> Client : 200 OK (rendered gallery)
+
+@enduml

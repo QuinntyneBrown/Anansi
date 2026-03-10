@@ -1,0 +1,37 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class BookingSiteConfig {
+  +Id : Guid
+  +PhotographerId : Guid
+  +CoverImageUrl : string?
+  +ProfilePhotoUrl : string?
+  +WelcomeMessage : string?
+  +CustomSlug : string
+  +IsPublished : bool
+  +EmbedCode : string?
+}
+
+class BookingCoupon {
+  +Id : Guid
+  +PhotographerId : Guid
+  +Code : string
+  +CouponType : CouponType
+  +PercentageValue : decimal?
+  +FixedAmountCents : long?
+  +ExpirationDate : DateTime?
+  +UsageLimit : int?
+  +TimesUsed : int
+  +IsActive : bool
+}
+
+enum CouponType {
+  PercentageOff
+  FixedAmountOff
+  FreeGiveaway
+}
+
+BookingCoupon ..> CouponType
+@enduml

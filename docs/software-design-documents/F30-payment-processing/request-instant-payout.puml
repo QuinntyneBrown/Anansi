@@ -1,0 +1,34 @@
+@startuml
+actor Photographer as P
+participant "PayoutsController" as PC
+participant "MediatR" as M
+participant "RequestInstantPayoutHandler" as IPH
+participant "IPaymentService" as PS
+participant "ApplicationDbContext" as DB
+
+P -> PC : POST /api/payouts/instant\n{amountCents, currency}
+PC -> M : Send(RequestInstantPayoutCommand)
+M -> IPH : Handle(command)
+
+IPH -> DB : Load Photographer\n(StripeAccountId)
+
+IPH -> IPH : Verify instant payout\neligibility via Stripe
+
+alt not eligible
+  IPH --> M : Result.Failure(\n"Instant payouts not available.\nCheck Stripe dashboard.")
+  M --> PC : Result.Failure
+  PC --> P : 400 Bad Request
+end
+
+IPH -> IPH : Calculate fee:\n1.5% of amount
+
+IPH -> PS : Request Stripe Payout\n(method: "instant",\namountCents, stripeAccountId)
+PS --> IPH : stripePayoutId
+
+IPH -> DB : PayoutRecords.Add(\namountCents, feeCents,\nstatus=Pending,\nisInstant=true,\nstripePayoutId)
+IPH -> DB : SaveChangesAsync()
+
+IPH --> M : Result.Success(payoutId)
+M --> PC : Result.Success
+PC --> P : 200 OK {payoutId,\nestimatedArrival: "minutes"}
+@enduml

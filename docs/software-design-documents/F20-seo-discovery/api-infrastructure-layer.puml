@@ -1,0 +1,39 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Api.Controllers" {
+  class WebsiteSeoController <<ApiController>> {
+    -_mediator : IMediator
+    +RunAudit(websiteId) : IActionResult
+    +GenerateAltText(command) : IActionResult
+    +GenerateDescription(pageId) : IActionResult
+    +ListRedirects(websiteId) : IActionResult
+    +CreateRedirect(websiteId, command) : IActionResult
+    +UpdateRedirect(redirectId, command) : IActionResult
+    +DeleteRedirect(redirectId) : IActionResult
+  }
+}
+
+package "Anansi.Api.Middleware" {
+  class RedirectMiddleware {
+    -_next : RequestDelegate
+    +InvokeAsync(context, db) : Task
+  }
+}
+
+package "Anansi.Infrastructure.Services" {
+  class AiContentService {
+    -_httpClient : HttpClient
+    -_config : AiServiceConfig
+    +GenerateAltTextAsync(imageUrl) : string
+    +GenerateDescriptionAsync(content) : string
+  }
+}
+
+WebsiteSeoController --> "IMediator"
+RedirectMiddleware --> "IApplicationDbContext" : checks redirects
+AiContentService ..|> "IAiContentService"
+
+@enduml

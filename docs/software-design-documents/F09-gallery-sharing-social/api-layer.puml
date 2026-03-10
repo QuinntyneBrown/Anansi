@@ -1,0 +1,39 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class SharingController <<Controller>> {
+  +SendInvitation() : ActionResult
+  +ListInvitations() : ActionResult
+  +CreateQuickShareLink() : ActionResult
+  +RevokeQuickShareLink() : ActionResult
+  +ListQuickShareLinks() : ActionResult
+  +GenerateQrCode() : ActionResult
+  +GetEmbedCode() : ActionResult
+}
+
+class QuickShareController <<Controller>> {
+  +GetSharedPhotos(token) : ActionResult
+}
+
+class OpenGraphController <<Controller>> {
+  +GetCollectionMeta(slug) : ActionResult
+  +GetImageMeta(slug, mediaId) : ActionResult
+}
+
+class EmailTrackingMiddleware <<Middleware>> {
+  +InvokeAsync(HttpContext) : Task
+}
+
+class OpenGraphMiddleware <<Middleware>> {
+  +InvokeAsync(HttpContext) : Task
+}
+
+SharingController ..> SendEmailInvitationCommand
+SharingController ..> CreateQuickShareLinkCommand
+SharingController ..> GenerateQrCodeQuery
+QuickShareController ..> GetQuickSharePhotosQuery
+OpenGraphController ..> GetShareMetadataQuery
+
+@enduml

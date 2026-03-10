@@ -1,0 +1,38 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Client
+participant "PublicMobileGalleryController" as API
+participant "GetPublicMobileGalleryHandler" as Handler
+participant "IApplicationDbContext" as DB
+participant "ICdnService" as CDN
+participant "ServiceWorker" as SW
+
+Client -> API : GET /m/{slug}/images?page=1&pageSize=20
+API -> Handler : Send(GetPublicMobileGalleryQuery)
+
+Handler -> DB : Load MobileGalleryApp by slug
+DB --> Handler : MobileGalleryApp
+
+Handler -> Handler : Verify Status == Published
+Handler -> DB : Load GalleryMedia by CuratedMediaIds\n(paginated)
+DB --> Handler : List<GalleryMedia>
+
+Handler -> CDN : Resolve CDN URLs for images
+CDN --> Handler : Image URLs
+
+Handler --> API : PublicMobileGalleryDto\n(images, contact, CTA, branding)
+API --> Client : 200 OK {images, contactInfo, cta}
+
+Client -> SW : Cache images for offline access
+note right of SW
+  Service worker intercepts
+  image requests and caches
+  responses for offline use
+end note
+
+Client -> Client : Tap share on image
+Client -> Client : Native Web Share API\n(social platforms)
+
+@enduml

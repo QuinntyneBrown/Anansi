@@ -1,0 +1,30 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam maxMessageSize 200
+
+actor Photographer
+participant "ActivitiesController" as API
+participant "ListActivitiesHandler" as Handler
+participant "IApplicationDbContext" as DB
+
+Photographer -> API : GET /api/collections/{id}/activities\n?type=Download&from=2026-01-01\n&to=2026-03-10&page=1&pageSize=50
+API -> Handler : Send(ListActivitiesQuery)
+
+Handler -> Handler : Verify PhotographerId\nfrom ICurrentUserService
+
+Handler -> DB : Query GalleryActivities\nWhere CollectionId & PhotographerId
+DB --> Handler : IQueryable
+
+Handler -> Handler : Apply ActivityType filter\n(Download only)
+Handler -> Handler : Apply date range filter\n(From, To)
+
+Handler -> DB : Count total matching records
+DB --> Handler : totalCount
+
+Handler -> DB : OrderByDescending(CreatedAt)\nSkip/Take for pagination\nSelect to GalleryActivityDto
+DB --> Handler : List<GalleryActivityDto>
+
+Handler --> API : Result<PagedList<GalleryActivityDto>>
+API --> Photographer : 200 OK\n{items, totalCount, page, totalPages}
+
+@enduml

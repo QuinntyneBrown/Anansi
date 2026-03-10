@@ -1,0 +1,46 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Anansi.Domain.Entities.Website" {
+  class Website {
+    +Id : Guid
+    +ColorPaletteJson : string?
+    +AnimationType : AnimationType
+    +AnimationsEnabled : bool
+  }
+
+  class ColorPalette {
+    +Id : Guid
+    +Name : string
+    +ColorsJson : string
+    +IsSystem : bool
+    +PhotographerId : Guid?
+    +SortOrder : int
+  }
+}
+
+package "Anansi.Domain.Enums" {
+  enum AnimationType {
+    None
+    FadeIn
+    ScaleUp
+    SlideIn
+    Unfold
+  }
+}
+
+note right of ColorPalette
+  ColorsJson example:
+  ["#1A1A1C", "#C9A962",
+   "#F5F5F0", "#6E9E6E"]
+
+  IsSystem = true: shared palette
+  IsSystem = false: custom (per photographer)
+end note
+
+Website ..> AnimationType
+Website ..> ColorPalette : applies via\nColorPaletteJson
+
+@enduml

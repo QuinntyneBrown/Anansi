@@ -1,0 +1,63 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty methods
+
+object "Color Tokens" as CT {
+  color.page.bg = "#1A1A1C"
+  color.card.bg = "#242426"
+  color.card.expanded = "#2A2A2C"
+  color.text.primary = "#F5F5F0"
+  color.text.secondary = "#6E6E70"
+  color.text.tertiary = "#4A4A4C"
+  color.border.default = "#3A3A3C"
+  color.accent.gold = "#C9A962"
+  color.status.success = "#6E9E6E"
+  color.status.warning = "#D4A843"
+  color.status.error = "#D44A4A"
+  color.status.info = "#4A8ED4"
+  color.overlay = "rgba(0,0,0,0.7)"
+}
+
+object "Typography Tokens" as TT {
+  font.display.family = "Cormorant Garamond"
+  font.display.weight.light = "300"
+  font.display.weight.medium = "500"
+  font.body.family = "Inter"
+  font.body.weight.regular = "400"
+  font.body.weight.medium = "500"
+  font.body.weight.semibold = "600"
+  font.size.xs = "10px"
+  font.size.sm = "12px"
+  font.size.base = "14px"
+  font.size.lg = "16px"
+  font.size.xl = "20px"
+  font.size.2xl = "24px"
+  font.size.3xl = "32px"
+  font.size.4xl = "40px"
+  font.size.5xl = "52px"
+}
+
+object "Spacing Tokens" as ST {
+  spacing.gap.xs = "4px"
+  spacing.gap.sm = "8px"
+  spacing.gap.md = "12px"
+  spacing.gap.lg = "16px"
+  spacing.gap.xl = "24px"
+  spacing.gap.2xl = "32px"
+  spacing.gap.3xl = "40px"
+  spacing.padding.xs = "4px"
+  spacing.padding.sm = "8px"
+  spacing.padding.md = "12px"
+  spacing.padding.lg = "16px"
+  spacing.padding.xl = "24px"
+  spacing.padding.2xl = "32px"
+}
+
+object "Radius Tokens" as RT {
+  radius.sm = "16px"
+  radius.md = "20px"
+  radius.lg = "24px"
+  radius.xl = "34px"
+}
+
+@enduml

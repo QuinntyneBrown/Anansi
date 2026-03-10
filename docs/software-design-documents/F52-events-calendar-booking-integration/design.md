@@ -122,6 +122,8 @@ CulturalEvent ..> EventStatus
 @enduml
 ```
 
+![Domain Layer -- Cultural Event Entity & Enums](domain-layer-cultural-event-entity-enums.png)
+
 ### Domain Layer -- Calendar Block & Session Type Link
 
 ```plantuml
@@ -164,6 +166,8 @@ CulturalEvent "1" --> "*" SessionType : linked session types
 EventCalendarBlock ..> CalendarBlockType
 @enduml
 ```
+
+![Domain Layer -- Calendar Block & Session Type Link](domain-layer-calendar-block-session-type-link.png)
 
 ### Application Layer -- Event Commands & Queries
 
@@ -221,6 +225,8 @@ ListEventsQuery ..> IEventRecurrenceService : uses
 @enduml
 ```
 
+![Application Layer -- Event Commands & Queries](application-layer-event-commands-queries.png)
+
 ### Application Layer -- Event DTOs
 
 ```plantuml
@@ -273,6 +279,8 @@ class EventCalendarBlockDto <<record>> {
 @enduml
 ```
 
+![Application Layer -- Event DTOs](application-layer-event-dtos.png)
+
 ### Infrastructure Layer -- Event Services
 
 ```plantuml
@@ -311,6 +319,8 @@ ListEventsQueryHandler --> IEventRecurrenceService
 SyncEventToCalendarCommandHandler --> IEventRecurrenceService
 @enduml
 ```
+
+![Infrastructure Layer -- Event Services](infrastructure-layer-event-services.png)
 
 ### API Layer -- Events Controllers
 
@@ -351,6 +361,8 @@ EventsController --> "IMediator" : sends queries/commands
 SessionTypesController --> "IMediator" : sends commands/queries
 @enduml
 ```
+
+![API Layer -- Events Controllers](api-layer-events-controllers.png)
 
 ---
 
@@ -398,6 +410,8 @@ EC --> C : 200 OK {\n  items: [\n    {name: "Black History Month",\n     startDa
 @enduml
 ```
 
+![List Events with Recurring Instance Generation](list-events-with-recurring-instance-generation.png)
+
 ### Sync Event to Photographer Booking Calendar
 
 ```plantuml
@@ -440,6 +454,8 @@ EC --> P : 201 Created {\n  id, eventId, eventName: "Caribana",\n  blockType: "A
 @enduml
 ```
 
+![Sync Event to Photographer Booking Calendar](sync-event-to-photographer-booking-calendar.png)
+
 ### Create Event-Linked Session Type
 
 ```plantuml
@@ -479,6 +495,8 @@ SC --> P : 201 Created {\n  id, name: "Caribana Portrait Session",\n  eventId: "
 @enduml
 ```
 
+![Create Event-Linked Session Type](create-event-linked-session-type.png)
+
 ### View Booking Calendar with Event Blocks
 
 ```plantuml
@@ -512,3 +530,5 @@ M --> BC : result
 BC --> P : 200 OK {\n  bookings: [...],\n  eventBlocks: [\n    {eventName: "Caribana",\n     blockType: "Available",\n     startDate: "2026-08-01",\n     endDate: "2026-08-04"}],\n  externalBlocks: [...]\n}
 @enduml
 ```
+
+![View Booking Calendar with Event Blocks](view-booking-calendar-with-event-blocks.png)

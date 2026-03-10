@@ -114,6 +114,8 @@ WebsitePage ..> WebsitePageType
 @enduml
 ```
 
+![Domain Layer -- Page Management](domain-layer-page-management.png)
+
 ### Domain Layer -- Content Blocks & Landing Page Templates
 
 ```plantuml
@@ -185,6 +187,8 @@ PageElement ..> LandingPageTemplate : references via\nContentJson.templateId
 
 @enduml
 ```
+
+![Domain Layer -- Content Blocks & Landing Page Templates](domain-layer-content-blocks-landing-page-templates.png)
 
 ### Application Layer -- Page Commands & Queries
 
@@ -258,6 +262,8 @@ ListPagesHandler ..> ListPagesQuery : handles
 @enduml
 ```
 
+![Application Layer -- Page Commands & Queries](application-layer-page-commands-queries.png)
+
 ### API Layer -- Page & Content Controllers
 
 ```plantuml
@@ -296,6 +302,8 @@ WebsiteTemplatesController --> "IMediator" : sends queries
 
 @enduml
 ```
+
+![API Layer -- Page & Content Controllers](api-layer-page-content-controllers.png)
 
 ## Sequence Diagrams
 
@@ -348,6 +356,8 @@ C --> P : 201 Created { pageDto }
 @enduml
 ```
 
+![Create a New Page (WEB-3.2.1)](create-a-new-page-web-3-2-1.png)
+
 ### Reorder Pages in Navigation (WEB-3.2.1)
 
 ```plantuml
@@ -386,6 +396,8 @@ C --> P : 200 OK
 
 @enduml
 ```
+
+![Reorder Pages in Navigation (WEB-3.2.1)](reorder-pages-in-navigation-web-3-2-1.png)
 
 ### Add Client Gallery Block to Page (WEB-3.2.2)
 
@@ -430,6 +442,8 @@ C --> P : 201 Created { elementDto }
 @enduml
 ```
 
+![Add Client Gallery Block to Page (WEB-3.2.2)](add-client-gallery-block-to-page-web-3-2-2.png)
+
 ### Add Instagram Feed Block (WEB-3.2.3)
 
 ```plantuml
@@ -471,6 +485,8 @@ end
 
 @enduml
 ```
+
+![Add Instagram Feed Block (WEB-3.2.3)](add-instagram-feed-block-web-3-2-3.png)
 
 ### Add Custom Embed Block with Plan Check (WEB-3.2.4)
 
@@ -516,6 +532,8 @@ end
 
 @enduml
 ```
+
+![Add Custom Embed Block with Plan Check (WEB-3.2.4)](add-custom-embed-block-with-plan-check-web-3-2-4.png)
 
 ### Add Landing Page from Template (WEB-3.2.5)
 
@@ -563,3 +581,5 @@ C --> P : 201 Created { pageDto }
 
 @enduml
 ```
+
+![Add Landing Page from Template (WEB-3.2.5)](add-landing-page-from-template-web-3-2-5.png)

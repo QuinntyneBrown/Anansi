@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Features.Questionnaires.Commands" {
+  class CreateQuestionnaireCommand <<record>> {
+    +Title : string
+    +Description : string?
+    +ContactId : Guid?
+    +ProjectId : Guid?
+    +Questions : List<QuestionInput>
+  }
+
+  class UpdateQuestionnaireCommand <<record>> {
+    +QuestionnaireId : Guid
+    +Title : string
+    +Description : string?
+    +ExpiryDays : int?
+    +AutoRemindersEnabled : bool
+    +ReminderIntervalDays : int?
+    +Questions : List<QuestionInput>
+  }
+
+  class SendQuestionnaireCommand <<record>> {
+    +QuestionnaireId : Guid
+  }
+
+  class ShareQuestionnairePubliclyCommand <<record>> {
+    +QuestionnaireId : Guid
+  }
+
+  class SubmitQuestionnaireResponseCommand <<record>> {
+    +Token : string?
+    +Slug : string?
+    +RespondentName : string?
+    +RespondentEmail : string?
+    +Answers : List<AnswerInput>
+  }
+
+  class CancelQuestionnaireCommand <<record>> {
+    +QuestionnaireId : Guid
+  }
+
+  class DeleteQuestionnaireCommand <<record>> {
+    +QuestionnaireId : Guid
+  }
+}
+
+class QuestionInput <<record>> {
+  +Label : string
+  +QuestionType : QuestionType
+  +IsRequired : bool
+  +Options : List<string>?
+  +SortOrder : int
+}
+
+class AnswerInput <<record>> {
+  +QuestionId : Guid
+  +Value : string
+}
+@enduml

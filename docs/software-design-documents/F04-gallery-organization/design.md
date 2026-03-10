@@ -145,6 +145,8 @@ Collection ..> CollectionPreset : references via PresetId
 @enduml
 ```
 
+![Domain Layer -- Collection, Set, and Preset Entities](domain-layer-collection-set-and-preset-entities.png)
+
 ### Domain Layer -- Enums
 
 ```plantuml
@@ -197,6 +199,8 @@ enum SlideshowSpeed {
 }
 @enduml
 ```
+
+![Domain Layer -- Enums](domain-layer-enums.png)
 
 ### Application Layer -- Collection Commands & Queries
 
@@ -273,6 +277,8 @@ BulkCreateCollectionsCommand *-- BulkGalleryEntry
 @enduml
 ```
 
+![Application Layer -- Collection Commands & Queries](application-layer-collection-commands-queries.png)
+
 ### API Layer -- Controllers
 
 ```plantuml
@@ -330,6 +336,8 @@ end note
 @enduml
 ```
 
+![API Layer -- Controllers](api-layer-controllers.png)
+
 ---
 
 ## Sequence Diagrams
@@ -369,6 +377,8 @@ M --> CC : Result.Success
 CC --> P : 200 OK (CollectionDto)
 @enduml
 ```
+
+![Create a Collection with Preset](create-a-collection-with-preset.png)
 
 ### Bulk Create Galleries
 
@@ -412,6 +422,8 @@ CC --> P : 200 OK [{collection1}, {collection2}, ...]
 @enduml
 ```
 
+![Bulk Create Galleries](bulk-create-galleries.png)
+
 ### Create and Manage Sets
 
 ```plantuml
@@ -444,6 +456,8 @@ M --> CSC : Result.Success
 CSC --> P : 200 OK
 @enduml
 ```
+
+![Create and Manage Sets](create-and-manage-sets.png)
 
 ### Move Media Between Sets
 
@@ -486,6 +500,8 @@ GMC --> P : 200 OK
 @enduml
 ```
 
+![Move Media Between Sets](move-media-between-sets.png)
+
 ### Star/Bookmark Collections and Photos
 
 ```plantuml
@@ -527,6 +543,8 @@ M --> CC : PagedList<CollectionDto>
 CC --> P : 200 OK
 @enduml
 ```
+
+![Star/Bookmark Collections and Photos](star-bookmark-collections-and-photos.png)
 
 ### Preset Management Lifecycle
 
@@ -575,3 +593,5 @@ M --> CPC : Result.Success
 CPC --> P : 200 OK
 @enduml
 ```
+
+![Preset Management Lifecycle](preset-management-lifecycle.png)

@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+class CreateMobileGalleryAppCommand <<Command>> {
+  +CollectionId : Guid
+  +Title : string
+  +CuratedMediaIds : List<Guid>
+  +ThemeMode : ThemeMode
+  +Layout : GridLayout
+  +CtaType : CtaButtonType
+  +CtaLabel : string?
+  +CtaUrl : string?
+}
+
+class UpdateMobileGalleryAppCommand <<Command>> {
+  +AppId : Guid
+  +Title : string?
+  +CuratedMediaIds : List<Guid>?
+  +CoverImageUrl : string?
+  +ThemeMode : ThemeMode?
+  +Layout : GridLayout?
+  +CtaType : CtaButtonType?
+  +CtaLabel : string?
+  +CtaUrl : string?
+}
+
+class PublishMobileGalleryAppCommand <<Command>> {
+  +AppId : Guid
+}
+
+class DeleteMobileGalleryAppCommand <<Command>> {
+  +AppId : Guid
+}
+
+class ListMobileGalleryAppsQuery <<Query>> {
+  +Status : MobileGalleryAppStatus?
+  +Page : int
+  +PageSize : int
+}
+
+class GetPublicMobileGalleryQuery <<Query>> {
+  +Slug : string
+}
+
+class MobileGalleryAppDto <<DTO>> {
+  +Id : Guid
+  +Title : string
+  +Slug : string
+  +Status : MobileGalleryAppStatus
+  +ImageCount : int
+  +CtaType : CtaButtonType
+  +ShareLink : string?
+  +CreatedAt : DateTime
+}
+
+class PublicMobileGalleryDto <<DTO>> {
+  +Title : string
+  +Images : List<GalleryMediaDto>
+  +CoverImageUrl : string?
+  +ThemeMode : ThemeMode
+  +Layout : GridLayout
+  +ContactPhone : string?
+  +ContactEmail : string?
+  +CtaLabel : string?
+  +CtaUrl : string?
+  +ShowPlatformBranding : bool
+}
+
+interface IManifestService <<Interface>> {
+  +GenerateManifestAsync(appId) : string
+  +GenerateServiceWorkerAsync(appId) : string
+}
+
+CreateMobileGalleryAppCommand ..> MobileGalleryAppDto
+PublishMobileGalleryAppCommand ..> MobileGalleryAppDto
+GetPublicMobileGalleryQuery ..> PublicMobileGalleryDto
+
+@enduml
