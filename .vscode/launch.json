@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API: Anansi.Api",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-api",
+      "program": "${workspaceFolder}/src/Anansi.Api/bin/Debug/net9.0/Anansi.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Anansi.Api",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "API: Attach to Process",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "Anansi.Api"
+    },
+    {
+      "name": "Frontend: Chrome (localhost:4200)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/src/Anansi.Web"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack: API + Chrome",
+      "configurations": ["API: Anansi.Api", "Frontend: Chrome (localhost:4200)"]
+    }
+  ]
+}
