@@ -59,198 +59,17 @@ Together, these two layers give photographers both granular, action-level insigh
 
 ### Domain Layer - Activity Entities
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class BaseEntity {
-  +Id : Guid
-  +CreatedAt : DateTime
-  +UpdatedAt : DateTime
-}
-
-class GalleryActivity {
-  +PhotographerId : Guid
-  +CollectionId : Guid
-  +ActivityType : ActivityType
-  +ActorName : string?
-  +ActorEmail : string?
-  +MediaId : Guid?
-  +FavoriteListId : Guid?
-  +Details : string?
-  +Resolution : DownloadResolution?
-  +IsFullGallery : bool?
-}
-
-class GalleryEmailRegistration {
-  +PhotographerId : Guid
-  +CollectionId : Guid
-  +Name : string
-  +Email : string
-}
-
-class Collection {
-  +GoogleAnalyticsPropertyId : string?
-}
-
-enum ActivityType {
-  Download
-  Favorite
-  PrivatePhoto
-  EmailRegistration
-  Comment
-  View
-}
-
-BaseEntity <|-- GalleryActivity
-BaseEntity <|-- GalleryEmailRegistration
-Collection "1" --> "*" GalleryActivity : Activities
-Collection "1" --> "*" GalleryEmailRegistration : EmailRegistrations
-GalleryActivity --> ActivityType
-
-@enduml
-```
-
 ![Domain Layer - Activity Entities](domain-layer-activity-entities.png)
 
 ### Application Layer - Queries and Services
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class ListActivitiesQuery <<Query>> {
-  +CollectionId : Guid
-  +ActivityType : ActivityType?
-  +From : DateTime?
-  +To : DateTime?
-  +Page : int
-  +PageSize : int
-}
-
-class ExportActivitiesCsvQuery <<Query>> {
-  +CollectionId : Guid
-  +ActivityType : ActivityType?
-  +From : DateTime?
-  +To : DateTime?
-}
-
-class GetActivitySummaryQuery <<Query>> {
-  +CollectionId : Guid
-  +From : DateTime?
-  +To : DateTime?
-}
-
-class SetGoogleAnalyticsCommand <<Command>> {
-  +CollectionId : Guid
-  +GoogleAnalyticsPropertyId : string?
-}
-
-class GalleryActivityDto <<DTO>> {
-  +Id : Guid
-  +CollectionId : Guid
-  +ActivityType : ActivityType
-  +ActorName : string?
-  +ActorEmail : string?
-  +MediaId : Guid?
-  +FavoriteListId : Guid?
-  +Details : string?
-  +Resolution : DownloadResolution?
-  +IsFullGallery : bool?
-  +CreatedAt : DateTime
-}
-
-class ActivitySummaryDto <<DTO>> {
-  +DownloadCount : int
-  +FavoriteCount : int
-  +PrivatePhotoCount : int
-  +EmailRegistrationCount : int
-  +CommentCount : int
-  +ViewCount : int
-}
-
-interface IGa4Service <<Interface>> {
-  +TrackEventAsync(propertyId, eventName, params) : Task
-}
-
-ListActivitiesQuery ..> GalleryActivityDto
-GetActivitySummaryQuery ..> ActivitySummaryDto
-
-@enduml
-```
 
 ![Application Layer - Queries and Services](application-layer-queries-and-services.png)
 
 ### Infrastructure Layer - GA4 Integration
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class Ga4TagInjectionMiddleware <<Middleware>> {
-  -_db : IApplicationDbContext
-  +InvokeAsync(HttpContext) : Task
-  -InjectGtagScript(html, propertyId) : string
-}
-
-class Ga4MeasurementProtocolService <<Service>> {
-  -_httpClient : HttpClient
-  -_config : Ga4Config
-  +TrackEventAsync(propertyId, eventName, params) : Task
-}
-
-class Ga4Config <<Configuration>> {
-  +ApiSecret : string
-  +EndpointUrl : string
-}
-
-interface IGa4Service <<Interface>> {
-  +TrackEventAsync(propertyId, eventName, params) : Task
-}
-
-interface IApplicationDbContext <<Interface>>
-
-Ga4MeasurementProtocolService ..|> IGa4Service
-Ga4TagInjectionMiddleware --> IApplicationDbContext
-Ga4MeasurementProtocolService --> Ga4Config
-
-@enduml
-```
-
 ![Infrastructure Layer - GA4 Integration](infrastructure-layer-ga4-integration.png)
 
 ### API Layer
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class ActivitiesController <<Controller>> {
-  +ListActivities() : ActionResult
-  +ExportCsv() : ActionResult
-  +GetSummary() : ActionResult
-  +SetGoogleAnalytics() : ActionResult
-}
-
-note right of ActivitiesController
-  Route: /api/collections/{collectionId}/activities
-
-  GET  /                     - List with filters
-  GET  /export               - CSV download
-  GET  /summary              - Aggregate counts
-  PUT  /google-analytics     - Set GA4 property
-end note
-
-@enduml
-```
 
 ![API Layer](api-layer.png)
 
@@ -258,214 +77,24 @@ end note
 
 ### List Collection Activities with Filtering
 
-```plantuml
-@startuml
-skinparam sequenceArrowThickness 1.5
-skinparam maxMessageSize 200
-
-actor Photographer
-participant "ActivitiesController" as API
-participant "ListActivitiesHandler" as Handler
-participant "IApplicationDbContext" as DB
-
-Photographer -> API : GET /api/collections/{id}/activities\n?type=Download&from=2026-01-01\n&to=2026-03-10&page=1&pageSize=50
-API -> Handler : Send(ListActivitiesQuery)
-
-Handler -> Handler : Verify PhotographerId\nfrom ICurrentUserService
-
-Handler -> DB : Query GalleryActivities\nWhere CollectionId & PhotographerId
-DB --> Handler : IQueryable
-
-Handler -> Handler : Apply ActivityType filter\n(Download only)
-Handler -> Handler : Apply date range filter\n(From, To)
-
-Handler -> DB : Count total matching records
-DB --> Handler : totalCount
-
-Handler -> DB : OrderByDescending(CreatedAt)\nSkip/Take for pagination\nSelect to GalleryActivityDto
-DB --> Handler : List<GalleryActivityDto>
-
-Handler --> API : Result<PagedList<GalleryActivityDto>>
-API --> Photographer : 200 OK\n{items, totalCount, page, totalPages}
-
-@enduml
-```
-
 ![List Collection Activities with Filtering](list-collection-activities-with-filtering.png)
 
 ### Export Activities as CSV
-
-```plantuml
-@startuml
-skinparam sequenceArrowThickness 1.5
-skinparam maxMessageSize 200
-
-actor Photographer
-participant "ActivitiesController" as API
-participant "ExportActivitiesCsvHandler" as Handler
-participant "IApplicationDbContext" as DB
-
-Photographer -> API : GET /api/collections/{id}/activities/export\n?type=Favorite&from=2026-02-01
-API -> Handler : Send(ExportActivitiesCsvQuery)
-
-Handler -> Handler : Verify PhotographerId
-
-Handler -> DB : Query GalleryActivities\nwith type and date filters
-DB --> Handler : List<GalleryActivity>
-
-Handler -> Handler : Build CSV header:\nTimestamp,Type,Name,Email,\nMediaId,FavoriteListId,\nResolution,IsFullGallery,Details
-
-loop For each activity
-  Handler -> Handler : Append CSV row
-end
-
-Handler --> API : Result<byte[]>
-API --> Photographer : 200 OK\nContent-Type: text/csv\nContent-Disposition: attachment;\nfilename="activities_2026-02-01.csv"
-
-@enduml
-```
 
 ![Export Activities as CSV](export-activities-as-csv.png)
 
 ### Get Activity Summary
 
-```plantuml
-@startuml
-skinparam sequenceArrowThickness 1.5
-skinparam maxMessageSize 200
-
-actor Photographer
-participant "ActivitiesController" as API
-participant "GetActivitySummaryHandler" as Handler
-participant "IApplicationDbContext" as DB
-
-Photographer -> API : GET /api/collections/{id}/activities/summary\n?from=2026-01-01&to=2026-03-10
-API -> Handler : Send(GetActivitySummaryQuery)
-
-Handler -> Handler : Verify PhotographerId
-
-Handler -> DB : Query GalleryActivities\nWhere CollectionId & PhotographerId\nGroupBy ActivityType\nSelect {ActivityType, Count}
-DB --> Handler : Grouped counts
-
-Handler -> Handler : Map to ActivitySummaryDto:\n- DownloadCount: 42\n- FavoriteCount: 18\n- PrivatePhotoCount: 3\n- EmailRegistrationCount: 12\n- CommentCount: 7\n- ViewCount: 256
-
-Handler --> API : Result<ActivitySummaryDto>
-API --> Photographer : 200 OK
-
-@enduml
-```
-
 ![Get Activity Summary](get-activity-summary.png)
 
 ### Configure Google Analytics GA4
-
-```plantuml
-@startuml
-skinparam sequenceArrowThickness 1.5
-skinparam maxMessageSize 200
-
-actor Photographer
-participant "ActivitiesController" as API
-participant "SetGoogleAnalyticsHandler" as Handler
-participant "IApplicationDbContext" as DB
-
-Photographer -> API : PUT /api/collections/{id}/activities/google-analytics\n{googleAnalyticsPropertyId: "G-ABC123XYZ"}
-API -> Handler : Send(SetGoogleAnalyticsCommand)
-
-Handler -> Handler : Verify PhotographerId
-Handler -> DB : Find Collection by Id & PhotographerId
-DB --> Handler : Collection
-
-Handler -> Handler : Validate GA4 property ID format\n(starts with "G-")
-
-Handler -> Handler : Set GoogleAnalyticsPropertyId
-Handler -> DB : SaveChangesAsync()
-
-Handler --> API : Result.Success()
-API --> Photographer : 200 OK
-
-note right of Handler
-  Once set, the Ga4TagInjection
-  Middleware injects gtag.js into
-  all client-facing pages for
-  this collection.
-end note
-
-@enduml
-```
 
 ![Configure Google Analytics GA4](configure-google-analytics-ga4.png)
 
 ### GA4 Tag Injection for Client Page Views
 
-```plantuml
-@startuml
-skinparam sequenceArrowThickness 1.5
-skinparam maxMessageSize 200
-
-actor Visitor
-participant "Ga4TagInjectionMiddleware" as Middleware
-participant "IApplicationDbContext" as DB
-participant "Gallery Page Renderer" as Renderer
-
-Visitor -> Middleware : GET /gallery/{slug}
-
-Middleware -> DB : Find Collection by slug
-DB --> Middleware : Collection
-
-alt GoogleAnalyticsPropertyId is set
-  Middleware -> Renderer : Proceed with request
-  Renderer --> Middleware : HTML response
-
-  Middleware -> Middleware : Inject into <head>:\n<script async src="gtag.js?id=G-..."></script>\n<script>gtag('config', 'G-...')</script>
-
-  Middleware --> Visitor : Modified HTML with GA4 tag
-else No GA4 configured
-  Middleware -> Renderer : Proceed with request
-  Renderer --> Middleware : HTML response
-  Middleware --> Visitor : Unmodified HTML
-end
-
-@enduml
-```
-
 ![GA4 Tag Injection for Client Page Views](ga4-tag-injection-for-client-page-views.png)
 
 ### Server-Side GA4 Event Tracking (Downloads)
-
-```plantuml
-@startuml
-skinparam sequenceArrowThickness 1.5
-skinparam maxMessageSize 200
-
-participant "RequestDownloadHandler" as Handler
-participant "IApplicationDbContext" as DB
-participant "IGa4Service" as GA4
-participant "GA4 Measurement\nProtocol API" as Google
-
-Handler -> DB : Create DownloadRequest\nand GalleryActivity
-Handler -> DB : SaveChangesAsync()
-
-Handler -> DB : Get Collection.GoogleAnalyticsPropertyId
-DB --> Handler : propertyId
-
-alt propertyId is set
-  Handler -> GA4 : TrackEventAsync(propertyId,\n"file_download",\n{resolution, isFullGallery, mediaCount})
-
-  GA4 -> Google : POST /mp/collect?measurement_id=G-...\n&api_secret=...\n{events: [{name: "file_download",\nparams: {...}}]}
-
-  Google --> GA4 : 204 No Content
-  GA4 --> Handler : Task completed
-end
-
-note right of GA4
-  Server-side tracking captures
-  API-driven events that have no
-  browser page view (downloads,
-  favorites added via API).
-end note
-
-@enduml
-```
 
 ![Server-Side GA4 Event Tracking (Downloads)](server-side-ga4-event-tracking-downloads.png)

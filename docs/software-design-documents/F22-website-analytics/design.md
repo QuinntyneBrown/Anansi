@@ -64,224 +64,17 @@ The analytics pipeline consists of three layers: a lightweight event collector t
 
 ### Domain Layer -- Analytics Entities
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class WebsiteAnalyticsSnapshot {
-  +Id : Guid
-  +PhotographerId : Guid
-  +WebsiteId : Guid
-  +Date : DateTime
-  +TotalVisitors : int
-  +UniqueVisitors : int
-  +PageViews : int
-  +AverageSessionDurationSeconds : double
-  +GeographicDistributionJson : string?
-  +TopPagesJson : string?
-}
-
-class AnalyticsPageHit {
-  +Id : Guid
-  +WebsiteId : Guid
-  +PagePath : string
-  +VisitorFingerprint : string
-  +IpAddress : string
-  +UserAgent : string?
-  +CountryCode : string?
-  +SessionId : string
-  +Timestamp : DateTime
-}
-
-class Website {
-  +Id : Guid
-  +BuiltInAnalyticsEnabled : bool
-  +GoogleAnalyticsMeasurementId : string?
-  +FacebookPixelId : string?
-}
-
-Website "1" --> "*" WebsiteAnalyticsSnapshot : AnalyticsSnapshots
-Website "1" --> "*" AnalyticsPageHit : PageHits
-@enduml
-```
-
 ![Domain Layer -- Analytics Entities](domain-layer-analytics-entities.png)
 
 ### Application Layer -- Analytics Commands & Queries
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-package "Features.Analytics.Commands" {
-  class RecordPageHitCommand <<record>> {
-    +WebsiteId : Guid
-    +PagePath : string
-    +IpAddress : string
-    +UserAgent : string?
-    +SessionId : string
-  }
-
-  class UpdateGoogleAnalyticsCommand <<record>> {
-    +WebsiteId : Guid
-    +MeasurementId : string?
-  }
-
-  class UpdateFacebookPixelCommand <<record>> {
-    +WebsiteId : Guid
-    +PixelId : string?
-  }
-
-  class ToggleBuiltInAnalyticsCommand <<record>> {
-    +WebsiteId : Guid
-    +Enabled : bool
-  }
-}
-
-package "Features.Analytics.Queries" {
-  class GetAnalyticsDashboardQuery <<record>> {
-    +WebsiteId : Guid
-    +StartDate : DateTime
-    +EndDate : DateTime
-  }
-
-  class AnalyticsDashboardDto <<record>> {
-    +TotalVisitors : int
-    +UniqueVisitors : int
-    +PageViews : int
-    +AverageSessionDuration : double
-    +DailySnapshots : List<DailySnapshot>
-  }
-
-  class GetTopPagesQuery <<record>> {
-    +WebsiteId : Guid
-    +StartDate : DateTime
-    +EndDate : DateTime
-    +Top : int
-  }
-
-  class GetGeographicDistributionQuery <<record>> {
-    +WebsiteId : Guid
-    +StartDate : DateTime
-    +EndDate : DateTime
-  }
-}
-
-interface IGeoLocationService {
-  +ResolveCountryAsync(ip) : string?
-}
-
-interface IAnalyticsAggregationService {
-  +AggregateAsync(date) : Task
-  +PruneRawEventsAsync(days) : Task
-}
-
-interface IPlanGateService {
-  +HasFeatureAsync(feature) : bool
-}
-
-RecordPageHitCommand ..> IGeoLocationService : resolves country
-ToggleBuiltInAnalyticsCommand ..> IPlanGateService : validates plan
-@enduml
-```
 
 ![Application Layer -- Analytics Commands & Queries](application-layer-analytics-commands-queries.png)
 
 ### Infrastructure Layer -- Aggregation & Geo Services
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-interface IAnalyticsAggregationService {
-  +AggregateAsync(date) : Task
-  +PruneRawEventsAsync(days) : Task
-}
-
-interface IGeoLocationService {
-  +ResolveCountryAsync(ip) : string?
-}
-
-class AnalyticsAggregationService {
-  -_dbContext : IApplicationDbContext
-  +AggregateAsync(date) : Task
-  +PruneRawEventsAsync(retentionDays) : Task
-}
-
-class GeoLocationService {
-  -_geoDatabase : DatabaseReader
-  +ResolveCountryAsync(ip) : string?
-}
-
-class AnalyticsAggregationBackgroundService {
-  -_serviceScopeFactory : IServiceScopeFactory
-  -_logger : ILogger
-  +ExecuteAsync(ct) : Task
-}
-
-class RecordPageHitHandler {
-  -_dbContext : IApplicationDbContext
-  -_geoService : IGeoLocationService
-  +Handle(cmd, ct) : Task
-}
-
-IAnalyticsAggregationService <|.. AnalyticsAggregationService
-IGeoLocationService <|.. GeoLocationService
-AnalyticsAggregationBackgroundService --> IAnalyticsAggregationService
-RecordPageHitHandler --> IGeoLocationService
-@enduml
-```
-
 ![Infrastructure Layer -- Aggregation & Geo Services](infrastructure-layer-aggregation-geo-services.png)
 
 ### API Layer -- Analytics Controllers
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class AnalyticsCollectorController <<ApiController>> {
-  -_mediator : IMediator
-  +RecordHit(RecordPageHitCommand) : IActionResult
-}
-
-class AnalyticsDashboardController <<ApiController>> {
-  -_mediator : IMediator
-  +GetDashboard(websiteId, startDate, endDate) : IActionResult
-  +GetTopPages(websiteId, startDate, endDate, top) : IActionResult
-  +GetGeoDistribution(websiteId, startDate, endDate) : IActionResult
-}
-
-class AnalyticsSettingsController <<ApiController>> {
-  -_mediator : IMediator
-  +ToggleBuiltIn(websiteId, cmd) : IActionResult
-  +SetGoogleAnalytics(websiteId, cmd) : IActionResult
-  +SetFacebookPixel(websiteId, cmd) : IActionResult
-}
-
-note right of AnalyticsCollectorController
-  Public endpoint. Rate-limited.
-  No authentication required.
-end note
-
-note right of AnalyticsDashboardController
-  [Authorize] required.
-  Date range filtering via query params.
-end note
-
-AnalyticsCollectorController --> "IMediator" : sends commands
-AnalyticsDashboardController --> "IMediator" : sends queries
-AnalyticsSettingsController --> "IMediator" : sends commands
-@enduml
-```
 
 ![API Layer -- Analytics Controllers](api-layer-analytics-controllers.png)
 
@@ -291,122 +84,16 @@ AnalyticsSettingsController --> "IMediator" : sends commands
 
 ### Record Page Hit (Built-In Tracking)
 
-```plantuml
-@startuml
-actor Visitor as V
-participant "Website Page" as WP
-participant "AnalyticsCollectorController" as AC
-participant "MediatR" as M
-participant "RecordPageHitHandler" as RH
-participant "IGeoLocationService" as GEO
-participant "ApplicationDbContext" as DB
-
-V -> WP : Loads page
-WP -> WP : Tracking script fires
-WP -> AC : POST /api/collect\n{websiteId, pagePath, sessionId}
-AC -> M : Send(RecordPageHitCommand)
-M -> RH : Handle()
-RH -> GEO : ResolveCountryAsync(ipAddress)
-GEO --> RH : "CA" (Canada)
-RH -> RH : Generate visitorFingerprint\n(hash of IP + UserAgent)
-RH -> DB : Insert AnalyticsPageHit
-DB --> RH : saved
-RH --> M : success
-M --> AC : result
-AC --> WP : 204 No Content
-@enduml
-```
-
 ![Record Page Hit (Built-In Tracking)](record-page-hit-built-in-tracking.png)
 
 ### Daily Analytics Aggregation
-
-```plantuml
-@startuml
-participant "AnalyticsAggregationBackgroundService" as BG
-participant "IAnalyticsAggregationService" as AGG
-participant "ApplicationDbContext" as DB
-
-BG -> AGG : AggregateAsync(yesterday)
-
-AGG -> DB : Query AnalyticsPageHit\nWHERE Date = yesterday\nGROUP BY WebsiteId
-DB --> AGG : grouped raw events
-
-loop for each website
-  AGG -> AGG : Count TotalVisitors (all hits)
-  AGG -> AGG : Count UniqueVisitors\n(distinct fingerprints)
-  AGG -> AGG : Count PageViews
-  AGG -> AGG : Compute avg session duration
-  AGG -> AGG : Aggregate TopPages JSON
-  AGG -> AGG : Aggregate GeographicDistribution JSON
-  AGG -> DB : Upsert WebsiteAnalyticsSnapshot
-  DB --> AGG : saved
-end
-
-AGG --> BG : aggregation complete
-
-BG -> AGG : PruneRawEventsAsync(90)
-AGG -> DB : DELETE AnalyticsPageHit\nWHERE Timestamp < NOW - 90 days
-DB --> AGG : pruned
-AGG --> BG : pruning complete
-@enduml
-```
 
 ![Daily Analytics Aggregation](daily-analytics-aggregation.png)
 
 ### View Analytics Dashboard
 
-```plantuml
-@startuml
-actor Photographer as P
-participant "AnalyticsDashboardController" as DC
-participant "MediatR" as M
-participant "GetAnalyticsDashboardHandler" as DH
-participant "ApplicationDbContext" as DB
-
-P -> DC : GET /api/websites/{id}/analytics\n?startDate=2026-02-01&endDate=2026-02-28
-DC -> M : Send(GetAnalyticsDashboardQuery)
-M -> DH : Handle()
-DH -> DB : Query WebsiteAnalyticsSnapshot\nWHERE WebsiteId = {id}\nAND Date BETWEEN startDate AND endDate
-DB --> DH : List<WebsiteAnalyticsSnapshot>
-DH -> DH : Sum TotalVisitors, UniqueVisitors, PageViews
-DH -> DH : Weighted average SessionDuration
-DH -> DH : Map to AnalyticsDashboardDto
-DH --> M : AnalyticsDashboardDto
-M --> DC : result
-DC --> P : 200 OK {totalVisitors, uniqueVisitors,\npageViews, avgSessionDuration, dailySnapshots[]}
-@enduml
-```
-
 ![View Analytics Dashboard](view-analytics-dashboard.png)
 
 ### Configure Google Analytics / Facebook Pixel
-
-```plantuml
-@startuml
-actor Photographer as P
-participant "AnalyticsSettingsController" as SC
-participant "MediatR" as M
-participant "UpdateGoogleAnalyticsHandler" as GH
-participant "ApplicationDbContext" as DB
-
-P -> SC : PUT /api/websites/{id}/analytics/google\n{measurementId: "G-XXXXXXXXXX"}
-SC -> M : Send(UpdateGoogleAnalyticsCommand)
-M -> GH : Handle()
-GH -> DB : Load Website
-DB --> GH : website
-GH -> DB : Website.GoogleAnalyticsMeasurementId = "G-XXXXXXXXXX"
-DB --> GH : saved
-GH --> M : success
-M --> SC : result
-SC --> P : 200 OK
-
-note over P
-  SiteRenderMiddleware now injects
-  gtag.js with the measurement ID
-  on all website pages.
-end note
-@enduml
-```
 
 ![Configure Google Analytics / Facebook Pixel](configure-google-analytics-facebook-pixel.png)

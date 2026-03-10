@@ -57,195 +57,21 @@ The HST calculation also carries through from quotes to invoices. When a client 
 
 ### Domain Layer -- Tax Profile Entity
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class TaxProfile {
-  +Id : Guid
-  +PhotographerId : Guid
-  +HstRate : decimal
-  +HstRegistrationNumber : string?
-  +RegistrationStatus : HstRegistrationStatus
-  +CreatedAt : DateTime
-  +UpdatedAt : DateTime
-}
-
-enum HstRegistrationStatus {
-  NotRegistered
-  Voluntary
-  Mandatory
-}
-
-TaxProfile --> HstRegistrationStatus : uses
-TaxProfile --> "1" Photographer : PhotographerId
-@enduml
-```
-
 ![Domain Layer -- Tax Profile Entity](domain-layer-tax-profile-entity.png)
 
 ### Domain Layer -- Extended Invoice & Quote Line Items
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class InvoiceLineItem {
-  +Id : Guid
-  +InvoiceId : Guid
-  +Name : string
-  +Description : string?
-  +Quantity : int
-  +UnitPriceCents : long
-  +TotalCents : long
-  +**IsTaxExempt : bool**
-  +SortOrder : int
-}
-
-class QuoteItem {
-  +Id : Guid
-  +QuoteId : Guid
-  +Name : string
-  +Description : string?
-  +Quantity : int
-  +UnitPriceCents : long
-  +TotalCents : long
-  +**IsTaxExempt : bool**
-  +SortOrder : int
-}
-
-class Invoice {
-  +Id : Guid
-  +TaxRatePercent : decimal
-  +TaxAmountCents : long
-  +SubtotalCents : long
-  +TotalCents : long
-}
-
-Invoice "1" --> "*" InvoiceLineItem : LineItems
-
-note bottom of InvoiceLineItem
-  IsTaxExempt = true excludes
-  the item from HST calculation.
-  TaxAmountCents = sum of
-  non-exempt item totals * HstRate
-end note
-@enduml
-```
 
 ![Domain Layer -- Extended Invoice & Quote Line Items](domain-layer-extended-invoice-quote-line-items.png)
 
 ### Application Layer -- Tax Profile Commands & Queries
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-package "Features.Tax.Commands" {
-  class UpdateTaxProfileCommand <<record>> {
-    +HstRate : decimal
-    +HstRegistrationNumber : string?
-    +RegistrationStatus : HstRegistrationStatus
-  }
-}
-
-package "Features.Tax.Queries" {
-  class GetTaxProfileQuery <<record>>
-}
-
-class TaxProfileDto <<record>> {
-  +HstRate : decimal
-  +HstRegistrationNumber : string?
-  +RegistrationStatus : HstRegistrationStatus
-}
-
-class TaxProfileValidator <<Validator>> {
-  +HstRate : 0..100
-  +HstRegistrationNumber : optional BN regex
-  +RegistrationStatus : valid enum
-}
-
-UpdateTaxProfileCommand ..> TaxProfileValidator : validated by
-GetTaxProfileQuery ..> TaxProfileDto : returns
-@enduml
-```
-
 ![Application Layer -- Tax Profile Commands & Queries](application-layer-tax-profile-commands-queries.png)
 
 ### Application Layer -- Extended Invoice Creation
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-package "Features.Invoices.Commands" {
-  class CreateInvoiceCommand <<record>> {
-    +Title : string
-    +ContactId : Guid?
-    +ProjectId : Guid?
-    +LineItems : List<LineItemInput>
-  }
-}
-
-class LineItemInput <<record>> {
-  +Name : string
-  +Description : string?
-  +Quantity : int
-  +UnitPriceCents : long
-  +IsTaxExempt : bool
-}
-
-package "Features.Invoices.Handlers" {
-  class CreateInvoiceCommandHandler {
-    -_db : IApplicationDbContext
-    -_currentUser : ICurrentUserService
-    +Handle(cmd, ct) : Result<InvoiceDetailDto>
-  }
-}
-
-CreateInvoiceCommandHandler ..> CreateInvoiceCommand
-CreateInvoiceCommandHandler --> TaxProfile : loads HST rate
-
-note right of CreateInvoiceCommandHandler
-  1. Build line items
-  2. Load TaxProfile
-  3. Filter taxable items
-     (IsTaxExempt = false)
-  4. TaxAmountCents =
-     sum(taxable totals) * hstRate / 100
-  5. TotalCents =
-     subtotal + tax - discount
-end note
-@enduml
-```
-
 ![Application Layer -- Extended Invoice Creation](application-layer-extended-invoice-creation.png)
 
 ### API Layer -- Tax Profile Controller
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class TaxProfileController <<ApiController>> {
-  -_mediator : IMediator
-  +UpdateTaxProfile(UpdateTaxProfileCommand) : IActionResult
-  +GetTaxProfile() : IActionResult
-}
-
-TaxProfileController --> "IMediator" : sends commands/queries
-@enduml
-```
 
 ![API Layer -- Tax Profile Controller](api-layer-tax-profile-controller.png)
 
@@ -255,152 +81,16 @@ TaxProfileController --> "IMediator" : sends commands/queries
 
 ### Update Tax Profile
 
-```plantuml
-@startuml
-actor Photographer as P
-participant "TaxProfileController" as TPC
-participant "MediatR" as M
-participant "UpdateTaxProfileHandler" as UH
-participant "ApplicationDbContext" as DB
-
-P -> TPC : PUT /api/tax-profile\n{hstRate: 13.0,\nhstRegistrationNumber:\n"123456789RT0001",\nregistrationStatus: "Mandatory"}
-TPC -> M : Send(UpdateTaxProfileCommand)
-M -> UH : Handle(command)
-
-UH -> UH : Validate (FluentValidation)\n- hstRate: 0..100\n- BN format: 9 digits + RT + 4 digits
-alt validation fails
-  UH --> M : Result.Failure(errors)
-  M --> TPC : Result.Failure
-  TPC --> P : 400 Bad Request
-end
-
-UH -> DB : Find TaxProfile\nby PhotographerId
-alt existing profile found
-  UH -> DB : Update HstRate,\nHstRegistrationNumber,\nRegistrationStatus
-else no existing profile
-  UH -> DB : TaxProfiles.Add(\nphotographerId, hstRate,\nregistrationNumber, status)
-end
-
-UH -> DB : SaveChangesAsync()
-UH --> M : Result.Success(TaxProfileDto)
-M --> TPC : Result.Success
-TPC --> P : 200 OK\n{hstRate: 13.0,\nhstRegistrationNumber:\n"123456789RT0001",\nregistrationStatus: "Mandatory"}
-@enduml
-```
-
 ![Update Tax Profile](update-tax-profile.png)
 
 ### Get Tax Profile
-
-```plantuml
-@startuml
-actor Photographer as P
-participant "TaxProfileController" as TPC
-participant "MediatR" as M
-participant "GetTaxProfileHandler" as GH
-participant "ApplicationDbContext" as DB
-
-P -> TPC : GET /api/tax-profile
-TPC -> M : Send(GetTaxProfileQuery)
-M -> GH : Handle(query)
-
-GH -> DB : Find TaxProfile\nby PhotographerId
-alt profile exists
-  DB --> GH : TaxProfile entity
-  GH -> GH : Map to TaxProfileDto
-else no profile found
-  GH -> GH : Return defaults:\nhstRate = 13.0,\nregistrationNumber = null,\nstatus = NotRegistered
-end
-
-GH --> M : Result.Success(TaxProfileDto)
-M --> TPC : Result.Success
-TPC --> P : 200 OK\n{hstRate, hstRegistrationNumber,\nregistrationStatus}
-@enduml
-```
 
 ![Get Tax Profile](get-tax-profile.png)
 
 ### Create Invoice with HST Calculation
 
-```plantuml
-@startuml
-actor Photographer as P
-participant "InvoicesController" as IC
-participant "MediatR" as M
-participant "CreateInvoiceCommandHandler" as CH
-participant "ApplicationDbContext" as DB
-
-P -> IC : POST /api/invoices\n{title: "Wedding Package",\nlineItems: [\n  {name: "Photography", qty: 1,\n   unitPriceCents: 350000,\n   isTaxExempt: false},\n  {name: "Travel", qty: 1,\n   unitPriceCents: 15000,\n   isTaxExempt: true}\n]}
-IC -> M : Send(CreateInvoiceCommand)
-M -> CH : Handle(command)
-
-CH -> CH : Validate (FluentValidation)
-
-CH -> DB : Generate next invoice number
-
-CH -> CH : Calculate line item totals:\nPhotography = 350000\nTravel = 15000
-
-CH -> CH : Subtotal = 365000
-
-CH -> DB : Load TaxProfile\nfor PhotographerId
-DB --> CH : TaxProfile\n{hstRate: 13.0}
-
-CH -> CH : Filter taxable items:\nPhotography (350000)\n(Travel excluded: isTaxExempt=true)
-
-CH -> CH : TaxAmountCents =\n350000 * 13 / 100 = 45500
-
-CH -> CH : TotalCents =\n365000 + 45500 = 410500
-
-CH -> DB : Invoices.Add(invoice\nwith TaxRatePercent = 13.0,\nTaxAmountCents = 45500)
-CH -> DB : InvoiceLineItems.AddRange(\nwith IsTaxExempt flags)
-CH -> DB : SaveChangesAsync()
-
-CH --> M : Result.Success(invoiceId)
-M --> IC : Result.Success
-IC --> P : 201 Created\n{invoiceId, invoiceNumber,\nsubtotalCents: 365000,\ntaxAmountCents: 45500,\ntotalCents: 410500}
-@enduml
-```
-
 ![Create Invoice with HST Calculation](create-invoice-with-hst-calculation.png)
 
 ### HST Carry-Through from Quote to Invoice
-
-```plantuml
-@startuml
-participant "AcceptQuoteCommandHandler" as AQH
-participant "MediatR" as M
-participant "GenerateInvoiceFromQuoteHandler" as GIH
-participant "ApplicationDbContext" as DB
-
-AQH -> M : Send(GenerateInvoiceFromQuoteCommand\n{quoteId})
-M -> GIH : Handle(command)
-
-GIH -> DB : Load Quote with QuoteItems
-DB --> GIH : Quote {\n  items: [\n    {name: "Photography",\n     unitPriceCents: 350000,\n     isTaxExempt: false},\n    {name: "Consultation",\n     unitPriceCents: 10000,\n     isTaxExempt: true}\n  ]\n}
-
-GIH -> DB : Load TaxProfile\nfor PhotographerId
-DB --> GIH : TaxProfile\n{hstRate: 13.0}
-
-GIH -> GIH : Map QuoteItems to\nInvoiceLineItems:\n- Copy name, description,\n  qty, unitPrice\n- **Copy IsTaxExempt flag**
-
-GIH -> GIH : Subtotal = 360000
-
-GIH -> GIH : Filter taxable items:\nPhotography (350000)\n(Consultation excluded)
-
-GIH -> GIH : TaxAmountCents =\n350000 * 13 / 100 = 45500
-
-GIH -> GIH : TotalCents =\n360000 + 45500 = 405500
-
-GIH -> DB : Generate invoice number
-
-GIH -> DB : Invoices.Add(draftInvoice\nwith Status = Draft,\nTaxRatePercent = 13.0,\nTaxAmountCents = 45500)
-GIH -> DB : InvoiceLineItems.AddRange(\nwith IsTaxExempt preserved)
-
-GIH -> DB : quote.GeneratedInvoiceId\n= newInvoice.Id
-GIH -> DB : SaveChangesAsync()
-
-GIH --> M : Result.Success(invoiceId)
-@enduml
-```
 
 ![HST Carry-Through from Quote to Invoice](hst-carry-through-from-quote-to-invoice.png)

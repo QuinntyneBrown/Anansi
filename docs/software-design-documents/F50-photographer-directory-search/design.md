@@ -58,166 +58,17 @@ All search results are paginated (default 20 per page) and include photographer 
 
 ### Domain Layer -- Directory Search Entities (from F49)
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class PhotographerProfile {
-  +Id : Guid
-  +UserId : Guid
-  +DisplayName : string
-  +BusinessName : string?
-  +ProfileImageUrl : string?
-}
-
-class CulturalTag {
-  +Id : Guid
-  +Name : string
-  +IsSystem : bool
-  +UsageCount : int
-}
-
-class PhotographerCulturalTag {
-  +Id : Guid
-  +PhotographerId : Guid
-  +CulturalTagId : Guid
-}
-
-class PhotographerServiceArea {
-  +Id : Guid
-  +PhotographerId : Guid
-  +Neighborhood : string
-  +Latitude : double
-  +Longitude : double
-  +RadiusKm : int
-}
-
-PhotographerProfile "1" --> "*" PhotographerCulturalTag : has tags
-PhotographerCulturalTag "*" --> "1" CulturalTag : references
-PhotographerProfile "1" --> "0..1" PhotographerServiceArea : service area
-@enduml
-```
-
 ![Domain Layer -- Directory Search Entities (from F49)](domain-layer-directory-search-entities-from-f49.png)
 
 ### Application Layer -- Search Query & DTOs
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-package "Features.Directory.Queries" {
-  class SearchDirectoryQuery <<record>> {
-    +Tags : string[]?
-    +Neighborhood : string?
-    +Latitude : double?
-    +Longitude : double?
-    +Page : int
-    +PageSize : int
-  }
-
-  class SearchDirectoryQueryValidator {
-    +SearchDirectoryQueryValidator()
-  }
-
-  class DirectorySearchResultDto <<record>> {
-    +PhotographerId : Guid
-    +DisplayName : string
-    +BusinessName : string?
-    +ProfileImageUrl : string?
-    +CulturalTags : string[]
-    +Neighborhood : string?
-    +MatchingTagCount : int?
-    +DistanceKm : double?
-    +RelevanceScore : double
-  }
-
-  class "PaginatedResult<DirectorySearchResultDto>" as PaginatedResult {
-    +Items : List<DirectorySearchResultDto>
-    +Page : int
-    +PageSize : int
-    +TotalCount : int
-    +TotalPages : int
-  }
-}
-
-SearchDirectoryQuery ..> PaginatedResult : returns
-SearchDirectoryQueryValidator ..> SearchDirectoryQuery : validates
-@enduml
-```
 
 ![Application Layer -- Search Query & DTOs](application-layer-search-query-dtos.png)
 
 ### Infrastructure Layer -- Search Services
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-interface INeighborhoodLookupService {
-  +GetCoordinatesAsync(name : string) : Task<(double, double)?>
-}
-
-interface IHaversineCalculator {
-  +CalculateDistanceKm(lat1, lng1, lat2, lng2) : double
-}
-
-class SearchDirectoryQueryHandler {
-  -_dbContext : IApplicationDbContext
-  -_neighborhoodLookup : INeighborhoodLookupService
-  -_haversine : IHaversineCalculator
-  +Handle(query, ct) : PaginatedResult<DirectorySearchResultDto>
-}
-
-class NeighborhoodLookupService {
-  -_neighborhoods : Dictionary<string, (double, double)>
-  -_dbContext : IApplicationDbContext
-  +GetCoordinatesAsync(name) : Task<(double, double)?>
-}
-
-class HaversineCalculator {
-  +CalculateDistanceKm(lat1, lng1, lat2, lng2) : double
-}
-
-INeighborhoodLookupService <|.. NeighborhoodLookupService
-IHaversineCalculator <|.. HaversineCalculator
-SearchDirectoryQueryHandler --> INeighborhoodLookupService
-SearchDirectoryQueryHandler --> IHaversineCalculator
-@enduml
-```
-
 ![Infrastructure Layer -- Search Services](infrastructure-layer-search-services.png)
 
 ### API Layer -- Directory Controller
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class DirectoryController <<ApiController>> {
-  -_mediator : IMediator
-  +Search(tags, neighborhood, lat, lng, page, pageSize) : IActionResult
-}
-
-note right of DirectoryController
-  GET /api/directory/search
-  Public endpoint (no [Authorize]).
-  All parameters are optional query strings.
-  At least one of tags or neighborhood/lat+lng
-  must be provided (validated server-side).
-end note
-
-DirectoryController --> "IMediator" : sends SearchDirectoryQuery
-@enduml
-```
 
 ![API Layer -- Directory Controller](api-layer-directory-controller.png)
 
@@ -227,140 +78,12 @@ DirectoryController --> "IMediator" : sends SearchDirectoryQuery
 
 ### Search by Cultural Tags
 
-```plantuml
-@startuml
-actor Client as C
-participant "DirectoryController" as DC
-participant "MediatR" as M
-participant "SearchDirectoryQueryHandler" as H
-participant "ApplicationDbContext" as DB
-
-C -> DC : GET /api/directory/search\n?tags=Caribbean+Wedding,Caribana\n&page=1&pageSize=20
-DC -> DC : Map query params to\nSearchDirectoryQuery
-DC -> M : Send(SearchDirectoryQuery)
-M -> H : Handle()
-
-H -> H : Detect tag-only search mode\n(no neighborhood/coordinates)
-
-H -> DB : SELECT p.Id, p.DisplayName,\np.BusinessName, p.ProfileImageUrl,\nsa.Neighborhood,\nCOUNT(pct.Id) AS MatchingTagCount\nFROM PhotographerProfiles p\nJOIN PhotographerCulturalTags pct\nJOIN CulturalTags ct\nWHERE ct.Name IN ('Caribbean Wedding', 'Caribana')\nGROUP BY p.Id\nORDER BY MatchingTagCount DESC
-DB --> H : matchedPhotographers
-
-H -> DB : Load all CulturalTags\nfor matched photographer IDs
-DB --> H : allTags per photographer
-
-H -> H : Build DirectorySearchResultDto[]\nwith RelevanceScore = MatchingTagCount
-
-H -> H : Apply pagination\n(skip 0, take 20)
-
-H --> M : PaginatedResult<DirectorySearchResultDto>
-M --> DC : result
-DC --> C : 200 OK {\n  items: [{name, businessName,\n    profileImage, tags,\n    neighborhood, matchingTagCount: 2,\n    relevanceScore: 2.0}],\n  page: 1, totalCount: 15\n}
-@enduml
-```
-
 ![Search by Cultural Tags](search-by-cultural-tags.png)
 
 ### Search by Neighborhood / Distance
 
-```plantuml
-@startuml
-actor Client as C
-participant "DirectoryController" as DC
-participant "MediatR" as M
-participant "SearchDirectoryQueryHandler" as H
-participant "INeighborhoodLookupService" as NL
-participant "IHaversineCalculator" as HC
-participant "ApplicationDbContext" as DB
-
-C -> DC : GET /api/directory/search\n?neighborhood=Scarborough\n&page=1&pageSize=20
-DC -> M : Send(SearchDirectoryQuery)
-M -> H : Handle()
-
-H -> H : Detect location-only search mode
-
-H -> NL : GetCoordinatesAsync("Scarborough")
-NL --> H : (43.7731, -79.2577)
-
-H -> DB : Load all PhotographerServiceArea\nrecords (with PhotographerProfile join)
-DB --> H : serviceAreas[]
-
-loop for each service area
-  H -> HC : CalculateDistanceKm(\nsearchLat, searchLng,\nphotographerLat, photographerLng)
-  HC --> H : distanceKm
-
-  H -> H : Include if distanceKm <= radiusKm
-end
-
-H -> H : Sort by distanceKm ascending
-
-H -> H : Apply pagination (skip 0, take 20)
-
-H -> DB : Load CulturalTags\nfor included photographer IDs
-DB --> H : tags per photographer
-
-H -> H : Build DirectorySearchResultDto[]\nwith DistanceKm and\nRelevanceScore = 1/distanceKm
-
-H --> M : PaginatedResult<DirectorySearchResultDto>
-M --> DC : result
-DC --> C : 200 OK {\n  items: [{name, businessName,\n    neighborhood: "Scarborough",\n    distanceKm: 2.3,\n    relevanceScore: 0.43}],\n  page: 1, totalCount: 8\n}
-@enduml
-```
-
 ![Search by Neighborhood / Distance](search-by-neighborhood-distance.png)
 
 ### Combined Search (Tags + Location)
-
-```plantuml
-@startuml
-actor Client as C
-participant "DirectoryController" as DC
-participant "MediatR" as M
-participant "SearchDirectoryQueryHandler" as H
-participant "INeighborhoodLookupService" as NL
-participant "IHaversineCalculator" as HC
-participant "ApplicationDbContext" as DB
-
-C -> DC : GET /api/directory/search\n?tags=Nigerian+Traditional\n&neighborhood=Little+Jamaica\n&page=1&pageSize=20
-DC -> M : Send(SearchDirectoryQuery)
-M -> H : Handle()
-
-H -> H : Detect combined search mode\n(tags AND location provided)
-
-== Tag Matching Phase ==
-
-H -> DB : SELECT PhotographerId,\nCOUNT(*) AS MatchingTagCount\nFROM PhotographerCulturalTags pct\nJOIN CulturalTags ct\nWHERE ct.Name IN ('Nigerian Traditional')\nGROUP BY PhotographerId
-DB --> H : tagMatches (photographerId -> count)
-
-== Location Filtering Phase ==
-
-H -> NL : GetCoordinatesAsync("Little Jamaica")
-NL --> H : (43.6896, -79.4285)
-
-H -> DB : Load PhotographerServiceArea\nWHERE PhotographerId IN (tagMatches)
-DB --> H : serviceAreas[]
-
-loop for each service area in tag-matched set
-  H -> HC : CalculateDistanceKm(\nsearchLat, searchLng,\nphotographerLat, photographerLng)
-  HC --> H : distanceKm
-
-  H -> H : Exclude if distanceKm > radiusKm
-end
-
-== Scoring Phase ==
-
-H -> H : Compute composite score:\nmaxTags = max(matchingTagCounts)\nmaxDist = max(distances)\nFor each photographer:\n  tagScore = matchCount / maxTags\n  distScore = 1 - (distance / maxDist)\n  composite = (tagScore * 0.6) + (distScore * 0.4)
-
-H -> H : Sort by composite score descending
-
-H -> H : Apply pagination
-
-H -> DB : Load full profile + all tags\nfor result set
-DB --> H : profiles + tags
-
-H --> M : PaginatedResult<DirectorySearchResultDto>
-M --> DC : result
-DC --> C : 200 OK {\n  items: [{name, tags,\n    matchingTagCount: 1,\n    distanceKm: 3.1,\n    relevanceScore: 0.82}],\n  page: 1, totalCount: 4\n}
-@enduml
-```
 
 ![Combined Search (Tags + Location)](combined-search-tags-location.png)

@@ -72,211 +72,17 @@ The pipeline board integrates tightly with the lead capture form system (F23). W
 
 ### Domain Layer -- Pipeline Board Entities
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class ProjectStage {
-  +Id : Guid
-  +PhotographerId : Guid
-  +Name : string
-  +SortOrder : int
-}
-
-class Project {
-  +Id : Guid
-  +PhotographerId : Guid
-  +ContactId : Guid?
-  +StageId : Guid
-  +Name : string
-  +ProjectType : string?
-  +SortOrder : int
-}
-
-class ProjectDocument {
-  +Id : Guid
-  +ProjectId : Guid
-  +DocumentId : Guid
-  +DocumentType : DocumentType
-}
-
-class Contact {
-  +Id : Guid
-  +FirstName : string
-  +LastName : string
-  +Email : string
-  +ContactType : ContactType
-}
-
-enum DocumentType {
-  Contract
-  Invoice
-  Questionnaire
-}
-
-ProjectStage "1" --> "*" Project : Projects
-Project --> "0..1" Contact : Contact
-Project "1" --> "*" ProjectDocument : Documents
-ProjectDocument ..> DocumentType
-@enduml
-```
-
 ![Domain Layer -- Pipeline Board Entities](domain-layer-pipeline-board-entities.png)
 
 ### Application Layer -- Board Queries & Commands
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-package "Features.Pipeline.Queries" {
-  class GetPipelineBoardQuery <<record>>
-
-  class PipelineBoardDto <<record>> {
-    +Stages : List<StageDto>
-  }
-
-  class StageDto <<record>> {
-    +Id : Guid
-    +Name : string
-    +SortOrder : int
-    +Projects : List<ProjectCardDto>
-  }
-
-  class ProjectCardDto <<record>> {
-    +Id : Guid
-    +Name : string
-    +ProjectType : string?
-    +ClientName : string?
-    +ClientEmail : string?
-    +HasPendingDocuments : bool
-    +HasUpcomingSession : bool
-    +HasOutstandingPayment : bool
-  }
-
-  class GetProjectDetailQuery <<record>> {
-    +ProjectId : Guid
-  }
-
-  class ProjectDetailDto <<record>> {
-    +Project : ProjectCardDto
-    +Contracts : List<ContractSummaryDto>
-    +Invoices : List<InvoiceSummaryDto>
-    +Questionnaires : List<QuestionnaireSummaryDto>
-    +Sessions : List<BookingSummaryDto>
-    +Payments : List<PaymentSummaryDto>
-  }
-}
-
-GetPipelineBoardQuery ..> PipelineBoardDto : returns
-GetProjectDetailQuery ..> ProjectDetailDto : returns
-@enduml
-```
 
 ![Application Layer -- Board Queries & Commands](application-layer-board-queries-commands.png)
 
 ### Application Layer -- Stage & Project Commands
 
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-package "Features.Pipeline.Commands" {
-  class CreateStageCommand <<record>> {
-    +Name : string
-    +SortOrder : int
-  }
-
-  class UpdateStageCommand <<record>> {
-    +StageId : Guid
-    +Name : string
-  }
-
-  class DeleteStageCommand <<record>> {
-    +StageId : Guid
-    +MoveProjectsToStageId : Guid?
-  }
-
-  class ReorderStagesCommand <<record>> {
-    +StageOrders : List<StageOrderDto>
-  }
-}
-
-package "Features.Projects.Commands" {
-  class CreateProjectCommand <<record>> {
-    +StageId : Guid
-    +ContactId : Guid?
-    +Name : string
-    +ProjectType : string?
-  }
-
-  class MoveProjectCommand <<record>> {
-    +ProjectId : Guid
-    +TargetStageId : Guid
-    +NewSortOrder : int
-  }
-
-  class LinkDocumentToProjectCommand <<record>> {
-    +ProjectId : Guid
-    +DocumentId : Guid
-    +DocumentType : DocumentType
-  }
-
-  class AutoCreateProjectCommand <<record>> {
-    +ContactId : Guid
-    +ProjectName : string
-  }
-}
-
-@enduml
-```
-
 ![Application Layer -- Stage & Project Commands](application-layer-stage-project-commands.png)
 
 ### API Layer -- Pipeline & Project Controllers
-
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
-hide empty methods
-
-class PipelineBoardController <<ApiController>> {
-  -_mediator : IMediator
-  +GetBoard() : IActionResult
-  +CreateStage(cmd) : IActionResult
-  +UpdateStage(stageId, cmd) : IActionResult
-  +DeleteStage(stageId) : IActionResult
-  +ReorderStages(cmd) : IActionResult
-}
-
-class ProjectsController <<ApiController>> {
-  -_mediator : IMediator
-  +Create(cmd) : IActionResult
-  +GetDetail(projectId) : IActionResult
-  +Update(projectId, cmd) : IActionResult
-  +Delete(projectId) : IActionResult
-  +Move(projectId, cmd) : IActionResult
-}
-
-class ProjectDocumentsController <<ApiController>> {
-  -_mediator : IMediator
-  +LinkDocument(projectId, cmd) : IActionResult
-  +UnlinkDocument(projectId, docId) : IActionResult
-  +ListDocuments(projectId) : IActionResult
-}
-
-PipelineBoardController --> "IMediator" : sends commands/queries
-ProjectsController --> "IMediator" : sends commands/queries
-ProjectDocumentsController --> "IMediator" : sends commands
-@enduml
-```
 
 ![API Layer -- Pipeline & Project Controllers](api-layer-pipeline-project-controllers.png)
 
@@ -286,165 +92,20 @@ ProjectDocumentsController --> "IMediator" : sends commands
 
 ### Load Pipeline Board
 
-```plantuml
-@startuml
-actor Photographer as P
-participant "PipelineBoardController" as PBC
-participant "MediatR" as M
-participant "GetPipelineBoardHandler" as BH
-participant "ApplicationDbContext" as DB
-
-P -> PBC : GET /api/pipeline
-PBC -> M : Send(GetPipelineBoardQuery)
-M -> BH : Handle()
-BH -> DB : Query ProjectStages\nWHERE PhotographerId\nORDER BY SortOrder\nINCLUDE Projects.Contact
-DB --> BH : stages with projects
-
-loop for each project
-  BH -> BH : Map to ProjectCardDto\n(clientName, statusIndicators)
-end
-
-BH -> BH : Assemble PipelineBoardDto
-BH --> M : PipelineBoardDto
-M --> PBC : result
-PBC --> P : 200 OK {stages: [\n  {name: "Inquiry", projects: [...]},\n  {name: "Booked Session", projects: [...]},\n  ...]}
-@enduml
-```
-
 ![Load Pipeline Board](load-pipeline-board.png)
 
 ### Drag-and-Drop: Move Project Between Stages
-
-```plantuml
-@startuml
-actor Photographer as P
-participant "ProjectsController" as PC
-participant "MediatR" as M
-participant "MoveProjectHandler" as MH
-participant "ApplicationDbContext" as DB
-
-P -> PC : PUT /api/projects/{id}/move\n{targetStageId, newSortOrder: 2}
-PC -> M : Send(MoveProjectCommand)
-M -> MH : Handle()
-MH -> DB : Load Project
-DB --> MH : project (StageId = oldStage)
-MH -> MH : oldStageId = project.StageId
-MH -> DB : project.StageId = targetStageId
-MH -> DB : project.SortOrder = 2
-MH -> DB : Shift SortOrder of other projects\nin target stage (>= 2) by +1
-DB --> MH : saved
-MH -> MH : Raise ProjectStageChangedEvent\n{from: oldStage, to: targetStage}
-MH --> M : success
-M --> PC : result
-PC --> P : 200 OK
-@enduml
-```
 
 ![Drag-and-Drop: Move Project Between Stages](drag-and-drop-move-project-between-stages.png)
 
 ### Auto-Create Project on Form Submission
 
-```plantuml
-@startuml
-participant "FormSubmittedEventHandler" as FEH
-participant "MediatR" as M
-participant "AutoCreateProjectHandler" as APH
-participant "ApplicationDbContext" as DB
-
-FEH -> M : Send(AutoCreateProjectCommand\n{contactId, projectName: "New Inquiry"})
-M -> APH : Handle()
-APH -> DB : Query ProjectStage\nWHERE PhotographerId\nORDER BY SortOrder ASC\nTAKE 1
-DB --> APH : inquiryStage (first stage)
-APH -> DB : Count projects in stage
-DB --> APH : count = 5
-APH -> DB : Create Project\n{contactId, stageId: inquiryStage.Id,\nname: "New Inquiry",\nsortOrder: 5}
-DB --> APH : project saved
-APH -> APH : Raise ProjectCreatedEvent
-APH --> M : ProjectId
-M --> FEH : success
-@enduml
-```
-
 ![Auto-Create Project on Form Submission](auto-create-project-on-form-submission.png)
 
 ### View Project Detail with Linked Documents
 
-```plantuml
-@startuml
-actor Photographer as P
-participant "ProjectsController" as PC
-participant "MediatR" as M
-participant "GetProjectDetailHandler" as DH
-participant "ApplicationDbContext" as DB
-
-P -> PC : GET /api/projects/{id}
-PC -> M : Send(GetProjectDetailQuery)
-M -> DH : Handle()
-DH -> DB : Load Project with Contact
-DB --> DH : project
-DH -> DB : Query ProjectDocument\nWHERE ProjectId = {id}
-DB --> DH : linkedDocs [{docId, type: Contract},\n{docId, type: Invoice}]
-
-loop for each linked document
-  alt DocumentType = Contract
-    DH -> DB : Load Contract by DocumentId
-    DB --> DH : contract
-  else DocumentType = Invoice
-    DH -> DB : Load Invoice by DocumentId
-    DB --> DH : invoice
-  else DocumentType = Questionnaire
-    DH -> DB : Load Questionnaire by DocumentId
-    DB --> DH : questionnaire
-  end
-end
-
-DH -> DB : Query BookingRecords\nWHERE ProjectId = {id}
-DB --> DH : bookings
-DH -> DB : Query PaymentRecords\nWHERE related to project
-DB --> DH : payments
-DH -> DH : Assemble ProjectDetailDto
-DH --> M : ProjectDetailDto
-M --> PC : result
-PC --> P : 200 OK {project, contracts,\ninvoices, questionnaires,\nsessions, payments}
-@enduml
-```
-
 ![View Project Detail with Linked Documents](view-project-detail-with-linked-documents.png)
 
 ### Customize Stages (Add / Rename / Reorder)
-
-```plantuml
-@startuml
-actor Photographer as P
-participant "PipelineBoardController" as PBC
-participant "MediatR" as M
-participant "ApplicationDbContext" as DB
-
-== Add New Stage ==
-P -> PBC : POST /api/pipeline/stages\n{name: "Editing", sortOrder: 2}
-PBC -> M : Send(CreateStageCommand)
-M -> DB : Shift existing stages >= sortOrder by +1
-M -> DB : Insert ProjectStage\n{name: "Editing", sortOrder: 2}
-DB --> M : saved
-M --> PBC : StageDto
-PBC --> P : 201 Created {id, name, sortOrder}
-
-== Rename Stage ==
-P -> PBC : PUT /api/pipeline/stages/{id}\n{name: "Color Grading"}
-PBC -> M : Send(UpdateStageCommand)
-M -> DB : Update ProjectStage.Name
-DB --> M : saved
-M --> PBC : success
-PBC --> P : 200 OK
-
-== Reorder All Stages ==
-P -> PBC : PUT /api/pipeline/stages/reorder\n{stageOrders: [{id, sortOrder: 0}, ...]}
-PBC -> M : Send(ReorderStagesCommand)
-M -> DB : Batch update SortOrder for each stage
-DB --> M : saved
-M --> PBC : success
-PBC --> P : 200 OK
-@enduml
-```
 
 ![Customize Stages (Add / Rename / Reorder)](customize-stages-add-rename-reorder.png)
