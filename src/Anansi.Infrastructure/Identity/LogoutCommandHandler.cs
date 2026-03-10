@@ -1,23 +1,15 @@
 using Anansi.Application.Common;
 using Anansi.Application.Features.Auth.Commands;
-using Anansi.Infrastructure.Persistence;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Anansi.Infrastructure.Identity;
 
 public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result>
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
-
-    public LogoutCommandHandler(SignInManager<ApplicationUser> signInManager)
+    public Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
-        _signInManager = signInManager;
-    }
-
-    public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
-    {
-        await _signInManager.SignOutAsync();
-        return Result.Success();
+        // With JWT-based auth, logout is primarily client-side (discard the token).
+        // Server-side, we could add the token to a blocklist for additional security.
+        return Task.FromResult(Result.Success());
     }
 }

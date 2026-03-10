@@ -121,20 +121,25 @@ public class SendEmailHandler : IRequestHandler<SendEmailCommand, Result<EmailCo
             IsRead = true
         };
 
-        conversation.Messages.Add(message);
+        _db.Set<EmailMessage>().Add(message);
         conversation.LastMessageAt = DateTime.UtcNow;
         conversation.IsRead = true;
 
         await _db.SaveChangesAsync(ct);
 
+        // Re-load conversation with all messages for the response
+        var loaded = await _db.Set<EmailConversation>()
+            .Include(c => c.Messages).ThenInclude(m => m.Attachments)
+            .FirstAsync(c => c.Id == conversation.Id, ct);
+
         return Result<EmailConversationDto>.Success(new EmailConversationDto(
-            conversation.Id, conversation.ContactId, conversation.Subject,
-            conversation.ClientEmail, conversation.ClientName, conversation.IsRead, conversation.LastMessageAt,
-            conversation.Messages.OrderBy(m => m.SentAt).Select(m => new EmailMessageDto(
+            loaded.Id, loaded.ContactId, loaded.Subject,
+            loaded.ClientEmail, loaded.ClientName, loaded.IsRead, loaded.LastMessageAt,
+            loaded.Messages.OrderBy(m => m.SentAt).Select(m => new EmailMessageDto(
                 m.Id, m.IsFromPhotographer, m.SenderEmail, m.SenderName, m.Body, m.IsRead, m.SentAt,
                 m.Attachments.Select(a => new EmailAttachmentDto(a.Id, a.FileName, a.ContentType, a.FileSizeBytes, a.StorageUrl)).ToList()
             )).ToList(),
-            conversation.CreatedAt
+            loaded.CreatedAt
         ));
     }
 }

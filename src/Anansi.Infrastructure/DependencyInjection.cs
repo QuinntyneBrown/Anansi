@@ -20,22 +20,7 @@ public static class DependencyInjection
 
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
-        // Identity
-        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-        {
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequiredLength = 8;
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-            options.Lockout.MaxFailedAccessAttempts = 5;
-            options.User.RequireUniqueEmail = true;
-        })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
-
-        // JWT Authentication
+        // JWT Authentication (must be configured before Identity to set default schemes)
         var jwtKey = configuration["Jwt:Key"] ?? "DefaultDevKeyThatShouldBeReplacedInProduction123!";
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
@@ -43,6 +28,7 @@ public static class DependencyInjection
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         })
         .AddJwtBearer(options =>
         {
@@ -58,6 +44,23 @@ public static class DependencyInjection
                 ClockSkew = TimeSpan.FromMinutes(1)
             };
         });
+
+        // Identity (use AddIdentityCore to avoid overriding JWT auth scheme)
+        services.AddIdentityCore<ApplicationUser>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddSignInManager()
+        .AddDefaultTokenProviders();
 
         // Services
         services.AddHttpContextAccessor();

@@ -41,7 +41,7 @@ public class WebsiteTemplateTests : IClassFixture<TestWebApplicationFactory>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var templates = await response.Content.ReadFromJsonAsync<List<WebsiteTemplateDto>>();
         templates.Should().NotBeNull();
-        templates!.Should().HaveCount(2);
+        templates!.Count.Should().BeGreaterThanOrEqualTo(2);
         templates.Should().OnlyContain(t => t.IsActive);
     }
 

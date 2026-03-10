@@ -10,16 +10,13 @@ namespace Anansi.Infrastructure.Identity;
 public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginResponse>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ITokenService _tokenService;
 
     public LoginCommandHandler(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
         ITokenService tokenService)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
         _tokenService = tokenService;
     }
 
@@ -29,13 +26,19 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginRes
         if (user == null)
             return Result<LoginResponse>.Failure("Invalid email or password.", 401);
 
-        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
-        if (!signInResult.Succeeded)
+        var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
+        if (!isValidPassword)
         {
-            if (signInResult.IsLockedOut)
+            await _userManager.AccessFailedAsync(user);
+
+            if (await _userManager.IsLockedOutAsync(user))
                 return Result<LoginResponse>.Failure("Account is locked out. Please try again later.", 423);
+
             return Result<LoginResponse>.Failure("Invalid email or password.", 401);
         }
+
+        // Reset access failed count on successful login
+        await _userManager.ResetAccessFailedCountAsync(user);
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = _tokenService.GenerateAccessToken(user.Id, user.Email!, user.PhotographerId, roles);

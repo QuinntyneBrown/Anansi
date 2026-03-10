@@ -13,21 +13,22 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            // Remove all DbContext-related registrations to avoid dual-provider error
-            var descriptorsToRemove = services
-                .Where(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>)
-                    || d.ServiceType == typeof(DbContextOptions)
-                    || (d.ServiceType.IsGenericType && d.ServiceType.GetGenericTypeDefinition() == typeof(DbContextOptions<>))
-                    || d.ServiceType.FullName?.Contains("EntityFrameworkCore") == true)
-                .ToList();
-            foreach (var d in descriptorsToRemove) services.Remove(d);
-
-            // Also remove the ApplicationDbContext registration itself so we can re-add it cleanly
-            var dbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(ApplicationDbContext));
-            if (dbContextDescriptor != null) services.Remove(dbContextDescriptor);
+            // Remove ALL EF Core and DbContext registrations to cleanly switch to InMemory
+            var dbName = $"AnansiTest_{Guid.NewGuid()}";
+            var toRemove = services.Where(d =>
+                d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>)
+                || d.ServiceType == typeof(DbContextOptions)
+                || d.ServiceType == typeof(ApplicationDbContext)
+                || d.ServiceType == typeof(IApplicationDbContext)
+                || d.ServiceType.FullName?.Contains("EntityFrameworkCore") == true
+                || d.ImplementationType?.FullName?.Contains("Npgsql") == true
+                || d.ServiceType.FullName?.Contains("Npgsql") == true
+            ).ToList();
+            foreach (var d in toRemove) services.Remove(d);
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseInMemoryDatabase($"AnansiTest_{Guid.NewGuid()}"));
+                options.UseInMemoryDatabase(dbName));
+            services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
             // Register stub services for interfaces without real implementations
             ReplaceServiceIfNotRegistered<IEmailService, StubEmailService>(services);
