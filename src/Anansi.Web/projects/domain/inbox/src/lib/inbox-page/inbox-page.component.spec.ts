@@ -105,12 +105,41 @@ describe('InboxPageComponent', () => {
       expect(component.loading()).toBe(false);
     });
 
-    it('should set loading to false on error', () => {
+    it('should set loading to false and error to true on error', () => {
       fixture.detectChanges();
 
       const req = httpTesting.expectOne(`${baseUrl}/api/email/conversations`);
       req.error(new ProgressEvent('error'));
 
+      expect(component.loading()).toBe(false);
+      expect(component.error()).toBe(true);
+    });
+
+    it('should show error state with retry button on load failure', () => {
+      fixture.detectChanges();
+
+      const req = httpTesting.expectOne(`${baseUrl}/api/email/conversations`);
+      req.error(new ProgressEvent('error'));
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.inbox__error-text')).toBeTruthy();
+      expect(el.querySelector('.inbox__error-text')!.textContent).toContain('Failed to load conversations.');
+      expect(el.querySelector('.inbox__conversation-item')).toBeNull();
+    });
+
+    it('should clear error on successful reload', () => {
+      fixture.detectChanges();
+
+      const req1 = httpTesting.expectOne(`${baseUrl}/api/email/conversations`);
+      req1.error(new ProgressEvent('error'));
+      expect(component.error()).toBe(true);
+
+      component.loadConversations();
+      expect(component.error()).toBe(false);
+
+      flushConversations();
+      expect(component.error()).toBe(false);
       expect(component.loading()).toBe(false);
     });
   });

@@ -40,6 +40,11 @@ import {
         <div class="loading-container">
           <lib-spinner [size]="32" />
         </div>
+      } @else if (error()) {
+        <div class="error-container">
+          <p class="error-text">{{ error() }}</p>
+          <lib-button variant="secondary" (clicked)="load()">Retry</lib-button>
+        </div>
       } @else if (invoices().length === 0) {
         <div class="empty-container">
           <lib-empty-state
@@ -109,6 +114,21 @@ import {
       padding: 64px 0;
     }
 
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 64px 0;
+    }
+
+    .error-text {
+      color: #C94A4A;
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      margin: 0;
+    }
+
     .empty-container {
       display: flex;
       justify-content: center;
@@ -174,6 +194,7 @@ export class InvoiceListPageComponent implements OnInit {
 
   readonly invoices = signal<InvoiceDto[]>([]);
   readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
   readonly activeTab = signal('All');
   readonly currentPage = signal(1);
   readonly totalPages = signal(1);
@@ -195,6 +216,7 @@ export class InvoiceListPageComponent implements OnInit {
 
   load(): void {
     this.loading.set(true);
+    this.error.set(null);
     const tab = this.activeTab();
     const status = tab === 'All' ? undefined : (tab as InvoiceStatus);
     this.invoicesService.list({ status, page: this.currentPage(), pageSize: 10 }).subscribe({
@@ -204,7 +226,10 @@ export class InvoiceListPageComponent implements OnInit {
         this.totalCount.set(result.totalCount);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.error.set('Failed to load invoices.');
+        this.loading.set(false);
+      },
     });
   }
 

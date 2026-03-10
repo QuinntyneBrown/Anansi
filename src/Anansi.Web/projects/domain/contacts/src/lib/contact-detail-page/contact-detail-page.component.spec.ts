@@ -58,12 +58,24 @@ describe('ContactDetailPageComponent', () => {
     expect(component.loading()).toBe(false);
   });
 
-  it('should set loading to false on error', () => {
+  it('should set loading to false and error to true on error', () => {
     fixture.detectChanges();
     const req = httpTesting.expectOne(`${baseUrl}/api/contacts/c-1`);
     req.error(new ProgressEvent('Network error'));
     expect(component.loading()).toBe(false);
+    expect(component.error()).toBe(true);
     expect(component.contact()).toBeNull();
+  });
+
+  it('should show error message on load failure', () => {
+    fixture.detectChanges();
+    const req = httpTesting.expectOne(`${baseUrl}/api/contacts/c-1`);
+    req.error(new ProgressEvent('Network error'));
+    fixture.detectChanges();
+
+    const errorEl = fixture.nativeElement.querySelector('.error-text');
+    expect(errorEl).toBeTruthy();
+    expect(errorEl.textContent).toContain('Failed to load contact');
   });
 
   it('should show spinner while loading', () => {

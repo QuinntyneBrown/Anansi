@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, output } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, output } from '@angular/core';
 import { BookingsService, SessionTypeDto, SessionVisibility } from 'api';
 import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent } from 'components';
 
@@ -135,8 +135,9 @@ export class SessionTypeSelectionComponent implements OnInit {
   readonly loading = signal(true);
   readonly sessionTypeSelected = output<SessionTypeDto>();
 
-  publicSessions = () =>
-    this.allSessions().filter((s) => s.visibility === SessionVisibility.Public);
+  readonly publicSessions = computed(() =>
+    this.allSessions().filter((s) => s.visibility === SessionVisibility.Public),
+  );
 
   ngOnInit(): void {
     this.load();

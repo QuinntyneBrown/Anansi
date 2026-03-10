@@ -104,7 +104,7 @@ describe('PlanSelectionComponent', () => {
       expect(component.loading()).toBe(false);
     });
 
-    it('should handle API error gracefully', () => {
+    it('should handle API error gracefully and show error state', () => {
       fixture.detectChanges();
 
       const req = httpTesting.expectOne(`${baseUrl}/api/plans`);
@@ -112,6 +112,20 @@ describe('PlanSelectionComponent', () => {
 
       expect(component.plans()).toEqual([]);
       expect(component.loading()).toBe(false);
+      expect(component.error()).toBe(true);
+    });
+
+    it('should display error message when error is true', () => {
+      fixture.detectChanges();
+
+      const req = httpTesting.expectOne(`${baseUrl}/api/plans`);
+      req.flush(null, { status: 500, statusText: 'Server Error' });
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      const errorText = el.querySelector('.plan-selection__error-text');
+      expect(errorText).toBeTruthy();
+      expect(errorText?.textContent).toContain('Failed to load plans');
     });
 
     it('should render plan cards after loading', () => {

@@ -326,7 +326,7 @@ describe('FileUploadModalComponent', () => {
     fixture.detectChanges();
 
     component.files.set([
-      { file: new File([''], 'x.jpg'), progress: 100, status: 'done' },
+      { id: 'test-1', file: new File([''], 'x.jpg'), progress: 100, status: 'done' },
     ]);
 
     const spy = vi.fn();

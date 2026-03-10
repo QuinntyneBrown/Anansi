@@ -5,12 +5,15 @@ using Anansi.Domain.Entities.Billing;
 using Anansi.Domain.Entities.Booking;
 using Anansi.Domain.Entities.Branding;
 using Anansi.Domain.Entities.CRM;
+using Anansi.Domain.Entities.Discovery;
+using Anansi.Domain.Entities.Events;
 using Anansi.Domain.Entities.Email;
 using Anansi.Domain.Entities.Finance;
 using Anansi.Domain.Entities.Galleries;
 using Anansi.Domain.Entities.Store;
 using Anansi.Domain.Entities.Integrations;
 using Anansi.Domain.Entities.Notifications;
+using Anansi.Domain.Entities.Presets;
 using Anansi.Domain.Entities.Website;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -112,6 +115,24 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     // Finance
     public DbSet<PaymentRecord> PaymentRecords => Set<PaymentRecord>();
     public DbSet<FinancingApplication> FinancingApplications => Set<FinancingApplication>();
+    public DbSet<InteracPaymentRequest> InteracPaymentRequests => Set<InteracPaymentRequest>();
+
+    // Tax
+    public DbSet<TaxProfile> TaxProfiles => Set<TaxProfile>();
+    public DbSet<BusinessExpense> BusinessExpenses => Set<BusinessExpense>();
+
+    // Presets
+    public DbSet<EditingPreset> EditingPresets => Set<EditingPreset>();
+    public DbSet<PresetFavorite> PresetFavorites => Set<PresetFavorite>();
+
+    // Events
+    public DbSet<CommunityEvent> CommunityEvents => Set<CommunityEvent>();
+    public DbSet<EventCalendarBlock> EventCalendarBlocks => Set<EventCalendarBlock>();
+
+    // Discovery
+    public DbSet<CulturalTag> CulturalTags => Set<CulturalTag>();
+    public DbSet<PhotographerCulturalTag> PhotographerCulturalTags => Set<PhotographerCulturalTag>();
+    public DbSet<PhotographerServiceArea> PhotographerServiceAreas => Set<PhotographerServiceArea>();
 
     // Integrations
     public DbSet<WebhookSubscription> WebhookSubscriptions => Set<WebhookSubscription>();
@@ -127,6 +148,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        builder.Entity<PresetFavorite>()
+            .HasIndex(pf => new { pf.PhotographerId, pf.PresetId })
+            .IsUnique();
+
+        builder.Entity<EditingPreset>()
+            .HasMany(ep => ep.Favorites)
+            .WithOne(pf => pf.Preset)
+            .HasForeignKey(pf => pf.PresetId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

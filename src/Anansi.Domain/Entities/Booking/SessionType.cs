@@ -61,6 +61,9 @@ public class SessionType : BaseEntity, ITenantEntity, ISoftDeletable, IAuditable
     /// <summary>Cover image URL for booking site.</summary>
     public string? CoverImageUrl { get; set; }
 
+    /// <summary>Optional link to a community event (EVT-24.2.3).</summary>
+    public Guid? CommunityEventId { get; set; }
+
     // Navigation
     public ICollection<MiniSessionDate> MiniSessionDates { get; set; } = new List<MiniSessionDate>();
     public ICollection<BookingRecord> Bookings { get; set; } = new List<BookingRecord>();

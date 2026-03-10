@@ -59,6 +59,7 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
             order.SubtotalCents, order.TaxCents, order.ShippingCents, order.DiscountCents,
             order.TotalCents, order.CommissionCents, order.CommissionPercentage,
             order.CouponCode, order.GiftCardCode, order.TrackingNumber, order.TrackingUrl,
+            order.InteracPaymentReference,
             order.Items.Select(i => new OrderItemDto(
                 i.Id, i.ProductId, i.ProductName, i.ProductVariationId,
                 i.VariationName, i.Quantity, i.UnitPriceCents,

@@ -4,10 +4,17 @@ import { GalleryMediaService, GalleryMediaDto } from 'api';
 import { ModalContainerComponent, ButtonComponent } from 'components';
 
 export interface UploadFileEntry {
+  id: string;
   file: File;
   progress: number;
   status: 'pending' | 'uploading' | 'done' | 'error';
+  errorMessage?: string;
 }
+
+let nextEntryId = 0;
+
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 @Component({
   selector: 'lib-file-upload-modal',
@@ -37,7 +44,7 @@ export interface UploadFileEntry {
 
       @if (files().length > 0) {
         <div class="file-list">
-          @for (entry of files(); track entry.file.name) {
+          @for (entry of files(); track entry.id) {
             <div class="file-item">
               <div class="file-header">
                 <span class="file-name">{{ entry.file.name }}</span>
@@ -51,7 +58,7 @@ export interface UploadFileEntry {
                 ></div>
               </div>
               @if (entry.status === 'error') {
-                <span class="error-text">Upload failed</span>
+                <span class="error-text">{{ entry.errorMessage ?? 'Upload failed' }}</span>
               }
             </div>
           }
@@ -216,13 +223,39 @@ export class FileUploadModalComponent {
   }
 
   addFiles(newFiles: File[]): void {
-    const entries: UploadFileEntry[] = newFiles.map((file) => ({
-      file,
-      progress: 0,
-      status: 'pending' as const,
-    }));
-    this.files.set([...this.files(), ...entries]);
-    this.uploadSequentially(entries);
+    const validEntries: UploadFileEntry[] = [];
+    const rejectedEntries: UploadFileEntry[] = [];
+
+    for (const file of newFiles) {
+      const id = `upload-${nextEntryId++}`;
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        rejectedEntries.push({
+          id,
+          file,
+          progress: 0,
+          status: 'error',
+          errorMessage: 'Unsupported file type',
+        });
+      } else if (file.size > MAX_FILE_SIZE) {
+        rejectedEntries.push({
+          id,
+          file,
+          progress: 0,
+          status: 'error',
+          errorMessage: 'File exceeds 50MB limit',
+        });
+      } else {
+        validEntries.push({
+          id,
+          file,
+          progress: 0,
+          status: 'pending',
+        });
+      }
+    }
+
+    this.files.set([...this.files(), ...rejectedEntries, ...validEntries]);
+    this.uploadSequentially(validEntries);
   }
 
   private uploadSequentially(entries: UploadFileEntry[]): void {
@@ -232,24 +265,24 @@ export class FileUploadModalComponent {
     }
 
     const [current, ...remaining] = entries;
-    this.updateEntry(current.file.name, { status: 'uploading', progress: 0 });
+    this.updateEntry(current.id, { status: 'uploading', progress: 0 });
 
     this.mediaService.upload(this.collectionId(), current.file).subscribe({
       next: () => {
-        this.updateEntry(current.file.name, { status: 'done', progress: 100 });
+        this.updateEntry(current.id, { status: 'done', progress: 100 });
         this.uploadSequentially(remaining);
       },
       error: () => {
-        this.updateEntry(current.file.name, { status: 'error', progress: 0 });
+        this.updateEntry(current.id, { status: 'error', progress: 0 });
         this.uploadSequentially(remaining);
       },
     });
   }
 
-  private updateEntry(fileName: string, update: Partial<UploadFileEntry>): void {
+  private updateEntry(entryId: string, update: Partial<UploadFileEntry>): void {
     this.files.update((entries) =>
       entries.map((e) =>
-        e.file.name === fileName ? { ...e, ...update } : e,
+        e.id === entryId ? { ...e, ...update } : e,
       ),
     );
   }

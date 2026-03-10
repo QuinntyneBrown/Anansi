@@ -153,6 +153,17 @@ describe('ProductCatalogPageComponent', () => {
     expect(component.loading()).toBe(false);
   });
 
+  it('should set loading to false on error for filtered request', () => {
+    flushInitialLoad();
+
+    component.onFilterChange('Digital');
+    const req = httpTesting.expectOne(
+      `${baseUrl}/api/products?productType=DigitalDownload&page=1&pageSize=12`,
+    );
+    req.error(new ProgressEvent('Network error'));
+    expect(component.loading()).toBe(false);
+  });
+
   it('should filter by Digital tab using productType param', () => {
     flushInitialLoad();
 

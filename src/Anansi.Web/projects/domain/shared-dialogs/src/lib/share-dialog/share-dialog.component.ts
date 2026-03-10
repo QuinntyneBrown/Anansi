@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, output, signal, OnDestroy } from '@angular/core';
 import { ModalContainerComponent, ButtonComponent } from 'components';
 
 export interface SharePlatform {
@@ -149,7 +149,7 @@ export interface SharePlatform {
     }
   `,
 })
-export class ShareDialogComponent {
+export class ShareDialogComponent implements OnDestroy {
   readonly isOpen = input<boolean>(false);
   readonly shareUrl = input<string>('');
   readonly title = input<string>('Share');
@@ -167,6 +167,13 @@ export class ShareDialogComponent {
     { name: 'whatsapp', label: 'WhatsApp' },
     { name: 'email', label: 'Email' },
   ];
+
+  ngOnDestroy(): void {
+    if (this.resetTimer) {
+      clearTimeout(this.resetTimer);
+      this.resetTimer = null;
+    }
+  }
 
   copyToClipboard(): void {
     navigator.clipboard.writeText(this.shareUrl());

@@ -1,4 +1,6 @@
-import { Component, inject, signal, computed, output, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, output, OnInit, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { ContactsService, ContactDto, ContactType, PagedList } from 'api';
 import {
   TopBarComponent,
@@ -224,8 +226,10 @@ import {
     }
   `,
 })
-export class ContactListPageComponent implements OnInit {
+export class ContactListPageComponent implements OnInit, OnDestroy {
   private readonly contactsService = inject(ContactsService);
+  private readonly searchSubject = new Subject<string>();
+  private searchSubscription: { unsubscribe(): void } | null = null;
 
   readonly contacts = signal<ContactDto[]>([]);
   readonly loading = signal(true);
@@ -246,7 +250,17 @@ export class ContactListPageComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.searchSubscription = this.searchSubject
+      .pipe(debounceTime(300))
+      .subscribe(() => {
+        this.currentPage.set(1);
+        this.load();
+      });
     this.load();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubscription?.unsubscribe();
   }
 
   load(): void {
@@ -274,8 +288,7 @@ export class ContactListPageComponent implements OnInit {
   onSearch(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
-    this.currentPage.set(1);
-    this.load();
+    this.searchSubject.next(value);
   }
 
   onPreviousPage(): void {
@@ -293,7 +306,9 @@ export class ContactListPageComponent implements OnInit {
   }
 
   getInitials(contact: ContactDto): string {
-    return `${contact.firstName.charAt(0)}${contact.lastName.charAt(0)}`.toUpperCase();
+    return (
+      (contact.firstName?.[0] ?? '') + (contact.lastName?.[0] ?? '')
+    ).toUpperCase();
   }
 
   getBadgeVariant(type: ContactType): 'success' | 'warning' | 'neutral' {

@@ -110,11 +110,27 @@ describe('InvoiceListPageComponent', () => {
     expect(component.totalPages()).toBe(1);
   });
 
-  it('should set loading to false on error', () => {
+  it('should show error state on load failure', () => {
     fixture.detectChanges();
     const req = httpTesting.expectOne(`${baseUrl}/api/invoices?page=1&pageSize=10`);
     req.error(new ProgressEvent('Network error'));
     expect(component.loading()).toBe(false);
+    expect(component.error()).toBe('Failed to load invoices.');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.error-text').textContent).toContain('Failed to load invoices.');
+  });
+
+  it('should clear error on successful reload', () => {
+    fixture.detectChanges();
+    const req1 = httpTesting.expectOne(`${baseUrl}/api/invoices?page=1&pageSize=10`);
+    req1.error(new ProgressEvent('Network error'));
+    expect(component.error()).toBe('Failed to load invoices.');
+
+    component.load();
+    expect(component.error()).toBeNull();
+    const req2 = httpTesting.expectOne(`${baseUrl}/api/invoices?page=1&pageSize=10`);
+    req2.flush(mockPagedList);
+    expect(component.error()).toBeNull();
   });
 
   it('should show spinner while loading', () => {

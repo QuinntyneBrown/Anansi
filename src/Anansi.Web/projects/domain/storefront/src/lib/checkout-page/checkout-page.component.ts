@@ -120,7 +120,7 @@ export interface CartItem {
                 <lib-button
                   type="submit"
                   variant="primary"
-                  [disabled]="submitting()"
+                  [disabled]="submitting() || !clientName.trim() || !clientEmail.trim()"
                 >
                   @if (submitting()) {
                     <lib-spinner [size]="16" />
@@ -417,6 +417,7 @@ export class CheckoutPageComponent {
 
   onSubmit(): void {
     if (this.submitting()) return;
+    if (!this.clientName.trim() || !this.clientEmail.trim()) return;
 
     this.submitting.set(true);
     this.errorMessage.set(null);

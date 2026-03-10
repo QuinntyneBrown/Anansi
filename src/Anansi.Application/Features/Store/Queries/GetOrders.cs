@@ -59,6 +59,7 @@ public class GetOrdersHandler : IRequestHandler<GetOrdersQuery, Result<PagedList
             o.SubtotalCents, o.TaxCents, o.ShippingCents, o.DiscountCents,
             o.TotalCents, o.CommissionCents, o.CommissionPercentage,
             o.CouponCode, o.GiftCardCode, o.TrackingNumber, o.TrackingUrl,
+            o.InteracPaymentReference,
             o.Items.Select(i => new OrderItemDto(
                 i.Id, i.ProductId, i.ProductName, i.ProductVariationId,
                 i.VariationName, i.Quantity, i.UnitPriceCents,

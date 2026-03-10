@@ -1,5 +1,6 @@
 using Anansi.Application.Common;
 using Anansi.Application.DTOs;
+using Anansi.Application.Features.Tax;
 using Anansi.Application.Interfaces;
 using Anansi.Domain.Entities.CRM;
 using Anansi.Domain.Entities.Finance;
@@ -30,11 +31,13 @@ public class RecordPaymentHandler : IRequestHandler<RecordPaymentCommand, Result
 {
     private readonly IApplicationDbContext _db;
     private readonly ICurrentUserService _currentUser;
+    private readonly IMediator? _mediator;
 
-    public RecordPaymentHandler(IApplicationDbContext db, ICurrentUserService currentUser)
+    public RecordPaymentHandler(IApplicationDbContext db, ICurrentUserService currentUser, IMediator? mediator = null)
     {
         _db = db;
         _currentUser = currentUser;
+        _mediator = mediator;
     }
 
     public async Task<Result<PaymentRecordDto>> Handle(RecordPaymentCommand request, CancellationToken ct)
@@ -50,6 +53,20 @@ public class RecordPaymentHandler : IRequestHandler<RecordPaymentCommand, Result
                 : (long)(request.AmountCents * 0.029m) + 30;
         }
 
+        // Auto-calculate tax from HST profile if linked to an invoice (TAX-21.2.1)
+        long taxCents = 0;
+        if (request.InvoiceId.HasValue)
+        {
+            var invoice = await _db.Set<Invoice>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.Id == request.InvoiceId && i.PhotographerId == photographerId, ct);
+            if (invoice is not null && invoice.TaxAmountCents > 0 && invoice.TotalCents > 0)
+            {
+                // Proportional tax: payment's share of the invoice tax
+                taxCents = (long)((decimal)request.AmountCents / invoice.TotalCents * invoice.TaxAmountCents);
+            }
+        }
+
         var payment = new PaymentRecord
         {
             PhotographerId = photographerId,
@@ -60,6 +77,7 @@ public class RecordPaymentHandler : IRequestHandler<RecordPaymentCommand, Result
             FeeCents = feeCents,
             NetAmountCents = request.AmountCents - feeCents,
             TipCents = request.TipCents,
+            TaxCents = taxCents,
             Currency = request.Currency,
             PaymentMethod = request.PaymentMethod,
             ExternalPaymentId = request.ExternalPaymentId,
@@ -109,6 +127,12 @@ public class RecordPaymentHandler : IRequestHandler<RecordPaymentCommand, Result
         }
 
         await _db.SaveChangesAsync(ct);
+
+        // Publish event for threshold checking (TAX-21.3.2)
+        if (_mediator is not null)
+        {
+            await _mediator.Publish(new PaymentRecordedEvent(photographerId, request.AmountCents), ct);
+        }
 
         return Result<PaymentRecordDto>.Success(new PaymentRecordDto(
             payment.Id, payment.ContactId, payment.InvoiceId, payment.BookingId,

@@ -362,3 +362,65 @@ Design tokens (colors, typography, spacing, corner radius), shared components (b
 TLS 1.2+ encryption on all connections, PCI DSS compliance via Stripe (no raw card storage), bcrypt password hashing, server-side content protection (gallery passwords, download PIN validation, watermark application), right-click protection, responsive design for all client-facing pages, CDN delivery with adaptive bitrate video streaming, and Chromecast/AirPlay casting support.
 
 **L2 Requirements:** SEC-11.1.1, SEC-11.1.2, UX-11.3.1, UX-11.3.2, UX-11.3.3, UX-11.3.4
+
+---
+
+## F46 - Interac e-Transfer Integration
+
+Interac e-Transfer as a Canadian payment method. Photographers generate payment requests from invoices with unique reference codes, confirm receipt to reconcile payments, and track request status (Pending/Completed/Expired). Clients see Interac as a checkout option with transfer instructions and reference codes. Stale requests auto-expire.
+
+**L2 Requirements:** INT-20.1.1, INT-20.1.2, INT-20.1.3, INT-20.1.4, INT-20.2.1, INT-20.2.2
+
+---
+
+## F47 - HST Tax Configuration & Calculation
+
+Ontario HST (13%) support for Canadian photographers. Tax profile configuration with HST rate, registration number, and registration status (NotRegistered/Voluntary/Mandatory). Automatic HST calculation on invoice line items with tax-exempt item support. HST displayed as a separate line item with registration number. Carry-through from quotes to generated invoices.
+
+**L2 Requirements:** TAX-21.1.1, TAX-21.1.2, TAX-21.2.1
+
+---
+
+## F48 - Revenue Threshold & Input Tax Credits
+
+Rolling four-quarter revenue tracking against the $30,000 CRA mandatory HST registration threshold. Dashboard widget showing progress percentage with alert notifications at 75% and 90% (once per quarter). Quarterly revenue breakdown. Business expense tracking with HST paid (categorized: Equipment, Software, Studio, Travel, Supplies, Marketing, Professional Services). Net HST calculation (collected minus ITCs) and ITC summary export for CRA filing.
+
+**L2 Requirements:** TAX-21.3.1, TAX-21.3.2, TAX-21.4.1, TAX-21.4.2
+
+---
+
+## F49 - Cultural Specialization Tags
+
+Photographers tag profiles with cultural expertise areas from a predefined library (Caribbean Wedding, Nigerian Traditional, Ghanaian Engagement, etc.) plus custom tags (max 20 per photographer, 50 chars each). Tags displayed on public profile and directory. Available tags list includes predefined tags plus custom tags used by 3+ photographers. Primary neighborhood selection from predefined Toronto neighborhoods and service area radius (5-100 km) with lat/lng geocoding.
+
+**L2 Requirements:** TAG-22.1.1, TAG-22.1.2, TAG-22.2.1
+
+---
+
+## F50 - Photographer Directory Search
+
+Public-facing directory search API. Search photographers by cultural specialization tags (relevance-ranked by match count), by neighborhood/distance (Haversine formula, filtered by service radius), or combined tag + location search. Paginated results with profile summary cards including name, business name, profile image, tags, neighborhood, and relevance score.
+
+**L2 Requirements:** TAG-22.3.1, TAG-22.3.2, TAG-22.3.3
+
+---
+
+## F51 - Skin Tone Preset Library
+
+Curated photo editing presets for melanin-rich skin tones. Presets store Lightroom-compatible adjustment values (Temperature, Tint, Exposure, Contrast, HSL arrays for 8 channels, split toning). Organized by skin tone range (Light/Medium/Deep/VeryDeep) and shooting context (StudioPortrait/OutdoorNatural/EventReception/GoldenHour/LowLight/Flash). Browse, search, favorite presets. Full CRUD for contributors with public/private visibility. Platform-seeded presets (8+ curated defaults, non-editable). Soft-delete with "unavailable" indication on others' favorites.
+
+**L2 Requirements:** PRE-23.1.1, PRE-23.2.1, PRE-23.2.2, PRE-23.2.3, PRE-23.3.1, PRE-23.3.2, PRE-23.3.3
+
+---
+
+## F52 - Events Calendar & Booking Integration
+
+Pre-populated calendar of Toronto Black cultural events and festivals (Caribana, Afrofest, KUUMBA, etc.) with seed data. List events by date range, category, and neighborhood with recurring event instance generation. Sync events to photographer's booking calendar as availability blocks (Available/Blocked/Tentative). Create event-linked session types with availability scoped to event dates. Dashboard upcoming events widget.
+
+**L2 Requirements:** EVT-24.1.1, EVT-24.2.1, EVT-24.2.2, EVT-24.2.3
+
+---
+
+## F53 - Community Event Submissions
+
+Photographers submit new community events for calendar inclusion. Moderation workflow (Pending/Approved/Rejected) with self-moderation for MVP (own events auto-approve). Recurring event support (Annual/Monthly/Weekly). Edit and cancel submitted events — edits to approved events reset to Pending for re-review. Soft-delete on cancellation. Rejection notifications with reason.

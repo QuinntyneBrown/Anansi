@@ -1,59 +1,68 @@
-# AnansiWeb
+# Anansi Web - Angular Workspace
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.5.
+Multi-project Angular workspace for the Anansi photography platform. This workspace contains all frontend applications and shared libraries that power the photographer and client experiences.
 
-## Development server
+## Applications
 
-To start a local development server, run:
+| App | Alias | Description | Port |
+|-----|-------|-------------|------|
+| `studio-manager` | sm | Photographer-facing CRM, booking, documents, inbox, reports, settings | 4200 |
+| `client-gallery` | cg | Client-facing photo gallery viewing experience | 4201 |
+| `online-store` | os | Client-facing storefront for prints, products, and digital downloads | 4202 |
+| `website-builder` | wb | Photographer-facing drag-and-drop website editor | 4203 |
+| `booking-site` | bs | Client-facing booking site for session selection and checkout | 4204 |
+| `mobile-gallery` | mg | Client-facing mobile gallery PWA with add-to-home-screen support | 4205 |
 
-```bash
-ng serve
-```
+## Shared Libraries
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+| Library | Path | Description |
+|---------|------|-------------|
+| `components` | `projects/components/` | Reusable UI components shared across applications |
+| `api` | `projects/api/` | API client services and HTTP interceptors |
 
-## Code scaffolding
+## Domain Libraries
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+18 domain libraries live under `projects/domain/`, organized by feature area:
 
-```bash
-ng generate component component-name
-```
+auth, booking, calendar, contacts, dashboard, documents, gallery-client, gallery-organization, inbox, notifications, projects, reports, settings, shared-dialogs, storefront, store-management, website-builder
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+See `projects/domain/CONVENTIONS.md` for domain library conventions.
 
-```bash
-ng generate --help
-```
+## Tech Stack
 
-## Building
+- **Framework**: Angular (standalone components)
+- **State**: Signals pattern
+- **Styles**: SCSS
+- **Testing**: Vitest
+- **Package Manager**: npm
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Development Commands
 
 ```bash
-ng test
+# Serve an application locally
+ng serve <app>          # e.g. ng serve studio-manager
+
+# Build an application for production
+ng build <app>          # e.g. ng build client-gallery
+
+# Run unit tests for a library
+ng test <lib>           # e.g. ng test components
+
+# Generate a new component
+ng generate component <name> --project <app-or-lib>
 ```
 
-## Running end-to-end tests
+## Project Structure
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+projects/
+  studio-manager/       # sm - Studio Manager app
+  client-gallery/       # cg - Client Gallery app
+  online-store/         # os - Online Store app
+  website-builder/      # wb - Website Builder app
+  booking-site/         # bs - Booking Site app
+  mobile-gallery/       # mg - Mobile Gallery app
+  components/           # Shared UI component library
+  api/                  # Shared API client library
+  domain/               # 18 domain feature libraries
+```

@@ -87,6 +87,7 @@ const WEEKDAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     } @else if (error()) {
       <div class="error-container">
         <p class="error-text">Something went wrong. Please try again.</p>
+        <lib-button variant="secondary" (clicked)="loadMonth()">Retry</lib-button>
       </div>
     } @else {
       <div class="calendar-layout">

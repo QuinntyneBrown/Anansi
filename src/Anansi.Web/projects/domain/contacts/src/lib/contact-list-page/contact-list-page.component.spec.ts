@@ -43,6 +43,7 @@ describe('ContactListPageComponent', () => {
   };
 
   beforeEach(async () => {
+    vi.useFakeTimers();
     await TestBed.configureTestingModule({
       imports: [ContactListPageComponent],
       providers: [
@@ -57,6 +58,7 @@ describe('ContactListPageComponent', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     httpTesting.verify();
   });
 
@@ -110,11 +112,13 @@ describe('ContactListPageComponent', () => {
     expect(component.currentPage()).toBe(1);
   });
 
-  it('should search contacts', () => {
+  it('should search contacts after debounce', () => {
     flushInitialLoad();
 
     const event = { target: { value: 'Alice' } } as unknown as Event;
     component.onSearch(event);
+
+    vi.advanceTimersByTime(300);
 
     const req = httpTesting.expectOne(`${baseUrl}/api/contacts?search=Alice&page=1&pageSize=10`);
     expect(req.request.method).toBe('GET');
@@ -139,6 +143,8 @@ describe('ContactListPageComponent', () => {
     const event = { target: { value: 'test' } } as unknown as Event;
     component.onSearch(event);
 
+    vi.advanceTimersByTime(300);
+
     const req = httpTesting.expectOne(`${baseUrl}/api/contacts?search=test&page=1&pageSize=10`);
     req.flush(mockPagedList);
 
@@ -154,6 +160,8 @@ describe('ContactListPageComponent', () => {
 
     const event = { target: { value: 'Alice' } } as unknown as Event;
     component.onSearch(event);
+
+    vi.advanceTimersByTime(300);
 
     const req = httpTesting.expectOne(`${baseUrl}/api/contacts?type=Client&search=Alice&page=1&pageSize=10`);
     req.flush(mockPagedList);
@@ -332,11 +340,13 @@ describe('ContactListPageComponent', () => {
 
     const event = { target: { value: 'Alice' } } as unknown as Event;
     component.onSearch(event);
+    vi.advanceTimersByTime(300);
     const req1 = httpTesting.expectOne(`${baseUrl}/api/contacts?search=Alice&page=1&pageSize=10`);
     req1.flush(mockPagedList);
 
     const clearEvent = { target: { value: '' } } as unknown as Event;
     component.onSearch(clearEvent);
+    vi.advanceTimersByTime(300);
     const req2 = httpTesting.expectOne(`${baseUrl}/api/contacts?page=1&pageSize=10`);
     req2.flush(mockPagedList);
 

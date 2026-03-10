@@ -199,7 +199,7 @@ import { FormsModule } from '@angular/forms';
       font-size: 14px;
       background: #242426;
       border: 1px solid #3A3A3C;
-      border-radius: 20px;
+      border-radius: 12px;
       padding: 12px 16px;
       color: #F5F5F0;
       outline: none;

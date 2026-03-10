@@ -37,6 +37,11 @@ import {
           <div class="inbox__loading">
             <lib-spinner />
           </div>
+        } @else if (error()) {
+          <div class="inbox__error">
+            <p class="inbox__error-text">Failed to load conversations.</p>
+            <lib-button variant="secondary" (clicked)="loadConversations()">Retry</lib-button>
+          </div>
         } @else if (conversations().length === 0) {
           <lib-empty-state
             heading="No conversations"
@@ -186,6 +191,21 @@ import {
       align-items: center;
       justify-content: center;
       padding: 40px 20px;
+    }
+
+    .inbox__error {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 40px 20px;
+    }
+
+    .inbox__error-text {
+      color: #C94A4A;
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      margin: 0;
     }
 
     .inbox__conversation-list {
@@ -401,6 +421,7 @@ export class InboxPageComponent implements OnInit {
   readonly conversations = signal<EmailConversationDto[]>([]);
   readonly selectedConversation = signal<EmailConversationDto | null>(null);
   readonly loading = signal(true);
+  readonly error = signal(false);
   readonly sending = signal(false);
   replyBody = '';
 
@@ -410,12 +431,16 @@ export class InboxPageComponent implements OnInit {
 
   loadConversations(): void {
     this.loading.set(true);
+    this.error.set(false);
     this.emailService.listConversations().subscribe({
       next: (result) => {
         this.conversations.set(result.items);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.error.set(true);
+        this.loading.set(false);
+      },
     });
   }
 

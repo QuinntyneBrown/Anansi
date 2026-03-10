@@ -268,13 +268,18 @@ export class RevenueDashboardPageComponent implements OnInit {
     this.paymentsService.exportTransactions({
       from: this.dateFrom(),
       to: this.dateTo(),
-    }).subscribe((blob: Blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'transactions.csv';
-      a.click();
-      URL.revokeObjectURL(url);
+    }).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'transactions.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => {
+        this.error.set(true);
+      },
     });
   }
 }

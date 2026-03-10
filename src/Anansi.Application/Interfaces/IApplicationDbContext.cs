@@ -1,8 +1,12 @@
 using Anansi.Domain.Entities;
 using Anansi.Domain.Entities.Billing;
+using Anansi.Domain.Entities.Discovery;
+using Anansi.Domain.Entities.Events;
+using Anansi.Domain.Entities.Finance;
 using Anansi.Domain.Entities.Galleries;
 using Anansi.Domain.Entities.Integrations;
 using Anansi.Domain.Entities.Notifications;
+using Anansi.Domain.Entities.Presets;
 using Anansi.Domain.Entities.Store;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +54,26 @@ public interface IApplicationDbContext
     DbSet<Plan> Plans { get; }
     DbSet<PlanFeatureGate> PlanFeatureGates { get; }
     DbSet<Subscription> Subscriptions { get; }
+
+    // Interac
+    DbSet<InteracPaymentRequest> InteracPaymentRequests { get; }
+
+    // Tax
+    DbSet<TaxProfile> TaxProfiles { get; }
+    DbSet<BusinessExpense> BusinessExpenses { get; }
+
+    // Presets
+    DbSet<EditingPreset> EditingPresets { get; }
+    DbSet<PresetFavorite> PresetFavorites { get; }
+
+    // Events
+    DbSet<CommunityEvent> CommunityEvents { get; }
+    DbSet<EventCalendarBlock> EventCalendarBlocks { get; }
+
+    // Discovery
+    DbSet<CulturalTag> CulturalTags { get; }
+    DbSet<PhotographerCulturalTag> PhotographerCulturalTags { get; }
+    DbSet<PhotographerServiceArea> PhotographerServiceAreas { get; }
 
     DbSet<T> Set<T>() where T : class;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

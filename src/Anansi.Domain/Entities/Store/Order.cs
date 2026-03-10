@@ -28,6 +28,9 @@ public class Order : BaseEntity, ITenantEntity, ISoftDeletable, IAuditableEntity
     /// <summary>Stripe payment intent ID.</summary>
     public string? PaymentIntentId { get; set; }
 
+    /// <summary>Interac e-Transfer payment reference (INT-20.2.2).</summary>
+    public string? InteracPaymentReference { get; set; }
+
     /// <summary>Subtotal before tax/shipping in cents.</summary>
     public long SubtotalCents { get; set; }
 

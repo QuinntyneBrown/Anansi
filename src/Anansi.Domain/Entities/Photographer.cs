@@ -22,6 +22,7 @@ public class Photographer : BaseEntity, IAuditableEntity, ISoftDeletable
     public string? FontTheme { get; set; }
     public string? StripeAccountId { get; set; }
     public string? PayPalEmail { get; set; }
+    public string? InteracEmail { get; set; }
     public string? GoogleCalendarId { get; set; }
     public string? ZoomAccountId { get; set; }
     public string? GoogleAnalyticsId { get; set; }

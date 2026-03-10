@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { LUCIDE_ICONS } from 'lucide-angular';
 import {
   API_CONFIG,
   BookingRecordDto,
@@ -8,6 +9,11 @@ import {
   PagedList,
 } from 'api';
 import { BookingManagementPageComponent } from './booking-management-page.component';
+
+class AllIconsProvider {
+  hasIcon(): boolean { return true; }
+  getIcon() { return [['path', { d: 'M0 0' }]] as const; }
+}
 
 describe('BookingManagementPageComponent', () => {
   let component: BookingManagementPageComponent;
@@ -63,6 +69,7 @@ describe('BookingManagementPageComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: API_CONFIG, useValue: { baseUrl } },
+        { provide: LUCIDE_ICONS, multi: true, useValue: new AllIconsProvider() },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(BookingManagementPageComponent);

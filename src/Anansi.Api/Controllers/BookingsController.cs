@@ -22,9 +22,9 @@ public class BookingsController : ControllerBase
     }
 
     [HttpGet("session-types")]
-    public async Task<IActionResult> ListSessionTypes(CancellationToken ct)
+    public async Task<IActionResult> ListSessionTypes([FromQuery] Guid? eventId, CancellationToken ct)
     {
-        var result = await _mediator.Send(new ListSessionTypesQuery(), ct);
+        var result = await _mediator.Send(new ListSessionTypesQuery(eventId), ct);
         return Ok(result.Value);
     }
 

@@ -285,6 +285,9 @@ export class NotificationPanelComponent implements OnInit {
         );
         this.unreadCount.set(0);
       },
+      error: () => {
+        // Silently fail — UI state unchanged on error
+      },
     });
   }
 
@@ -299,6 +302,9 @@ export class NotificationPanelComponent implements OnInit {
           items.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
         );
         this.unreadCount.update((c) => Math.max(0, c - 1));
+      },
+      error: () => {
+        // Silently fail — UI state unchanged on error
       },
     });
   }

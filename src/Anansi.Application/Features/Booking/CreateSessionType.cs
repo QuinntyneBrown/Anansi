@@ -26,7 +26,8 @@ public record CreateSessionTypeCommand(
     bool RequirePayment,
     long? DepositAmountCents,
     string? IntakeDocumentIds,
-    string? CoverImageUrl) : IRequest<Result<SessionTypeDto>>;
+    string? CoverImageUrl,
+    Guid? CommunityEventId = null) : IRequest<Result<SessionTypeDto>>;
 
 public class CreateSessionTypeValidator : AbstractValidator<CreateSessionTypeCommand>
 {
@@ -73,7 +74,8 @@ public class CreateSessionTypeHandler : IRequestHandler<CreateSessionTypeCommand
             RequirePayment = request.RequirePayment,
             DepositAmountCents = request.DepositAmountCents,
             IntakeDocumentIds = request.IntakeDocumentIds,
-            CoverImageUrl = request.CoverImageUrl
+            CoverImageUrl = request.CoverImageUrl,
+            CommunityEventId = request.CommunityEventId
         };
 
         _db.Set<SessionType>().Add(sessionType);
@@ -88,5 +90,5 @@ public class CreateSessionTypeHandler : IRequestHandler<CreateSessionTypeCommand
             s.RequireManualConfirmation, s.IsMiniSession, s.MiniSessionGapMinutes,
             s.MiniSessionSpotsPerSlot, s.AvailabilityWindows, s.VideoCallType,
             s.RequirePayment, s.DepositAmountCents, s.IntakeDocumentIds, s.CoverImageUrl,
-            s.CreatedAt);
+            s.CommunityEventId, s.CreatedAt);
 }

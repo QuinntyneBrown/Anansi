@@ -527,6 +527,18 @@ describe('CalendarPageComponent', () => {
       const grid = fixture.nativeElement.querySelector('.calendar-grid');
       expect(grid).toBeNull();
     });
+
+    it('should show retry button on error', () => {
+      fixture.detectChanges();
+
+      const req = httpTesting.expectOne((r) => r.url === `${baseUrl}/api/bookings`);
+      req.flush('Server error', { status: 500, statusText: 'Server Error' });
+
+      fixture.detectChanges();
+
+      const retryBtn = fixture.nativeElement.querySelector('.error-container lib-button');
+      expect(retryBtn).toBeTruthy();
+    });
   });
 
   describe('rendered content', () => {

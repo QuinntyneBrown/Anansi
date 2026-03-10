@@ -23,4 +23,5 @@ public record SessionTypeDto(
     long? DepositAmountCents,
     string? IntakeDocumentIds,
     string? CoverImageUrl,
+    Guid? CommunityEventId,
     DateTime CreatedAt);

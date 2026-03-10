@@ -27,6 +27,7 @@ public record OrderDto(
     string? GiftCardCode,
     string? TrackingNumber,
     string? TrackingUrl,
+    string? InteracPaymentReference,
     List<OrderItemDto> Items,
     DateTime CreatedAt,
     DateTime UpdatedAt);

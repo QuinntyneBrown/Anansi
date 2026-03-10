@@ -20,6 +20,10 @@ import { CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent } from
         <div class="plan-selection__loading">
           <lib-spinner [size]="32" />
         </div>
+      } @else if (error()) {
+        <div class="plan-selection__error">
+          <p class="plan-selection__error-text">Failed to load plans. Please try again.</p>
+        </div>
       } @else {
         <div class="plan-selection__grid">
           @for (plan of plans(); track plan.id) {
@@ -97,6 +101,18 @@ import { CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent } from
       display: flex;
       justify-content: center;
       padding: 64px 0;
+    }
+
+    .plan-selection__error {
+      display: flex;
+      justify-content: center;
+      padding: 64px 0;
+    }
+
+    .plan-selection__error-text {
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: #C94A4A;
     }
 
     .plan-selection__grid {
@@ -199,6 +215,7 @@ export class PlanSelectionComponent implements OnInit {
 
   readonly plans = signal<PlanDto[]>([]);
   readonly loading = signal(true);
+  readonly error = signal(false);
 
   readonly planSelected = output<PlanDto>();
 
@@ -208,6 +225,7 @@ export class PlanSelectionComponent implements OnInit {
 
   load(): void {
     this.loading.set(true);
+    this.error.set(false);
     this.plansService.list().subscribe({
       next: (plans) => {
         this.plans.set(plans);
@@ -215,6 +233,7 @@ export class PlanSelectionComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
+        this.error.set(true);
       },
     });
   }

@@ -12,5 +12,6 @@ public enum PaymentMethod
     Affirm,
     TapToPay,
     Offline,
-    GiftCard
+    GiftCard,
+    InteracETransfer
 }

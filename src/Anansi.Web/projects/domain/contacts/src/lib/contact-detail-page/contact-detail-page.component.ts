@@ -27,6 +27,10 @@ import {
       <div class="loading-container">
         <lib-spinner [size]="32" />
       </div>
+    } @else if (error()) {
+      <div class="error-container">
+        <p class="error-text">Failed to load contact. Please try again.</p>
+      </div>
     } @else if (contact(); as c) {
       <div class="page">
         <div class="breadcrumb-bar">
@@ -108,10 +112,17 @@ import {
       padding: 24px;
     }
 
-    .loading-container {
+    .loading-container,
+    .error-container {
       display: flex;
       justify-content: center;
       padding: 64px 0;
+    }
+
+    .error-text {
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: #C94A4A;
     }
 
     .breadcrumb-bar {
@@ -224,6 +235,7 @@ export class ContactDetailPageComponent implements OnInit {
   readonly contact = signal<ContactDto | null>(null);
   readonly activeTab = signal('documents');
   readonly loading = signal(true);
+  readonly error = signal(false);
 
   readonly tabs: TabItem[] = [
     { label: 'Documents', value: 'documents' },
@@ -239,12 +251,16 @@ export class ContactDetailPageComponent implements OnInit {
 
   loadContact(): void {
     this.loading.set(true);
+    this.error.set(false);
     this.contactsService.get(this.contactId()).subscribe({
       next: (contact: ContactDto) => {
         this.contact.set(contact);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 
@@ -260,7 +276,9 @@ export class ContactDetailPageComponent implements OnInit {
   }
 
   getInitials(contact: ContactDto): string {
-    return `${contact.firstName.charAt(0)}${contact.lastName.charAt(0)}`.toUpperCase();
+    return (
+      (contact.firstName?.[0] ?? '') + (contact.lastName?.[0] ?? '')
+    ).toUpperCase();
   }
 
   getBadgeVariant(type: ContactType): 'success' | 'warning' | 'neutral' {

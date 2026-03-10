@@ -163,7 +163,7 @@ import {
                 </div>
                 <div class="form-actions">
                   <lib-button variant="outline" (clicked)="previousStep()">Back</lib-button>
-                  <lib-button variant="primary" type="submit" [disabled]="submitting()">
+                  <lib-button variant="primary" type="submit" [disabled]="submitting() || !firstName.trim() || !lastName.trim() || !email.trim() || !startDate.trim() || !startTime.trim()">
                     @if (submitting()) {
                       <lib-spinner [size]="16" />
                     }
@@ -432,6 +432,8 @@ export class BookingFormComponent {
 
   onSubmit(): void {
     if (this.submitting() || this.currentStep() !== 3) return;
+    if (!this.firstName.trim() || !this.lastName.trim() || !this.email.trim()) return;
+    if (!this.startDate.trim() || !this.startTime.trim()) return;
 
     const endTime = this.calculatedEndTime();
     const command: CreateBookingCommand = {

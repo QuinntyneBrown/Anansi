@@ -357,6 +357,9 @@ describe('BookingFormComponent', () => {
   });
 
   it('should clear error on new submission', () => {
+    component.firstName = 'Jane';
+    component.lastName = 'Doe';
+    component.email = 'jane@example.com';
     component.currentStep.set(3);
     component.startDate = '2025-06-15';
     component.startTime = '10:00';

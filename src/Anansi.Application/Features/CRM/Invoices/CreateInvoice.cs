@@ -2,9 +2,11 @@ using Anansi.Application.Common;
 using Anansi.Application.DTOs;
 using Anansi.Application.Interfaces;
 using Anansi.Domain.Entities.CRM;
+using Anansi.Domain.Entities.Finance;
 using Anansi.Domain.Enums;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Anansi.Application.Features.CRM.Invoices;
 
@@ -55,6 +57,19 @@ public class CreateInvoiceHandler : IRequestHandler<CreateInvoiceCommand, Result
         var photographerId = _currentUser.PhotographerId!.Value;
         var invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
 
+        // Auto-apply HST rate from tax profile when no explicit rate is provided (TAX-21.2.1)
+        var effectiveTaxRate = request.TaxRatePercent;
+        if (effectiveTaxRate == 0)
+        {
+            var taxProfile = await _db.Set<TaxProfile>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.PhotographerId == photographerId, ct);
+            if (taxProfile is not null && taxProfile.IsHstEnabled)
+            {
+                effectiveTaxRate = taxProfile.HstRatePercent;
+            }
+        }
+
         var invoice = new Invoice
         {
             PhotographerId = photographerId,
@@ -63,7 +78,7 @@ public class CreateInvoiceHandler : IRequestHandler<CreateInvoiceCommand, Result
             ContactId = request.ContactId,
             ProjectId = request.ProjectId,
             DueDate = request.DueDate,
-            TaxRatePercent = request.TaxRatePercent,
+            TaxRatePercent = effectiveTaxRate,
             DiscountCents = request.DiscountCents,
             TipsEnabled = request.TipsEnabled,
             DepositAmountCents = request.DepositAmountCents,
@@ -93,7 +108,7 @@ public class CreateInvoiceHandler : IRequestHandler<CreateInvoiceCommand, Result
         }
 
         invoice.SubtotalCents = subtotal;
-        invoice.TaxAmountCents = (long)(subtotal * request.TaxRatePercent / 100m);
+        invoice.TaxAmountCents = (long)(subtotal * effectiveTaxRate / 100m);
         invoice.TotalCents = subtotal + invoice.TaxAmountCents - request.DiscountCents;
 
         // Payment schedules (INV-4.5.2, INV-4.5.3)

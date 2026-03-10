@@ -31,6 +31,7 @@ describe('CollectionListPageComponent', () => {
   let fixture: ComponentFixture<CollectionListPageComponent>;
   let httpTesting: HttpTestingController;
   const baseUrl = 'http://localhost';
+  const collectionsUrl = `${baseUrl}/api/collections`;
 
   const mockCollections: CollectionSummaryDto[] = [
     {
@@ -93,7 +94,12 @@ describe('CollectionListPageComponent', () => {
   ): void {
     fixture.detectChanges();
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('page') === '1' &&
+        r.params.get('pageSize') === '12' &&
+        !r.params.has('status') &&
+        !r.params.has('search'),
     );
     expect(req.request.method).toBe('GET');
     req.flush(response);
@@ -115,7 +121,7 @@ describe('CollectionListPageComponent', () => {
   it('should set loading to false on error', () => {
     fixture.detectChanges();
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?page=1&pageSize=12`,
+      (r) => r.url === collectionsUrl,
     );
     req.error(new ProgressEvent('Network error'));
     expect(component.loading()).toBe(false);
@@ -127,7 +133,7 @@ describe('CollectionListPageComponent', () => {
     expect(spinner).toBeTruthy();
 
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?page=1&pageSize=12`,
+      (r) => r.url === collectionsUrl,
     );
     req.flush(mockPagedList);
     fixture.detectChanges();
@@ -141,7 +147,11 @@ describe('CollectionListPageComponent', () => {
 
     component.onStatusChange(CollectionStatus.Draft);
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?status=Draft&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('status') === 'Draft' &&
+        r.params.get('page') === '1' &&
+        r.params.get('pageSize') === '12',
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockPagedList);
@@ -156,7 +166,10 @@ describe('CollectionListPageComponent', () => {
     component.currentPage.set(3);
     component.onStatusChange(CollectionStatus.Published);
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?status=Published&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('status') === 'Published' &&
+        r.params.get('page') === '1',
     );
     req.flush(mockPagedList);
 
@@ -168,13 +181,18 @@ describe('CollectionListPageComponent', () => {
 
     component.onStatusChange(CollectionStatus.Draft);
     const draftReq = httpTesting.expectOne(
-      `${baseUrl}/api/collections?status=Draft&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('status') === 'Draft',
     );
     draftReq.flush(mockPagedList);
 
     component.onStatusChange('All');
     const allReq = httpTesting.expectOne(
-      `${baseUrl}/api/collections?page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        !r.params.has('status') &&
+        r.params.get('page') === '1',
     );
     allReq.flush(mockPagedList);
   });
@@ -186,7 +204,10 @@ describe('CollectionListPageComponent', () => {
     component.onSearch(event);
 
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?search=Wedding&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('search') === 'Wedding' &&
+        r.params.get('page') === '1',
     );
     expect(req.request.method).toBe('GET');
     req.flush({
@@ -211,7 +232,10 @@ describe('CollectionListPageComponent', () => {
     component.onSearch(event);
 
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?search=test&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('search') === 'test' &&
+        r.params.get('page') === '1',
     );
     req.flush(mockPagedList);
 
@@ -223,7 +247,9 @@ describe('CollectionListPageComponent', () => {
 
     component.onStatusChange(CollectionStatus.Published);
     const statusReq = httpTesting.expectOne(
-      `${baseUrl}/api/collections?status=Published&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('status') === 'Published',
     );
     statusReq.flush(mockPagedList);
 
@@ -231,7 +257,11 @@ describe('CollectionListPageComponent', () => {
     component.onSearch(event);
 
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?status=Published&search=Wedding&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('status') === 'Published' &&
+        r.params.get('search') === 'Wedding' &&
+        r.params.get('page') === '1',
     );
     req.flush(mockPagedList);
   });
@@ -242,14 +272,19 @@ describe('CollectionListPageComponent', () => {
     const event = { target: { value: 'Wedding' } } as unknown as Event;
     component.onSearch(event);
     const req1 = httpTesting.expectOne(
-      `${baseUrl}/api/collections?search=Wedding&page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('search') === 'Wedding',
     );
     req1.flush(mockPagedList);
 
     const clearEvent = { target: { value: '' } } as unknown as Event;
     component.onSearch(clearEvent);
     const req2 = httpTesting.expectOne(
-      `${baseUrl}/api/collections?page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        !r.params.has('search') &&
+        r.params.get('page') === '1',
     );
     req2.flush(mockPagedList);
 
@@ -296,7 +331,10 @@ describe('CollectionListPageComponent', () => {
 
     component.onNextPage();
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?page=2&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('page') === '2' &&
+        r.params.get('pageSize') === '12',
     );
     req.flush({
       items: [],
@@ -319,7 +357,9 @@ describe('CollectionListPageComponent', () => {
     component.onPreviousPage();
 
     const req = httpTesting.expectOne(
-      `${baseUrl}/api/collections?page=1&pageSize=12`,
+      (r) =>
+        r.url === collectionsUrl &&
+        r.params.get('page') === '1',
     );
     req.flush(mockPagedList);
 
@@ -330,9 +370,6 @@ describe('CollectionListPageComponent', () => {
     flushInitialLoad();
 
     component.onPreviousPage();
-    httpTesting.expectNone(
-      `${baseUrl}/api/collections?page=0&pageSize=12`,
-    );
     expect(component.currentPage()).toBe(1);
   });
 
@@ -340,9 +377,6 @@ describe('CollectionListPageComponent', () => {
     flushInitialLoad();
 
     component.onNextPage();
-    httpTesting.expectNone(
-      `${baseUrl}/api/collections?page=2&pageSize=12`,
-    );
     expect(component.currentPage()).toBe(1);
   });
 

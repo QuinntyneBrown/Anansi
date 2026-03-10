@@ -11,5 +11,7 @@ public enum NotificationEventType
     QuoteAccepted,
     MessageReceived,
     FormSubmissionReceived,
-    GalleryExpiring
+    GalleryExpiring,
+    HstThresholdWarning,
+    HstThresholdCritical
 }

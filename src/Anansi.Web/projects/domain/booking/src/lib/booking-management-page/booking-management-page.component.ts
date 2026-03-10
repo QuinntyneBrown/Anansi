@@ -7,7 +7,6 @@ import {
   PagedList,
 } from 'api';
 import {
-  CardComponent,
   ButtonComponent,
   BadgeComponent,
   SpinnerComponent,
@@ -25,7 +24,6 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     FormsModule,
-    CardComponent,
     ButtonComponent,
     BadgeComponent,
     SpinnerComponent,
@@ -276,6 +274,10 @@ export class BookingManagementPageComponent implements OnInit {
   onConfirm(booking: BookingRecordDto): void {
     this.bookingsService.confirm(booking.id, { id: booking.id }).subscribe({
       next: () => this.load(),
+      error: () => {
+        // Reload to ensure UI is consistent even on error
+        this.load();
+      },
     });
   }
 

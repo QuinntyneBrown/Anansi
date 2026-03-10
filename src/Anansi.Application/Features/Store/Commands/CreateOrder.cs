@@ -215,6 +215,12 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
         order.CommissionCents = commission;
         order.Status = OrderStatus.Pending;
 
+        // Generate Interac e-Transfer payment reference for store checkout (INT-20.2.2)
+        if (req.PaymentMethod == PaymentMethod.InteracETransfer)
+        {
+            order.InteracPaymentReference = $"ANANSI-ORD-{Guid.NewGuid().ToString("N")[..4].ToUpper()}";
+        }
+
         _db.Orders.Add(order);
         await _db.SaveChangesAsync(ct);
 
@@ -229,6 +235,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
         o.SubtotalCents, o.TaxCents, o.ShippingCents, o.DiscountCents,
         o.TotalCents, o.CommissionCents, o.CommissionPercentage,
         o.CouponCode, o.GiftCardCode, o.TrackingNumber, o.TrackingUrl,
+        o.InteracPaymentReference,
         o.Items.Select(i => new OrderItemDto(
             i.Id, i.ProductId, i.ProductName, i.ProductVariationId,
             i.VariationName, i.Quantity, i.UnitPriceCents,
