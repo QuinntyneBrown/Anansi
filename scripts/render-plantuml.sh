@@ -27,7 +27,7 @@ render_puml() {
         abs_dir="$(cd "$output_dir" && pwd)"
         local filename
         filename="$(basename "$input_file")"
-        docker run --rm -v "$abs_dir:/data" plantuml/plantuml -tpng "/data/$filename"
+        MSYS_NO_PATHCONV=1 docker run --rm -v "$abs_dir:/data" plantuml/plantuml -tpng "/data/$filename"
     else
         echo "ERROR: No PlantUML renderer found." >&2
         echo "  Install one of:" >&2
