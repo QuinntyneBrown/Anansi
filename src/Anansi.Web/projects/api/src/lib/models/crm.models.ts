@@ -316,6 +316,8 @@ export interface QuoteItemDto {
 export interface CreateQuoteCommand {
   title: string;
   contactId?: string;
+  projectId?: string;
+  notes?: string;
   isTemplate: boolean;
   templateName?: string;
   items: CreateQuoteItemRequest[];
@@ -327,6 +329,14 @@ export interface CreateQuoteItemRequest {
   quantity: number;
   unitPriceCents: number;
   sortOrder: number;
+}
+
+export interface QuoteListParams {
+  status?: QuoteStatus;
+  search?: string;
+  isTemplate?: boolean;
+  page?: number;
+  pageSize?: number;
 }
 
 // --- Questionnaires ---
@@ -364,9 +374,11 @@ export interface CreateQuestionnaireCommand {
   title: string;
   description?: string;
   contactId?: string;
+  projectId?: string;
   allowMultipleSubmissions: boolean;
   expiryDays?: number;
   autoRemindersEnabled: boolean;
+  reminderIntervalDays?: number;
   isTemplate: boolean;
   templateName?: string;
   questions: CreateQuestionnaireQuestionRequest[];
@@ -385,6 +397,14 @@ export interface SubmitQuestionnaireResponseCommand {
   respondentEmail?: string;
   respondentName?: string;
   answersJson: string;
+}
+
+export interface QuestionnaireListParams {
+  status?: QuestionnaireStatus;
+  search?: string;
+  isTemplate?: boolean;
+  page?: number;
+  pageSize?: number;
 }
 
 // --- Projects ---

@@ -1,4 +1,5 @@
 using Anansi.Application.Features.CRM.Questionnaires;
+using Anansi.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,23 @@ public class QuestionnairesController : ControllerBase
 {
     private readonly IMediator _mediator;
     public QuestionnairesController(IMediator mediator) => _mediator = mediator;
+
+    [HttpGet]
+    public async Task<IActionResult> List(
+        [FromQuery] QuestionnaireStatus? status,
+        [FromQuery] string? search,
+        [FromQuery] bool? isTemplate,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 25,
+        CancellationToken ct = default)
+    {
+        var result = await _mediator.Send(
+            new ListQuestionnairesQuery(status, search, isTemplate, page, pageSize),
+            ct);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : StatusCode(result.StatusCode ?? 400, result.Error);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateQuestionnaireCommand command, CancellationToken ct)

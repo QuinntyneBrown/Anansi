@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 
@@ -18,7 +18,7 @@ interface NavItem {
       </div>
 
       <nav class="wb-sidebar__nav" role="navigation" aria-label="Builder navigation">
-        @for (item of navItems; track item.route) {
+        @for (item of navItems(); track item.route) {
           <button
             class="wb-sidebar__item"
             [class.wb-sidebar__item--active]="isActive(item.route)"
@@ -105,12 +105,26 @@ export class BuilderSidebarComponent implements OnInit, OnDestroy {
   private routerSub: Subscription | null = null;
 
   readonly currentRoute = signal('');
+  readonly currentWebsiteId = computed(() => {
+    const match = this.currentRoute().match(/^\/sites\/([^/]+)/);
+    return match ? match[1] : null;
+  });
 
-  readonly navItems: NavItem[] = [
-    { label: 'Templates', route: '/templates' },
-    { label: 'Pages', route: '/pages' },
-    { label: 'SEO Manager', route: '/seo' },
-  ];
+  readonly navItems = computed<NavItem[]>(() => {
+    const websiteId = this.currentWebsiteId();
+    if (!websiteId) {
+      return [{ label: 'Websites', route: '/sites' }];
+    }
+
+    return [
+      { label: 'Websites', route: '/sites' },
+      { label: 'Templates', route: `/sites/${websiteId}/templates` },
+      { label: 'Pages', route: `/sites/${websiteId}/pages` },
+      { label: 'Blog', route: `/sites/${websiteId}/blog` },
+      { label: 'SEO Manager', route: `/sites/${websiteId}/seo` },
+      { label: 'Analytics', route: `/sites/${websiteId}/analytics` },
+    ];
+  });
 
   ngOnInit(): void {
     this.currentRoute.set(this.router.url);
@@ -126,10 +140,14 @@ export class BuilderSidebarComponent implements OnInit, OnDestroy {
   }
 
   isActive(route: string): boolean {
+    if (route === '/sites') {
+      return this.currentRoute() === '/sites';
+    }
+
     return this.currentRoute().startsWith(route);
   }
 
   navigate(route: string): void {
-    this.router.navigate([route]);
+    this.router.navigateByUrl(route);
   }
 }

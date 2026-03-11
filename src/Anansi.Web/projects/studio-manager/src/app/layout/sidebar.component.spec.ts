@@ -34,6 +34,10 @@ describe('SidebarComponent', () => {
           { path: 'projects', component: DummyComponent },
           { path: 'calendar', component: DummyComponent },
           { path: 'bookings', component: DummyComponent },
+          { path: 'galleries', component: DummyComponent },
+          { path: 'store', component: DummyComponent },
+          { path: 'quotes', component: DummyComponent },
+          { path: 'questionnaires', component: DummyComponent },
           { path: 'documents', component: DummyComponent },
           { path: 'inbox', component: DummyComponent },
           { path: 'reports', component: DummyComponent },
@@ -60,8 +64,8 @@ describe('SidebarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have 9 nav items', () => {
-    expect(component.navItems.length).toBe(9);
+  it('should have 13 nav items', () => {
+    expect(component.navItems.length).toBe(13);
   });
 
   it('should have Dashboard as first nav item', () => {
@@ -89,24 +93,44 @@ describe('SidebarComponent', () => {
     expect(component.navItems[4].route).toBe('/bookings');
   });
 
-  it('should have Documents as sixth nav item', () => {
-    expect(component.navItems[5].label).toBe('Documents');
-    expect(component.navItems[5].route).toBe('/documents');
+  it('should have Galleries as sixth nav item', () => {
+    expect(component.navItems[5].label).toBe('Galleries');
+    expect(component.navItems[5].route).toBe('/galleries');
   });
 
-  it('should have Inbox as seventh nav item', () => {
-    expect(component.navItems[6].label).toBe('Inbox');
-    expect(component.navItems[6].route).toBe('/inbox');
+  it('should have Store as seventh nav item', () => {
+    expect(component.navItems[6].label).toBe('Store');
+    expect(component.navItems[6].route).toBe('/store');
   });
 
-  it('should have Reports as eighth nav item', () => {
-    expect(component.navItems[7].label).toBe('Reports');
-    expect(component.navItems[7].route).toBe('/reports');
+  it('should have Quotes as eighth nav item', () => {
+    expect(component.navItems[7].label).toBe('Quotes');
+    expect(component.navItems[7].route).toBe('/quotes');
+  });
+
+  it('should have Questionnaires as ninth nav item', () => {
+    expect(component.navItems[8].label).toBe('Questionnaires');
+    expect(component.navItems[8].route).toBe('/questionnaires');
+  });
+
+  it('should have Documents as tenth nav item', () => {
+    expect(component.navItems[9].label).toBe('Documents');
+    expect(component.navItems[9].route).toBe('/documents');
+  });
+
+  it('should have Inbox as eleventh nav item', () => {
+    expect(component.navItems[10].label).toBe('Inbox');
+    expect(component.navItems[10].route).toBe('/inbox');
+  });
+
+  it('should have Reports as twelfth nav item', () => {
+    expect(component.navItems[11].label).toBe('Reports');
+    expect(component.navItems[11].route).toBe('/reports');
   });
 
   it('should have Settings as last nav item', () => {
-    expect(component.navItems[8].label).toBe('Settings');
-    expect(component.navItems[8].route).toBe('/settings');
+    expect(component.navItems[12].label).toBe('Settings');
+    expect(component.navItems[12].route).toBe('/settings');
   });
 
   it('should initialize collapsed to false', () => {
@@ -181,7 +205,7 @@ describe('SidebarComponent', () => {
   it('should render sidebar-item components', () => {
     fixture.detectChanges();
     const items = fixture.nativeElement.querySelectorAll('lib-sidebar-item');
-    expect(items.length).toBe(9);
+    expect(items.length).toBe(13);
   });
 
   it('should render subtitle when not collapsed', () => {

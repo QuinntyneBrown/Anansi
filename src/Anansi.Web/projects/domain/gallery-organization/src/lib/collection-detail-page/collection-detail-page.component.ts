@@ -388,7 +388,7 @@ export class CollectionDetailPageComponent implements OnInit {
 
   getBreadcrumbs(collection: CollectionDto): BreadcrumbItem[] {
     return [
-      { label: 'Collections', href: '/collections' },
+      { label: 'Collections', href: '/galleries' },
       { label: collection.title },
     ];
   }

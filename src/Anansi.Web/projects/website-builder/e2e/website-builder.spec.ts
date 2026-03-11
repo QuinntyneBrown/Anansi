@@ -9,13 +9,13 @@ test.describe('Website Builder Shell', () => {
     await expect(app.sidebar).toBeVisible();
     await expect(app.sidebarLogo).toHaveText('Anansi');
     await expect(app.sidebarSubtitle).toHaveText(/Website Builder/i);
-    expect(await app.getSidebarItemCount()).toBe(3);
+    expect(await app.getSidebarItemCount()).toBe(1);
   });
 
-  test('should redirect root to templates', async ({ page }) => {
+  test('should redirect root to sites', async ({ page }) => {
     const app = new BuilderAppPage(page);
     await app.goto();
-    await expect(page).toHaveURL(/\/templates/);
+    await expect(page).toHaveURL(/\/sites/);
   });
 
   test('should render main content area', async ({ page }) => {
@@ -24,18 +24,24 @@ test.describe('Website Builder Shell', () => {
     await expect(app.mainContent).toBeVisible();
   });
 
+  test('should expose site workflow navigation when viewing a site', async ({ page }) => {
+    const app = new BuilderAppPage(page);
+    await app.navigateTo('/sites/ws-1/templates');
+    expect(await app.getSidebarItemCount()).toBe(6);
+  });
+
   test('should navigate to pages when sidebar item clicked', async ({ page }) => {
     const app = new BuilderAppPage(page);
-    await app.goto();
+    await app.navigateTo('/sites/ws-1/templates');
     await app.clickSidebarItem('Pages');
-    await expect(page).toHaveURL(/\/pages/);
+    await expect(page).toHaveURL(/\/sites\/ws-1\/pages/);
   });
 
   test('should navigate to SEO when sidebar item clicked', async ({ page }) => {
     const app = new BuilderAppPage(page);
-    await app.goto();
+    await app.navigateTo('/sites/ws-1/templates');
     await app.clickSidebarItem('SEO Manager');
-    await expect(page).toHaveURL(/\/seo/);
+    await expect(page).toHaveURL(/\/sites\/ws-1\/seo/);
   });
 });
 
@@ -45,7 +51,7 @@ test.describe('WEB-16.1.1: Template Gallery Desktop', () => {
 
   test('should show template thumbnails with category filters', async ({ page }) => {
     const app = new BuilderAppPage(page);
-    await app.navigateTo('/templates');
+    await app.navigateTo('/sites/ws-1/templates');
 
     await expect(app.sidebar).toBeVisible();
     await page.waitForSelector('.page, lib-spinner', { timeout: 10000 });
@@ -58,8 +64,8 @@ test.describe('WEB-16.1.2: Flex Editor Desktop', () => {
 
   test('should navigate to templates page', async ({ page }) => {
     const app = new BuilderAppPage(page);
-    await app.navigateTo('/templates');
-    await expect(page).toHaveURL(/\/templates/);
+    await app.navigateTo('/sites/ws-1/templates');
+    await expect(page).toHaveURL(/\/sites\/ws-1\/templates/);
   });
 });
 
@@ -69,7 +75,7 @@ test.describe('WEB-16.1.3: Page Management Desktop', () => {
 
   test('should show page list with action buttons', async ({ page }) => {
     const app = new BuilderAppPage(page);
-    await app.navigateTo('/pages');
+    await app.navigateTo('/sites/ws-1/pages');
 
     await expect(app.sidebar).toBeVisible();
     await page.waitForSelector('.page, lib-spinner', { timeout: 10000 });
@@ -80,10 +86,11 @@ test.describe('WEB-16.1.3: Page Management Desktop', () => {
 test.describe('WEB-16.2.1: Blog Editor Desktop', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('should navigate to templates page', async ({ page }) => {
+  test('should show blog manager page', async ({ page }) => {
     const app = new BuilderAppPage(page);
-    await app.navigateTo('/templates');
-    await expect(page).toHaveURL(/\/templates/);
+    await app.navigateTo('/sites/ws-1/blog');
+    await expect(page).toHaveURL(/\/sites\/ws-1\/blog/);
+    await page.waitForSelector('.page, lib-spinner', { timeout: 10000 });
   });
 });
 
@@ -93,7 +100,19 @@ test.describe('WEB-16.2.2: SEO Manager Desktop', () => {
 
   test('should show SEO manager with health indicators', async ({ page }) => {
     const app = new BuilderAppPage(page);
-    await app.navigateTo('/seo');
+    await app.navigateTo('/sites/ws-1/seo');
+
+    await expect(app.sidebar).toBeVisible();
+    await page.waitForSelector('.page, lib-spinner', { timeout: 10000 });
+  });
+});
+
+test.describe('WEB-16.2.3: Analytics Dashboard - Desktop', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('should show analytics dashboard shell', async ({ page }) => {
+    const app = new BuilderAppPage(page);
+    await app.navigateTo('/sites/ws-1/analytics');
 
     await expect(app.sidebar).toBeVisible();
     await page.waitForSelector('.page, lib-spinner', { timeout: 10000 });
