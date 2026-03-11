@@ -60,6 +60,57 @@ export const routes: Routes = [
     data: { title: 'Bookings', icon: 'bookings' },
   },
   {
+    path: 'galleries',
+    loadComponent: () =>
+      import('@domain/gallery-organization').then(
+        (m) => m.CollectionListPageComponent,
+      ),
+    data: { title: 'Galleries', icon: 'image' },
+  },
+  {
+    path: 'galleries/:collectionId',
+    loadComponent: () =>
+      import('@domain/gallery-organization').then(
+        (m) => m.CollectionDetailPageComponent,
+      ),
+    data: { title: 'Gallery Detail', icon: 'image' },
+  },
+  {
+    path: 'store',
+    redirectTo: 'store/products',
+    pathMatch: 'full',
+  },
+  {
+    path: 'store/products',
+    loadComponent: () =>
+      import('@domain/store-management').then(
+        (m) => m.ProductCatalogPageComponent,
+      ),
+    data: { title: 'Store Products', icon: 'store' },
+  },
+  {
+    path: 'store/orders',
+    loadComponent: () =>
+      import('@domain/store-management').then(
+        (m) => m.OrderManagementPageComponent,
+      ),
+    data: { title: 'Store Orders', icon: 'store' },
+  },
+  {
+    path: 'quotes',
+    loadComponent: () =>
+      import('./pages/quotes-page.component').then((m) => m.QuotesPageComponent),
+    data: { title: 'Quotes', icon: 'receipt' },
+  },
+  {
+    path: 'questionnaires',
+    loadComponent: () =>
+      import('./pages/questionnaires-page.component').then(
+        (m) => m.QuestionnairesPageComponent,
+      ),
+    data: { title: 'Questionnaires', icon: 'clipboard-list' },
+  },
+  {
     path: 'inbox',
     loadComponent: () =>
       import('@domain/inbox').then((m) => m.InboxPageComponent),

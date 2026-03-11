@@ -76,4 +76,22 @@ public class NotificationsController : ControllerBase
             return StatusCode(result.StatusCode ?? 400, new { error = result.Error });
         return Ok();
     }
+
+    [HttpPost("device-tokens")]
+    public async Task<IActionResult> RegisterDeviceToken([FromBody] RegisterDeviceTokenCommand command)
+    {
+        var result = await _mediator.Send(command);
+        if (!result.IsSuccess)
+            return StatusCode(result.StatusCode ?? 400, new { error = result.Error });
+        return Ok();
+    }
+
+    [HttpDelete("device-tokens")]
+    public async Task<IActionResult> UnregisterDeviceToken([FromBody] UnregisterDeviceTokenCommand command)
+    {
+        var result = await _mediator.Send(command);
+        if (!result.IsSuccess)
+            return StatusCode(result.StatusCode ?? 400, new { error = result.Error });
+        return Ok();
+    }
 }

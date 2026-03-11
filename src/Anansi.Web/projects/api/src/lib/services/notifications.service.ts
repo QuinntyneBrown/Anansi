@@ -7,7 +7,9 @@ import {
   NotificationDto,
   NotificationListParams,
   NotificationPreferencesDto,
+  RegisterDeviceTokenCommand,
   UnreadCountResponse,
+  UnregisterDeviceTokenCommand,
   UpdateNotificationPreferenceCommand,
 } from '../models/system.models';
 
@@ -66,6 +68,21 @@ export class NotificationsService {
     return this.http.put<void>(
       `${this.config.baseUrl}/api/notifications/preferences`,
       command,
+    );
+  }
+
+  registerDeviceToken(command: RegisterDeviceTokenCommand): Observable<void> {
+    return this.http.post<void>(
+      `${this.config.baseUrl}/api/notifications/device-tokens`,
+      command,
+    );
+  }
+
+  unregisterDeviceToken(command: UnregisterDeviceTokenCommand): Observable<void> {
+    return this.http.request<void>(
+      'DELETE',
+      `${this.config.baseUrl}/api/notifications/device-tokens`,
+      { body: command },
     );
   }
 }

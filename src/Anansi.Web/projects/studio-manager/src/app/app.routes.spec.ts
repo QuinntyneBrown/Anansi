@@ -65,6 +65,48 @@ describe('App Routes', () => {
     expect(route!.loadComponent).toBeDefined();
   });
 
+  it('should have a galleries route', () => {
+    const route = routes.find((r) => r.path === 'galleries');
+    expect(route).toBeTruthy();
+    expect(route!.loadComponent).toBeDefined();
+  });
+
+  it('should have a gallery detail route', () => {
+    const route = routes.find((r) => r.path === 'galleries/:collectionId');
+    expect(route).toBeTruthy();
+    expect(route!.loadComponent).toBeDefined();
+  });
+
+  it('should redirect store to store/products', () => {
+    const route = routes.find((r) => r.path === 'store');
+    expect(route).toBeTruthy();
+    expect(route!.redirectTo).toBe('store/products');
+  });
+
+  it('should have a store products route', () => {
+    const route = routes.find((r) => r.path === 'store/products');
+    expect(route).toBeTruthy();
+    expect(route!.loadComponent).toBeDefined();
+  });
+
+  it('should have a store orders route', () => {
+    const route = routes.find((r) => r.path === 'store/orders');
+    expect(route).toBeTruthy();
+    expect(route!.loadComponent).toBeDefined();
+  });
+
+  it('should have a quotes route', () => {
+    const route = routes.find((r) => r.path === 'quotes');
+    expect(route).toBeTruthy();
+    expect(route!.loadComponent).toBeDefined();
+  });
+
+  it('should have a questionnaires route', () => {
+    const route = routes.find((r) => r.path === 'questionnaires');
+    expect(route).toBeTruthy();
+    expect(route!.loadComponent).toBeDefined();
+  });
+
   it('should have an inbox route', () => {
     const route = routes.find((r) => r.path === 'inbox');
     expect(route).toBeTruthy();
@@ -120,6 +162,26 @@ describe('App Routes', () => {
     expect(route!.data!['title']).toBe('Bookings');
   });
 
+  it('should have title data on galleries route', () => {
+    const route = routes.find((r) => r.path === 'galleries');
+    expect(route!.data!['title']).toBe('Galleries');
+  });
+
+  it('should have title data on store products route', () => {
+    const route = routes.find((r) => r.path === 'store/products');
+    expect(route!.data!['title']).toBe('Store Products');
+  });
+
+  it('should have title data on quotes route', () => {
+    const route = routes.find((r) => r.path === 'quotes');
+    expect(route!.data!['title']).toBe('Quotes');
+  });
+
+  it('should have title data on questionnaires route', () => {
+    const route = routes.find((r) => r.path === 'questionnaires');
+    expect(route!.data!['title']).toBe('Questionnaires');
+  });
+
   it('should have title data on inbox route', () => {
     const route = routes.find((r) => r.path === 'inbox');
     expect(route!.data!['title']).toBe('Inbox');
@@ -137,6 +199,6 @@ describe('App Routes', () => {
 
   it('should have icon data on each route', () => {
     const routesWithIcon = routes.filter((r) => r.data && r.data['icon']);
-    expect(routesWithIcon.length).toBeGreaterThanOrEqual(9);
+    expect(routesWithIcon.length).toBeGreaterThanOrEqual(13);
   });
 });

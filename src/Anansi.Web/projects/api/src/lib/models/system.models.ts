@@ -70,6 +70,15 @@ export interface UnreadCountResponse {
   count: number;
 }
 
+export interface RegisterDeviceTokenCommand {
+  deviceToken: string;
+  platform: string;
+}
+
+export interface UnregisterDeviceTokenCommand {
+  deviceToken: string;
+}
+
 // --- Email ---
 
 export interface EmailConversationDto {
