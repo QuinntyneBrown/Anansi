@@ -2,12 +2,12 @@
 # Extracts inline PlantUML blocks from design.md files into separate .puml files
 # and updates the markdown to include image references to the rendered PNGs.
 #
-# Usage: ./scripts/extract-plantuml-from-sdd.sh [design.md ...]
+# Usage: ./eng/scripts/extract-plantuml-from-sdd.sh [design.md ...]
 #   No args = process all docs/software-design-documents/*/design.md
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SDD_DIR="$REPO_ROOT/docs/software-design-documents"
 
 process_file() {
@@ -99,5 +99,5 @@ for f in "${files[@]}"; do
 done
 
 echo ""
-echo "Extraction complete. Run 'scripts/render-plantuml.sh' to generate PNG images."
+echo "Extraction complete. Run 'eng/scripts/render-plantuml.sh' to generate PNG images."
 echo "Configure git hooks: git config core.hooksPath .githooks"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Renders all .puml files to .png using PlantUML.
 # Usage:
-#   ./scripts/render-plantuml.sh              # render all .puml files in the repo
-#   ./scripts/render-plantuml.sh file1.puml file2.puml  # render specific files
+#   ./eng/scripts/render-plantuml.sh              # render all .puml files in the repo
+#   ./eng/scripts/render-plantuml.sh file1.puml file2.puml  # render specific files
 #
 # Requires: Java runtime + plantuml.jar (set PLANTUML_JAR env var)
 #   OR: Docker with plantuml/plantuml image
@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 # --- Locate PlantUML renderer ---
 render_puml() {

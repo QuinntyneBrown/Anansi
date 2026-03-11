@@ -2,7 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$REPO_ROOT"
 
 # Colors
 GREEN='\033[0;32m'
@@ -14,7 +15,7 @@ usage() {
   cat <<EOF
 Anansi Development Helper
 
-Usage: ./dev.sh <command> [options]
+Usage: ./eng/scripts/dev.sh <command> [options]
 
 Commands:
   up            Start PostgreSQL (and optionally pgAdmin)
@@ -29,11 +30,11 @@ Apps: studio-manager, client-gallery, online-store,
       website-builder, booking-site, mobile-gallery
 
 Examples:
-  ./dev.sh up                  # Start database
-  ./dev.sh up --tools          # Start database + pgAdmin
-  ./dev.sh api                 # Run API on http://localhost:5236
-  ./dev.sh app                 # Serve studio-manager on http://localhost:4200
-  ./dev.sh app client-gallery  # Serve client-gallery on http://localhost:4200
+  ./eng/scripts/dev.sh up                  # Start database
+  ./eng/scripts/dev.sh up --tools          # Start database + pgAdmin
+  ./eng/scripts/dev.sh api                 # Run API on http://localhost:5236
+  ./eng/scripts/dev.sh app                 # Serve studio-manager on http://localhost:4200
+  ./eng/scripts/dev.sh app client-gallery  # Serve client-gallery on http://localhost:4200
 EOF
 }
 
