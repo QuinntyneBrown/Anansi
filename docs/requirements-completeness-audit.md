@@ -40,9 +40,9 @@ The repository remains broad and requirement-aware, with the strongest completen
 
 The biggest change since the prior audit is frontend composition. The previous finding that four of the six top-level Angular apps were empty placeholder shells is no longer accurate. All six top-level Angular apps now have non-empty route tables, and `booking-site`, `online-store`, `website-builder`, and `mobile-gallery` now render real shell components plus routed domain pages. Each of those apps also has route unit tests and Playwright shell/navigation coverage.
 
-That materially improves evidence for `F15`, `F16` to `F22`, `F25`, `F36`, and `F44`. The remaining frontend gap is narrower: the apps are now assembled, but several still expose only a subset of the workflows described in the requirements. Website Builder currently routes only template/page/SEO surfaces, store routing is shopper-focused rather than full management coverage, gallery-admin routes are still absent from `studio-manager`, and several flows are covered mainly by shell-level or smoke-level tests rather than full end-to-end behavior.
+That materially improves evidence for `F15`, `F16` to `F22`, `F25`, `F28`, `F29`, `F36`, `F40`, and `F44`. The remaining frontend gap is narrower: the apps are now assembled and several previously missing admin surfaces are now routed, but deeper workflow breadth is still incomplete in places. Website Builder now exposes site list, blog, and analytics routes in addition to template/page/SEO surfaces, and `studio-manager` now routes gallery organization, store admin, quotes, and questionnaires. The remaining weakness is deeper end-to-end behavior rather than shell composition.
 
-Several advanced requirement areas still stop at interface/stub level rather than concrete implementation: Lightroom plugin, concrete print-lab adapters, push/device registration, template-management API breadth, and the full business financing lifecycle.
+Several advanced requirement areas still stop at interface/stub level rather than concrete implementation: Lightroom plugin, concrete print-lab adapters, broader template-management API breadth, and the full business financing lifecycle.
 
 ## Evidence Snapshot
 
@@ -56,9 +56,9 @@ Several advanced requirement areas still stop at interface/stub level rather tha
 
 Build/test caveat:
 
-- This refresh focused on repository completeness and UI composition; it did not re-run the full root build/test matrix.
-- The repo still has no tracked `global.json`, so SDK selection remains machine-dependent.
-- The prior audit observed root build instability under floating SDK selection and file-access issues; that reproducibility concern remains open until a clean root build/test is re-verified.
+- The repo now includes a tracked `global.json` (`9.0.308`), which removes the prior floating-SDK ambiguity.
+- Targeted verification succeeded for `dotnet build src/Anansi.Api/Anansi.Api.csproj -v:m`, `npm run build -- website-builder`, and `npm run build -- studio-manager`.
+- This refresh still did not re-run the full root build/test matrix, so complete repository-wide reproducibility is improved but not fully re-proven.
 
 ## Major Findings
 
@@ -78,24 +78,24 @@ This materially improves repository evidence for public booking, storefront, web
 
 The repo now exposes more complete app entry points, but several requirement areas remain only partially surfaced:
 
-- `website-builder` routes only `templates`, `pages`, and `seo`; blog, richer editor tooling, hosting/domain management, and analytics are not surfaced as top-level app routes
-- `online-store` routes shopper flows (`shop`, `cart`, `checkout`), but store-management/admin surfaces are not composed into a top-level app
+- `website-builder` now routes site list, templates, pages, blog, SEO, and analytics, but richer editor tooling and hosting/domain management remain incomplete
+- `online-store` still focuses on shopper flows (`shop`, `cart`, `checkout`), although store-management/admin surfaces are now composed under `studio-manager`
 - `booking-site` routes session selection and booking form pages, but broader booking confirmation/payment/intake behavior is only lightly evidenced at app level
-- `studio-manager` still does not route photographer-facing gallery organization/admin, quotes, or questionnaires
+- the previous missing-route gap for gallery organization/admin, quotes, and questionnaires in `studio-manager` is closed, but those routed flows are still thin compared with the full requirement set
 
 ### 3. Integration-heavy and financing features remain uneven
 
 The repository models many integrations, but several remain partial:
 
 - `F12` print lab integration exposes abstractions and handlers but no concrete lab adapter/service implementation under `src/`
-- `F40` push notifications expose `IPushNotificationService`, but there is no concrete device-token registration/controller/service flow under `src/`
+- `F40` push notifications now include concrete device-token registration/unregistration API and application flows, but broader delivery/provider breadth is still only partially evidenced
 - `F42` Lightroom plugin still stops at `ILightroomSyncService` and test/docs references; there is no controller, command/query surface, or plugin code
 - `F43` webhooks/API keys/custom code exist partially, but the broader template-management API described in requirements is not present
 - `F32` business financing includes basic apply/get flows, but not accept/decline/history/repayment lifecycle implementation
 
-### 4. Reproducibility is still weaker than the docs imply
+### 4. Reproducibility is improved, but full-matrix verification is still pending
 
-`README.md` describes straightforward `dotnet build` / `dotnet test` usage, but repository verification remains weaker than it should be because SDK pinning is still absent and a clean root build/test has not yet been re-established.
+`README.md` is in a better position than in the prior audit because SDK pinning is now tracked and targeted backend/frontend builds were re-verified. The remaining reproducibility gap is that the full repo-wide build/test matrix has not yet been rerun end to end.
 
 ## Feature Coverage
 
@@ -112,8 +112,8 @@ The repository models many integrations, but several remain partial:
   Gap: no clearly wired photographer-facing gallery admin app route surface
 
 - `F04 Gallery Organization`: `Medium`
-  Evidence: `CollectionSetsController`, `CollectionPresetsController`, `tests/Anansi.Tests.Acceptance/Galleries/OrganizationTests.cs`, `src/Anansi.Web/projects/domain/gallery-organization`
-  Gap: domain library exists but is not surfaced by a top-level routed gallery admin app
+  Evidence: `CollectionSetsController`, `CollectionPresetsController`, `tests/Anansi.Tests.Acceptance/Galleries/OrganizationTests.cs`, `src/Anansi.Web/projects/domain/gallery-organization`, routed `studio-manager` gallery pages
+  Gap: routed gallery admin composition now exists, but deeper organization/publish/download workflow breadth is still incomplete
 
 - `F05 Gallery Design & Customization`: `Medium`
   Evidence: gallery design/language tests, gallery entities/settings, branding and website typography infrastructure
@@ -164,16 +164,16 @@ The repository models many integrations, but several remain partial:
 ### Website Builder
 
 - `F16 Website Builder Core`: `Medium`
-  Evidence: `WebsitesController`, `WebsiteTemplatesController`, website application features, `@domain/website-builder` library, routed `website-builder` shell
-  Gap: the top-level app now exists, but it currently exposes only template/page/SEO surfaces rather than the broader builder toolset in the requirements
+  Evidence: `WebsitesController`, `WebsiteTemplatesController`, website application features, `@domain/website-builder` library, routed `website-builder` shell, site list page
+  Gap: the top-level app now exposes more workflow depth, but richer editor tooling and site operations remain incomplete
 
 - `F17 Website Pages & Content`: `Medium`
   Evidence: `WebsitePagesController`, `PageElementsController`, page/template tests, `PageManagerComponent`, routed `pages` app route
   Gap: full editor composition is still limited
 
 - `F18 Blog Platform`: `Medium`
-  Evidence: `BlogController`, website blog tests, blog DTOs/entities
-  Gap: no composed blog management UI in the top-level website builder app
+  Evidence: `BlogController`, website blog tests, blog DTOs/entities, routed `blog` page in `website-builder`
+  Gap: blog authoring/editorial workflow breadth remains incomplete
 
 - `F19 Website Design & Typography`: `Medium`
   Evidence: `WebsiteTypographyController`, typography features/tests, template/domain website-builder components
@@ -184,12 +184,12 @@ The repository models many integrations, but several remain partial:
   Gap: SEO surface is now routed, but wider discovery/optimization breadth is not fully evidenced end to end
 
 - `F21 Website Hosting & Domains`: `Medium`
-  Evidence: websites/custom domain/password/branding tests and models
-  Gap: routed/published website management UX is incomplete at app level
+  Evidence: websites/custom domain/password/branding tests and models, website list/publish management UI
+  Gap: hosting/domain setup and management breadth is still incomplete at app level
 
 - `F22 Website Analytics`: `Medium`
-  Evidence: analytics DTOs/entities, website tests, integration config endpoints
-  Gap: analytics UI is not surfaced in the current website-builder routes
+  Evidence: analytics DTOs/entities, website tests, integration config endpoints, routed analytics page in `website-builder`
+  Gap: analytics depth remains lighter than the requirement breadth
 
 ### Studio Manager / CRM / Booking / Documents / Finance
 
@@ -212,12 +212,12 @@ The repository models many integrations, but several remain partial:
   Gap: installment/deposit/reminder/template breadth is only partially visible in surfaced UI
 
 - `F28 Quotes & Proposals`: `Medium`
-  Evidence: `QuotesController`, quote tests, quote DTOs/entities
-  Gap: no obvious quote UI in routed Angular apps
+  Evidence: `QuotesController`, quote tests, quote DTOs/entities, list/create application flow, routed `studio-manager` quotes page
+  Gap: proposal authoring, approval, and richer workflow depth remain incomplete
 
 - `F29 Questionnaires`: `Medium`
-  Evidence: `QuestionnairesController`, questionnaire tests, questionnaire DTOs/entities
-  Gap: no obvious questionnaire builder UI in routed Angular apps
+  Evidence: `QuestionnairesController`, questionnaire tests, questionnaire DTOs/entities, list/create application flow, routed `studio-manager` questionnaires page
+  Gap: questionnaire builder and advanced delivery workflow breadth remain incomplete
 
 - `F30 Payment Processing`: `Medium`
   Evidence: `PaymentsController`, finance/payment tests, Stripe/PayPal abstractions, offline/gift card flows
@@ -260,8 +260,8 @@ The repository models many integrations, but several remain partial:
   Evidence: branding/custom domain tests, DTOs/entities/configuration
 
 - `F40 Notification System`: `Medium`
-  Evidence: `NotificationsController`, notification tests, notification preference flows, notification panel/settings UI, `IPushNotificationService`
-  Gap: no concrete device-token entity/controller/push registration flow under `src/`
+  Evidence: `NotificationsController`, notification tests, notification preference flows, notification panel/settings UI, `IPushNotificationService`, concrete device-token register/unregister commands and API routes
+  Gap: broader provider delivery breadth and end-to-end push verification remain incomplete
 
 - `F41 Integrations Hub`: `Medium`
   Evidence: `IntegrationsController`, integration tests, interfaces for Google Calendar/Instagram/PayPal/webhooks/labs
@@ -312,26 +312,26 @@ The repository models many integrations, but several remain partial:
 
 ## Overall Assessment
 
-At repository level, this remains a strong backend-first implementation with meaningful test coverage and a richer Angular application layer than in the prior pass. It is still not complete against the full requirements set, but the frontend evidence has improved materially.
+At repository level, this remains a strong backend-first implementation with meaningful test coverage and a richer Angular application layer than in the prior pass. It is still not complete against the full requirements set, but the frontend evidence has improved materially again and the build story is less fragile than in the previous audit.
 
 The most important gaps are:
 
-1. Expanding the new top-level Angular shells into fuller requirement workflows
+1. Expanding the newly routed workflows into deeper end-to-end product behavior
 2. Completing advanced integrations and the financing lifecycle
-3. Surfacing missing photographer/admin routes such as gallery organization, quotes, and questionnaires
-4. Restoring reproducible root build/test verification with SDK pinning
+3. Filling out builder/booking/store-admin breadth beyond the current routed slices
+4. Re-running and documenting a full repo-wide build/test matrix
 
 If judged as a requirements-complete product repository today, the codebase is best described as:
 
 - `Backend/API completeness`: strong
 - `Frontend shell completeness`: materially improved
-- `Frontend workflow completeness`: partial
+- `Frontend workflow completeness`: improved but still partial
 - `Integration completeness`: partial
 - `Overall requirements completeness`: medium
 
 ## Recommended Next Steps
 
-1. Add a tracked `global.json` and re-establish a clean root build/test path.
-2. Expand the newly composed apps from shell routing into full workflows, especially Website Builder editor/blog/analytics, store order completion/admin, booking payment/confirmation, and gallery-admin tooling.
-3. Surface missing admin workflows in routed apps, especially gallery organization, quotes, and questionnaires.
-4. Close the low-evidence gaps first: Lightroom plugin, concrete print-lab adapters, device-token/push flow, template-management API breadth, and financing lifecycle.
+1. Re-run and document a full repo-wide build/test matrix now that SDK pinning and Angular workspace alias resolution are in place.
+2. Expand the newly routed workflows into deeper feature sets, especially Website Builder editor/hosting/domain flows, store admin/order-completion depth, and booking payment/confirmation/intake.
+3. Add stronger automated coverage for the new routed admin surfaces and notification device-token flow.
+4. Close the remaining low-evidence gaps first: Lightroom plugin, concrete print-lab adapters, template-management API breadth, and financing lifecycle.
