@@ -2,6 +2,7 @@ using System.Text;
 using Anansi.Application.Interfaces;
 using Anansi.Infrastructure.Identity;
 using Anansi.Infrastructure.Persistence;
+using Anansi.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -74,6 +75,20 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ITokenService, TokenService>();
+
+        // External service stubs (swap for real implementations when ready)
+        services.AddScoped<IEmailService, StubEmailService>();
+        services.AddScoped<IStorageService, StubStorageService>();
+        services.AddScoped<IPaymentService, StubPaymentService>();
+        services.AddScoped<IInstagramService, StubInstagramService>();
+        services.AddScoped<ILabIntegrationService, StubLabIntegrationService>();
+        services.AddScoped<IPushNotificationService, StubPushNotificationService>();
+        services.AddScoped<IPayPalService, StubPayPalService>();
+        services.AddScoped<ILightroomSyncService, StubLightroomSyncService>();
+        services.AddScoped<IVideoCallService, StubVideoCallService>();
+        services.AddScoped<IWebhookService, StubWebhookService>();
+        services.AddScoped<IGoogleCalendarService, StubGoogleCalendarService>();
+        services.AddScoped<ICdnService, StubCdnService>();
 
         return services;
     }

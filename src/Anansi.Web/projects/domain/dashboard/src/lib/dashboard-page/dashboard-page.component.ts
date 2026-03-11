@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of, catchError } from 'rxjs';
 import {
   PaymentsService,
   BookingsService,
@@ -265,10 +265,18 @@ export class DashboardPageComponent implements OnInit {
     this.loading.set(true);
     this.error.set(false);
 
+    const emptyDashboard: RevenueDashboardDto = {
+      totalRevenueCents: 0,
+      pendingInvoiceCount: 0,
+      paidInvoiceCount: 0,
+      overdueInvoiceCount: 0,
+    } as RevenueDashboardDto;
+    const emptyPage = { items: [], totalCount: 0, page: 1, pageSize: 5, totalPages: 0 };
+
     forkJoin({
-      dashboard: this.paymentsService.getDashboard(),
-      sessions: this.bookingsService.list({ pageSize: 5 }),
-      activity: this.notificationsService.list({ pageSize: 5 }),
+      dashboard: this.paymentsService.getDashboard().pipe(catchError(() => of(emptyDashboard))),
+      sessions: this.bookingsService.list({ pageSize: 5 }).pipe(catchError(() => of(emptyPage))),
+      activity: this.notificationsService.list({ pageSize: 5 }).pipe(catchError(() => of(emptyPage))),
     }).subscribe({
       next: (result) => {
         this.dashboard.set(result.dashboard);
