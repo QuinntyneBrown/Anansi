@@ -1,20 +1,17 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SidebarComponent } from './layout/sidebar.component';
-import { TopNavComponent } from './layout/top-nav.component';
-import { MobileTabBarComponent } from './layout/mobile-tab-bar.component';
 
 @Component({
   selector: 'sm-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, TopNavComponent, MobileTabBarComponent],
-  templateUrl: './app.html',
-  styleUrl: './app.scss',
+  imports: [RouterOutlet],
+  template: `<router-outlet />`,
+  styles: `
+    :host {
+      display: block;
+      min-height: 100vh;
+      background: #1A1A1C;
+    }
+  `,
 })
-export class App {
-  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
-
-  onMenuToggle(): void {
-    this.sidebar?.openMobile();
-  }
-}
+export class App {}

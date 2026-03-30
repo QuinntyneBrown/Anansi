@@ -85,7 +85,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
     lib-card {
       display: block;
       width: 100%;
-      max-width: 440px;
+      max-width: 480px;
     }
 
     .sign-in__header {
@@ -95,9 +95,9 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
     .sign-in__title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 600;
-      color: #F5F5F0;
+      color: #C9A962;
       margin: 0 0 8px;
     }
 
@@ -122,7 +122,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
     .sign-in__form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
     }
 
     .sign-in__forgot-link {
@@ -192,6 +192,23 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
     .sign-in__link:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .sign-in {
+        padding: 0;
+        align-items: stretch;
+      }
+
+      lib-card {
+        max-width: 100%;
+        padding: 28px;
+        border-radius: 0;
+      }
+
+      .sign-in__form {
+        gap: 24px;
+      }
     }
   `,
 })

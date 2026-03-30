@@ -2,6 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideApiConfig } from 'api';
+import { icons, LUCIDE_ICONS, LucideIconProvider } from 'lucide-angular';
 
 import { routes } from './app.routes';
 
@@ -11,5 +12,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptorsFromDi()),
     provideApiConfig(''),
+    { provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons) },
   ],
 };

@@ -184,18 +184,18 @@ export class SidebarComponent implements OnInit, OnDestroy {
   readonly unreadCount = signal(0);
 
   readonly navItems: NavItem[] = [
-    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-    { label: 'Contacts', icon: 'contacts', route: '/contacts' },
-    { label: 'Projects', icon: 'projects', route: '/projects' },
+    { label: 'Dashboard', icon: 'layout-dashboard', route: '/dashboard' },
+    { label: 'Contacts', icon: 'users', route: '/contacts' },
+    { label: 'Projects', icon: 'folder-kanban', route: '/projects' },
     { label: 'Calendar', icon: 'calendar', route: '/calendar' },
-    { label: 'Bookings', icon: 'bookings', route: '/bookings' },
+    { label: 'Bookings', icon: 'calendar-check', route: '/bookings' },
     { label: 'Galleries', icon: 'image', route: '/galleries' },
-    { label: 'Store', icon: 'store', route: '/store' },
+    { label: 'Store', icon: 'shopping-bag', route: '/store' },
     { label: 'Quotes', icon: 'receipt', route: '/quotes' },
     { label: 'Questionnaires', icon: 'clipboard-list', route: '/questionnaires' },
-    { label: 'Documents', icon: 'documents', route: '/documents' },
+    { label: 'Documents', icon: 'file-text', route: '/documents' },
     { label: 'Inbox', icon: 'inbox', route: '/inbox' },
-    { label: 'Reports', icon: 'reports', route: '/reports' },
+    { label: 'Reports', icon: 'bar-chart-3', route: '/reports' },
     { label: 'Settings', icon: 'settings', route: '/settings' },
   ];
 

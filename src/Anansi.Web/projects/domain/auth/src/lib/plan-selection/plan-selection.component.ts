@@ -1,11 +1,12 @@
 import { Component, inject, signal, output, OnInit } from '@angular/core';
 import { PlansService, PlanDto } from 'api';
 import { CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent } from 'components';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'lib-plan-selection',
   standalone: true,
-  imports: [CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent],
+  imports: [CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent, LucideAngularModule],
   template: `
     <div class="plan-selection">
       <div class="plan-selection__progress">
@@ -48,7 +49,7 @@ import { CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent } from
                 <ul class="plan-card__features">
                   @for (gate of plan.featureGates; track gate.id) {
                     <li class="plan-card__feature">
-                      <span class="plan-card__check">&#10003;</span>
+                      <lucide-icon class="plan-card__check" name="check" [size]="14"></lucide-icon>
                       {{ gate.description ?? gate.featureKey }}
                     </li>
                   }
@@ -70,7 +71,7 @@ import { CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent } from
     .plan-selection {
       min-height: 100vh;
       background: #1A1A1C;
-      padding: 48px 24px;
+      padding: 48px 60px;
     }
 
     .plan-selection__progress {
@@ -196,7 +197,6 @@ import { CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent } from
 
     .plan-card__check {
       color: #6E9E6E;
-      font-size: 14px;
       flex-shrink: 0;
     }
 
@@ -207,6 +207,17 @@ import { CardComponent, ButtonComponent, BadgeComponent, SpinnerComponent } from
     .plan-card lib-button ::ng-deep .btn {
       width: 100%;
       justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .plan-selection {
+        padding: 32px 24px;
+      }
+
+      .plan-selection__grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
     }
   `,
 })

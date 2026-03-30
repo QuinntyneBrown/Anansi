@@ -13,6 +13,12 @@ export const routes: Routes = [
     data: { title: 'Gallery' },
   },
   {
+    path: 'gallery/:collectionId/cover',
+    loadComponent: () =>
+      import('@domain/gallery-client').then((m) => m.CollectionCoverComponent),
+    data: { title: 'Gallery Cover' },
+  },
+  {
     path: 'gallery/:collectionId/favorites',
     loadComponent: () =>
       import('@domain/gallery-client').then((m) => m.FavoritesPageComponent),

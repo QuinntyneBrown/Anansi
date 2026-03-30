@@ -80,7 +80,7 @@ import {
             </lib-table-header-row>
             @for (tx of transactions(); track tx.id) {
               <lib-table-data-row>
-                <span class="col-client">{{ tx.contactId ?? 'N/A' }}</span>
+                <span class="col-client">{{ tx.contactId ? 'Client' : 'N/A' }}</span>
                 <span class="col-desc">{{ tx.description ?? '-' }}</span>
                 <span class="col-date">{{ tx.createdAt | date:'mediumDate' }}</span>
                 <span class="col-amount">{{ formatCurrency(tx.amountCents) }}</span>
@@ -203,8 +203,17 @@ export class RevenueDashboardPageComponent implements OnInit {
   readonly transactions = signal<PaymentRecordDto[]>([]);
   readonly loading = signal(true);
   readonly error = signal(false);
-  readonly dateFrom = signal('Jan 1, 2026');
-  readonly dateTo = signal('Mar 10, 2026');
+  readonly dateFrom = signal(RevenueDashboardPageComponent.computeYearStart());
+  readonly dateTo = signal(RevenueDashboardPageComponent.computeToday());
+
+  private static computeYearStart(): string {
+    const now = new Date();
+    return new Date(now.getFullYear(), 0, 1).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  private static computeToday(): string {
+    return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
 
   readonly barHeights = computed<number[]>(() => {
     const dash = this.dashboard();

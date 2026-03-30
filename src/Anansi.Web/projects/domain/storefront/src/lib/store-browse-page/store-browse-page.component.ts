@@ -7,12 +7,6 @@ import {
   TabItem,
 } from 'components';
 
-export interface CartItem {
-  product: ProductDto;
-  variationId: string;
-  quantity: number;
-}
-
 @Component({
   selector: 'lib-store-browse-page',
   standalone: true,

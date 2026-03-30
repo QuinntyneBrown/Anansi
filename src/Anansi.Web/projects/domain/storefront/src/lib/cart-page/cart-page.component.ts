@@ -1,16 +1,11 @@
-import { Component, input, output, computed } from '@angular/core';
-import { ProductDto } from 'api';
+import { Component, inject, computed } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   CardComponent,
   ButtonComponent,
   EmptyStateComponent,
 } from 'components';
-
-export interface CartItem {
-  product: ProductDto;
-  variationId: string;
-  quantity: number;
-}
+import { CartService, CartItem } from '../cart/cart.service';
 
 @Component({
   selector: 'lib-cart-page',
@@ -37,6 +32,19 @@ export interface CartItem {
             @for (item of cartItems(); track item.variationId; let i = $index) {
               <lib-card>
                 <div class="cart-item">
+                  <div class="item-thumbnail">
+                    @if (item.product.previewImageUrl) {
+                      <img
+                        class="thumbnail-img"
+                        [src]="item.product.previewImageUrl"
+                        [alt]="item.product.name"
+                      />
+                    } @else {
+                      <div class="thumbnail-placeholder">
+                        <span class="placeholder-icon">&#128247;</span>
+                      </div>
+                    }
+                  </div>
                   <div class="item-details">
                     <h3 class="item-name">{{ item.product.name }}</h3>
                     <p class="item-variation">{{ getVariationName(item) }}</p>
@@ -46,21 +54,21 @@ export interface CartItem {
                     <div class="quantity-controls">
                       <button
                         class="qty-btn"
-                        (click)="decrementQuantity.emit(i)"
+                        (click)="onDecrement(i)"
                         [disabled]="item.quantity <= 1"
                         aria-label="Decrease quantity"
                       >-</button>
                       <span class="qty-value">{{ item.quantity }}</span>
                       <button
                         class="qty-btn"
-                        (click)="incrementQuantity.emit(i)"
+                        (click)="onIncrement(i)"
                         aria-label="Increase quantity"
                       >+</button>
                     </div>
                     <span class="item-total">{{ formatPrice(getLineTotal(item)) }}</span>
                     <button
                       class="remove-btn"
-                      (click)="removeItem.emit(i)"
+                      (click)="onRemove(i)"
                       aria-label="Remove item"
                     >Remove</button>
                   </div>
@@ -88,7 +96,7 @@ export interface CartItem {
                 <span class="summary-value total-price">{{ formatPrice(subtotal()) }}</span>
               </div>
               <div class="checkout-action">
-                <lib-button variant="primary" (clicked)="proceedToCheckout.emit()">
+                <lib-button variant="primary" (clicked)="onProceedToCheckout()">
                   Proceed to Checkout
                 </lib-button>
               </div>
@@ -102,7 +110,7 @@ export interface CartItem {
     .page {
       background: #1A1A1C;
       min-height: 100vh;
-      padding: 24px;
+      padding: 32px;
     }
 
     .page-header {
@@ -111,15 +119,15 @@ export interface CartItem {
 
     .page-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 32px;
-      font-weight: 600;
+      font-size: 24px;
+      font-weight: 500;
       color: #F5F5F0;
       margin: 0;
     }
 
     .cart-layout {
       display: flex;
-      gap: 24px;
+      gap: 32px;
       align-items: flex-start;
     }
 
@@ -138,9 +146,36 @@ export interface CartItem {
 
     .cart-item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       gap: 16px;
+    }
+
+    .item-thumbnail {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .thumbnail-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumbnail-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #1A1A1C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .placeholder-icon {
+      font-size: 24px;
+      opacity: 0.3;
     }
 
     .item-details {
@@ -305,12 +340,10 @@ export interface CartItem {
   `,
 })
 export class CartPageComponent {
-  readonly cartItems = input<CartItem[]>([]);
+  private readonly cartService = inject(CartService);
+  private readonly router = inject(Router);
 
-  readonly incrementQuantity = output<number>();
-  readonly decrementQuantity = output<number>();
-  readonly removeItem = output<number>();
-  readonly proceedToCheckout = output<void>();
+  readonly cartItems = this.cartService.items;
 
   readonly itemCount = computed(() =>
     this.cartItems().reduce((sum, item) => sum + item.quantity, 0),
@@ -336,5 +369,27 @@ export class CartPageComponent {
 
   formatPrice(cents: number): string {
     return `$${(cents / 100).toFixed(2)}`;
+  }
+
+  onIncrement(index: number): void {
+    const item = this.cartItems()[index];
+    if (item) {
+      this.cartService.updateQuantity(index, item.quantity + 1);
+    }
+  }
+
+  onDecrement(index: number): void {
+    const item = this.cartItems()[index];
+    if (item && item.quantity > 1) {
+      this.cartService.updateQuantity(index, item.quantity - 1);
+    }
+  }
+
+  onRemove(index: number): void {
+    this.cartService.removeItem(index);
+  }
+
+  onProceedToCheckout(): void {
+    this.router.navigate(['/checkout']);
   }
 }

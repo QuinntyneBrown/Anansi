@@ -2,11 +2,12 @@ import { Component, inject, signal, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService, ForgotPasswordCommand, ResetPasswordCommand } from 'api';
 import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent } from 'components';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'lib-password-recovery',
   standalone: true,
-  imports: [FormsModule, CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent],
+  imports: [FormsModule, CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent, LucideAngularModule],
   template: `
     <div class="recovery">
       <lib-card>
@@ -51,7 +52,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
           @case ('check-email') {
             <div class="recovery__header">
-              <div class="recovery__icon">&#9993;</div>
+              <div class="recovery__icon"><lucide-icon name="mail" [size]="48"></lucide-icon></div>
               <h2 class="recovery__check-title">Check your email</h2>
               <p class="recovery__description">
                 We've sent a password reset link to <strong>{{ email }}</strong>.
@@ -169,8 +170,8 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
     }
 
     .recovery__icon {
-      font-size: 48px;
       margin-bottom: 16px;
+      color: #C9A962;
     }
 
     .recovery__check-title {

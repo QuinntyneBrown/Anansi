@@ -3,11 +3,12 @@ import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Subscription, filter, map, mergeMap } from 'rxjs';
 import { NotificationsService, UnreadCountResponse } from 'api';
 import { AvatarComponent } from 'components';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'sm-top-nav',
   standalone: true,
-  imports: [AvatarComponent],
+  imports: [AvatarComponent, LucideAngularModule],
   template: `
     <header class="topnav">
       <div class="topnav__left">
@@ -25,10 +26,7 @@ import { AvatarComponent } from 'components';
           (click)="notificationsClicked.emit()"
           aria-label="Notifications"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F5F0" stroke-width="2">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
+          <lucide-icon name="bell" [size]="20" color="#F5F5F0"></lucide-icon>
           @if (unreadCount() > 0) {
             <span class="topnav__notification-badge">{{ unreadCount() > 99 ? '99+' : unreadCount() }}</span>
           }

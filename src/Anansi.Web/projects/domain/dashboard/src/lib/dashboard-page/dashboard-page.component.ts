@@ -87,6 +87,7 @@ function notificationDotColor(category: string): string {
     AvatarComponent,
     BadgeComponent,
     SpinnerComponent,
+    ButtonComponent,
   ],
   template: `
     @if (loading()) {
@@ -103,6 +104,16 @@ function notificationDotColor(category: string): string {
         <lib-metric-card [value]="'' + upcomingSessions().length" label="Sessions" />
         <lib-metric-card [value]="'' + dashboard()!.pendingInvoiceCount" label="Pending Invoices" />
         <lib-metric-card [value]="'' + newLeadsCount()" label="New Leads" />
+      </div>
+
+      <div class="quick-actions-card">
+        <h3 class="card-title">Quick Actions</h3>
+        <div class="quick-actions-buttons">
+          <lib-button variant="secondary" (clicked)="navigateTo('/documents/invoices/new')">New Invoice</lib-button>
+          <lib-button variant="secondary" (clicked)="navigateTo('/documents/contracts/new')">New Contract</lib-button>
+          <lib-button variant="secondary" (clicked)="navigateTo('/contacts/new')">Add Contact</lib-button>
+          <lib-button variant="secondary" (clicked)="navigateTo('/calendar')">New Booking</lib-button>
+        </div>
       </div>
 
       <div class="two-column">
@@ -163,6 +174,18 @@ function notificationDotColor(category: string): string {
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       margin-bottom: 24px;
+    }
+    .quick-actions-card {
+      background: #242426;
+      border: 1px solid #3A3A3C;
+      border-radius: 20px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .quick-actions-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
     }
     .two-column {
       display: grid;
@@ -246,6 +269,7 @@ function notificationDotColor(category: string): string {
   `,
 })
 export class DashboardPageComponent implements OnInit {
+  private readonly router = inject(Router);
   private readonly paymentsService = inject(PaymentsService);
   private readonly bookingsService = inject(BookingsService);
   private readonly notificationsService = inject(NotificationsService);
@@ -316,5 +340,9 @@ export class DashboardPageComponent implements OnInit {
 
   getDotColor(category: string): string {
     return notificationDotColor(category);
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
   }
 }

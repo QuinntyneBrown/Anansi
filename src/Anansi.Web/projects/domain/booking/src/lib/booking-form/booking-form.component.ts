@@ -1,5 +1,6 @@
-import { Component, inject, signal, input, output } from '@angular/core';
+import { Component, inject, signal, input, output, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LucideAngularModule } from 'lucide-angular';
 import {
   BookingsService,
   SessionTypeDto,
@@ -16,12 +17,21 @@ import {
 @Component({
   selector: 'lib-booking-form',
   standalone: true,
-  imports: [FormsModule, CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent],
+  imports: [FormsModule, LucideAngularModule, CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent],
   template: `
     <div class="booking-form">
+      @if (loading()) {
+        <div class="loading-container">
+          <lib-spinner [size]="32" />
+        </div>
+      } @else if (!sessionType()) {
+        <div class="error-container">
+          <p class="error-text">Session type not found.</p>
+        </div>
+      } @else {
       <lib-card>
         <div card-header>
-          <h2 class="form-title">Book {{ sessionType().name }}</h2>
+          <h2 class="form-title">Book {{ sessionType()!.name }}</h2>
           <div class="steps-indicator">
             <span class="step" [class.step--active]="currentStep() >= 1" [class.step--completed]="currentStep() > 1">1</span>
             <span class="step-line" [class.step-line--active]="currentStep() > 1"></span>
@@ -33,12 +43,41 @@ import {
 
         @if (confirmed()) {
           <div class="confirmation">
-            <div class="confirmation-icon">&#10003;</div>
+            <div class="confirmation-icon">
+              <lucide-icon name="check" [size]="40" color="#FFFFFF"></lucide-icon>
+            </div>
             <h3 class="confirmation-title">Booking Confirmed!</h3>
             <p class="confirmation-text">
-              Your {{ sessionType().name }} session has been booked for {{ formatDateTime(startDate, startTime) }}.
+              Your {{ sessionType()!.name }} session has been booked for {{ formatDateTime(startDate, startTime) }}.
             </p>
             <p class="confirmation-text">A confirmation will be sent to {{ email }}.</p>
+
+            <div class="confirmation-details-card">
+              <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Session Type</span>
+                <span class="confirmation-detail-value">{{ sessionType()!.name }}</span>
+              </div>
+              <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Date</span>
+                <span class="confirmation-detail-value">{{ startDate }}</span>
+              </div>
+              <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Time</span>
+                <span class="confirmation-detail-value">{{ startTime }} - {{ calculatedEndTime() }}</span>
+              </div>
+              @if (sessionType()!.location) {
+                <div class="confirmation-detail-row">
+                  <span class="confirmation-detail-label">Location</span>
+                  <span class="confirmation-detail-value">{{ sessionType()!.location }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="calendar-buttons">
+              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('google')">Google Calendar</lib-button>
+              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('apple')">Apple Calendar</lib-button>
+              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('outlook')">Outlook</lib-button>
+            </div>
           </div>
         } @else {
           @if (errorMessage()) {
@@ -121,15 +160,15 @@ import {
                     <h4 class="review-heading">Session</h4>
                     <div class="review-row">
                       <span class="review-label">Type</span>
-                      <span class="review-value">{{ sessionType().name }}</span>
+                      <span class="review-value">{{ sessionType()!.name }}</span>
                     </div>
                     <div class="review-row">
                       <span class="review-label">Duration</span>
-                      <span class="review-value">{{ formatDuration(sessionType().durationMinutes) }}</span>
+                      <span class="review-value">{{ formatDuration(sessionType()!.durationMinutes) }}</span>
                     </div>
                     <div class="review-row">
                       <span class="review-label">Price</span>
-                      <span class="review-value price">{{ formatPrice(sessionType().priceCents) }}</span>
+                      <span class="review-value price">{{ formatPrice(sessionType()!.priceCents) }}</span>
                     </div>
                   </div>
                   <div class="review-group">
@@ -175,10 +214,29 @@ import {
           </form>
         }
       </lib-card>
+      }
     </div>
   `,
   styles: `
     :host { display: block; }
+
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      padding: 64px 0;
+    }
+
+    .error-container {
+      display: flex;
+      justify-content: center;
+      padding: 64px 0;
+    }
+
+    .error-text {
+      font-family: Inter, sans-serif;
+      font-size: 16px;
+      color: #6E6E70;
+    }
 
     .booking-form {
       display: flex;
@@ -363,12 +421,9 @@ import {
       height: 80px;
       border-radius: 50%;
       background: #6E9E6E;
-      color: #1A1A1C;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 40px;
-      font-weight: bold;
     }
 
     .confirmation-title {
@@ -385,18 +440,73 @@ import {
       color: #6E6E70;
       margin: 0;
     }
+
+    .confirmation-details-card {
+      width: 500px;
+      max-width: 100%;
+      background: #242426;
+      border: 1px solid #3A3A3C;
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+
+    .confirmation-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .confirmation-detail-label {
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: #6E6E70;
+    }
+
+    .confirmation-detail-value {
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: #F5F5F0;
+      font-weight: 500;
+    }
+
+    .calendar-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   `,
 })
-export class BookingFormComponent {
+export class BookingFormComponent implements OnInit {
   private readonly bookingsService = inject(BookingsService);
 
-  readonly sessionType = input.required<SessionTypeDto>();
+  readonly sessionTypeId = input.required<string>();
   readonly bookingCreated = output<BookingRecordDto>();
 
+  readonly sessionType = signal<SessionTypeDto | null>(null);
+  readonly loading = signal(true);
   readonly currentStep = signal(1);
   readonly submitting = signal(false);
   readonly confirmed = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  ngOnInit(): void {
+    this.bookingsService.listSessionTypes().subscribe({
+      next: (types) => {
+        const match = types.find((t) => t.id === this.sessionTypeId());
+        this.sessionType.set(match ?? null);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.errorMessage.set('Failed to load session type.');
+      },
+    });
+  }
 
   firstName = '';
   lastName = '';
@@ -412,7 +522,7 @@ export class BookingFormComponent {
     const hours = parseInt(parts[0], 10);
     const minutes = parseInt(parts[1], 10);
     if (isNaN(hours) || isNaN(minutes)) return '--:--';
-    const totalMinutes = hours * 60 + minutes + this.sessionType().durationMinutes;
+    const totalMinutes = hours * 60 + minutes + (this.sessionType()?.durationMinutes ?? 0);
     const endHours = Math.floor(totalMinutes / 60) % 24;
     const endMinutes = totalMinutes % 60;
     return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
@@ -437,7 +547,7 @@ export class BookingFormComponent {
 
     const endTime = this.calculatedEndTime();
     const command: CreateBookingCommand = {
-      sessionTypeId: this.sessionType().id,
+      sessionTypeId: this.sessionType()!.id,
       clientFirstName: this.firstName,
       clientLastName: this.lastName,
       clientEmail: this.email,
@@ -477,5 +587,30 @@ export class BookingFormComponent {
   formatDateTime(date: string, time: string): string {
     if (!date || !time) return '';
     return `${date} at ${time}`;
+  }
+
+  onAddToCalendar(provider: 'google' | 'apple' | 'outlook'): void {
+    const session = this.sessionType();
+    if (!session) return;
+    const title = encodeURIComponent(session.name);
+    const startIso = `${this.startDate.replace(/-/g, '')}T${this.startTime.replace(/:/g, '')}00`;
+    const endIso = `${this.startDate.replace(/-/g, '')}T${this.calculatedEndTime().replace(/:/g, '')}00`;
+
+    let url = '';
+    switch (provider) {
+      case 'google':
+        url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startIso}/${endIso}`;
+        break;
+      case 'outlook':
+        url = `https://outlook.live.com/calendar/0/deeplink/compose?subject=${title}&startdt=${this.startDate}T${this.startTime}:00&enddt=${this.startDate}T${this.calculatedEndTime()}:00`;
+        break;
+      case 'apple':
+        // Apple Calendar uses .ics files; open a data URI
+        url = `data:text/calendar;charset=utf-8,BEGIN:VCALENDAR%0ABEGIN:VEVENT%0ASUMMARY:${title}%0ADTSTART:${startIso}%0ADTEND:${endIso}%0AEND:VEVENT%0AEND:VCALENDAR`;
+        break;
+    }
+    if (url) {
+      window.open(url, '_blank');
+    }
   }
 }

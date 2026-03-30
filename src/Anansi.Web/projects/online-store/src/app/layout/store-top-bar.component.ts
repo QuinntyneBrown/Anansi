@@ -1,5 +1,6 @@
-import { Component, inject, signal, output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { CartService } from '@domain/storefront';
 
 @Component({
   selector: 'os-store-top-bar',
@@ -107,8 +108,9 @@ import { Router } from '@angular/router';
 })
 export class StoreTopBarComponent {
   private readonly router = inject(Router);
+  private readonly cartService = inject(CartService);
 
-  readonly cartItemCount = signal(0);
+  readonly cartItemCount = this.cartService.itemCount;
 
   navigateHome(): void {
     this.router.navigate(['/shop']);

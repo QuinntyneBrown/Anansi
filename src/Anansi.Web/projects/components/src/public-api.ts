@@ -24,3 +24,4 @@ export * from './lib/sidebar-item/sidebar-item.component';
 export * from './lib/breadcrumb/breadcrumb.component';
 export * from './lib/tab-bar/tab-bar.component';
 export * from './lib/pill-tab-bar/pill-tab-bar.component';
+export * from './lib/pipes';

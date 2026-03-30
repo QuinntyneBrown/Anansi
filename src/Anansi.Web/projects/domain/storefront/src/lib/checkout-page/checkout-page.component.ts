@@ -1,6 +1,6 @@
-import { Component, inject, signal, computed, input, output } from '@angular/core';
+import { Component, inject, signal, computed, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OrdersService, CreateOrderRequest, OrderDto, ProductDto, PaymentMethod } from 'api';
+import { OrdersService, CreateOrderRequest, OrderDto, PaymentMethod } from 'api';
 import {
   CardComponent,
   ButtonComponent,
@@ -8,12 +8,7 @@ import {
   InputGroupComponent,
   EmptyStateComponent,
 } from 'components';
-
-export interface CartItem {
-  product: ProductDto;
-  variationId: string;
-  quantity: number;
-}
+import { CartService, CartItem } from '../cart/cart.service';
 
 @Component({
   selector: 'lib-checkout-page',
@@ -30,6 +25,16 @@ export interface CartItem {
     <div class="page">
       <div class="page-header">
         <h1 class="page-title">Checkout</h1>
+        <div class="step-indicator">
+          <span class="step" [class.step--active]="!orderPlaced()" [class.step--completed]="orderPlaced()">1</span>
+          <span class="step-label" [class.step-label--active]="!orderPlaced()">Shipping</span>
+          <span class="step-line" [class.step-line--active]="orderPlaced()"></span>
+          <span class="step" [class.step--active]="!orderPlaced()" [class.step--completed]="orderPlaced()">2</span>
+          <span class="step-label" [class.step-label--active]="!orderPlaced()">Payment</span>
+          <span class="step-line" [class.step-line--active]="orderPlaced()"></span>
+          <span class="step" [class.step--active]="orderPlaced()">3</span>
+          <span class="step-label" [class.step-label--active]="orderPlaced()">Confirmation</span>
+        </div>
       </div>
 
       @if (orderPlaced()) {
@@ -177,7 +182,66 @@ export interface CartItem {
       font-size: 32px;
       font-weight: 600;
       color: #F5F5F0;
-      margin: 0;
+      margin: 0 0 20px;
+    }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .step {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Inter, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      background: #242426;
+      border: 1px solid #3A3A3C;
+      color: #6E6E70;
+      flex-shrink: 0;
+    }
+
+    .step--active {
+      background: #C9A962;
+      border-color: #C9A962;
+      color: #1A1A1C;
+    }
+
+    .step--completed {
+      background: #6E9E6E;
+      border-color: #6E9E6E;
+      color: #1A1A1C;
+    }
+
+    .step-label {
+      font-family: Inter, sans-serif;
+      font-size: 13px;
+      color: #6E6E70;
+      margin-left: 6px;
+      margin-right: 12px;
+      white-space: nowrap;
+    }
+
+    .step-label--active {
+      color: #C9A962;
+    }
+
+    .step-line {
+      height: 2px;
+      width: 32px;
+      background: #3A3A3C;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .step-line--active {
+      background: #6E9E6E;
     }
 
     .success-container {
@@ -375,8 +439,9 @@ export interface CartItem {
 })
 export class CheckoutPageComponent {
   private readonly ordersService = inject(OrdersService);
+  private readonly cartService = inject(CartService);
 
-  readonly cartItems = input<CartItem[]>([]);
+  readonly cartItems = this.cartService.items;
   readonly orderComplete = output<OrderDto>();
 
   readonly submitting = signal(false);
@@ -444,6 +509,7 @@ export class CheckoutPageComponent {
         this.submitting.set(false);
         this.orderPlaced.set(true);
         this.placedOrder.set(order);
+        this.cartService.clear();
         this.orderComplete.emit(order);
       },
       error: (err) => {

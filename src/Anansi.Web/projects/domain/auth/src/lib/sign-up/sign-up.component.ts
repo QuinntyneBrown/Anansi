@@ -93,7 +93,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
     lib-card {
       display: block;
       width: 100%;
-      max-width: 440px;
+      max-width: 480px;
     }
 
     .sign-up__header {
@@ -103,9 +103,9 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
     .sign-up__title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 600;
-      color: #F5F5F0;
+      color: #C9A962;
       margin: 0 0 8px;
     }
 
@@ -130,7 +130,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
     .sign-up__form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
     }
 
     .sign-up__form lib-button {
@@ -187,6 +187,23 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
     .sign-up__link:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .sign-up {
+        padding: 0;
+        align-items: stretch;
+      }
+
+      lib-card {
+        max-width: 100%;
+        padding: 28px;
+        border-radius: 0;
+      }
+
+      .sign-up__form {
+        gap: 24px;
+      }
     }
   `,
 })

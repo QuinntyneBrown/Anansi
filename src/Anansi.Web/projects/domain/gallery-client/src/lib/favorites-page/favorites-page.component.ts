@@ -6,6 +6,7 @@ import {
   FavoriteItemDto,
   CreateFavoriteListCommand,
   PagedList,
+  TranslationService,
 } from 'api';
 import {
   CardComponent,
@@ -271,6 +272,7 @@ import {
 })
 export class FavoritesPageComponent implements OnInit {
   private readonly favoritesService = inject(FavoritesService);
+  readonly i18n = inject(TranslationService);
 
   readonly collectionId = input.required<string>();
   readonly favoriteLists = signal<FavoriteListDto[]>([]);

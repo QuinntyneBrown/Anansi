@@ -1,6 +1,6 @@
 import { Component, inject, signal, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CollectionsService } from 'api';
+import { CollectionsService, TranslationService } from 'api';
 import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent } from 'components';
 
 @Component({

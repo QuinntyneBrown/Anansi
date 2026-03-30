@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
+import { LucideAngularModule } from 'lucide-angular';
 
 interface MobileTab {
   label: string;
@@ -11,6 +12,7 @@ interface MobileTab {
 @Component({
   selector: 'sm-mobile-tab-bar',
   standalone: true,
+  imports: [LucideAngularModule],
   template: `
     <nav class="mobile-tabs" role="navigation" aria-label="Mobile navigation">
       @for (tab of tabs; track tab.route) {
@@ -20,7 +22,7 @@ interface MobileTab {
           (click)="navigate(tab.route)"
           [attr.aria-label]="tab.label"
         >
-          <span class="mobile-tabs__icon">{{ getIcon(tab.icon) }}</span>
+          <lucide-icon class="mobile-tabs__icon" [name]="tab.icon" [size]="18"></lucide-icon>
           <span class="mobile-tabs__label">{{ tab.label }}</span>
         </button>
       }
@@ -61,7 +63,6 @@ interface MobileTab {
     }
 
     .mobile-tabs__icon {
-      font-size: 18px;
       color: #6E6E70;
       transition: color 0.15s ease;
     }
@@ -95,11 +96,11 @@ export class MobileTabBarComponent implements OnInit, OnDestroy {
   readonly currentRoute = signal('');
 
   readonly tabs: MobileTab[] = [
-    { label: 'Home', icon: 'dashboard', route: '/dashboard' },
-    { label: 'Contacts', icon: 'contacts', route: '/contacts' },
+    { label: 'Home', icon: 'home', route: '/dashboard' },
     { label: 'Calendar', icon: 'calendar', route: '/calendar' },
-    { label: 'Inbox', icon: 'inbox', route: '/inbox' },
-    { label: 'More', icon: 'settings', route: '/settings' },
+    { label: 'Inbox', icon: 'mail', route: '/inbox' },
+    { label: 'Payments', icon: 'credit-card', route: '/payments' },
+    { label: 'More', icon: 'menu', route: '/settings' },
   ];
 
   ngOnInit(): void {
@@ -119,16 +120,5 @@ export class MobileTabBarComponent implements OnInit, OnDestroy {
 
   navigate(route: string): void {
     this.router.navigate([route]);
-  }
-
-  getIcon(icon: string): string {
-    const icons: Record<string, string> = {
-      dashboard: '\u2302',
-      contacts: '\u263A',
-      calendar: '\u2637',
-      inbox: '\u2709',
-      settings: '\u2699',
-    };
-    return icons[icon] ?? '\u25CF';
   }
 }

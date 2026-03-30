@@ -1,12 +1,21 @@
 import { Component, inject, signal, computed, OnInit, output } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
 import { BookingsService, SessionTypeDto, SessionVisibility } from 'api';
 import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent } from 'components';
 
 @Component({
   selector: 'lib-session-type-selection',
   standalone: true,
-  imports: [CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent],
+  imports: [LucideAngularModule, CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent],
   template: `
+    <div class="cover-section">
+      <div class="profile-image">
+        <lucide-icon name="user" [size]="48"></lucide-icon>
+      </div>
+      <h1 class="photographer-name">Studio Name</h1>
+      <p class="welcome-text">Welcome! Browse our available session types and book the perfect photography experience for you.</p>
+    </div>
+
     @if (loading()) {
       <div class="loading-container">
         <lib-spinner [size]="32" />
@@ -56,6 +65,45 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
   `,
   styles: `
     :host { display: block; }
+
+    .cover-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 60px 0;
+    }
+
+    .profile-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid #C9A962;
+      background: #242426;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6E6E70;
+    }
+
+    .photographer-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 600;
+      color: #F5F5F0;
+      margin: 0;
+      text-align: center;
+    }
+
+    .welcome-text {
+      font-family: Inter, sans-serif;
+      font-size: 16px;
+      color: #6E6E70;
+      margin: 0;
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.5;
+    }
 
     .loading-container {
       display: flex;
@@ -127,6 +175,22 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
       font-family: 'Cormorant Garamond', serif;
       font-size: 24px;
       color: #C9A962;
+    }
+
+    @media (max-width: 480px) {
+      .session-grid {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+        gap: 20px;
+      }
+
+      .cover-section {
+        padding: 40px 20px;
+      }
+
+      .photographer-name {
+        font-size: 32px;
+      }
     }
   `,
 })

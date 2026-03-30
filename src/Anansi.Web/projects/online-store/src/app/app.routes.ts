@@ -13,6 +13,12 @@ export const routes: Routes = [
     data: { title: 'Shop' },
   },
   {
+    path: 'shop/:productId',
+    loadComponent: () =>
+      import('@domain/storefront').then((m) => m.ProductDetailPageComponent),
+    data: { title: 'Product' },
+  },
+  {
     path: 'cart',
     loadComponent: () =>
       import('@domain/storefront').then((m) => m.CartPageComponent),

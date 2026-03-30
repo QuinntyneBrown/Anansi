@@ -89,6 +89,7 @@ public static class DependencyInjection
         services.AddScoped<IWebhookService, StubWebhookService>();
         services.AddScoped<IGoogleCalendarService, StubGoogleCalendarService>();
         services.AddScoped<ICdnService, StubCdnService>();
+        services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
 
         return services;
     }
