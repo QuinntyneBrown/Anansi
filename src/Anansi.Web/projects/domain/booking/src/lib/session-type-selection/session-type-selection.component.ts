@@ -47,7 +47,7 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
               </div>
             </div>
             <div card-actions>
-              <lib-button variant="primary" (clicked)="onBook(session)">Book</lib-button>
+              <lib-button variant="primary" (clicked)="onBook(session)">Book Now</lib-button>
             </div>
           </lib-card>
         }
@@ -72,13 +72,13 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
     .session-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-      padding: 24px;
+      gap: 32px;
+      padding: 0 120px;
     }
 
     .session-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
+      font-size: 28px;
       font-weight: 600;
       color: #F5F5F0;
       margin: 0;
@@ -124,6 +124,8 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
     }
 
     .detail-value.price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
       color: #C9A962;
     }
   `,

@@ -1,4 +1,5 @@
 import { Component, inject, signal, output, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { InvoicesService, InvoiceDto, InvoiceStatus, PagedList } from 'api';
 import {
   ButtonComponent,
@@ -27,7 +28,7 @@ import {
     <div class="page">
       <div class="page-header">
         <h1 class="page-title">Invoices</h1>
-        <lib-button variant="primary" (clicked)="createInvoice.emit()">+ Create Invoice</lib-button>
+        <lib-button variant="primary" (clicked)="onCreateInvoice()">+ Create Invoice</lib-button>
       </div>
 
       <lib-pill-tab-bar
@@ -191,6 +192,7 @@ import {
 })
 export class InvoiceListPageComponent implements OnInit {
   private readonly invoicesService = inject(InvoicesService);
+  private readonly router = inject(Router);
 
   readonly invoices = signal<InvoiceDto[]>([]);
   readonly loading = signal(true);
@@ -251,6 +253,11 @@ export class InvoiceListPageComponent implements OnInit {
       this.currentPage.set(this.currentPage() + 1);
       this.load();
     }
+  }
+
+  onCreateInvoice(): void {
+    this.createInvoice.emit();
+    this.router.navigate(['/documents/invoices/new']);
   }
 
   getStatusBadgeVariant(status: InvoiceStatus): 'success' | 'warning' | 'error' | 'neutral' {

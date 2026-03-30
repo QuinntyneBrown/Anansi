@@ -1,4 +1,5 @@
 import { Component, inject, signal, output, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ContractsService, ContractDto, ContractStatus, PagedList } from 'api';
 import {
   ButtonComponent,
@@ -27,7 +28,7 @@ import {
     <div class="page">
       <div class="page-header">
         <h1 class="page-title">Contracts</h1>
-        <lib-button variant="primary" (clicked)="createContract.emit()">+ Create Contract</lib-button>
+        <lib-button variant="primary" (clicked)="onCreateContract()">+ Create Contract</lib-button>
       </div>
 
       <lib-pill-tab-bar
@@ -185,6 +186,7 @@ import {
 })
 export class ContractListPageComponent implements OnInit {
   private readonly contractsService = inject(ContractsService);
+  private readonly router = inject(Router);
 
   readonly contracts = signal<ContractDto[]>([]);
   readonly loading = signal(true);
@@ -241,6 +243,11 @@ export class ContractListPageComponent implements OnInit {
       this.currentPage.set(this.currentPage() + 1);
       this.load();
     }
+  }
+
+  onCreateContract(): void {
+    this.createContract.emit();
+    this.router.navigate(['/documents/contracts/new']);
   }
 
   getStatusBadgeVariant(status: ContractStatus): 'success' | 'warning' | 'error' | 'neutral' {

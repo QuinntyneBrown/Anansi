@@ -354,26 +354,26 @@ import {
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 12px;
-      padding: 24px 0;
+      gap: 24px;
+      padding: 40px 0;
     }
 
     .confirmation-icon {
-      width: 48px;
-      height: 48px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       background: #6E9E6E;
       color: #1A1A1C;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 40px;
       font-weight: bold;
     }
 
     .confirmation-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
+      font-size: 42px;
       font-weight: 600;
       color: #F5F5F0;
       margin: 0;

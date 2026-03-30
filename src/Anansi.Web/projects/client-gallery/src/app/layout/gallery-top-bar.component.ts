@@ -22,8 +22,8 @@ import { Subscription, filter, map, mergeMap } from 'rxjs';
   `,
   styles: `
     .gallery-bar {
-      height: 56px;
-      padding: 0 24px;
+      height: 80px;
+      padding: 0 48px;
       display: flex;
       align-items: center;
       justify-content: space-between;

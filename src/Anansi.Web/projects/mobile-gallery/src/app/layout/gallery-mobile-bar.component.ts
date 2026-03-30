@@ -23,7 +23,7 @@ import { Subscription, filter, map, mergeMap } from 'rxjs';
   `,
   styles: `
     .mobile-bar {
-      height: 48px;
+      height: 56px;
       padding: 0 16px;
       display: flex;
       align-items: center;

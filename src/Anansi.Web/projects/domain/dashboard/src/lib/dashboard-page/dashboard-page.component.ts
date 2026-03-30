@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { forkJoin, of, catchError } from 'rxjs';
 import {
   PaymentsService,
@@ -14,6 +15,7 @@ import {
   AvatarComponent,
   BadgeComponent,
   SpinnerComponent,
+  ButtonComponent,
 } from 'components';
 
 export function formatCurrency(cents: number): string {

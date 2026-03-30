@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed, output, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ContactsService, ContactDto, ContactType, PagedList } from 'api';
@@ -41,7 +42,7 @@ import {
           />
         </div>
         <div topbar-right>
-          <lib-button variant="primary" (clicked)="addContact.emit()">+ Add Contact</lib-button>
+          <lib-button variant="primary" (clicked)="onAddContact()">+ Add Contact</lib-button>
         </div>
       </lib-top-bar>
 
@@ -66,8 +67,8 @@ import {
           @for (contact of contacts(); track contact.id) {
             <lib-table-data-row
               class="clickable-row"
-              (click)="contactSelected.emit(contact)"
-              (keydown.enter)="contactSelected.emit(contact)"
+              (click)="onContactClick(contact)"
+              (keydown.enter)="onContactClick(contact)"
               tabindex="0"
             >
               <span class="col-name name-cell">
@@ -228,6 +229,7 @@ import {
 })
 export class ContactListPageComponent implements OnInit, OnDestroy {
   private readonly contactsService = inject(ContactsService);
+  private readonly router = inject(Router);
   private readonly searchSubject = new Subject<string>();
   private searchSubscription: { unsubscribe(): void } | null = null;
 
@@ -303,6 +305,16 @@ export class ContactListPageComponent implements OnInit, OnDestroy {
       this.currentPage.set(this.currentPage() + 1);
       this.load();
     }
+  }
+
+  onContactClick(contact: ContactDto): void {
+    this.contactSelected.emit(contact);
+    this.router.navigate(['/contacts', contact.id]);
+  }
+
+  onAddContact(): void {
+    this.addContact.emit();
+    this.router.navigate(['/contacts/new']);
   }
 
   getInitials(contact: ContactDto): string {

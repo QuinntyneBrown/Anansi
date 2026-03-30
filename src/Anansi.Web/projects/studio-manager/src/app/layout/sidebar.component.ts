@@ -72,7 +72,7 @@ export interface NavItem {
     }
 
     .sidebar__header {
-      padding: 24px 20px 16px;
+      padding: 24px 16px;
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -109,10 +109,10 @@ export interface NavItem {
 
     .sidebar__nav {
       flex: 1;
-      padding: 12px 8px;
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
       overflow-y: auto;
     }
 

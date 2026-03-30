@@ -56,7 +56,7 @@ import { SpinnerComponent, EmptyStateComponent } from 'components';
     .gallery-page {
       background: #1A1A1C;
       min-height: 100vh;
-      padding: 32px 24px;
+      padding: 40px 48px;
     }
 
     .gallery-header {
@@ -84,7 +84,7 @@ import { SpinnerComponent, EmptyStateComponent } from 'components';
 
     .photo-grid {
       columns: 3;
-      column-gap: 16px;
+      column-gap: 12px;
     }
 
     .photo-card {

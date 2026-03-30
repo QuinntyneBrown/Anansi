@@ -27,12 +27,12 @@ import { Router } from '@angular/router';
   `,
   styles: `
     .store-bar {
-      height: 56px;
-      padding: 0 24px;
+      height: 64px;
+      padding: 0 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #242426;
+      background: #1A1A1C;
       border-bottom: 1px solid #3A3A3C;
     }
 
