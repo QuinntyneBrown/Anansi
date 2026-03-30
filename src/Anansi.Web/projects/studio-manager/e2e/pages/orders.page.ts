@@ -1,0 +1,43 @@
+import { Page, Locator } from '@playwright/test';
+import { AppPage } from './app.page';
+
+export class OrdersPage extends AppPage {
+  readonly searchInput: Locator;
+  readonly tabBar: Locator;
+  readonly tableContainer: Locator;
+  readonly tableRows: Locator;
+  readonly paginationInfo: Locator;
+  readonly previousButton: Locator;
+  readonly nextButton: Locator;
+  readonly loadingSpinner: Locator;
+  readonly emptyState: Locator;
+
+  constructor(page: Page) {
+    super(page);
+    this.searchInput = page.locator('.search-input');
+    this.tabBar = page.locator('lib-pill-tab-bar');
+    this.tableContainer = page.locator('.table-container');
+    this.tableRows = page.locator('lib-table-data-row');
+    this.paginationInfo = page.locator('.pagination__info');
+    this.previousButton = page.locator('.page-btn', { hasText: 'Previous' });
+    this.nextButton = page.locator('.page-btn', { hasText: 'Next' });
+    this.loadingSpinner = page.locator('lib-spinner');
+    this.emptyState = page.locator('lib-empty-state');
+  }
+
+  async goto(): Promise<void> {
+    await this.page.goto('/store/orders');
+  }
+
+  async search(query: string): Promise<void> {
+    await this.searchInput.fill(query);
+  }
+
+  async selectTab(label: string): Promise<void> {
+    await this.tabBar.getByText(label).click();
+  }
+
+  async getTableRowCount(): Promise<number> {
+    return this.tableRows.count();
+  }
+}
