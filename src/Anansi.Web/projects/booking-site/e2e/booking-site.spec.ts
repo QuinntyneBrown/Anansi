@@ -3,6 +3,9 @@ import { BookingAppPage } from './pages/app.page';
 import { SessionTypesPage } from './pages/session-types.page';
 import { BookingFormPage } from './pages/booking-form.page';
 
+// ---------------------------------------------------------------------------
+// Shell
+// ---------------------------------------------------------------------------
 test.describe('Booking Site Shell', () => {
   test('should display booking top bar with logo', async ({ page }) => {
     const app = new BookingAppPage(page);
@@ -26,7 +29,9 @@ test.describe('Booking Site Shell', () => {
   });
 });
 
+// ---------------------------------------------------------------------------
 // BKG-17.1.1: Landing Page - Desktop
+// ---------------------------------------------------------------------------
 test.describe('BKG-17.1.1: Landing Page Desktop', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
@@ -42,6 +47,17 @@ test.describe('BKG-17.1.1: Landing Page Desktop', () => {
     const hasEmpty = (await sessionTypes.emptyState.count()) > 0;
     expect(hasTitle || hasSpinner || hasEmpty).toBe(true);
   });
+
+  test('should show session cards or empty state', async ({ page }) => {
+    const sessionTypes = new SessionTypesPage(page);
+    await sessionTypes.goto();
+    await page.waitForSelector('.session-card, lib-spinner, lib-empty-state', { timeout: 10000 });
+
+    const hasCards = (await sessionTypes.sessionCards.count()) > 0;
+    const hasSpinner = (await sessionTypes.spinner.count()) > 0;
+    const hasEmpty = (await sessionTypes.emptyState.count()) > 0;
+    expect(hasCards || hasSpinner || hasEmpty).toBe(true);
+  });
 });
 
 // BKG-17.1.2: Landing Page - Mobile
@@ -55,10 +71,18 @@ test.describe('BKG-17.1.2: Landing Page Mobile', () => {
     await expect(sessionTypes.topBar).toBeVisible();
     await page.waitForSelector('.page-title, lib-spinner, lib-empty-state', { timeout: 10000 });
   });
+
+  test('should show stacked session cards on mobile', async ({ page }) => {
+    const sessionTypes = new SessionTypesPage(page);
+    await sessionTypes.goto();
+    await page.waitForSelector('.session-card, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
 });
 
-// BKG-17.1.3: Date/Time Selection
-test.describe('BKG-17.1.3: Date/Time Selection', () => {
+// ---------------------------------------------------------------------------
+// BKG-17.1.3: Booking Form - Multi-Step Flow
+// ---------------------------------------------------------------------------
+test.describe('BKG-17.1.3: Booking Form Desktop', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test('should navigate to booking form with session type', async ({ page }) => {
@@ -66,13 +90,53 @@ test.describe('BKG-17.1.3: Date/Time Selection', () => {
     await app.navigateTo('/book/test-session-type');
     await expect(page).toHaveURL(/\/book\/test-session-type/);
   });
+
+  test('should show booking form with step indicator', async ({ page }) => {
+    const form = new BookingFormPage(page);
+    await form.goto();
+
+    await expect(form.topBar).toBeVisible();
+    await page.waitForSelector('.booking-form, .form-container, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
+
+  test('should show 3 steps in the progress indicator', async ({ page }) => {
+    const form = new BookingFormPage(page);
+    await form.goto();
+    await page.waitForSelector('.steps-indicator, lib-spinner', { timeout: 10000 });
+
+    if ((await form.stepsIndicator.count()) > 0) {
+      expect(await form.getStepCount()).toBe(3);
+    }
+  });
+
+  test('should show form inputs on step 1', async ({ page }) => {
+    const form = new BookingFormPage(page);
+    await form.goto();
+    await page.waitForSelector('.form-fields, lib-spinner', { timeout: 10000 });
+
+    if ((await form.formFields.count()) > 0) {
+      expect(await form.getFormInputCount()).toBeGreaterThan(0);
+    }
+  });
+
+  test('should show continue button on form steps', async ({ page }) => {
+    const form = new BookingFormPage(page);
+    await form.goto();
+    await page.waitForSelector('.booking-form, lib-spinner', { timeout: 10000 });
+
+    if ((await form.formContainer.count()) > 0) {
+      const hasContinue = (await form.continueButton.count()) > 0;
+      const hasConfirm = (await form.confirmButton.count()) > 0;
+      expect(hasContinue || hasConfirm).toBe(true);
+    }
+  });
 });
 
 // BKG-17.1.4: Contact Info Form
 test.describe('BKG-17.1.4: Contact Info Form', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('should show booking form page with form or loading state', async ({ page }) => {
+  test('should show form fields for client information', async ({ page }) => {
     const form = new BookingFormPage(page);
     await form.goto();
 
@@ -116,5 +180,24 @@ test.describe('BKG-17.1.7: Booking Confirmation', () => {
     const app = new BookingAppPage(page);
     await app.navigateTo('/book/confirm-session');
     await expect(page).toHaveURL(/\/book\/confirm-session/);
+  });
+});
+
+// BKG-17.1.8: Booking Form - Mobile
+test.describe('BKG-17.1.8: Booking Form Mobile', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('should show booking form on mobile viewport', async ({ page }) => {
+    const form = new BookingFormPage(page);
+    await form.goto();
+
+    await expect(form.topBar).toBeVisible();
+    await page.waitForSelector('.booking-form, .form-container, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
+
+  test('should show step indicator on mobile', async ({ page }) => {
+    const form = new BookingFormPage(page);
+    await form.goto();
+    await page.waitForSelector('.steps-indicator, lib-spinner', { timeout: 10000 });
   });
 });

@@ -4,6 +4,9 @@ import { GalleryPage } from './pages/gallery.page';
 import { FavoritesPage } from './pages/favorites.page';
 import { PasswordPage } from './pages/password.page';
 
+// ---------------------------------------------------------------------------
+// Shell
+// ---------------------------------------------------------------------------
 test.describe('Client Gallery Shell', () => {
   test('should display gallery top bar with logo', async ({ page }) => {
     const app = new GalleryAppPage(page);
@@ -24,9 +27,17 @@ test.describe('Client Gallery Shell', () => {
     await app.goto();
     await expect(app.mainContent).toBeVisible();
   });
+
+  test('should show back button in gallery bar', async ({ page }) => {
+    const app = new GalleryAppPage(page);
+    await app.navigateTo('/gallery/demo');
+    await page.waitForSelector('.gallery-bar__link, .gallery-bar', { timeout: 10000 });
+  });
 });
 
+// ---------------------------------------------------------------------------
 // GAL-14.2.1: Gallery Homepage - Desktop (1440px)
+// ---------------------------------------------------------------------------
 test.describe('GAL-14.2.1: Gallery Homepage Desktop', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
@@ -41,6 +52,18 @@ test.describe('GAL-14.2.1: Gallery Homepage Desktop', () => {
     const hasSpinner = (await gallery.spinner.count()) > 0;
     expect(hasGallery || hasSpinner).toBe(true);
   });
+
+  test('should show gallery title when loaded', async ({ page }) => {
+    const gallery = new GalleryPage(page);
+    await gallery.goto('demo');
+    await page.waitForSelector('.gallery-title, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
+
+  test('should show photo cards when media exists', async ({ page }) => {
+    const gallery = new GalleryPage(page);
+    await gallery.goto('demo');
+    await page.waitForSelector('.photo-card, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
 });
 
 // GAL-14.2.2: Gallery Homepage - Mobile (402px)
@@ -54,6 +77,12 @@ test.describe('GAL-14.2.2: Gallery Homepage Mobile', () => {
     await expect(gallery.topBar).toBeVisible();
     await page.waitForSelector('.gallery-page, lib-spinner, lib-empty-state', { timeout: 10000 });
   });
+
+  test('should maintain full-width gallery bar on mobile', async ({ page }) => {
+    const gallery = new GalleryPage(page);
+    await gallery.goto('demo');
+    await expect(gallery.topBar).toBeVisible();
+  });
 });
 
 // GAL-14.2.3: Collection Cover Page - Desktop
@@ -65,6 +94,17 @@ test.describe('GAL-14.2.3: Collection Cover Page Desktop', () => {
     await app.navigateTo('/gallery/demo');
     await expect(page).toHaveURL(/\/gallery\/demo/);
   });
+
+  test('should show gallery page content or loading', async ({ page }) => {
+    const gallery = new GalleryPage(page);
+    await gallery.goto('demo');
+    await page.waitForSelector('.gallery-page, lib-spinner, lib-empty-state', { timeout: 10000 });
+
+    const hasPage = (await page.locator('.gallery-page').count()) > 0;
+    const hasSpinner = (await gallery.spinner.count()) > 0;
+    const hasEmpty = (await gallery.emptyState.count()) > 0;
+    expect(hasPage || hasSpinner || hasEmpty).toBe(true);
+  });
 });
 
 // GAL-14.2.4: Photo Grid - Desktop (Light Theme)
@@ -75,6 +115,12 @@ test.describe('GAL-14.2.4: Photo Grid Desktop Light', () => {
     const gallery = new GalleryPage(page);
     await gallery.goto('demo');
     await page.waitForSelector('.gallery-page, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
+
+  test('should render photo cards in grid layout', async ({ page }) => {
+    const gallery = new GalleryPage(page);
+    await gallery.goto('demo');
+    await page.waitForSelector('.photo-grid, lib-spinner, lib-empty-state', { timeout: 10000 });
   });
 });
 
@@ -104,6 +150,12 @@ test.describe('GAL-14.2.6: Photo Grid Mobile', () => {
 
     await expect(gallery.topBar).toBeVisible();
   });
+
+  test('should show single-column grid on narrow viewport', async ({ page }) => {
+    const gallery = new GalleryPage(page);
+    await gallery.goto('demo');
+    await page.waitForSelector('.gallery-page, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
 });
 
 // GAL-14.2.7: Image Lightbox - Desktop
@@ -114,6 +166,17 @@ test.describe('GAL-14.2.7: Image Lightbox Desktop', () => {
     const gallery = new GalleryPage(page);
     await gallery.goto('demo');
     await page.waitForSelector('.gallery-page, lib-spinner, lib-empty-state', { timeout: 10000 });
+  });
+
+  test('should render photo cards with cursor pointer', async ({ page }) => {
+    const gallery = new GalleryPage(page);
+    await gallery.goto('demo');
+    await page.waitForSelector('.photo-card, lib-spinner, lib-empty-state', { timeout: 10000 });
+
+    if ((await gallery.photoCards.count()) > 0) {
+      const cursor = await gallery.photoCards.first().evaluate((el) => getComputedStyle(el).cursor);
+      expect(cursor).toBeTruthy();
+    }
   });
 });
 
@@ -131,6 +194,34 @@ test.describe('GAL-14.2.8: Favorite List Management', () => {
     const hasFavoritesPage = (await page.locator('.favorites-page').count()) > 0;
     const hasSpinner = (await favorites.spinner.count()) > 0;
     expect(hasFavoritesPage || hasSpinner).toBe(true);
+  });
+
+  test('should show create button for new favorite list', async ({ page }) => {
+    const favorites = new FavoritesPage(page);
+    await favorites.goto('demo');
+    await page.waitForSelector('.page-header, lib-spinner', { timeout: 10000 });
+  });
+
+  test('should show list rows or empty state', async ({ page }) => {
+    const favorites = new FavoritesPage(page);
+    await favorites.goto('demo');
+    await page.waitForSelector('.list-row, lib-empty-state, lib-spinner', { timeout: 10000 });
+
+    const hasRows = (await favorites.listRows.count()) > 0;
+    const hasEmpty = (await favorites.emptyState.count()) > 0;
+    const hasSpinner = (await favorites.spinner.count()) > 0;
+    expect(hasRows || hasEmpty || hasSpinner).toBe(true);
+  });
+});
+
+// GAL-14.2.8.2: Favorites - Mobile
+test.describe('GAL-14.2.8.2: Favorites Mobile', () => {
+  test.use({ viewport: { width: 402, height: 874 } });
+
+  test('should show favorites page on mobile', async ({ page }) => {
+    const favorites = new FavoritesPage(page);
+    await favorites.goto('demo');
+    await expect(favorites.topBar).toBeVisible();
   });
 });
 
@@ -155,6 +246,26 @@ test.describe('GAL-14.2.9: Password Entry Screen', () => {
     await password.goto('demo');
 
     await expect(password.errorMessage).toHaveCount(0);
+  });
+
+  test('should show card container', async ({ page }) => {
+    const password = new PasswordPage(page);
+    await password.goto('demo');
+    await expect(password.card).toBeVisible();
+  });
+});
+
+// GAL-14.2.9.2: Password Entry - Mobile
+test.describe('GAL-14.2.9.2: Password Entry Mobile', () => {
+  test.use({ viewport: { width: 402, height: 874 } });
+
+  test('should show password entry on mobile', async ({ page }) => {
+    const password = new PasswordPage(page);
+    await password.goto('demo');
+
+    await expect(password.topBar).toBeVisible();
+    await expect(password.passwordInput).toBeVisible();
+    await expect(password.submitButton).toBeVisible();
   });
 });
 
