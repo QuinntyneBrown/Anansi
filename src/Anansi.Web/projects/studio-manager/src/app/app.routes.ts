@@ -181,6 +181,97 @@ export const routes: Routes = [
         data: { title: 'Reports', icon: 'reports' },
       },
       {
+        path: 'interac',
+        loadComponent: () =>
+          import('@domain/interac').then(
+            (m) => m.InteracPaymentsPageComponent,
+          ),
+        data: { title: 'Interac Payments', icon: 'banknote' },
+      },
+      {
+        path: 'interac/pay/:id',
+        loadComponent: () =>
+          import('@domain/interac').then(
+            (m) => m.InteracInstructionsComponent,
+          ),
+        data: { title: 'Interac Payment', icon: 'banknote' },
+      },
+      {
+        path: 'tax',
+        loadComponent: () =>
+          import('@domain/tax').then(
+            (m) => m.TaxProfilePageComponent,
+          ),
+        data: { title: 'Tax & HST', icon: 'receipt' },
+      },
+      {
+        path: 'tax/expenses',
+        loadComponent: () =>
+          import('@domain/tax').then(
+            (m) => m.ExpenseTrackingPageComponent,
+          ),
+        data: { title: 'Expenses', icon: 'wallet' },
+      },
+      // --- Cultural Discovery (L27) ---
+      {
+        path: 'discovery/profile',
+        loadComponent: () =>
+          import('@domain/discovery').then(
+            (m) => m.ProfileDiscoveryPageComponent,
+          ),
+        data: { title: 'Profile & Discovery', icon: 'user' },
+      },
+      {
+        path: 'discovery/directory',
+        loadComponent: () =>
+          import('@domain/discovery').then(
+            (m) => m.DirectorySearchPageComponent,
+          ),
+        data: { title: 'Directory', icon: 'search' },
+      },
+      // --- Skin Tone Presets (L28) ---
+      {
+        path: 'presets',
+        loadComponent: () =>
+          import('@domain/presets').then(
+            (m) => m.PresetLibraryPageComponent,
+          ),
+        data: { title: 'Preset Library', icon: 'palette' },
+      },
+      {
+        path: 'presets/create',
+        loadComponent: () =>
+          import('@domain/presets').then(
+            (m) => m.PresetDetailPageComponent,
+          ),
+        data: { title: 'Create Preset', icon: 'palette' },
+      },
+      {
+        path: 'presets/:id',
+        loadComponent: () =>
+          import('@domain/presets').then(
+            (m) => m.PresetDetailPageComponent,
+          ),
+        data: { title: 'Preset Detail', icon: 'palette' },
+      },
+      // --- Events Calendar (L29) ---
+      {
+        path: 'events',
+        loadComponent: () =>
+          import('@domain/events').then(
+            (m) => m.EventsCalendarPageComponent,
+          ),
+        data: { title: 'Events Calendar', icon: 'calendar' },
+      },
+      {
+        path: 'events/submit',
+        loadComponent: () =>
+          import('@domain/events').then(
+            (m) => m.EventSubmissionPageComponent,
+          ),
+        data: { title: 'Submit Event', icon: 'calendar-plus' },
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('@domain/settings').then(

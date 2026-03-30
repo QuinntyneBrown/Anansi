@@ -213,26 +213,28 @@ describe('SeoManagerComponent', () => {
     expect(pageTitles[2].textContent).toContain('About');
   });
 
-  it('should render issue slugs with leading slash', () => {
+  it('should render SEO title column', () => {
     flushInitialLoad();
     fixture.detectChanges();
 
-    const sections = fixture.nativeElement.querySelectorAll('.section');
-    const issueSection = sections[0];
-    const slugs = issueSection.querySelectorAll('.slug-text');
-    expect(slugs[0].textContent).toContain('/home');
-    expect(slugs[1].textContent).toContain('/about');
-  });
-
-  it('should render issue descriptions', () => {
-    flushInitialLoad();
-    fixture.detectChanges();
-
-    const descriptions = fixture.nativeElement.querySelectorAll(
-      '.col-description',
+    const seoTitles = fixture.nativeElement.querySelectorAll(
+      '.col-seo-title',
     );
     // 1 header + 2 data rows
-    expect(descriptions[1].textContent).toContain(
+    expect(seoTitles.length).toBe(3);
+    expect(seoTitles[1].textContent).toContain('missing-meta-description');
+    expect(seoTitles[2].textContent).toContain('missing-alt-text');
+  });
+
+  it('should render meta description column', () => {
+    flushInitialLoad();
+    fixture.detectChanges();
+
+    const metaDescriptions = fixture.nativeElement.querySelectorAll(
+      '.col-meta-description',
+    );
+    // 1 header + 2 data rows
+    expect(metaDescriptions[1].textContent).toContain(
       'Page is missing a meta description',
     );
   });

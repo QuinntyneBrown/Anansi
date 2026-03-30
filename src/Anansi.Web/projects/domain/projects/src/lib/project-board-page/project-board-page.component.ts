@@ -1,6 +1,13 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  CdkDragDrop,
+  CdkDrag,
+  CdkDropList,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+import {
   ProjectsService,
   ProjectBoardDto,
   ProjectDto,
@@ -8,6 +15,7 @@ import {
   CreateProjectCommand,
   CreateStageCommand,
   MoveProjectCommand,
+  UpdateStageCommand,
 } from 'api';
 import {
   TopBarComponent,
@@ -16,17 +24,21 @@ import {
   BadgeComponent,
   SpinnerComponent,
 } from 'components';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'lib-project-board-page',
   standalone: true,
   imports: [
     FormsModule,
+    CdkDrag,
+    CdkDropList,
     TopBarComponent,
     ButtonComponent,
     CardComponent,
     BadgeComponent,
     SpinnerComponent,
+    LucideAngularModule,
   ],
   template: `
     <div class="page">
@@ -109,25 +121,36 @@ import {
         </div>
       } @else {
         <div class="board">
-          @for (stage of stages(); track stage.id) {
+          @for (stage of stages(); track stage.id; let si = $index) {
             <div class="column">
               <div class="column-header">
                 <span class="column-title">{{ stage.name }}</span>
-                <span class="column-count">{{ stage.projects.length }}</span>
+                <div class="column-header-actions">
+                  <button class="icon-btn" title="Rename stage" (click)="onRenameStage(stage)">
+                    <lucide-icon name="pencil" [size]="14"></lucide-icon>
+                  </button>
+                  <button class="icon-btn icon-btn--danger" title="Delete stage" (click)="onDeleteStage(stage)">
+                    <lucide-icon name="trash-2" [size]="14"></lucide-icon>
+                  </button>
+                  <span class="column-count">{{ stage.projects.length }}</span>
+                </div>
               </div>
-              <div class="column-body">
+              <div
+                class="column-body"
+                cdkDropList
+                [cdkDropListData]="{ stageIndex: si }"
+                [id]="'stage-' + stage.id"
+                [cdkDropListConnectedTo]="getConnectedLists(stage.id)"
+                (cdkDropListDropped)="onDrop($event)"
+              >
                 @for (project of stage.projects; track project.id) {
-                  <lib-card class="project-card">
+                  <lib-card class="project-card" cdkDrag [cdkDragData]="project">
                     <div class="card-content">
                       <div class="card-top">
                         <span class="project-name">{{ project.name }}</span>
-                        <button
-                          class="move-btn"
-                          title="Move project"
-                          (click)="onMoveProject(project)"
-                        >
-                          ⇄
-                        </button>
+                        <div class="drag-handle" cdkDragHandle>
+                          <lucide-icon name="grip-vertical" [size]="16"></lucide-icon>
+                        </div>
                       </div>
                       @if (project.projectType) {
                         <lib-badge variant="neutral">{{ project.projectType }}</lib-badge>
@@ -289,6 +312,35 @@ import {
       justify-content: space-between;
       padding: 16px;
       border-bottom: 1px solid #3A3A3C;
+      gap: 8px;
+    }
+
+    .column-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #6E6E70;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      color: #C9A962;
+      background: #1A1A1C;
+    }
+
+    .icon-btn--danger:hover {
+      color: #C94A4A;
     }
 
     .column-title {
@@ -339,20 +391,42 @@ import {
       color: #F5F5F0;
     }
 
-    .move-btn {
-      background: none;
-      border: 1px solid #3A3A3C;
+    .drag-handle {
       color: #6E6E70;
-      font-size: 14px;
-      cursor: pointer;
-      padding: 2px 8px;
-      border-radius: 8px;
-      transition: color 0.15s ease, border-color 0.15s ease;
+      cursor: grab;
+      padding: 2px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s ease;
     }
 
-    .move-btn:hover {
+    .drag-handle:hover {
       color: #C9A962;
-      border-color: #C9A962;
+    }
+
+    .cdk-drag-preview {
+      background: #242426;
+      border: 1px solid #C9A962;
+      border-radius: 20px;
+      padding: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .cdk-drag-placeholder {
+      background: #3A3A3C;
+      border: 1px dashed #C9A962;
+      border-radius: 20px;
+      min-height: 60px;
+      opacity: 0.4;
+    }
+
+    .cdk-drag-animating {
+      transition: transform 200ms ease;
+    }
+
+    .column-body.cdk-drop-list-dragging .project-card:not(.cdk-drag-placeholder) {
+      transition: transform 200ms ease;
     }
 
     .contact-name {
@@ -511,25 +585,72 @@ export class ProjectBoardPageComponent implements OnInit {
     });
   }
 
-  onMoveProject(project: ProjectDto): void {
-    const stages = this.stages();
-    const currentIndex = stages.findIndex((s) => s.id === project.stageId);
-    if (currentIndex < 0 || currentIndex >= stages.length - 1) {
-      return;
+  getConnectedLists(currentStageId: string): string[] {
+    return this.stages()
+      .filter((s) => s.id !== currentStageId)
+      .map((s) => 'stage-' + s.id);
+  }
+
+  onDrop(event: CdkDragDrop<{ stageIndex: number }>): void {
+    const board = this.board();
+    if (!board) return;
+
+    const prevStageIndex = event.previousContainer.data.stageIndex;
+    const curStageIndex = event.container.data.stageIndex;
+    const stages = [...board.stages].map((s) => ({
+      ...s,
+      projects: [...s.projects],
+    }));
+
+    if (prevStageIndex === curStageIndex) {
+      moveItemInArray(stages[curStageIndex].projects, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        stages[prevStageIndex].projects,
+        stages[curStageIndex].projects,
+        event.previousIndex,
+        event.currentIndex,
+      );
     }
-    const nextStage = stages[currentIndex + 1];
+
+    this.board.set({ stages });
+
+    const movedProject = stages[curStageIndex].projects[event.currentIndex];
+    const targetStage = stages[curStageIndex];
     const command: MoveProjectCommand = {
-      id: project.id,
-      stageId: nextStage.id,
-      sortOrder: nextStage.projects.length,
+      id: movedProject.id,
+      stageId: targetStage.id,
+      sortOrder: event.currentIndex,
     };
-    this.projectsService.move(project.id, command).subscribe({
-      next: () => {
+    this.projectsService.move(movedProject.id, command).subscribe({
+      error: () => {
         this.load();
       },
-      error: () => {
-        // silently fail for move errors
-      },
     });
+  }
+
+  onRenameStage(stage: ProjectStageDto): void {
+    const newName = prompt('Rename stage:', stage.name);
+    if (newName && newName.trim() && newName.trim() !== stage.name) {
+      this.projectsService.updateStage(stage.id, {
+        id: stage.id,
+        name: newName.trim(),
+        sortOrder: stage.sortOrder,
+      }).subscribe({
+        next: () => this.load(),
+      });
+    }
+  }
+
+  onDeleteStage(stage: ProjectStageDto): void {
+    if (stage.projects.length > 0) {
+      alert('Cannot delete a stage that contains projects. Move or remove all projects first.');
+      return;
+    }
+    if (confirm(`Delete stage "${stage.name}"?`)) {
+      this.projectsService.deleteStage(stage.id).subscribe({
+        next: () => this.load(),
+      });
+    }
   }
 }

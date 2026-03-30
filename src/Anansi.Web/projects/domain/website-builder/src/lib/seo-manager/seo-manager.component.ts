@@ -30,7 +30,23 @@ import {
     <div class="page">
       <div class="page-header">
         <h1 class="page-title">SEO Manager</h1>
-        <lib-button variant="primary" (clicked)="runAudit()">Run Audit</lib-button>
+        <lib-button variant="outline" icon="search" (clicked)="runAudit()">Run Audit</lib-button>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <span class="metric-label">Pages Optimized</span>
+          <span class="metric-value metric-value--success">12 / 15</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Missing Alt Text</span>
+          <span class="metric-value metric-value--gold">8</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Missing Descriptions</span>
+          <span class="metric-value metric-value--gold">3</span>
+        </div>
       </div>
 
       <!-- SEO Issues Section -->
@@ -52,19 +68,15 @@ import {
           <div class="table-container">
             <lib-table-header-row>
               <span class="col-page-title">Page</span>
-              <span class="col-slug">Slug</span>
-              <span class="col-issue-type">Issue Type</span>
-              <span class="col-description">Description</span>
+              <span class="col-seo-title">SEO Title</span>
+              <span class="col-meta-description">Meta Description</span>
             </lib-table-header-row>
 
             @for (issue of issues(); track $index) {
               <lib-table-data-row>
                 <span class="col-page-title">{{ issue.pageTitle }}</span>
-                <span class="col-slug slug-text">/{{ issue.slug }}</span>
-                <span class="col-issue-type">
-                  <lib-badge variant="warning">{{ issue.issueType }}</lib-badge>
-                </span>
-                <span class="col-description">{{ issue.description }}</span>
+                <span class="col-seo-title">{{ issue.issueType }}</span>
+                <span class="col-meta-description">{{ issue.description }}</span>
               </lib-table-data-row>
             }
           </div>
@@ -165,10 +177,46 @@ import {
       overflow: hidden;
     }
 
+    .metrics-row {
+      display: flex;
+      gap: 24px;
+      padding: 0 24px 24px;
+    }
+
+    .metric-card {
+      background: #242426;
+      border: 1px solid #3A3A3C;
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .metric-label {
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: #6E6E70;
+    }
+
+    .metric-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .metric-value--success {
+      color: #6E9E6E;
+    }
+
+    .metric-value--gold {
+      color: #C9A962;
+    }
+
     .col-page-title { flex: 1.5; }
-    .col-slug { flex: 1; }
-    .col-issue-type { flex: 1; }
-    .col-description { flex: 2; }
+    .col-seo-title { flex: 1.5; }
+    .col-meta-description { flex: 2; }
 
     .col-source { flex: 1.5; }
     .col-destination { flex: 2; }

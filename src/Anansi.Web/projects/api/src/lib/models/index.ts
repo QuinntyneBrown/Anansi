@@ -6,3 +6,4 @@ export * from './store.models';
 export * from './website.models';
 export * from './crm.models';
 export * from './system.models';
+export * from './discovery.models';

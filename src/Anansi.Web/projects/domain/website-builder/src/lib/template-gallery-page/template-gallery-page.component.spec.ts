@@ -278,11 +278,20 @@ describe('TemplateGalleryPageComponent', () => {
     );
   });
 
-  it('should render Use Template buttons', () => {
+  it('should render Preview and Select buttons for each template', () => {
     flushInitialLoad();
     fixture.detectChanges();
 
     const buttons = fixture.nativeElement.querySelectorAll('lib-button');
-    expect(buttons.length).toBe(3);
+    // 2 buttons per template card (Preview + Select) * 3 templates = 6
+    expect(buttons.length).toBe(6);
+  });
+
+  it('should emit templatePreview when Preview is clicked', () => {
+    flushInitialLoad();
+    const spy = vi.fn();
+    component.templatePreview.subscribe(spy);
+    component.onPreviewTemplate(mockTemplates[0]);
+    expect(spy).toHaveBeenCalledWith(mockTemplates[0]);
   });
 });

@@ -1,5 +1,6 @@
 import { Component, inject, signal, computed, output, OnInit } from '@angular/core';
-import { ProductsService, ProductDto, ProductType, PagedList } from 'api';
+import { LucideAngularModule } from 'lucide-angular';
+import { ProductsService, ProductDto, ProductType, PagedList, TranslationService } from 'api';
 import {
   SpinnerComponent,
   EmptyStateComponent,
@@ -11,6 +12,7 @@ import {
   selector: 'lib-store-browse-page',
   standalone: true,
   imports: [
+    LucideAngularModule,
     SpinnerComponent,
     EmptyStateComponent,
     TabBarComponent,
@@ -18,7 +20,7 @@ import {
   template: `
     <div class="page">
       <div class="page-header">
-        <h1 class="page-title">Shop</h1>
+        <h1 class="page-title">{{ i18n.t().store.shop }}</h1>
       </div>
 
       <div class="filter-section">
@@ -29,42 +31,63 @@ import {
         />
       </div>
 
-      @if (loading()) {
-        <div class="loading-container">
-          <lib-spinner [size]="32" />
-        </div>
-      } @else if (filteredProducts().length === 0) {
-        <lib-empty-state
-          heading="No products available"
-          description="Check back soon for new items."
-        />
-      } @else {
-        <div class="product-grid">
-          @for (product of filteredProducts(); track product.id) {
-            <div
-              class="product-card"
-              (click)="productSelected.emit(product)"
-              (keydown.enter)="productSelected.emit(product)"
-              tabindex="0"
-            >
-              <div class="product-image">
-                @if (product.previewImageUrl) {
-                  <img [src]="product.previewImageUrl" [alt]="product.name" />
-                } @else {
-                  <div class="image-placeholder">
-                    <span class="placeholder-icon">&#128247;</span>
+      <div class="store-layout">
+        <aside class="category-sidebar">
+          <h3 class="sidebar-heading">Categories</h3>
+          <ul class="sidebar-list">
+            @for (tab of filterTabs(); track tab.value) {
+              <li>
+                <button
+                  class="sidebar-link"
+                  [class.sidebar-link--active]="activeFilter() === tab.value"
+                  (click)="onFilterChange(tab.value)"
+                >
+                  {{ tab.label }}
+                </button>
+              </li>
+            }
+          </ul>
+        </aside>
+
+        <div class="product-area">
+          @if (loading()) {
+            <div class="loading-container">
+              <lib-spinner [size]="32" />
+            </div>
+          } @else if (filteredProducts().length === 0) {
+            <lib-empty-state
+              [heading]="i18n.t().store.noProducts"
+              [description]="i18n.t().store.noProductsDescription"
+            />
+          } @else {
+            <div class="product-grid">
+              @for (product of filteredProducts(); track product.id) {
+                <div
+                  class="product-card"
+                  (click)="productSelected.emit(product)"
+                  (keydown.enter)="productSelected.emit(product)"
+                  tabindex="0"
+                >
+                  <div class="product-image">
+                    @if (product.previewImageUrl) {
+                      <img [src]="product.previewImageUrl" [alt]="product.name" />
+                    } @else {
+                      <div class="image-placeholder">
+                        <lucide-icon name="image" [size]="24"></lucide-icon>
+                      </div>
+                    }
                   </div>
-                }
-              </div>
-              <div class="product-info">
-                <h3 class="product-name">{{ product.name }}</h3>
-                <p class="product-type">{{ formatProductType(product.productType) }}</p>
-                <p class="product-price">{{ formatPrice(getStartingPrice(product)) }}</p>
-              </div>
+                  <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-type">{{ formatProductType(product.productType) }}</p>
+                    <p class="product-price">{{ formatPrice(getStartingPrice(product)) }}</p>
+                  </div>
+                </div>
+              }
             </div>
           }
         </div>
-      }
+      </div>
     </div>
   `,
   styles: `
@@ -87,7 +110,74 @@ import {
     }
 
     .filter-section {
+      display: none;
       margin-bottom: 32px;
+    }
+
+    .store-layout {
+      display: flex;
+      gap: 32px;
+    }
+
+    .category-sidebar {
+      width: 200px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F5F5F0;
+      margin: 0 0 16px;
+    }
+
+    .sidebar-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sidebar-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: #F5F5F0;
+      padding: 8px 0;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .sidebar-link:hover {
+      color: #C9A962;
+    }
+
+    .sidebar-link--active {
+      color: #C9A962;
+      font-weight: 500;
+    }
+
+    .product-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (max-width: 768px) {
+      .category-sidebar {
+        display: none;
+      }
+
+      .filter-section {
+        display: block;
+      }
+
+      .store-layout {
+        display: block;
+      }
     }
 
     .loading-container {
@@ -178,6 +268,7 @@ import {
 })
 export class StoreBrowsePageComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
+  readonly i18n = inject(TranslationService);
 
   readonly products = signal<ProductDto[]>([]);
   readonly loading = signal(true);
@@ -185,14 +276,14 @@ export class StoreBrowsePageComponent implements OnInit {
 
   readonly productSelected = output<ProductDto>();
 
-  readonly filterTabs: TabItem[] = [
-    { label: 'All', value: 'All' },
-    { label: 'Prints', value: ProductType.Print },
-    { label: 'Canvas', value: ProductType.CanvasPrint },
-    { label: 'Metal', value: ProductType.MetalPrint },
-    { label: 'Albums', value: ProductType.Album },
-    { label: 'Digital', value: ProductType.DigitalDownload },
-  ];
+  readonly filterTabs = computed<TabItem[]>(() => [
+    { label: this.i18n.t().store.all, value: 'All' },
+    { label: this.i18n.t().store.prints, value: ProductType.Print },
+    { label: this.i18n.t().store.canvas, value: ProductType.CanvasPrint },
+    { label: this.i18n.t().store.metal, value: ProductType.MetalPrint },
+    { label: this.i18n.t().store.albums, value: ProductType.Album },
+    { label: this.i18n.t().store.digital, value: ProductType.DigitalDownload },
+  ]);
 
   readonly filteredProducts = computed(() => {
     const all = this.products().filter((p) => p.isActive);
@@ -226,7 +317,7 @@ export class StoreBrowsePageComponent implements OnInit {
   }
 
   formatPrice(cents: number): string {
-    return `$${(cents / 100).toFixed(2)}`;
+    return this.i18n.formatCurrency(cents);
   }
 
   formatProductType(type: ProductType): string {

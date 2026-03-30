@@ -6,6 +6,7 @@ import {
   SessionTypeDto,
   CreateBookingCommand,
   BookingRecordDto,
+  TranslationService,
 } from 'api';
 import {
   CardComponent,
@@ -26,12 +27,12 @@ import {
         </div>
       } @else if (!sessionType()) {
         <div class="error-container">
-          <p class="error-text">Session type not found.</p>
+          <p class="error-text">{{ i18n.t().booking.sessionNotFound }}</p>
         </div>
       } @else {
       <lib-card>
         <div card-header>
-          <h2 class="form-title">Book {{ sessionType()!.name }}</h2>
+          <h2 class="form-title">{{ i18n.t().booking.bookPrefix }}{{ sessionType()!.name }}</h2>
           <div class="steps-indicator">
             <span class="step" [class.step--active]="currentStep() >= 1" [class.step--completed]="currentStep() > 1">1</span>
             <span class="step-line" [class.step-line--active]="currentStep() > 1"></span>
@@ -46,37 +47,37 @@ import {
             <div class="confirmation-icon">
               <lucide-icon name="check" [size]="40" color="#FFFFFF"></lucide-icon>
             </div>
-            <h3 class="confirmation-title">Booking Confirmed!</h3>
+            <h3 class="confirmation-title">{{ i18n.t().booking.confirmed }}</h3>
             <p class="confirmation-text">
-              Your {{ sessionType()!.name }} session has been booked for {{ formatDateTime(startDate, startTime) }}.
+              {{ i18n.interpolate(i18n.t().booking.confirmationMessage, { sessionType: sessionType()!.name, date: formatDateTime(startDate, startTime) }) }}
             </p>
-            <p class="confirmation-text">A confirmation will be sent to {{ email }}.</p>
+            <p class="confirmation-text">{{ i18n.interpolate(i18n.t().booking.confirmationEmail, { email: email }) }}</p>
 
             <div class="confirmation-details-card">
               <div class="confirmation-detail-row">
-                <span class="confirmation-detail-label">Session Type</span>
+                <span class="confirmation-detail-label">{{ i18n.t().booking.sessionType }}</span>
                 <span class="confirmation-detail-value">{{ sessionType()!.name }}</span>
               </div>
               <div class="confirmation-detail-row">
-                <span class="confirmation-detail-label">Date</span>
+                <span class="confirmation-detail-label">{{ i18n.t().booking.date }}</span>
                 <span class="confirmation-detail-value">{{ startDate }}</span>
               </div>
               <div class="confirmation-detail-row">
-                <span class="confirmation-detail-label">Time</span>
+                <span class="confirmation-detail-label">{{ i18n.t().booking.time }}</span>
                 <span class="confirmation-detail-value">{{ startTime }} - {{ calculatedEndTime() }}</span>
               </div>
               @if (sessionType()!.location) {
                 <div class="confirmation-detail-row">
-                  <span class="confirmation-detail-label">Location</span>
+                  <span class="confirmation-detail-label">{{ i18n.t().booking.location }}</span>
                   <span class="confirmation-detail-value">{{ sessionType()!.location }}</span>
                 </div>
               }
             </div>
 
             <div class="calendar-buttons">
-              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('google')">Google Calendar</lib-button>
-              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('apple')">Apple Calendar</lib-button>
-              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('outlook')">Outlook</lib-button>
+              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('google')">{{ i18n.t().booking.googleCalendar }}</lib-button>
+              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('apple')">{{ i18n.t().booking.appleCalendar }}</lib-button>
+              <lib-button variant="outline" icon="calendar" (clicked)="onAddToCalendar('outlook')">{{ i18n.t().booking.outlook }}</lib-button>
             </div>
           </div>
         } @else {
@@ -87,126 +88,126 @@ import {
           <form (ngSubmit)="onSubmit()">
             @if (currentStep() === 1) {
               <div class="step-content">
-                <h3 class="step-title">Your Information</h3>
+                <h3 class="step-title">{{ i18n.t().booking.yourInfo }}</h3>
                 <div class="form-fields">
                   <lib-input-group
-                    label="First Name"
-                    placeholder="Enter your first name"
+                    [label]="i18n.t().booking.firstName"
+                    [placeholder]="i18n.t().booking.firstNamePlaceholder"
                     [(ngModel)]="firstName"
                     name="firstName"
                   />
                   <lib-input-group
-                    label="Last Name"
-                    placeholder="Enter your last name"
+                    [label]="i18n.t().booking.lastName"
+                    [placeholder]="i18n.t().booking.lastNamePlaceholder"
                     [(ngModel)]="lastName"
                     name="lastName"
                   />
                   <lib-input-group
-                    label="Email"
+                    [label]="i18n.t().booking.email"
                     type="email"
-                    placeholder="you@example.com"
+                    [placeholder]="i18n.t().booking.emailPlaceholder"
                     [(ngModel)]="email"
                     name="email"
                   />
                   <lib-input-group
-                    label="Phone (optional)"
+                    [label]="i18n.t().booking.phoneOptional"
                     type="tel"
-                    placeholder="Your phone number"
+                    [placeholder]="i18n.t().booking.phonePlaceholder"
                     [(ngModel)]="phone"
                     name="phone"
                   />
                 </div>
                 <div class="form-actions">
-                  <lib-button variant="primary" (clicked)="nextStep()">Continue</lib-button>
+                  <lib-button variant="primary" (clicked)="nextStep()">{{ i18n.t().booking.continue }}</lib-button>
                 </div>
               </div>
             }
 
             @if (currentStep() === 2) {
               <div class="step-content">
-                <h3 class="step-title">Select Date & Time</h3>
+                <h3 class="step-title">{{ i18n.t().booking.selectDateTime }}</h3>
                 <div class="form-fields">
                   <lib-input-group
-                    label="Date"
+                    [label]="i18n.t().booking.date"
                     type="text"
-                    placeholder="YYYY-MM-DD"
+                    [placeholder]="i18n.t().booking.datePlaceholder"
                     [(ngModel)]="startDate"
                     name="startDate"
                   />
                   <lib-input-group
-                    label="Start Time"
+                    [label]="i18n.t().booking.startTime"
                     type="text"
-                    placeholder="HH:MM"
+                    [placeholder]="i18n.t().booking.timePlaceholder"
                     [(ngModel)]="startTime"
                     name="startTime"
                   />
                   <div class="end-time-display">
-                    <span class="detail-label">End Time (calculated)</span>
+                    <span class="detail-label">{{ i18n.t().booking.endTime }}</span>
                     <span class="detail-value">{{ calculatedEndTime() }}</span>
                   </div>
                 </div>
                 <div class="form-actions">
-                  <lib-button variant="outline" (clicked)="previousStep()">Back</lib-button>
-                  <lib-button variant="primary" (clicked)="nextStep()">Continue</lib-button>
+                  <lib-button variant="outline" (clicked)="previousStep()">{{ i18n.t().booking.back }}</lib-button>
+                  <lib-button variant="primary" (clicked)="nextStep()">{{ i18n.t().booking.continue }}</lib-button>
                 </div>
               </div>
             }
 
             @if (currentStep() === 3) {
               <div class="step-content">
-                <h3 class="step-title">Review & Confirm</h3>
+                <h3 class="step-title">{{ i18n.t().booking.reviewConfirm }}</h3>
                 <div class="review-section">
                   <div class="review-group">
-                    <h4 class="review-heading">Session</h4>
+                    <h4 class="review-heading">{{ i18n.t().booking.session }}</h4>
                     <div class="review-row">
-                      <span class="review-label">Type</span>
+                      <span class="review-label">{{ i18n.t().booking.type }}</span>
                       <span class="review-value">{{ sessionType()!.name }}</span>
                     </div>
                     <div class="review-row">
-                      <span class="review-label">Duration</span>
+                      <span class="review-label">{{ i18n.t().booking.duration }}</span>
                       <span class="review-value">{{ formatDuration(sessionType()!.durationMinutes) }}</span>
                     </div>
                     <div class="review-row">
-                      <span class="review-label">Price</span>
+                      <span class="review-label">{{ i18n.t().booking.price }}</span>
                       <span class="review-value price">{{ formatPrice(sessionType()!.priceCents) }}</span>
                     </div>
                   </div>
                   <div class="review-group">
-                    <h4 class="review-heading">Date & Time</h4>
+                    <h4 class="review-heading">{{ i18n.t().booking.dateTime }}</h4>
                     <div class="review-row">
-                      <span class="review-label">Date</span>
+                      <span class="review-label">{{ i18n.t().booking.date }}</span>
                       <span class="review-value">{{ startDate }}</span>
                     </div>
                     <div class="review-row">
-                      <span class="review-label">Time</span>
+                      <span class="review-label">{{ i18n.t().booking.time }}</span>
                       <span class="review-value">{{ startTime }} - {{ calculatedEndTime() }}</span>
                     </div>
                   </div>
                   <div class="review-group">
-                    <h4 class="review-heading">Contact</h4>
+                    <h4 class="review-heading">{{ i18n.t().booking.contact }}</h4>
                     <div class="review-row">
-                      <span class="review-label">Name</span>
+                      <span class="review-label">{{ i18n.t().booking.name }}</span>
                       <span class="review-value">{{ firstName }} {{ lastName }}</span>
                     </div>
                     <div class="review-row">
-                      <span class="review-label">Email</span>
+                      <span class="review-label">{{ i18n.t().booking.email }}</span>
                       <span class="review-value">{{ email }}</span>
                     </div>
                     @if (phone) {
                       <div class="review-row">
-                        <span class="review-label">Phone</span>
+                        <span class="review-label">{{ i18n.t().booking.phone }}</span>
                         <span class="review-value">{{ phone }}</span>
                       </div>
                     }
                   </div>
                 </div>
                 <div class="form-actions">
-                  <lib-button variant="outline" (clicked)="previousStep()">Back</lib-button>
+                  <lib-button variant="outline" (clicked)="previousStep()">{{ i18n.t().booking.back }}</lib-button>
                   <lib-button variant="primary" type="submit" [disabled]="submitting() || !firstName.trim() || !lastName.trim() || !email.trim() || !startDate.trim() || !startTime.trim()">
                     @if (submitting()) {
                       <lib-spinner [size]="16" />
                     }
-                    Confirm Booking
+                    {{ i18n.t().booking.confirmBooking }}
                   </lib-button>
                 </div>
               </div>
@@ -483,6 +484,7 @@ import {
 })
 export class BookingFormComponent implements OnInit {
   private readonly bookingsService = inject(BookingsService);
+  readonly i18n = inject(TranslationService);
 
   readonly sessionTypeId = input.required<string>();
   readonly bookingCreated = output<BookingRecordDto>();
@@ -503,7 +505,7 @@ export class BookingFormComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.errorMessage.set('Failed to load session type.');
+        this.errorMessage.set(this.i18n.t().booking.loadError);
       },
     });
   }
@@ -567,21 +569,22 @@ export class BookingFormComponent implements OnInit {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(err.error?.message ?? 'Failed to create booking. Please try again.');
+        this.errorMessage.set(err.error?.message ?? this.i18n.t().booking.createError);
       },
     });
   }
 
   formatDuration(minutes: number): string {
+    const t = this.i18n.t().booking;
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    if (hours === 0) return `${mins} min`;
-    if (mins === 0) return `${hours} hr`;
-    return `${hours} hr ${mins} min`;
+    if (hours === 0) return `${mins} ${t.min}`;
+    if (mins === 0) return `${hours} ${t.hr}`;
+    return `${hours} ${t.hr} ${mins} ${t.min}`;
   }
 
   formatPrice(cents: number): string {
-    return `$${(cents / 100).toFixed(2)}`;
+    return this.i18n.formatCurrency(cents);
   }
 
   formatDateTime(date: string, time: string): string {

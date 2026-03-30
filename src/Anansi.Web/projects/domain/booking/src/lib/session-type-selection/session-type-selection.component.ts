@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, OnInit, output } from '@angular/core';
+import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
-import { BookingsService, SessionTypeDto, SessionVisibility } from 'api';
+import { BookingsService, SessionTypeDto, SessionVisibility, TranslationService } from 'api';
 import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent } from 'components';
 
 @Component({
@@ -13,7 +14,7 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
         <lucide-icon name="user" [size]="48"></lucide-icon>
       </div>
       <h1 class="photographer-name">Studio Name</h1>
-      <p class="welcome-text">Welcome! Browse our available session types and book the perfect photography experience for you.</p>
+      <p class="welcome-text">{{ i18n.t().booking.welcome }}</p>
     </div>
 
     @if (loading()) {
@@ -23,8 +24,8 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
     } @else if (publicSessions().length === 0) {
       <div class="empty-container">
         <lib-empty-state
-          heading="No Sessions Available"
-          description="There are no session types available for booking at this time."
+          [heading]="i18n.t().booking.noSessions"
+          [description]="i18n.t().booking.noSessionsDescription"
         />
       </div>
     } @else {
@@ -40,23 +41,23 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
               }
               <div class="session-details">
                 <span class="detail-item">
-                  <span class="detail-label">Duration</span>
+                  <span class="detail-label">{{ i18n.t().booking.duration }}</span>
                   <span class="detail-value">{{ formatDuration(session.durationMinutes) }}</span>
                 </span>
                 <span class="detail-item">
-                  <span class="detail-label">Price</span>
+                  <span class="detail-label">{{ i18n.t().booking.price }}</span>
                   <span class="detail-value price">{{ formatPrice(session.priceCents) }}</span>
                 </span>
                 @if (session.location) {
                   <span class="detail-item">
-                    <span class="detail-label">Location</span>
+                    <span class="detail-label">{{ i18n.t().booking.location }}</span>
                     <span class="detail-value">{{ session.location }}</span>
                   </span>
                 }
               </div>
             </div>
             <div card-actions>
-              <lib-button variant="primary" (clicked)="onBook(session)">Book Now</lib-button>
+              <lib-button variant="primary" (clicked)="onBook(session)">{{ i18n.t().booking.bookNow }}</lib-button>
             </div>
           </lib-card>
         }
@@ -196,6 +197,7 @@ import { CardComponent, ButtonComponent, SpinnerComponent, EmptyStateComponent }
 })
 export class SessionTypeSelectionComponent implements OnInit {
   private readonly bookingsService = inject(BookingsService);
+  readonly i18n = inject(TranslationService);
 
   readonly allSessions = signal<SessionTypeDto[]>([]);
   readonly loading = signal(true);
@@ -220,19 +222,23 @@ export class SessionTypeSelectionComponent implements OnInit {
     });
   }
 
+  private readonly router = inject(Router);
+
   onBook(session: SessionTypeDto): void {
     this.sessionTypeSelected.emit(session);
+    this.router.navigate(['/book', session.id]);
   }
 
   formatDuration(minutes: number): string {
+    const t = this.i18n.t().booking;
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    if (hours === 0) return `${mins} min`;
-    if (mins === 0) return `${hours} hr`;
-    return `${hours} hr ${mins} min`;
+    if (hours === 0) return `${mins} ${t.min}`;
+    if (mins === 0) return `${hours} ${t.hr}`;
+    return `${hours} ${t.hr} ${mins} ${t.min}`;
   }
 
   formatPrice(cents: number): string {
-    return `$${(cents / 100).toFixed(2)}`;
+    return this.i18n.formatCurrency(cents);
   }
 }

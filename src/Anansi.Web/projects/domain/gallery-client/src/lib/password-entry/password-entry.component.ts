@@ -11,8 +11,8 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
     <div class="password-entry">
       <lib-card>
         <div class="password-entry__header">
-          <h1 class="password-entry__title">Protected Gallery</h1>
-          <p class="password-entry__subtitle">Enter the password to view this gallery</p>
+          <h1 class="password-entry__title">{{ i18n.t().gallery.protectedGallery }}</h1>
+          <p class="password-entry__subtitle">{{ i18n.t().gallery.enterPassword }}</p>
         </div>
 
         @if (errorMessage()) {
@@ -21,9 +21,9 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
         <form class="password-entry__form" (ngSubmit)="onSubmit()">
           <lib-input-group
-            label="Password"
+            [label]="i18n.t().gallery.password"
             type="password"
-            placeholder="Enter gallery password"
+            [placeholder]="i18n.t().gallery.passwordPlaceholder"
             [(ngModel)]="password"
             name="password"
           />
@@ -36,7 +36,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
             @if (loading()) {
               <lib-spinner [size]="16" />
             }
-            Enter Gallery
+            {{ i18n.t().gallery.enterGallery }}
           </lib-button>
         </form>
       </lib-card>
@@ -103,10 +103,33 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
       width: 100%;
       justify-content: center;
     }
+
+    @media (max-width: 480px) {
+      .password-entry {
+        padding: 16px;
+      }
+
+      lib-card {
+        max-width: 100%;
+      }
+
+      .password-entry__header {
+        margin-bottom: 24px;
+      }
+
+      .password-entry__title {
+        font-size: 24px;
+      }
+
+      .password-entry__subtitle {
+        font-size: 14px;
+      }
+    }
   `,
 })
 export class PasswordEntryComponent {
   private readonly collectionsService = inject(CollectionsService);
+  readonly i18n = inject(TranslationService);
 
   readonly collectionId = input.required<string>();
   readonly loading = signal(false);
@@ -129,7 +152,7 @@ export class PasswordEntryComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message ?? 'Incorrect password. Please try again.');
+        this.errorMessage.set(err.error?.message ?? this.i18n.t().gallery.incorrectPassword);
       },
     });
   }

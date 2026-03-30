@@ -415,3 +415,70 @@ export enum GalleryDisplayType {
   Grid = 0,
   FeaturedCollection = 1,
 }
+
+export enum InteracRequestStatus {
+  Pending = 'Pending',
+  Completed = 'Completed',
+  Expired = 'Expired',
+  Cancelled = 'Cancelled',
+}
+
+export enum TaxRegistrationStatus {
+  Voluntary = 'Voluntary',
+  Mandatory = 'Mandatory',
+  NotRegistered = 'NotRegistered',
+}
+
+export enum ExpenseCategory {
+  Equipment = 'Equipment',
+  Travel = 'Travel',
+  Software = 'Software',
+  Marketing = 'Marketing',
+  Insurance = 'Insurance',
+  Office = 'Office',
+  Education = 'Education',
+  Other = 'Other',
+}
+
+// --- Cultural Discovery (L27) ---
+
+export enum SkinToneRange {
+  Light = 'Light',
+  Medium = 'Medium',
+  Deep = 'Deep',
+  VeryDeep = 'VeryDeep',
+}
+
+export enum PresetContext {
+  Studio = 'Studio',
+  Outdoor = 'Outdoor',
+  Event = 'Event',
+  GoldenHour = 'GoldenHour',
+}
+
+export enum PresetVisibility {
+  Public = 'Public',
+  Private = 'Private',
+}
+
+export enum EventCategory {
+  Festival = 'Festival',
+  Cultural = 'Cultural',
+  Community = 'Community',
+  Religious = 'Religious',
+  Market = 'Market',
+}
+
+export enum EventRecurrence {
+  OneTime = 'OneTime',
+  Weekly = 'Weekly',
+  Monthly = 'Monthly',
+  Annual = 'Annual',
+}
+
+export enum EventStatus {
+  Draft = 'Draft',
+  Pending = 'Pending',
+  Approved = 'Approved',
+  Rejected = 'Rejected',
+}

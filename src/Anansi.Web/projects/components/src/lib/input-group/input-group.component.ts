@@ -96,7 +96,7 @@ export class InputGroupComponent implements ControlValueAccessor {
   readonly label = input<string>('');
   readonly placeholder = input<string>('');
   readonly value = model<string>('');
-  readonly type = input<'text' | 'email' | 'password' | 'number' | 'tel' | 'url'>('text');
+  readonly type = input<'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date'>('text');
   readonly disabled = input<boolean>(false);
   readonly errorMessage = input<string | null>(null);
 

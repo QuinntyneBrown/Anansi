@@ -1,4 +1,6 @@
 import { Component, inject, signal, output, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 import {
   CollectionsService,
   CollectionSummaryDto,
@@ -19,6 +21,7 @@ import {
   selector: 'lib-collection-list-page',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CardComponent,
     ButtonComponent,
     BadgeComponent,
@@ -38,7 +41,7 @@ import {
             [value]="searchQuery()"
             (input)="onSearch($event)"
           />
-          <lib-button variant="primary" (clicked)="createCollection.emit()">+ Create Collection</lib-button>
+          <lib-button variant="primary" (clicked)="onCreateCollection()">+ Create Collection</lib-button>
         </div>
       </div>
 
@@ -69,7 +72,7 @@ import {
                     [class.starred]="collection.isStarred"
                     (click)="onToggleStar(collection)"
                     [attr.aria-label]="collection.isStarred ? 'Unstar collection' : 'Star collection'"
-                  >{{ collection.isStarred ? '\u2605' : '\u2606' }}</button>
+                  ><lucide-icon [name]="collection.isStarred ? 'star' : 'star'" [size]="16"></lucide-icon></button>
                 </div>
                 <div class="card-body">
                   <div class="card-stats">
@@ -288,6 +291,12 @@ export class CollectionListPageComponent implements OnInit {
   readonly totalCount = signal(0);
 
   readonly createCollection = output<void>();
+  private readonly router = inject(Router);
+
+  onCreateCollection(): void {
+    this.createCollection.emit();
+    this.router.navigate(['/galleries/new']);
+  }
 
   readonly statusTabs: PillTabItem[] = [
     { label: 'All', value: 'All', icon: 'layout-grid' },

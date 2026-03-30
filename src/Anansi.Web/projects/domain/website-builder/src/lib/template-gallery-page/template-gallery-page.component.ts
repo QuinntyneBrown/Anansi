@@ -71,7 +71,8 @@ import {
                     <p class="template-description">{{ template.description }}</p>
                   }
                   <div class="template-actions">
-                    <lib-button variant="primary" (clicked)="onUseTemplate(template)">Use Template</lib-button>
+                    <lib-button variant="outline" (clicked)="onPreviewTemplate(template)">Preview</lib-button>
+                    <lib-button variant="primary" (clicked)="onUseTemplate(template)">Select</lib-button>
                   </div>
                 </div>
               </div>
@@ -118,7 +119,7 @@ import {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 24px;
-      padding: 0 24px 24px;
+      padding: 0 32px 32px;
     }
 
     .template-card {
@@ -128,7 +129,7 @@ import {
 
     .template-preview {
       width: 100%;
-      height: 200px;
+      height: 240px;
       overflow: hidden;
       border-radius: 12px 12px 0 0;
     }
@@ -185,6 +186,7 @@ import {
     .template-actions {
       display: flex;
       justify-content: flex-end;
+      gap: 8px;
     }
   `,
 })
@@ -196,6 +198,7 @@ export class TemplateGalleryPageComponent implements OnInit {
   readonly activeTab = signal('All');
 
   readonly templateSelected = output<WebsiteTemplateDto>();
+  readonly templatePreview = output<WebsiteTemplateDto>();
 
   readonly tabs: PillTabItem[] = [
     { label: 'All', icon: 'layout-grid', value: 'All' },
@@ -231,6 +234,10 @@ export class TemplateGalleryPageComponent implements OnInit {
 
   onTabChange(tab: string): void {
     this.activeTab.set(tab);
+  }
+
+  onPreviewTemplate(template: WebsiteTemplateDto): void {
+    this.templatePreview.emit(template);
   }
 
   onUseTemplate(template: WebsiteTemplateDto): void {

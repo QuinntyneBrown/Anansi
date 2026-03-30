@@ -2,6 +2,8 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import {
   PaymentsService,
+  ContactsService,
+  ContactDto,
   RevenueDashboardDto,
   PaymentRecordDto,
   PagedList,
@@ -80,7 +82,7 @@ import {
             </lib-table-header-row>
             @for (tx of transactions(); track tx.id) {
               <lib-table-data-row>
-                <span class="col-client">{{ tx.contactId ? 'Client' : 'N/A' }}</span>
+                <span class="col-client">{{ getClientLabel(tx) }}</span>
                 <span class="col-desc">{{ tx.description ?? '-' }}</span>
                 <span class="col-date">{{ tx.createdAt | date:'mediumDate' }}</span>
                 <span class="col-amount">{{ formatCurrency(tx.amountCents) }}</span>
@@ -198,9 +200,11 @@ import {
 })
 export class RevenueDashboardPageComponent implements OnInit {
   private readonly paymentsService = inject(PaymentsService);
+  private readonly contactsService = inject(ContactsService);
 
   readonly dashboard = signal<RevenueDashboardDto | null>(null);
   readonly transactions = signal<PaymentRecordDto[]>([]);
+  readonly contactMap = signal<Map<string, string>>(new Map());
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly dateFrom = signal(RevenueDashboardPageComponent.computeYearStart());
@@ -256,6 +260,7 @@ export class RevenueDashboardPageComponent implements OnInit {
     this.paymentsService.listTransactions({ pageSize: 10 }).subscribe({
       next: (result: PagedList<PaymentRecordDto>) => {
         this.transactions.set(result.items);
+        this.loadContactNames(result.items);
         this.loading.set(false);
       },
       error: () => {
@@ -263,6 +268,28 @@ export class RevenueDashboardPageComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  private loadContactNames(transactions: PaymentRecordDto[]): void {
+    const contactIds = [...new Set(transactions.filter((t) => t.contactId).map((t) => t.contactId!))];
+    if (contactIds.length === 0) return;
+    this.contactsService.list({ pageSize: 100 }).subscribe({
+      next: (result: PagedList<ContactDto>) => {
+        const map = new Map<string, string>();
+        result.items.forEach((c) => {
+          map.set(c.id, `${c.firstName} ${c.lastName}`);
+        });
+        this.contactMap.set(map);
+      },
+    });
+  }
+
+  getClientLabel(tx: PaymentRecordDto): string {
+    if (!tx.contactId) return 'N/A';
+    const map = this.contactMap();
+    const name = map.get(tx.contactId);
+    if (name) return name;
+    return `Client #${tx.contactId.substring(0, 6)}`;
   }
 
   formatCurrency(cents: number): string {

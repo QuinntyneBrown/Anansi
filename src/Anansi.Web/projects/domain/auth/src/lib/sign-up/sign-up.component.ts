@@ -1,4 +1,5 @@
 import { Component, inject, signal, output } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService, AuthResponse, RegisterCommand } from 'api';
 import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent } from 'components';
@@ -75,7 +76,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
         <p class="sign-up__footer">
           Already have an account?
-          <a class="sign-up__link" (click)="navigateToSignIn.emit()">Sign In</a>
+          <a class="sign-up__link" (click)="onSignIn()">Sign In</a>
         </p>
       </lib-card>
     </div>
@@ -209,12 +210,18 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 })
 export class SignUpComponent {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
   readonly authSuccess = output<AuthResponse>();
   readonly navigateToSignIn = output<void>();
+
+  onSignIn(): void {
+    this.navigateToSignIn.emit();
+    this.router.navigate(['/sign-in']);
+  }
 
   businessName = '';
   fullName = '';

@@ -37,9 +37,9 @@ import {
     } @else {
       <div class="favorites-page">
         <div class="page-header">
-          <h1 class="page-title">Favorites</h1>
+          <h1 class="page-title">{{ i18n.t().favorites.title }}</h1>
           <lib-button variant="outline" (clicked)="toggleCreateForm()">
-            {{ showCreateForm() ? 'Cancel' : '+ New List' }}
+            {{ showCreateForm() ? i18n.t().favorites.cancel : i18n.t().favorites.newList }}
           </lib-button>
         </div>
 
@@ -47,9 +47,9 @@ import {
           <lib-card>
             <form class="create-form" (ngSubmit)="onCreateList()">
               <lib-input-group
-                label="List Name"
+                [label]="i18n.t().favorites.listName"
                 type="text"
-                placeholder="Enter list name"
+                [placeholder]="i18n.t().favorites.listNamePlaceholder"
                 [(ngModel)]="newListName"
                 name="newListName"
               />
@@ -57,14 +57,14 @@ import {
                 @if (creating()) {
                   <lib-spinner [size]="16" />
                 }
-                Create
+                {{ i18n.t().favorites.create }}
               </lib-button>
             </form>
           </lib-card>
         }
 
         @if (favoriteLists().length === 0 && !showCreateForm()) {
-          <lib-empty-state heading="No favorite lists" description="Create a favorite list to get started." />
+          <lib-empty-state [heading]="i18n.t().favorites.noLists" [description]="i18n.t().favorites.noListsDescription" />
         } @else {
           <div class="lists-container">
             @for (list of favoriteLists(); track list.id) {
@@ -82,9 +82,9 @@ import {
                     }
                   </div>
                   <div class="list-meta">
-                    <span class="list-count">{{ list.itemCount }} items</span>
+                    <span class="list-count">{{ list.itemCount }} {{ i18n.t().favorites.items }}</span>
                     @if (list.isCompleted) {
-                      <lib-badge variant="success">Completed</lib-badge>
+                      <lib-badge variant="success">{{ i18n.t().favorites.completed }}</lib-badge>
                     }
                   </div>
                 </div>
@@ -97,20 +97,20 @@ import {
           <div class="items-section">
             <div class="items-header">
               <h2 class="items-title">{{ selected.name }}</h2>
-              <lib-button variant="ghost" (clicked)="clearSelectedList()">Close</lib-button>
+              <lib-button variant="ghost" (clicked)="clearSelectedList()">{{ i18n.t().favorites.close }}</lib-button>
             </div>
             @if (loadingItems()) {
               <div class="loading-container">
                 <lib-spinner [size]="24" />
               </div>
             } @else if (selectedItems().length === 0) {
-              <lib-empty-state heading="No items" description="This favorite list is empty." />
+              <lib-empty-state [heading]="i18n.t().favorites.noItems" [description]="i18n.t().favorites.emptyList" />
             } @else {
               <div class="items-grid">
                 @for (item of selectedItems(); track item.id) {
                   <lib-card>
                     <div class="item-card">
-                      <span class="item-filename">{{ item.mediaFileName || 'Unknown' }}</span>
+                      <span class="item-filename">{{ item.mediaFileName || i18n.t().favorites.unknown }}</span>
                       @if (item.comment) {
                         <span class="item-comment">{{ item.comment }}</span>
                       }

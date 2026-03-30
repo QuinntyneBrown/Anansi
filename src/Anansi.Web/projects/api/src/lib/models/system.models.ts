@@ -3,10 +3,13 @@ import {
   DocumentType,
   DomainPurpose,
   EmailDigestOption,
+  ExpenseCategory,
+  InteracRequestStatus,
   NotificationCategory,
   NotificationDeliveryMethod,
   PaymentMethod,
   SslStatus,
+  TaxRegistrationStatus,
   WatermarkPosition,
   WatermarkType,
   WebhookEventType,
@@ -419,6 +422,128 @@ export interface PaymentExportParams {
 export interface RevenueDashboardParams {
   from?: string;
   to?: string;
+}
+
+// --- Interac e-Transfer ---
+
+export interface InteracConfigDto {
+  id: string;
+  registeredEmail: string;
+  isEnabled: boolean;
+  autoDepositEnabled: boolean;
+  updatedAt: string;
+}
+
+export interface UpdateInteracConfigCommand {
+  registeredEmail: string;
+  isEnabled: boolean;
+  autoDepositEnabled: boolean;
+}
+
+export interface InteracPaymentRequestDto {
+  id: string;
+  reference: string;
+  contactId?: string;
+  clientName: string;
+  clientEmail: string;
+  amountCents: number;
+  currency: string;
+  status: InteracRequestStatus;
+  message?: string;
+  invoiceId?: string;
+  expiresAt: string;
+  completedAt?: string;
+  createdAt: string;
+}
+
+export interface CreateInteracPaymentRequestCommand {
+  contactId?: string;
+  clientName: string;
+  clientEmail: string;
+  amountCents: number;
+  currency: string;
+  message?: string;
+  invoiceId?: string;
+}
+
+export interface InteracPaymentRequestListParams {
+  status?: InteracRequestStatus;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ConfirmInteracTransferCommand {
+  requestId: string;
+}
+
+// --- Tax & HST ---
+
+export interface TaxProfileDto {
+  id: string;
+  registrationNumber?: string;
+  hstRate: number;
+  status: TaxRegistrationStatus;
+  revenueYtdCents: number;
+  thresholdCents: number;
+  thresholdPercentage: number;
+  isRegistered: boolean;
+  updatedAt: string;
+}
+
+export interface UpdateTaxProfileCommand {
+  registrationNumber?: string;
+  hstRate: number;
+  status: TaxRegistrationStatus;
+}
+
+export interface QuarterlyBreakdownDto {
+  quarter: string;
+  revenueCents: number;
+  hstCollectedCents: number;
+  itcClaimedCents: number;
+  netHstOwingCents: number;
+}
+
+export interface TaxDashboardDto {
+  profile: TaxProfileDto;
+  quarterlyBreakdowns: QuarterlyBreakdownDto[];
+}
+
+export interface ExpenseDto {
+  id: string;
+  date: string;
+  description: string;
+  category: ExpenseCategory;
+  amountCents: number;
+  hstPaidCents: number;
+  receiptUrl?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface CreateExpenseCommand {
+  date: string;
+  description: string;
+  category: ExpenseCategory;
+  amountCents: number;
+  hstPaidCents: number;
+  receiptUrl?: string;
+  notes?: string;
+}
+
+export interface ExpenseListParams {
+  category?: ExpenseCategory;
+  from?: string;
+  to?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ExpenseSummaryDto {
+  totalExpensesCents: number;
+  totalHstPaidCents: number;
+  netHstOwingCents: number;
 }
 
 // --- Plans ---

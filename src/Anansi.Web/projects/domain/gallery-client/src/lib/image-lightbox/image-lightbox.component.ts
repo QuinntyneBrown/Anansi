@@ -1,6 +1,6 @@
-import { Component, input, output, signal, computed, HostListener } from '@angular/core';
+import { Component, inject, input, output, signal, computed, HostListener } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
-import { GalleryMediaDto } from 'api';
+import { GalleryMediaDto, API_CONFIG } from 'api';
 
 @Component({
   selector: 'lib-image-lightbox',
@@ -27,9 +27,17 @@ import { GalleryMediaDto } from 'api';
 
       <div class="lightbox-image-container">
         @if (currentPhoto(); as photo) {
-          <div class="photo-display">
-            <span class="photo-filename">{{ photo.originalFileName }}</span>
-          </div>
+          @if (getPhotoUrl(photo)) {
+            <img
+              [src]="getPhotoUrl(photo)"
+              [alt]="photo.originalFileName"
+              class="lightbox-image"
+            />
+          } @else {
+            <div class="photo-display">
+              <span class="photo-filename">{{ photo.originalFileName }}</span>
+            </div>
+          }
         }
       </div>
 
@@ -156,6 +164,13 @@ import { GalleryMediaDto } from 'api';
       justify-content: center;
     }
 
+    .lightbox-image {
+      max-width: 800px;
+      max-height: 540px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
     .photo-display {
       display: flex;
       align-items: center;
@@ -226,9 +241,47 @@ import { GalleryMediaDto } from 'api';
       font-weight: 500;
       color: #F5F5F0;
     }
+
+    @media (max-width: 480px) {
+      .nav-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+      }
+
+      .nav-btn--left {
+        left: 12px;
+      }
+
+      .nav-btn--right {
+        right: 12px;
+      }
+
+      .close-btn {
+        top: 12px;
+        right: 12px;
+      }
+
+      .bottom-bar {
+        padding: 0 16px;
+        height: 56px;
+      }
+
+      .lightbox-image {
+        max-width: calc(100vw - 80px);
+        max-height: calc(100vh - 120px);
+      }
+
+      .photo-display {
+        min-width: 260px;
+        min-height: 200px;
+      }
+    }
   `,
 })
 export class ImageLightboxComponent {
+  private readonly config = inject(API_CONFIG);
+
   readonly photos = input.required<GalleryMediaDto[]>();
   readonly currentIndex = input.required<number>();
 
@@ -298,6 +351,11 @@ export class ImageLightboxComponent {
     if (photo) {
       this.share.emit(photo);
     }
+  }
+
+  getPhotoUrl(photo: GalleryMediaDto): string | null {
+    if (!photo.collectionId || !photo.id) return null;
+    return `${this.config.baseUrl}/api/collections/${photo.collectionId}/media/${photo.id}/content`;
   }
 
   private navigatePrevious(): void {

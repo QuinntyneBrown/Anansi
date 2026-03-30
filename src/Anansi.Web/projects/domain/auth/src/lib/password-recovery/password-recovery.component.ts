@@ -1,4 +1,5 @@
 import { Component, inject, signal, output } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService, ForgotPasswordCommand, ResetPasswordCommand } from 'api';
 import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent } from 'components';
@@ -46,7 +47,7 @@ import { LucideAngularModule } from 'lucide-angular';
             </form>
 
             <p class="recovery__footer">
-              <a class="recovery__link" (click)="navigateToSignIn.emit()">Back to Sign In</a>
+              <a class="recovery__link" (click)="onBackToSignIn()">Back to Sign In</a>
             </p>
           }
 
@@ -61,7 +62,7 @@ import { LucideAngularModule } from 'lucide-angular';
             </div>
 
             <p class="recovery__footer">
-              <a class="recovery__link" (click)="navigateToSignIn.emit()">Back to Sign In</a>
+              <a class="recovery__link" (click)="onBackToSignIn()">Back to Sign In</a>
             </p>
           }
 
@@ -113,7 +114,7 @@ import { LucideAngularModule } from 'lucide-angular';
             </form>
 
             <p class="recovery__footer">
-              <a class="recovery__link" (click)="navigateToSignIn.emit()">Back to Sign In</a>
+              <a class="recovery__link" (click)="onBackToSignIn()">Back to Sign In</a>
             </p>
           }
         }
@@ -229,6 +230,7 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class PasswordRecoveryComponent {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly step = signal<'request' | 'check-email' | 'new-password'>('request');
   readonly loading = signal(false);
@@ -236,6 +238,11 @@ export class PasswordRecoveryComponent {
 
   readonly recoveryComplete = output<void>();
   readonly navigateToSignIn = output<void>();
+
+  onBackToSignIn(): void {
+    this.navigateToSignIn.emit();
+    this.router.navigate(['/sign-in']);
+  }
 
   email = '';
   token = '';

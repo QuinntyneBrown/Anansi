@@ -1,5 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { Router } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
+import { TranslationService } from 'api';
 import {
   CardComponent,
   ButtonComponent,
@@ -11,6 +13,7 @@ import { CartService, CartItem } from '../cart/cart.service';
   selector: 'lib-cart-page',
   standalone: true,
   imports: [
+    LucideAngularModule,
     CardComponent,
     ButtonComponent,
     EmptyStateComponent,
@@ -18,13 +21,13 @@ import { CartService, CartItem } from '../cart/cart.service';
   template: `
     <div class="page">
       <div class="page-header">
-        <h1 class="page-title">Your Cart</h1>
+        <h1 class="page-title">{{ i18n.t().cart.title }}</h1>
       </div>
 
       @if (cartItems().length === 0) {
         <lib-empty-state
-          heading="Your cart is empty"
-          description="Browse our store and add items to your cart."
+          [heading]="i18n.t().cart.empty"
+          [description]="i18n.t().cart.emptyDescription"
         />
       } @else {
         <div class="cart-layout">
@@ -41,14 +44,14 @@ import { CartService, CartItem } from '../cart/cart.service';
                       />
                     } @else {
                       <div class="thumbnail-placeholder">
-                        <span class="placeholder-icon">&#128247;</span>
+                        <lucide-icon name="image" [size]="24"></lucide-icon>
                       </div>
                     }
                   </div>
                   <div class="item-details">
                     <h3 class="item-name">{{ item.product.name }}</h3>
                     <p class="item-variation">{{ getVariationName(item) }}</p>
-                    <p class="item-unit-price">{{ formatPrice(getUnitPrice(item)) }} each</p>
+                    <p class="item-unit-price">{{ formatPrice(getUnitPrice(item)) }} {{ i18n.t().cart.each }}</p>
                   </div>
                   <div class="item-actions">
                     <div class="quantity-controls">
@@ -56,21 +59,21 @@ import { CartService, CartItem } from '../cart/cart.service';
                         class="qty-btn"
                         (click)="onDecrement(i)"
                         [disabled]="item.quantity <= 1"
-                        aria-label="Decrease quantity"
+                        [attr.aria-label]="i18n.t().cart.decreaseQty"
                       >-</button>
                       <span class="qty-value">{{ item.quantity }}</span>
                       <button
                         class="qty-btn"
                         (click)="onIncrement(i)"
-                        aria-label="Increase quantity"
+                        [attr.aria-label]="i18n.t().cart.increaseQty"
                       >+</button>
                     </div>
                     <span class="item-total">{{ formatPrice(getLineTotal(item)) }}</span>
                     <button
                       class="remove-btn"
                       (click)="onRemove(i)"
-                      aria-label="Remove item"
-                    >Remove</button>
+                      [attr.aria-label]="i18n.t().cart.remove"
+                    >{{ i18n.t().cart.remove }}</button>
                   </div>
                 </div>
               </lib-card>
@@ -79,25 +82,25 @@ import { CartService, CartItem } from '../cart/cart.service';
 
           <div class="cart-summary">
             <lib-card>
-              <div card-header class="summary-title">Order Summary</div>
+              <div card-header class="summary-title">{{ i18n.t().cart.orderSummary }}</div>
               <div class="summary-rows">
                 <div class="summary-row">
-                  <span class="summary-label">Items</span>
+                  <span class="summary-label">{{ i18n.t().cart.itemsLabel }}</span>
                   <span class="summary-value">{{ itemCount() }}</span>
                 </div>
                 <div class="summary-row">
-                  <span class="summary-label">Subtotal</span>
+                  <span class="summary-label">{{ i18n.t().cart.subtotal }}</span>
                   <span class="summary-value">{{ formatPrice(subtotal()) }}</span>
                 </div>
               </div>
               <div class="summary-divider"></div>
               <div class="summary-row summary-total">
-                <span class="summary-label">Estimated Total</span>
+                <span class="summary-label">{{ i18n.t().cart.estimatedTotal }}</span>
                 <span class="summary-value total-price">{{ formatPrice(subtotal()) }}</span>
               </div>
               <div class="checkout-action">
                 <lib-button variant="primary" (clicked)="onProceedToCheckout()">
-                  Proceed to Checkout
+                  {{ i18n.t().cart.proceedToCheckout }}
                 </lib-button>
               </div>
             </lib-card>
@@ -342,6 +345,7 @@ import { CartService, CartItem } from '../cart/cart.service';
 export class CartPageComponent {
   private readonly cartService = inject(CartService);
   private readonly router = inject(Router);
+  readonly i18n = inject(TranslationService);
 
   readonly cartItems = this.cartService.items;
 
@@ -368,7 +372,7 @@ export class CartPageComponent {
   }
 
   formatPrice(cents: number): string {
-    return `$${(cents / 100).toFixed(2)}`;
+    return this.i18n.formatCurrency(cents);
   }
 
   onIncrement(index: number): void {

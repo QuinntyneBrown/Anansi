@@ -1,4 +1,5 @@
 import { Component, inject, signal, output } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService, AuthResponse, LoginCommand } from 'api';
 import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent } from 'components';
@@ -35,7 +36,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
             name="password"
           />
 
-          <a class="sign-in__forgot-link" (click)="navigateToForgotPassword.emit()">
+          <a class="sign-in__forgot-link" (click)="onForgotPassword()">
             Forgot password?
           </a>
 
@@ -67,7 +68,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 
         <p class="sign-in__footer">
           Don't have an account?
-          <a class="sign-in__link" (click)="navigateToSignUp.emit()">Sign up</a>
+          <a class="sign-in__link" (click)="onSignUp()">Sign up</a>
         </p>
       </lib-card>
     </div>
@@ -214,6 +215,7 @@ import { CardComponent, ButtonComponent, InputGroupComponent, SpinnerComponent }
 })
 export class SignInComponent {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -221,6 +223,16 @@ export class SignInComponent {
   readonly authSuccess = output<AuthResponse>();
   readonly navigateToSignUp = output<void>();
   readonly navigateToForgotPassword = output<void>();
+
+  onForgotPassword(): void {
+    this.navigateToForgotPassword.emit();
+    this.router.navigate(['/forgot-password']);
+  }
+
+  onSignUp(): void {
+    this.navigateToSignUp.emit();
+    this.router.navigate(['/sign-up']);
+  }
 
   email = '';
   password = '';

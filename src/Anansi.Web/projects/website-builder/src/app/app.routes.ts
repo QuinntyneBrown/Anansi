@@ -29,12 +29,28 @@ export const routes: Routes = [
     data: { title: 'Pages' },
   },
   {
+    path: 'sites/:websiteId/editor',
+    loadComponent: () =>
+      import('@domain/website-builder').then(
+        (m) => m.FlexEditorPageComponent,
+      ),
+    data: { title: 'Flex Editor' },
+  },
+  {
     path: 'sites/:websiteId/blog',
     loadComponent: () =>
       import('./pages/blog-manager-page.component').then(
         (m) => m.BlogManagerPageComponent,
       ),
     data: { title: 'Blog' },
+  },
+  {
+    path: 'sites/:websiteId/blog/:postId',
+    loadComponent: () =>
+      import('./pages/blog-editor-page.component').then(
+        (m) => m.BlogEditorPageComponent,
+      ),
+    data: { title: 'Blog Editor' },
   },
   {
     path: 'sites/:websiteId/seo',

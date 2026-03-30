@@ -21,7 +21,12 @@
       "@domain/website-builder": ["./projects/domain/website-builder/src/public-api.ts"],
       "@domain/booking": ["./projects/domain/booking/src/public-api.ts"],
       "@domain/notifications": ["./projects/domain/notifications/src/public-api.ts"],
-      "@domain/shared-dialogs": ["./projects/domain/shared-dialogs/src/public-api.ts"]
+      "@domain/shared-dialogs": ["./projects/domain/shared-dialogs/src/public-api.ts"],
+      "@domain/interac": ["./projects/domain/interac/src/public-api.ts"],
+      "@domain/tax": ["./projects/domain/tax/src/public-api.ts"],
+      "@domain/discovery": ["./projects/domain/discovery/src/public-api.ts"],
+      "@domain/presets": ["./projects/domain/presets/src/public-api.ts"],
+      "@domain/events": ["./projects/domain/events/src/public-api.ts"]
     },
     "strict": true,
     "noImplicitOverride": true,
@@ -156,6 +161,36 @@
     },
     {
       "path": "./projects/domain/shared-dialogs/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/interac/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/interac/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/tax/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/tax/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/discovery/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/discovery/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/presets/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/presets/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/domain/events/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/domain/events/tsconfig.spec.json"
     },
     {
       "path": "./projects/studio-manager/tsconfig.app.json"

@@ -1,4 +1,5 @@
 import { Component, inject, signal, output, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   ProductsService,
   ProductDto,
@@ -63,7 +64,7 @@ function getFulfillmentLabel(type: FulfillmentType): string {
     <div class="page">
       <div class="page__header">
         <h1 class="page__title">Products</h1>
-        <lib-button variant="primary" (clicked)="addProduct.emit()">+ Add Product</lib-button>
+        <lib-button variant="primary" (clicked)="onAddProduct()">+ Add Product</lib-button>
       </div>
 
       <lib-pill-tab-bar
@@ -317,6 +318,12 @@ export class ProductCatalogPageComponent implements OnInit {
   readonly totalCount = signal(0);
 
   readonly addProduct = output<void>();
+  private readonly router = inject(Router);
+
+  onAddProduct(): void {
+    this.addProduct.emit();
+    this.router.navigate(['/store/products/new']);
+  }
 
   readonly filterTabs = [
     { label: 'All', icon: 'layers', value: 'All' },

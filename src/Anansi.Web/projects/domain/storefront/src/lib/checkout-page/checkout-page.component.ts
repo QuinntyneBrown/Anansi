@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OrdersService, CreateOrderRequest, OrderDto, PaymentMethod } from 'api';
+import { LucideAngularModule } from 'lucide-angular';
+import { OrdersService, CreateOrderRequest, OrderDto, PaymentMethod, TranslationService } from 'api';
 import {
   CardComponent,
   ButtonComponent,
@@ -15,6 +16,7 @@ import { CartService, CartItem } from '../cart/cart.service';
   standalone: true,
   imports: [
     FormsModule,
+    LucideAngularModule,
     CardComponent,
     ButtonComponent,
     SpinnerComponent,
@@ -24,16 +26,16 @@ import { CartService, CartItem } from '../cart/cart.service';
   template: `
     <div class="page">
       <div class="page-header">
-        <h1 class="page-title">Checkout</h1>
+        <h1 class="page-title">{{ i18n.t().checkout.title }}</h1>
         <div class="step-indicator">
           <span class="step" [class.step--active]="!orderPlaced()" [class.step--completed]="orderPlaced()">1</span>
-          <span class="step-label" [class.step-label--active]="!orderPlaced()">Shipping</span>
+          <span class="step-label" [class.step-label--active]="!orderPlaced()">{{ i18n.t().checkout.shipping }}</span>
           <span class="step-line" [class.step-line--active]="orderPlaced()"></span>
           <span class="step" [class.step--active]="!orderPlaced()" [class.step--completed]="orderPlaced()">2</span>
-          <span class="step-label" [class.step-label--active]="!orderPlaced()">Payment</span>
+          <span class="step-label" [class.step-label--active]="!orderPlaced()">{{ i18n.t().checkout.payment }}</span>
           <span class="step-line" [class.step-line--active]="orderPlaced()"></span>
           <span class="step" [class.step--active]="orderPlaced()">3</span>
-          <span class="step-label" [class.step-label--active]="orderPlaced()">Confirmation</span>
+          <span class="step-label" [class.step-label--active]="orderPlaced()">{{ i18n.t().checkout.confirmation }}</span>
         </div>
       </div>
 
@@ -41,78 +43,78 @@ import { CartService, CartItem } from '../cart/cart.service';
         <div class="success-container">
           <lib-card>
             <div class="success-content">
-              <div class="success-icon">&#10003;</div>
-              <h2 class="success-title">Order Placed Successfully!</h2>
-              <p class="success-message">Thank you for your order. A confirmation email has been sent to {{ placedOrder()?.clientEmail }}.</p>
-              <p class="success-order-id">Order #{{ placedOrder()?.id }}</p>
+              <div class="success-icon"><lucide-icon name="check" [size]="40"></lucide-icon></div>
+              <h2 class="success-title">{{ i18n.t().checkout.orderPlaced }}</h2>
+              <p class="success-message">{{ i18n.t().checkout.orderConfirmation }}{{ placedOrder()?.clientEmail }}.</p>
+              <p class="success-order-id">{{ i18n.t().checkout.orderNumber }}{{ placedOrder()?.id }}</p>
             </div>
           </lib-card>
         </div>
       } @else if (cartItems().length === 0) {
         <lib-empty-state
-          heading="No items to checkout"
-          description="Add items to your cart before proceeding to checkout."
+          [heading]="i18n.t().checkout.noItems"
+          [description]="i18n.t().checkout.noItemsDescription"
         />
       } @else {
         <div class="checkout-layout">
           <div class="checkout-form">
             <lib-card>
-              <div card-header class="section-title">Contact Information</div>
+              <div card-header class="section-title">{{ i18n.t().checkout.contactInfo }}</div>
               <form class="form-fields" (ngSubmit)="onSubmit()">
                 <lib-input-group
-                  label="Full Name"
-                  placeholder="Your full name"
+                  [label]="i18n.t().checkout.fullName"
+                  [placeholder]="i18n.t().checkout.fullNamePlaceholder"
                   [(ngModel)]="clientName"
                   name="clientName"
                 />
                 <lib-input-group
-                  label="Email"
+                  [label]="i18n.t().checkout.email"
                   type="email"
-                  placeholder="you@example.com"
+                  [placeholder]="i18n.t().checkout.emailPlaceholder"
                   [(ngModel)]="clientEmail"
                   name="clientEmail"
                 />
                 <lib-input-group
-                  label="Phone (optional)"
+                  [label]="i18n.t().checkout.phoneOptional"
                   type="tel"
-                  placeholder="Your phone number"
+                  [placeholder]="i18n.t().checkout.phonePlaceholder"
                   [(ngModel)]="clientPhone"
                   name="clientPhone"
                 />
 
                 <div class="section-divider"></div>
-                <h3 class="sub-section-title">Shipping Address</h3>
+                <h3 class="sub-section-title">{{ i18n.t().checkout.shippingAddress }}</h3>
 
                 <lib-input-group
-                  label="Street Address"
-                  placeholder="123 Main St"
+                  [label]="i18n.t().checkout.street"
+                  [placeholder]="i18n.t().checkout.streetPlaceholder"
                   [(ngModel)]="shippingAddress"
                   name="shippingAddress"
                 />
                 <div class="form-row">
                   <lib-input-group
-                    label="City"
-                    placeholder="City"
+                    [label]="i18n.t().checkout.city"
+                    [placeholder]="i18n.t().checkout.cityPlaceholder"
                     [(ngModel)]="shippingCity"
                     name="shippingCity"
                   />
                   <lib-input-group
-                    label="Province/State"
-                    placeholder="Province"
+                    [label]="i18n.t().checkout.province"
+                    [placeholder]="i18n.t().checkout.provincePlaceholder"
                     [(ngModel)]="shippingProvince"
                     name="shippingProvince"
                   />
                 </div>
                 <div class="form-row">
                   <lib-input-group
-                    label="Postal Code"
-                    placeholder="Postal code"
+                    [label]="i18n.t().checkout.postalCode"
+                    [placeholder]="i18n.t().checkout.postalCodePlaceholder"
                     [(ngModel)]="shippingPostalCode"
                     name="shippingPostalCode"
                   />
                   <lib-input-group
-                    label="Country"
-                    placeholder="Country"
+                    [label]="i18n.t().checkout.country"
+                    [placeholder]="i18n.t().checkout.countryPlaceholder"
                     [(ngModel)]="shippingCountry"
                     name="shippingCountry"
                   />
@@ -130,7 +132,7 @@ import { CartService, CartItem } from '../cart/cart.service';
                   @if (submitting()) {
                     <lib-spinner [size]="16" />
                   }
-                  Place Order
+                  {{ i18n.t().checkout.placeOrder }}
                 </lib-button>
               </form>
             </lib-card>
@@ -138,7 +140,7 @@ import { CartService, CartItem } from '../cart/cart.service';
 
           <div class="order-summary">
             <lib-card>
-              <div card-header class="section-title">Order Summary</div>
+              <div card-header class="section-title">{{ i18n.t().cart.orderSummary }}</div>
               <div class="summary-items">
                 @for (item of cartItems(); track item.variationId) {
                   <div class="summary-item">
@@ -152,12 +154,12 @@ import { CartService, CartItem } from '../cart/cart.service';
               </div>
               <div class="summary-divider"></div>
               <div class="summary-row">
-                <span class="summary-label">Subtotal</span>
+                <span class="summary-label">{{ i18n.t().checkout.subtotal }}</span>
                 <span class="summary-value">{{ formatPrice(subtotal()) }}</span>
               </div>
               <div class="summary-divider"></div>
               <div class="summary-row summary-total">
-                <span class="summary-label">Estimated Total</span>
+                <span class="summary-label">{{ i18n.t().checkout.estimatedTotal }}</span>
                 <span class="summary-value total-price">{{ formatPrice(subtotal()) }}</span>
               </div>
             </lib-card>
@@ -440,6 +442,7 @@ import { CartService, CartItem } from '../cart/cart.service';
 export class CheckoutPageComponent {
   private readonly ordersService = inject(OrdersService);
   private readonly cartService = inject(CartService);
+  readonly i18n = inject(TranslationService);
 
   readonly cartItems = this.cartService.items;
   readonly orderComplete = output<OrderDto>();
@@ -477,7 +480,7 @@ export class CheckoutPageComponent {
   }
 
   formatPrice(cents: number): string {
-    return `$${(cents / 100).toFixed(2)}`;
+    return this.i18n.formatCurrency(cents);
   }
 
   onSubmit(): void {

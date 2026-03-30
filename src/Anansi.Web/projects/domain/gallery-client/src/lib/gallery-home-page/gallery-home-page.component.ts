@@ -51,12 +51,16 @@ import { ImageLightboxComponent } from '../image-lightbox/image-lightbox.compone
                   <span class="photo-filename">{{ item.originalFileName }}</span>
                 </div>
                 @if (item.isStarred) {
-                  <div class="star-indicator">&#9733;</div>
+                  <div class="star-indicator"><lucide-icon name="star" [size]="14"></lucide-icon></div>
                 }
               </div>
             }
           </div>
         }
+
+        <footer class="gallery-footer" [class.theme-light]="theme() === 'light'">
+          <span class="gallery-footer__text">Powered by Anansi</span>
+        </footer>
       </div>
     }
 
@@ -236,6 +240,26 @@ import { ImageLightboxComponent } from '../image-lightbox/image-lightbox.compone
 
     .gallery-header--hidden {
       display: none;
+    }
+
+    .gallery-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 60px;
+      border-top: 1px solid #3A3A3C;
+      margin-top: 40px;
+      width: 100%;
+    }
+
+    .gallery-footer.theme-light {
+      border-top-color: #E0E0DC;
+    }
+
+    .gallery-footer__text {
+      font-family: Inter, sans-serif;
+      font-size: 12px;
+      color: #6E6E70;
     }
 
     /* Mobile grid adjustments */

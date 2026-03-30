@@ -142,6 +142,31 @@ import { LucideAngularModule } from 'lucide-angular';
         transform: translateX(-50%) translateY(-4px);
       }
     }
+
+    @media (max-width: 480px) {
+      .collection-title {
+        font-size: 24px;
+      }
+
+      .collection-subtitle {
+        font-size: 12px;
+      }
+
+      .title-section {
+        padding: 0 20px;
+        bottom: 100px;
+      }
+
+      .photographer-name {
+        top: 16px;
+        left: 20px;
+        font-size: 15px;
+      }
+
+      .scroll-indicator {
+        bottom: 32px;
+      }
+    }
   `,
 })
 export class CollectionCoverComponent {
